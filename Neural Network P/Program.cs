@@ -7,7 +7,8 @@ namespace PNet
     {
         private static void Main()
         {
-            Network net = new Network(new int[] { 2, 6, 1 });
+            Network net = new Network(new int[] { 2, 2, 1 });
+            net.InitializeRandomly(-1, 1);
 
             List<Data> trainingData = new List<Data>();
             trainingData.Add(new Data(new double[] { 0, 0 }, new double[] { 0 }));
@@ -15,7 +16,10 @@ namespace PNet
             trainingData.Add(new Data(new double[] { 1, 0 }, new double[] { 1 }));
             trainingData.Add(new Data(new double[] { 1, 1 }, new double[] { 0 }));
 
-            net.Train(trainingData);
+            TrainerMomentum momentumTrainer = new TrainerMomentum(net);
+
+            // todo: sometimes training gets stuck. why?!
+            momentumTrainer.Train(trainingData, 5000);
 
             foreach (double x in net.Output(new double[] { 0, 0 }))
                 Console.WriteLine(x);
