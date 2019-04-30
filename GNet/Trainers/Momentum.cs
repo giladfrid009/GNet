@@ -10,7 +10,7 @@ namespace GNet.Trainers
         protected readonly double[][] biasesDelta;
         protected readonly double[][][] weightsDelta;
 
-        public TrainerMomentum(Network net, double learningRate = 0.4, double momentum = 0.9) : base(net)
+        public TrainerMomentum(Network net, LossFuncs lossFunc, double learningRate = 0.4, double momentum = 0.9) : base(net, lossFunc)
         {
             LearningRate = learningRate;
             Momentum = momentum;

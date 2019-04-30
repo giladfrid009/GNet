@@ -7,9 +7,7 @@ namespace GNet.Extensions
     {
         private static readonly Random rnd = new Random();
 
-        // todo: IT WORKS!!!!!!!!!! IMPLEMENT. FINALLLLLLLY
-        // todo: remrite both methods into 1? 
-        // todo: maybe add default value exception handling?
+        // todo: maybe add forcedVal exception handling?
 
         public static T[] DeepClone<T>(this T[] array, object forcedVal = null)
         {

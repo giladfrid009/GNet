@@ -3,7 +3,7 @@ using System;
 
 namespace GNet
 {
-    public class Data
+    public class Data : ICloneable
     {
         public double[] Inputs { get; private set; }
         public double[] Targets { get; private set; }
@@ -20,6 +20,11 @@ namespace GNet
         {
             Inputs = inputs.Flatten<double>();
             Targets = targets.Flatten<double>();
+        }
+
+        public object Clone()
+        {
+            return new Data(Inputs, Targets);
         }
     }
 }

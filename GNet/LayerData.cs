@@ -8,21 +8,23 @@ namespace GNet
     public class LayerData : ICloneable
     {
         public int NeuronNum { get; private set; }
-        public ActivationFunctions LayerActivation { get; private set; }
-        public WeightInitializers LayerWeightInit { get; private set; }
+        public Activations ActivationFunction { get; private set; }
+        public Initializers WeightsInitializer { get; private set; }
+        public Initializers BiasInitializer { get; private set; }
         public ConnectionTypes LayerConnection { get; private set; }
 
-        public LayerData(int neuronNum, ConnectionTypes connectionType, ActivationFunctions activationFunction, WeightInitializers weightInitializer)
+        public LayerData(int neuronNum, ConnectionTypes connectionType, Activations activationFunction, Initializers weightInitializer, Initializers biasInitializer)
         {
             NeuronNum = neuronNum;
             LayerConnection = connectionType;
-            LayerActivation = activationFunction;
-            LayerWeightInit = weightInitializer;
+            ActivationFunction = activationFunction;
+            WeightsInitializer = weightInitializer;
+            BiasInitializer = biasInitializer;
         }
 
         public object Clone()
         {
-            return new LayerData(NeuronNum, LayerConnection, LayerActivation, LayerWeightInit);
+            return new LayerData(NeuronNum, LayerConnection, ActivationFunction, WeightsInitializer, BiasInitializer);
         }        
     }
 }

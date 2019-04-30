@@ -10,17 +10,24 @@ namespace GNet.Trainers
 
         protected readonly Network network;
         protected readonly LayerData[] layersData;
+        protected readonly LossFuncs lossFunc;
         protected readonly double[][] biases;
+        protected readonly double[][] batchBiasesDelta;
         protected readonly double[][] neurons;
         protected readonly double[][] gradients;
         protected readonly double[][][] weights;
+        protected readonly double[][][] batchWeightsDelta;
 
-        public TrainerBase(Network refNetwork)
+        public TrainerBase(Network refNetwork, LossFuncs lossFunc)
         {
             (layersData, neurons, biases, weights) = refNetwork.GetParamRefs();
 
             network = refNetwork;
+            this.lossFunc = lossFunc;
+
             gradients = neurons.DeepClone();
+            batchBiasesDelta = biases.DeepClone(0);
+            batchWeightsDelta = weights.DeepClone(0);
         }
 
         private void TestDataStructure(List<Data> data)
@@ -41,7 +48,8 @@ namespace GNet.Trainers
         }
 
         // todo: implement batch
-        public void Train(List<Data> trainingData, int batchSize, int maxEpochs = int.MaxValue, double minError = 0.02)
+        // todo: implement 2 training methods: based on minError and based on maxEpoches, or keep them null as default, and check for them only if they have val
+        public void Train(List<Data> trainingData, int batchSize, int maxEpochs = int.MaxValue, double minAvgError = 0.002)
         {
             TestDataStructure(trainingData);
 
@@ -55,18 +63,16 @@ namespace GNet.Trainers
 
                 for (int j = 0; j < trainingData.Count; j++)
                 {
-                    network.Output(trainingData[j].Inputs);
+                    var outputs = network.Output(trainingData[j].Inputs);
 
-                    for (int k = 0; k < layersData[outIndex].NeuronNum; k++)
-                    {
-                        var localError = trainingData[j].Targets[k] - neurons[outIndex][k];
-                        epochError += localError * localError;
-                    }
+                    epochError += LossProvider.GetTotalLoss(lossFunc, trainingData[j].Targets, outputs);                    
 
                     Backpropogate(trainingData[j].Targets);
                 }
 
-                if (epochError < minError)
+                epochError /= trainingData.Count;
+
+                if (epochError < minAvgError)
                     break;
             }
         }        
@@ -82,12 +88,13 @@ namespace GNet.Trainers
                 gradient += gradients[neuronLayer + 1][k] * weights[neuronLayer][neuronIndex][k];
             }
            
-            return gradient *= Activations.Derivative(neurons[neuronLayer][neuronIndex], layersData[neuronLayer].LayerActivation);
+            return gradient *= ActivationProvider.Derive(layersData[neuronLayer].ActivationFunction, neurons[neuronLayer][neuronIndex]);
         }
 
         protected virtual double CalcGradient(int neuronLayer, int neuronIndex, double targetValue)
         {
-            return CalcError(targetValue, neurons[neuronLayer][neuronIndex]) * Activations.Derivative(neurons[neuronLayer][neuronIndex], layersData[neuronLayer].LayerActivation);
+            return LossProvider.Derive(lossFunc, targetValue, neurons[neuronLayer][neuronIndex]) * 
+                ActivationProvider.Derive(layersData[neuronLayer].ActivationFunction, neurons[neuronLayer][neuronIndex]);
         }
 
         protected virtual double CalcBiasDelta(int biasLayer, int biasIndex, double learningRate)
@@ -98,11 +105,6 @@ namespace GNet.Trainers
         protected virtual double CalcWeightDelta(int inNeuronLayer, int inNeuronIndex, int outNeuronIndex, double learningRate)
         {
             return learningRate * gradients[inNeuronLayer + 1][outNeuronIndex] * neurons[inNeuronLayer][inNeuronIndex];
-        }
-
-        protected virtual double CalcError(double targetValue, double value)
-        {
-            return targetValue - value;
         }
     }
 }

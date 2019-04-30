@@ -4,7 +4,7 @@
     {
         public double LearningRate;
 
-        public TrainerClassic(Network net, double learningRate = 0.4) : base(net)
+        public TrainerClassic(Network net, LossFuncs lossFunc, double learningRate = 0.4) : base(net, lossFunc)
         {
             LearningRate = learningRate;
         }      
