@@ -42,7 +42,7 @@ namespace GNet
         {
             switch (lossFunc)
             {
-                case LossFuncs.Squared: return 2 * (T - O);
+                case LossFuncs.Squared: return 2 * (O - T);
 
                 case LossFuncs.SquaredLog: return -1 / (O + 1);
 
