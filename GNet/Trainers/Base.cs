@@ -93,7 +93,7 @@ namespace GNet.Trainers
 
         protected virtual double CalcGradient(int neuronLayer, int neuronIndex, double targetValue)
         {
-            return LossProvider.Derive(lossFunc, targetValue, neurons[neuronLayer][neuronIndex]) * 
+            return -1 * LossProvider.Derive(lossFunc, targetValue, neurons[neuronLayer][neuronIndex]) * 
                 ActivationProvider.Derive(layersData[neuronLayer].ActivationFunction, neurons[neuronLayer][neuronIndex]);
         }
 
