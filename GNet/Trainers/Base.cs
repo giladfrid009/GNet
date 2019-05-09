@@ -6,41 +6,39 @@ namespace GNet.Trainers
 {
     public abstract class TrainerBase
     {
-        // todo: maybe remove bias from here?
-
         protected readonly Network network;
-        protected readonly LayerData[] layersData;
-        protected readonly LossFuncs lossFunc;
+        protected readonly LayerConfig[] layersConfig;
+        protected readonly Losses lossFunc;
         protected readonly double[][] biases;
-        protected readonly double[][] batchBiasesDelta;
+        protected readonly double[][] batchBiases;
         protected readonly double[][] neurons;
         protected readonly double[][] gradients;
         protected readonly double[][][] weights;
-        protected readonly double[][][] batchWeightsDelta;
+        protected readonly double[][][] batchWeights;
 
-        public TrainerBase(Network refNetwork, LossFuncs lossFunc)
+        public TrainerBase(Network refNetwork, Losses lossFunc)
         {
-            (layersData, neurons, biases, weights) = refNetwork.GetParamRefs();
+            (layersConfig, neurons, biases, weights) = refNetwork.GetParamRefs();
 
             network = refNetwork;
             this.lossFunc = lossFunc;
 
             gradients = neurons.DeepClone();
-            batchBiasesDelta = biases.DeepClone(0);
-            batchWeightsDelta = weights.DeepClone(0);
+            batchBiases = biases.DeepClone(0);
+            batchWeights = weights.DeepClone(0);
         }
 
         private void TestDataStructure(List<Data> data)
         {
-            int outIndex = layersData.Length - 1;
+            int outIndex = layersConfig.Length - 1;
 
             for (int i = 0; i < data.Count; i++)
             {
-                if (data[i].Inputs.Length != layersData[0].NeuronNum)
+                if (data[i].Inputs.Length != layersConfig[0].NeuronNum)
                 {
                     throw new Exception($"Data[{i}].Inputs length mismatch with network structure");
                 }
-                else if (data[i].Targets.Length != layersData[outIndex].NeuronNum)
+                else if (data[i].Targets.Length != layersConfig[outIndex].NeuronNum)
                 {
                     throw new Exception($"Data[{i}].Targets length mismatch with network structure");
                 }
@@ -52,8 +50,6 @@ namespace GNet.Trainers
         public void Train(List<Data> trainingData, int batchSize, int maxEpochs = int.MaxValue, double minAvgError = 0.002)
         {
             TestDataStructure(trainingData);
-
-            int outIndex = layersData.Length - 1;
 
             for (int i = 0; i < maxEpochs; i++)
             {
@@ -79,22 +75,21 @@ namespace GNet.Trainers
 
         protected abstract void Backpropogate(double[] targets);
 
-        protected virtual double CalcGradient(int neuronLayer, int neuronIndex)
+        protected virtual double CalcGradient(int neuronLayer, int neuronIndex, ActivationFunc activationDerivative)
         {
             double gradient = 0;
 
-            for (int k = 0; k < layersData[neuronLayer + 1].NeuronNum; k++)
+            for (int k = 0; k < layersConfig[neuronLayer + 1].NeuronNum; k++)
             {
                 gradient += gradients[neuronLayer + 1][k] * weights[neuronLayer][neuronIndex][k];
             }
-           
-            return gradient *= ActivationProvider.Derive(layersData[neuronLayer].ActivationFunction, neurons[neuronLayer][neuronIndex]);
+
+            return gradient *= activationDerivative(neurons[neuronLayer][neuronIndex]);
         }
 
-        protected virtual double CalcGradient(int neuronLayer, int neuronIndex, double targetValue)
+        protected virtual double CalcGradient(int neuronLayer, int neuronIndex, double targetValue, ActivationFunc activationDerivative, LossFunc lossDerivative)
         {
-            return -1 * LossProvider.Derive(lossFunc, targetValue, neurons[neuronLayer][neuronIndex]) * 
-                ActivationProvider.Derive(layersData[neuronLayer].ActivationFunction, neurons[neuronLayer][neuronIndex]);
+            return -1 * lossDerivative(targetValue, neurons[neuronLayer][neuronIndex]) * activationDerivative(neurons[neuronLayer][neuronIndex]);
         }
 
         protected virtual double CalcBiasDelta(int biasLayer, int biasIndex, double learningRate)

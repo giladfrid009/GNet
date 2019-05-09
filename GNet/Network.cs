@@ -6,26 +6,24 @@ namespace GNet
 {
     public class Network : ICloneable
     {
-        private static Random rnd = new Random();
-
-        private LayerData[] layersData;
+        private LayerConfig[] layersConfig;
         private double[][] neurons;
         private double[][] biases;
         private double[][][] weights;
 
-        public Network(LayerData[] layersData)
+        public Network(LayerConfig[] layersConfig)
         {
-            this.layersData = layersData.DeepClone();
-            neurons = InitNeuronsArr(layersData);
-            biases = InitBiasArr(layersData);
-            weights = InitWeightsArr(layersData);
+            this.layersConfig = layersConfig.DeepClone();
+            neurons = InitNeuronsArr(layersConfig);
+            biases = InitBiasArr(layersConfig);
+            weights = InitWeightsArr(layersConfig);
 
             InitNetwork();
         }
 
-        public Network(LayerData[] layersData, double[][] biases, double[][][] weights)
+        public Network(LayerConfig[] layersConfig, double[][] biases, double[][][] weights)
         {
-            this.layersData = layersData.DeepClone();
+            this.layersConfig = layersConfig.DeepClone();
             this.biases = biases.DeepClone();
             this.weights = weights.DeepClone();
             neurons = biases.DeepClone(0);
@@ -33,55 +31,55 @@ namespace GNet
 
         public object Clone()
         {
-            return new Network(layersData, biases, weights);
+            return new Network(layersConfig, biases, weights);
         }
 
-        public (LayerData[] layersData, double[][] neurons, double[][] biases, double[][][] weights) GetParamRefs()
+        public (LayerConfig[] layersConfig, double[][] neurons, double[][] biases, double[][][] weights) GetParamRefs()
         {
-            return (layersData, neurons, biases, weights);
+            return (layersConfig, neurons, biases, weights);
         }
 
-        public (LayerData[] layersData, double[][] neurons, double[][] biases, double[][][] weights) GetParamCopies()
+        public (LayerConfig[] layersConfig, double[][] neurons, double[][] biases, double[][][] weights) GetParamCopies()
         {
-            return (layersData.DeepClone(), (double[][])neurons.DeepClone(), biases.DeepClone(), weights.DeepClone());
+            return (layersConfig.DeepClone(), (double[][])neurons.DeepClone(), biases.DeepClone(), weights.DeepClone());
         }
 
-        private double[][] InitNeuronsArr(LayerData[] layersData)
+        private double[][] InitNeuronsArr(LayerConfig[] layersConfig)
         {
-            double[][] neurons = new double[layersData.Length][];
+            double[][] neurons = new double[layersConfig.Length][];
 
-            for (int i = 0; i < layersData.Length; i++)
+            for (int i = 0; i < layersConfig.Length; i++)
             {
-                neurons[i] = new double[layersData[i].NeuronNum];
+                neurons[i] = new double[layersConfig[i].NeuronNum];
             }
 
             return neurons;
         }
 
-        private double[][] InitBiasArr(LayerData[] layersData)
+        private double[][] InitBiasArr(LayerConfig[] layersConfig)
         {
-            double[][] biases = new double[layersData.Length][];
+            double[][] biases = new double[layersConfig.Length][];
             biases[0] = new double[0];
 
-            for (int i = 1; i < layersData.Length; i++)
+            for (int i = 1; i < layersConfig.Length; i++)
             {
-                biases[i] = new double[layersData[i].NeuronNum];
+                biases[i] = new double[layersConfig[i].NeuronNum];
             }
 
             return biases;
         }
 
-        private double[][][] InitWeightsArr(LayerData[] layersData)
+        private double[][][] InitWeightsArr(LayerConfig[] layersConfig)
         {
-            double[][][] weights = new double[layersData.Length][][];
+            double[][][] weights = new double[layersConfig.Length][][];
 
-            for (int i = 0; i < layersData.Length - 1; i++)
+            for (int i = 0; i < layersConfig.Length - 1; i++)
             {
-                weights[i] = new double[layersData[i].NeuronNum][];
+                weights[i] = new double[layersConfig[i].NeuronNum][];
 
-                for (int j = 0; j < layersData[i].NeuronNum; j++)
+                for (int j = 0; j < layersConfig[i].NeuronNum; j++)
                 {
-                    weights[i][j] = new double[layersData[i + 1].NeuronNum];
+                    weights[i][j] = new double[layersConfig[i + 1].NeuronNum];
                 }
             }
 
@@ -92,33 +90,37 @@ namespace GNet
         
         public void InitNetwork()
         {
-            for (int i = 0; i < weights.Length; i++)
+            for (int i = 0; i < weights.Length - 1; i++)
             {
-                var initializer = layersData[i].WeightsInitializer;
-                var prevLength = weights[i].Length; // todo: weights reside on the wrong layer: weights of layer index 1 are on index 0.
+                // todo: weights reside on the wrong layer: weights of layer index 1 are on index 0.
+                // weights should be moved 1 index further
+                var initializer = InitializerProvider.GetInitializer(layersConfig[i].WeightsInitializer);
+                var nIn = weights[i].Length;
+                var nOut = weights[i + 1].Length;
 
                 for (int j = 0; j < weights[i].Length; j++)
                 {
                     for (int k = 0; k < weights[i][j].Length; k++)
                     {
-                        weights[i][j][k] = Initializer.GenerateValue(initializer, prevLength);
+                        weights[i][j][k] = initializer(nIn, nOut);
                     }
                 }
             }
 
             for (int i = 1; i < biases.Length; i++)
             {
-                var initializer = layersData[i].BiasInitializer;
-                var prevLength = biases[i - 1].Length;
+                var initializer = InitializerProvider.GetInitializer(layersConfig[i].BiasInitializer);
+                var nIn = biases[i - 1].Length;
+                var nOut = biases[i].Length;
 
-                for (int j = 0; j < biases[i].Length; j++)
+                for (int j = 0; j < nOut; j++)
                 {
-                    biases[i][j] = Initializer.GenerateValue(initializer, prevLength);
+                    biases[i][j] = initializer(nIn, nOut);
                 }
             }
         }
 
-        public double Validate(List<Data> testData, LossFuncs lossFunc)
+        public double Validate(List<Data> testData, Losses lossFunc)
         {
             double lossAvg = 0;
 
@@ -132,26 +134,30 @@ namespace GNet
 
         public double[] Output(double[] inputs)
         {
-            if (inputs.Length != layersData[0].NeuronNum)
+            if (inputs.Length != layersConfig[0].NeuronNum)
                 throw new ArgumentException("input length mismatch");
 
-            for (int i = 0; i < layersData[0].NeuronNum; i++)
+            var activationFunc = ActivationProvider.GetActivation(layersConfig[0].Activation);
+
+            for (int i = 0; i < layersConfig[0].NeuronNum; i++)
             {
-                neurons[0][i] = ActivationProvider.ActivateValue(layersData[0].ActivationFunction, inputs[i]);
+                neurons[0][i] = activationFunc(inputs[i]);
             }
 
-            for (int i = 1; i < layersData.Length; i++)
+            for (int i = 1; i < layersConfig.Length; i++)
             {
-                for (int j = 0; j < layersData[i].NeuronNum; j++)
+                activationFunc = ActivationProvider.GetActivation(layersConfig[i].Activation);
+
+                for (int j = 0; j < layersConfig[i].NeuronNum; j++)
                 {
                     double neurovVal = 0;
 
-                    for (int k = 0; k < layersData[i - 1].NeuronNum; k++)
+                    for (int k = 0; k < layersConfig[i - 1].NeuronNum; k++)
                     {
                         neurovVal += neurons[i - 1][k] * weights[i - 1][k][j];
                     }
 
-                    neurons[i][j] = ActivationProvider.ActivateValue(layersData[i].ActivationFunction, neurovVal + biases[i][j]);
+                    neurons[i][j] = activationFunc(neurovVal + biases[i][j]);
                 }
             }
 
