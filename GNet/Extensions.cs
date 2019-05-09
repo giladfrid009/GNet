@@ -7,14 +7,12 @@ namespace GNet.Extensions
     {
         private static readonly Random rnd = new Random();
 
-        // todo: maybe add forcedVal exception handling?
-
-        public static T[] DeepClone<T>(this T[] array, object forcedVal = null)
+        public static T[] DeepClone<T>(this T[] array)
         {
-            return (T[])RecursiveClone(array, forcedVal);
+            return (T[])RecursiveClone(array);
         }
 
-        private static object RecursiveClone(Array array, object forcedVal)
+        private static object RecursiveClone(Array array)
         {
             Array newArr = (Array)Activator.CreateInstance(array.GetType(), array.Length);
 
@@ -24,11 +22,7 @@ namespace GNet.Extensions
 
                 if (element is Array)
                 {
-                    newArr.SetValue(RecursiveClone(element as Array, forcedVal), i);
-                }
-                else if (forcedVal != null)
-                {
-                    newArr.SetValue(forcedVal, i);
+                    newArr.SetValue(RecursiveClone(element as Array), i);
                 }
                 else if (element is ICloneable)
                 {
@@ -66,6 +60,20 @@ namespace GNet.Extensions
             return flattened.ToArray();
         }
 
+        public static void ClearRecursive(this Array array)
+        {
+            if (array.GetType().GetElementType().IsArray == false)
+            {
+                Array.Clear(array, 0, array.Length);
+                return;
+            }
+
+            foreach (var element in array)
+            {
+                ClearRecursive((Array)element);
+            }
+        }
+
         public static void Shuffle<T>(this IList<T> list)
         {
             int upperBound = list.Count;
@@ -85,6 +93,11 @@ namespace GNet.Extensions
         public static double NextDouble(this Random rnd, double minValue, double maxValue)
         {
             return rnd.NextDouble() * (maxValue - minValue) + minValue;
+        }
+
+        public static double NextDouble(this Random rnd, double range)
+        {
+            return NextDouble(rnd, -range, range);
         }
 
         public static double NextGaussian(this Random rnd)

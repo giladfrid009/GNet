@@ -10,16 +10,18 @@ namespace GNet.Trainers
         protected readonly double[][] biasesDelta;
         protected readonly double[][][] weightsDelta;
 
-        public TrainerMomentum(Network net, Losses lossFunc, double learningRate = 0.4, double momentum = 0.9) : base(net, lossFunc)
+        public TrainerMomentum(Network net, Losses loss, double learningRate = 0.4, double momentum = 0.9) : base(net, loss)
         {
             LearningRate = learningRate;
             Momentum = momentum;
 
-            biasesDelta = biases.DeepClone(0);
-            weightsDelta = weights.DeepClone(0);
+            biasesDelta = batchBiases.DeepClone();
+            weightsDelta = batchWeights.DeepClone();
+            biasesDelta.ClearRecursive();
+            weightsDelta.ClearRecursive();
         }
-        
-        protected override void Backpropogate(double[] targets)
+
+        protected override void calcDeltas(double[] targets)
         {
             int outLayer = layersConfig.Length - 1;
 
@@ -27,11 +29,11 @@ namespace GNet.Trainers
             for (int j = 0; j < layersConfig[outLayer].NeuronNum; j++)
             {
                 var activationDerivative = ActivationProvider.GetDerivative(layersConfig[outLayer].Activation);
-
-                var lossDerivative = LossProvider.GetDerivative(lossFunc);
+                var oldBiasDelta = biasesDelta[outLayer][j];
 
                 gradients[outLayer][j] = CalcGradient(outLayer, j, targets[j], activationDerivative, lossDerivative);
-                (biases[outLayer][j], biasesDelta[outLayer][j]) = CalcBias(outLayer, j, LearningRate, Momentum);
+                biasesDelta[outLayer][j] = CalcBiasDelta(outLayer, j, LearningRate);
+                batchBiases[outLayer][j] += biasesDelta[outLayer][j] + oldBiasDelta * Momentum;
             }
 
             // Hidden layers
@@ -41,12 +43,18 @@ namespace GNet.Trainers
 
                 for (int j = 0; j < layersConfig[i].NeuronNum; j++)
                 {
+                    var oldBiasDelta = biasesDelta[i][j];
+
                     gradients[i][j] = CalcGradient(i, j, derivative);
-                    (biases[i][j], biasesDelta[i][j]) = CalcBias(i, j, LearningRate, Momentum);
+                    biasesDelta[i][j] = CalcBiasDelta(i, j, LearningRate);
+                    batchBiases[i][j] += biasesDelta[i][j] + oldBiasDelta * Momentum;
 
                     for (int k = 0; k < layersConfig[i + 1].NeuronNum; k++)
                     {
-                        (weights[i][j][k], weightsDelta[i][j][k]) = CalcWeight(i, j, k, LearningRate, Momentum);
+                        var oldWeightDelta = weightsDelta[i][j][k];
+
+                        weightsDelta[i][j][k] = CalcWeightDelta(i, j, k, LearningRate);
+                        batchWeights[i][j][k] += weightsDelta[i][j][k] + oldWeightDelta * Momentum;
                     }
                 }
             }
@@ -56,27 +64,12 @@ namespace GNet.Trainers
             {
                 for (int k = 0; k < layersConfig[j + 1].NeuronNum; k++)
                 {
-                    (weights[0][j][k], weightsDelta[0][j][k]) = CalcWeight(0, j, k, LearningRate, Momentum);
+                    var oldWeightDelta = weightsDelta[0][j][k];
+
+                    weightsDelta[0][j][k] = CalcWeightDelta(0, j, k, LearningRate);
+                    batchWeights[0][j][k] += weightsDelta[0][j][k] + oldWeightDelta * Momentum;
                 }
             }
-        }
-
-        protected virtual (double bias, double biasDelta) CalcBias(int biasLayer, int biasIndex, double LearningRate, double Momentum)
-        {
-            double oldDelta = biasesDelta[biasLayer][biasIndex];
-            double newDelta = CalcBiasDelta(biasLayer, biasIndex, LearningRate);
-            double newBias = biases[biasLayer][biasIndex] + newDelta + Momentum * oldDelta;
-
-            return (newBias, newDelta);
-        }
-
-       protected virtual (double weight, double weightDelta) CalcWeight(int inNeuronLayer, int inNeuronIndex, int outNeuronIndex, double LearningRate, double Momentum)
-        {
-            double oldDelta = weightsDelta[inNeuronLayer][inNeuronIndex][outNeuronIndex];
-            double newDelta = CalcWeightDelta(inNeuronLayer, inNeuronIndex, outNeuronIndex, LearningRate);
-            double newWeight = weights[inNeuronLayer][inNeuronIndex][outNeuronIndex] + newDelta + Momentum * oldDelta;
-
-            return (newWeight, newDelta);
         }
     }
 }

@@ -3,7 +3,7 @@
 namespace GNet
 {
     // todo: implement connection type
-    public enum ConnectionTypes { Dense };
+    public enum Connections { Dense };
 
     public class LayerConfig : ICloneable
     {
@@ -11,9 +11,9 @@ namespace GNet
         public Activations Activation { get; private set; }
         public Initializers WeightsInitializer { get; private set; }
         public Initializers BiasInitializer { get; private set; }
-        public ConnectionTypes ConnectionType { get; private set; }
+        public Connections ConnectionType { get; private set; }
 
-        public LayerConfig(int neuronNum, ConnectionTypes connectionType, Activations activationFunction, Initializers weightInitializer, Initializers biasInitializer)
+        public LayerConfig(int neuronNum, Connections connectionType, Activations activationFunction, Initializers weightInitializer, Initializers biasInitializer)
         {
             NeuronNum = neuronNum;
             ConnectionType = connectionType;
@@ -25,6 +25,6 @@ namespace GNet
         public object Clone()
         {
             return new LayerConfig(NeuronNum, ConnectionType, Activation, WeightsInitializer, BiasInitializer);
-        }        
+        }
     }
 }

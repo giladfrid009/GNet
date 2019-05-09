@@ -5,7 +5,7 @@ namespace GNet
 {
     public delegate double ActivationFunc(double value);
 
-    public enum Activations { Identity, BinaryStep, ReLU, ReLU6, LeakyReLU, ELU, Sigmoid, HardSigmoid, Tanh, LeCunTanh };
+    public enum Activations { Identity, BinaryStep, ReLU, ReLU6, LeakyReLU, ELU, Sigmoid, HardSigmoid, Tanh, LeCunTanh, Softplus };
 
     internal static class ActivationProvider
     {
@@ -33,10 +33,12 @@ namespace GNet
 
                 case Activations.LeCunTanh: return (X) => 1.7159 * Tanh(2 / 3 * X);
 
+                case Activations.Softplus: return (X) => Log(1 + Exp(X));
+
                 default: throw new ArgumentException("Unsupported activation");
             }
         }
-       
+
         public static ActivationFunc GetDerivative(Activations activation)
         {
             switch (activation)
@@ -61,8 +63,10 @@ namespace GNet
 
                 case Activations.LeCunTanh: return (X) => (2.0 / 3.0) / 1.7159 * (1.7159 - X) * (1.7159 + X);
 
+                case Activations.Softplus: return (X) => 1 - (1 / Exp(X));
+
                 default: throw new ArgumentException("Unsupported activation");
             }
-        }        
+        }       
     }
 }

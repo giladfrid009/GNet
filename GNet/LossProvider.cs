@@ -11,9 +11,9 @@ namespace GNet
     {
         // todo: comparing to https://github.com/dotnet/machinelearning/blob/master/src/Microsoft.ML.Data/Utils/LossFunctions.cs, a lot of losses and their derivatives are wrong. wtf? why and understand logic.
 
-        public static LossFunc GetLoss(Losses lossFunc)
+        public static LossFunc GetLoss(Losses loss)
         {
-            switch(lossFunc)
+            switch (loss)
             {
                 case Losses.Squared: return (T, O) => (T - O) * (T - O);
 
@@ -35,13 +35,13 @@ namespace GNet
 
                 case Losses.Poisson: return (T, O) => O - T * Log(O);
 
-                default: throw new ArgumentOutOfRangeException("Unknown lossFunc");
+                default: throw new ArgumentOutOfRangeException("Unknown loss");
             }
-        }         
-        
-        public static LossFunc GetDerivative(Losses lossFunc)
+        }
+
+        public static LossFunc GetDerivative(Losses loss)
         {
-            switch (lossFunc)
+            switch (loss)
             {
                 case Losses.Squared: return (T, O) => 2 * (O - T);
 
@@ -63,23 +63,20 @@ namespace GNet
 
                 case Losses.Poisson: return (T, O) => 1 - (T / O);
 
-                default: throw new ArgumentOutOfRangeException("Unknown lossFunc");
+                default: throw new ArgumentOutOfRangeException("Unknown loss");
             }
         }
 
-        // todo: does it belong here? or move it out?
-        public static double GetTotalLoss(Losses lossFunc, double[] targets, double[] outputs)
+        public static double CalcTotalLoss(LossFunc lossFunc, double[] targets, double[] outputs)
         {
             if (targets.Length != outputs.Length)
                 throw new ArgumentException("targets and outputs length mismatch");
 
             double totalLoss = 0;
 
-            var loss = GetLoss(lossFunc);
-
             for (int i = 0; i < targets.Length; i++)
             {
-                totalLoss += loss(targets[i], outputs[i]);
+                totalLoss += lossFunc(targets[i], outputs[i]);
             }
 
             return totalLoss / targets.Length;
