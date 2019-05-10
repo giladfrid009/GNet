@@ -31,7 +31,7 @@ namespace GNet.Trainers
                 var activationDerivative = ActivationProvider.GetDerivative(layersConfig[outLayer].Activation);
                 var oldBiasDelta = biasesDelta[outLayer][j];
 
-                gradients[outLayer][j] = CalcGradient(outLayer, j, targets[j], activationDerivative, lossDerivative);
+                gradients[outLayer][j] = CalcGradient(outLayer, j, targets[j], activationDerivative);
                 biasesDelta[outLayer][j] = CalcBiasDelta(outLayer, j, LearningRate);
                 batchBiases[outLayer][j] += biasesDelta[outLayer][j] + oldBiasDelta * Momentum;
             }

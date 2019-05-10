@@ -8,12 +8,12 @@ namespace GNet.Trainers
     {
         private readonly Network network;
         private readonly LossFunc lossFunc;
+        private readonly LossFunc lossDerivative;
         private readonly double[][] biases;
         private readonly double[][] neurons;
         private readonly double[][][] weights;
 
         protected readonly LayerConfig[] layersConfig;
-        protected readonly LossFunc lossDerivative;
         protected readonly double[][] batchBiases;
         protected readonly double[][] gradients;
         protected readonly double[][][] batchWeights;
@@ -74,6 +74,7 @@ namespace GNet.Trainers
 
                         epochError += LossProvider.CalcTotalLoss(lossFunc, trainingData[index].Targets, outputs);
 
+                        // todo: calcDeltas should probably return (biasesDelta, weightsDelta). find best structure
                         calcDeltas(trainingData[index].Targets);
                     }
 
@@ -104,7 +105,7 @@ namespace GNet.Trainers
             return gradient *= activationDerivative(neurons[neuronLayer][neuronIndex]);
         }
 
-        protected virtual double CalcGradient(int neuronLayer, int neuronIndex, double targetValue, ActivationFunc activationDerivative, LossFunc lossDerivative)
+        protected virtual double CalcGradient(int neuronLayer, int neuronIndex, double targetValue, ActivationFunc activationDerivative)
         {
             return -1 * lossDerivative(targetValue, neurons[neuronLayer][neuronIndex]) * activationDerivative(neurons[neuronLayer][neuronIndex]);
         }

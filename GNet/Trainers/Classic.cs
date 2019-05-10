@@ -18,7 +18,7 @@
             {
                 var activationDerivative = ActivationProvider.GetDerivative(layersConfig[outLayer].Activation);
 
-                gradients[outLayer][j] = CalcGradient(outLayer, j, targets[j], activationDerivative, lossDerivative);
+                gradients[outLayer][j] = CalcGradient(outLayer, j, targets[j], activationDerivative);
                 batchBiases[outLayer][j] += CalcBiasDelta(outLayer, j, LearningRate);
             }
 

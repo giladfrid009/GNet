@@ -5,7 +5,7 @@ namespace GNet
 {
     public delegate double ActivationFunc(double value);
 
-    public enum Activations { Identity, BinaryStep, ReLU, ReLU6, LeakyReLU, ELU, Sigmoid, HardSigmoid, Tanh, LeCunTanh, Softplus };
+    public enum Activations { Identity, BinaryStep, ReLU, LeakyReLU, ELU, Sigmoid, HardSigmoid, Tanh, LeCunTanh, Softplus };
 
     internal static class ActivationProvider
     {
@@ -18,8 +18,6 @@ namespace GNet
                 case Activations.BinaryStep: return (X) => X < 0 ? 0 : 1;
 
                 case Activations.ReLU: return (X) => X < 0 ? 0 : X;
-
-                case Activations.ReLU6: return (X) => X < 0 ? 0 : X > 6 ? 6 : X;
 
                 case Activations.LeakyReLU: return (X) => X < 0 ? 0.01 * X : X;
 
@@ -48,8 +46,6 @@ namespace GNet
                 case Activations.BinaryStep: return (X) => 0;
 
                 case Activations.ReLU: return (X) => X == 0 ? 0 : 1;
-
-                case Activations.ReLU6: return (X) => X == 0 || X == 6 ? 0 : 1;
 
                 case Activations.LeakyReLU: return (X) => X < 0 ? 0.01 : 1;
 
