@@ -34,9 +34,17 @@ namespace GNet.Trainers
                 gradients[outLayer][j] = CalcGradient(outLayer, j, targets[j], activationDerivative);
                 biasesDelta[outLayer][j] = CalcBiasDelta(outLayer, j, LearningRate);
                 batchBiases[outLayer][j] += biasesDelta[outLayer][j] + oldBiasDelta * Momentum;
+
+                for (int k = 0; k < layersConfig[outLayer - 1].NeuronNum; k++)
+                {
+                    var oldWeightDelta = weightsDelta[outLayer][j][k];
+
+                    weightsDelta[outLayer][j][k] = CalcWeightDelta(outLayer, j, k, LearningRate);
+                    batchWeights[outLayer][j][k] += weightsDelta[outLayer][j][k] + oldWeightDelta * Momentum;
+                }
             }
 
-            // Hidden layers
+            // Hidden & Input layers
             for (int i = outLayer - 1; i > 0; i--)
             {
                 var derivative = ActivationProvider.GetDerivative(layersConfig[i].Activation);
@@ -49,7 +57,7 @@ namespace GNet.Trainers
                     biasesDelta[i][j] = CalcBiasDelta(i, j, LearningRate);
                     batchBiases[i][j] += biasesDelta[i][j] + oldBiasDelta * Momentum;
 
-                    for (int k = 0; k < layersConfig[i + 1].NeuronNum; k++)
+                    for (int k = 0; k < layersConfig[i - 1].NeuronNum; k++)
                     {
                         var oldWeightDelta = weightsDelta[i][j][k];
 
@@ -57,19 +65,7 @@ namespace GNet.Trainers
                         batchWeights[i][j][k] += weightsDelta[i][j][k] + oldWeightDelta * Momentum;
                     }
                 }
-            }
-
-            // Input layer
-            for (int j = 0; j < layersConfig[0].NeuronNum; j++)
-            {
-                for (int k = 0; k < layersConfig[j + 1].NeuronNum; k++)
-                {
-                    var oldWeightDelta = weightsDelta[0][j][k];
-
-                    weightsDelta[0][j][k] = CalcWeightDelta(0, j, k, LearningRate);
-                    batchWeights[0][j][k] += weightsDelta[0][j][k] + oldWeightDelta * Momentum;
-                }
-            }
+            }            
         }
     }
 }

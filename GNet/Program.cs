@@ -11,10 +11,9 @@ namespace GNet
             // todo: fix all. some activations dont work well as output activations.
             // todo: layer's weights are it's inputs, not outputs. find write way to write connectionType and weightInitializer, and redo weights array.
             List<LayerConfig> layersConfig = new List<LayerConfig>();
-            layersConfig.Add(new LayerConfig(2, Connections.Dense, Activations.Identity, Initializers.XavierNormal, Initializers.Zero));
-            layersConfig.Add(new LayerConfig(10, Connections.Dense, Activations.Softplus, Initializers.XavierNormal, Initializers.Gaussian));
-            layersConfig.Add(new LayerConfig(10, Connections.Dense, Activations.Softplus, Initializers.XavierNormal, Initializers.Gaussian));
-            layersConfig.Add(new LayerConfig(1, Connections.Dense, Activations.Sigmoid, Initializers.Zero, Initializers.Gaussian));
+            layersConfig.Add(new LayerConfig(2, Connections.Dense, Activations.Identity, Initializers.Zero, Initializers.Zero));
+            layersConfig.Add(new LayerConfig(10, Connections.Dense, Activations.LeCunTanh, Initializers.LeCunNormal, Initializers.LeCunUniform));
+            layersConfig.Add(new LayerConfig(1, Connections.Dense, Activations.Sigmoid, Initializers.Normal, Initializers.LeCunUniform));
 
             Network net = new Network(layersConfig.ToArray());
 

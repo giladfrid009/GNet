@@ -74,30 +74,28 @@ namespace GNet
         {
             double[][][] weights = new double[layersConfig.Length][][];
 
-            for (int i = 0; i < layersConfig.Length - 1; i++)
+            weights[0] = new double[0][];
+
+            for (int i = 1; i < layersConfig.Length; i++)
             {
                 weights[i] = new double[layersConfig[i].NeuronNum][];
 
                 for (int j = 0; j < layersConfig[i].NeuronNum; j++)
                 {
-                    weights[i][j] = new double[layersConfig[i + 1].NeuronNum];
+                    weights[i][j] = new double[layersConfig[i - 1].NeuronNum];
                 }
             }
-
-            weights[weights.Length - 1] = new double[0][];
 
             return weights;
         }
 
         public void InitNetwork()
         {
-            for (int i = 0; i < weights.Length - 1; i++)
+            for (int i = 1; i < weights.Length - 1; i++)
             {
-                // todo: weights reside on the wrong layer: weights of layer index 1 are on index 0.
-                // weights should be moved 1 index further
                 var initializer = InitializerProvider.GetInitializer(layersConfig[i].WeightsInitializer);
-                var nIn = weights[i].Length;
-                var nOut = weights[i + 1].Length;
+                var nIn = layersConfig[i - 1].NeuronNum;
+                var nOut = layersConfig[i].NeuronNum;
 
                 for (int j = 0; j < weights[i].Length; j++)
                 {
@@ -111,8 +109,8 @@ namespace GNet
             for (int i = 1; i < biases.Length; i++)
             {
                 var initializer = InitializerProvider.GetInitializer(layersConfig[i].BiasInitializer);
-                var nIn = biases[i - 1].Length;
-                var nOut = biases[i].Length;
+                var nIn = layersConfig[i - 1].NeuronNum;
+                var nOut = layersConfig[i].NeuronNum;
 
                 for (int j = 0; j < nOut; j++)
                 {
@@ -135,6 +133,7 @@ namespace GNet
             return lossAvg;
         }
 
+        // todo: we switched weight index. fix everywhere
         public double[] Output(double[] inputs)
         {
             if (inputs.Length != layersConfig[0].NeuronNum)
@@ -157,7 +156,7 @@ namespace GNet
 
                     for (int k = 0; k < layersConfig[i - 1].NeuronNum; k++)
                     {
-                        neurovVal += neurons[i - 1][k] * weights[i - 1][k][j];
+                        neurovVal += neurons[i - 1][k] * weights[i][j][k];
                     }
 
                     neurons[i][j] = activationFunc(neurovVal + biases[i][j]);

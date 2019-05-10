@@ -26,8 +26,8 @@ namespace GNet
         {
             double[] normalized = new double[vals.Length];
 
-            var mean = vals.Sum() / vals.Length;
-            var standartDeviation = Sqrt(vals.Sum(a => (a - mean) * (a - mean)) / vals.Length);
+            double mean = vals.Sum() / vals.Length;
+            double standartDeviation = Sqrt(vals.Sum(a => (a - mean) * (a - mean)) / vals.Length);
 
             for (int i = 0; i < vals.Length; i++)
             {

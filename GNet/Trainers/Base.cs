@@ -99,7 +99,7 @@ namespace GNet.Trainers
 
             for (int k = 0; k < layersConfig[neuronLayer + 1].NeuronNum; k++)
             {
-                gradient += gradients[neuronLayer + 1][k] * weights[neuronLayer][neuronIndex][k];
+                gradient += gradients[neuronLayer + 1][k] * weights[neuronLayer + 1][k][neuronIndex];
             }
 
             return gradient *= activationDerivative(neurons[neuronLayer][neuronIndex]);
@@ -115,9 +115,9 @@ namespace GNet.Trainers
             return learningRate * gradients[biasLayer][biasIndex];
         }
 
-        protected virtual double CalcWeightDelta(int inNeuronLayer, int inNeuronIndex, int outNeuronIndex, double learningRate)
+        protected virtual double CalcWeightDelta(int outNeuronLayer, int outNeuronIndex, int inNeuronIndex, double learningRate)
         {
-            return learningRate * gradients[inNeuronLayer + 1][outNeuronIndex] * neurons[inNeuronLayer][inNeuronIndex];
+            return learningRate * gradients[outNeuronLayer][outNeuronIndex] * neurons[outNeuronLayer - 1][inNeuronIndex];
         }
 
         private void UpdateNetwork()
