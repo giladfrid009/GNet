@@ -14,9 +14,9 @@ namespace GNet
         public Network(LayerConfig[] layersConfig)
         {
             this.layersConfig = layersConfig.DeepClone();
-            neurons = createNeuronsArr(layersConfig);
-            biases = createBiasArr(layersConfig);
-            weights = createWeightsArr(layersConfig);
+            neurons = CreateNeuronsArr(layersConfig);
+            biases = CreateBiasArr(layersConfig);
+            weights = CreateWeightsArr(layersConfig);
 
             InitNetwork();
         }
@@ -35,17 +35,17 @@ namespace GNet
             return new Network(layersConfig, biases, weights);
         }
 
-        public (LayerConfig[] layersConfig, double[][] neurons, double[][] biases, double[][][] weights) GetParamRefs()
+        public (LayerConfig[] LayersConfig, double[][] Neurons, double[][] Biases, double[][][] Weights) GetParamRefs()
         {
             return (layersConfig, neurons, biases, weights);
         }
 
-        public (LayerConfig[] layersConfig, double[][] neurons, double[][] biases, double[][][] weights) GetParamCopies()
+        public (LayerConfig[] LayersConfig, double[][] Neurons, double[][] Biases, double[][][] Weights) GetParamCopies()
         {
             return (layersConfig.DeepClone(), neurons.DeepClone(), biases.DeepClone(), weights.DeepClone());
         }
 
-        private double[][] createNeuronsArr(LayerConfig[] layersConfig)
+        private double[][] CreateNeuronsArr(LayerConfig[] layersConfig)
         {
             double[][] neurons = new double[layersConfig.Length][];
 
@@ -57,7 +57,7 @@ namespace GNet
             return neurons;
         }
 
-        private double[][] createBiasArr(LayerConfig[] layersConfig)
+        private double[][] CreateBiasArr(LayerConfig[] layersConfig)
         {
             double[][] biases = new double[layersConfig.Length][];
             biases[0] = new double[0];
@@ -70,7 +70,7 @@ namespace GNet
             return biases;
         }
 
-        private double[][][] createWeightsArr(LayerConfig[] layersConfig)
+        private double[][][] CreateWeightsArr(LayerConfig[] layersConfig)
         {
             double[][][] weights = new double[layersConfig.Length][][];
 
@@ -91,41 +91,35 @@ namespace GNet
 
         public void InitNetwork()
         {
-            for (int i = 1; i < weights.Length - 1; i++)
+            for (int i = 1; i < weights.Length; i++)
             {
-                var initializer = InitializerProvider.GetInitializer(layersConfig[i].WeightsInitializer);
                 var nIn = layersConfig[i - 1].NeuronNum;
                 var nOut = layersConfig[i].NeuronNum;
 
                 for (int j = 0; j < weights[i].Length; j++)
                 {
+                    var initializer = InitializerProvider.GetInitializer(layersConfig[i].BiasInitializer);
+
+                    biases[i][j] = initializer(nIn, nOut);
+
+                    initializer = InitializerProvider.GetInitializer(layersConfig[i].WeightsInitializer);
+
                     for (int k = 0; k < weights[i][j].Length; k++)
                     {
                         weights[i][j][k] = initializer(nIn, nOut);
                     }
                 }
-            }
-
-            for (int i = 1; i < biases.Length; i++)
-            {
-                var initializer = InitializerProvider.GetInitializer(layersConfig[i].BiasInitializer);
-                var nIn = layersConfig[i - 1].NeuronNum;
-                var nOut = layersConfig[i].NeuronNum;
-
-                for (int j = 0; j < nOut; j++)
-                {
-                    biases[i][j] = initializer(nIn, nOut);
-                }
-            }
+            }            
         }
 
         public double Validate(List<Data> testData, Losses loss)
         {
             double lossAvg = 0;
+            LossFunc lossFunc = LossProvider.GetLoss(loss);
            
             for (int i = 0; i < testData.Count; i++)
             {
-                lossAvg += LossProvider.CalcTotalLoss(LossProvider.GetLoss(loss), testData[i].Targets, Output(testData[i].Inputs));
+                lossAvg += LossProvider.CalcTotalLoss(lossFunc, testData[i].Targets, Output(testData[i].Inputs));
             }
 
             lossAvg /= testData.Count;
@@ -133,7 +127,6 @@ namespace GNet
             return lossAvg;
         }
 
-        // todo: we switched weight index. fix everywhere
         public double[] Output(double[] inputs)
         {
             if (inputs.Length != layersConfig[0].NeuronNum)

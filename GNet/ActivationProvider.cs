@@ -9,6 +9,9 @@ namespace GNet
 
     internal static class ActivationProvider
     {
+        /// <summary>
+        /// Returns an activation function.
+        /// </summary>
         public static ActivationFunc GetActivation(Activations activation)
         {
             switch (activation)
@@ -37,6 +40,9 @@ namespace GNet
             }
         }
 
+        /// <summary>
+        /// Returns an activation derivative function, which is based on an activated value.
+        /// </summary>
         public static ActivationFunc GetDerivative(Activations activation)
         {
             switch (activation)
@@ -57,7 +63,7 @@ namespace GNet
 
                 case Activations.Tanh: return (X) => 1.0 - (X * X);
 
-                case Activations.LeCunTanh: return (X) => (2.0 / 3.0) / 1.7159 * (1.7159 - X) * (1.7159 + X);
+                case Activations.LeCunTanh: return (X) => 1.7159 * (2.0 / 3.0) * (1.0 - X / 1.7159) * (1.0 + X / 1.7159);
 
                 case Activations.Softplus: return (X) => 1.0 - (1.0 / Exp(X));
 

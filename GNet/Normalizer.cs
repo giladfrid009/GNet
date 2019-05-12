@@ -27,11 +27,11 @@ namespace GNet
             double[] normalized = new double[vals.Length];
 
             double mean = vals.Sum() / vals.Length;
-            double standartDeviation = Sqrt(vals.Sum(a => (a - mean) * (a - mean)) / vals.Length);
+            double standardDeviation = Sqrt(vals.Sum(a => (a - mean) * (a - mean)) / vals.Length);
 
             for (int i = 0; i < vals.Length; i++)
             {
-                normalized[i] = (vals[i] - mean) / standartDeviation;
+                normalized[i] = (vals[i] - mean) / standardDeviation;
             }
 
             return normalized;

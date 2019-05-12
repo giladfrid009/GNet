@@ -30,8 +30,6 @@ namespace GNet.Trainers
             gradients = neurons.DeepClone();
             batchBiases = biases.DeepClone();
             batchWeights = weights.DeepClone();
-            batchBiases.ClearRecursive();
-            batchWeights.ClearRecursive();
         }
 
         private void TestDataStructure(List<Data> data)
@@ -59,29 +57,27 @@ namespace GNet.Trainers
             {
                 trainingData.Shuffle();
 
-                double epochError = 0;
-                int maxIndex = 0;
-                int index = 0;
+                var epochError = 0.0;
+                var maxIndex = 0;
+                var index = 0;
 
                 for (; maxIndex <= trainingData.Count; maxIndex += batchSize)
                 {
                     if (maxIndex > trainingData.Count)
                         maxIndex = trainingData.Count;
 
+                    batchBiases.ClearRecursive();
+                    batchWeights.ClearRecursive();
+
                     for (; index < maxIndex; index++)
                     {
-                        var outputs = network.Output(trainingData[index].Inputs);
-
-                        epochError += LossProvider.CalcTotalLoss(lossFunc, trainingData[index].Targets, outputs);
+                        epochError += LossProvider.CalcTotalLoss(lossFunc, trainingData[index].Targets, network.Output(trainingData[index].Inputs));
 
                         // todo: calcDeltas should probably return (biasesDelta, weightsDelta). find best structure
                         calcDeltas(trainingData[index].Targets);
                     }
 
                     UpdateNetwork();
-
-                    batchBiases.ClearRecursive();
-                    batchWeights.ClearRecursive();
                 }
 
                 epochError /= trainingData.Count;

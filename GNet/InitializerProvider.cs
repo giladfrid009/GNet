@@ -4,6 +4,11 @@ using static System.Math;
 
 namespace GNet
 {
+    /// <summary>
+    /// Value initialization function.
+    /// </summary>
+    /// <param name="nIn">Weight's input layer length.</param>
+    /// <param name="nOut">Weight's output layer length.</param>
     public delegate double InitFunc(int nIn, int nOut);
 
     public enum Initializers { Zero, SmallConst, One, Uniform, Normal, LeCunNormal, HeNormal, XavierNormal, LeCunUniform, HeUniform, XavierUniform };
@@ -12,6 +17,9 @@ namespace GNet
     {
         private static readonly Random rnd = new Random();
 
+        /// <summary>
+        /// Returns an initialization function.
+        /// </summary>
         public static InitFunc GetInitializer(Initializers initializer)
         {
             switch (initializer)
@@ -22,7 +30,7 @@ namespace GNet
 
                 case Initializers.One: return (nIn, nOut) => 1.0;
 
-                case Initializers.Uniform: return (nIn, nOut) => rnd.NextDouble();
+                case Initializers.Uniform: return (nIn, nOut) => rnd.NextDouble(-1, 1);
 
                 case Initializers.Normal: return (nIn, nOut) => rnd.NextGaussian();
 
