@@ -9,11 +9,11 @@ namespace GNet
         private static void Main()
         {
             List<LayerConfig> layersConfig = new List<LayerConfig>();
-            layersConfig.Add(new LayerConfig(2, Connections.Dense, Activations.Identity, Initializers.Zero, Initializers.Zero));
-            layersConfig.Add(new LayerConfig(4, Connections.Dense, Activations.ELU, Initializers.HeNormal, Initializers.SmallConst));
-            layersConfig.Add(new LayerConfig(10, Connections.Dense, Activations.ELU, Initializers.HeNormal, Initializers.SmallConst));
-            layersConfig.Add(new LayerConfig(5, Connections.Dense, Activations.ELU, Initializers.HeNormal, Initializers.SmallConst));
-            layersConfig.Add(new LayerConfig(1, Connections.Dense, Activations.Sigmoid, Initializers.Normal, Initializers.Normal));
+            layersConfig.Add(new LayerConfig(2, Activations.Identity, Initializers.Zero, Initializers.Zero));
+            layersConfig.Add(new LayerConfig(4, Activations.ELU, Initializers.HeNormal, Initializers.SmallConst));
+            layersConfig.Add(new LayerConfig(10, Activations.ELU, Initializers.HeNormal, Initializers.SmallConst));
+            layersConfig.Add(new LayerConfig(5, Activations.ELU, Initializers.HeNormal, Initializers.SmallConst));
+            layersConfig.Add(new LayerConfig(1, Activations.Sigmoid, Initializers.Normal, Initializers.Normal));
 
             Network net = new Network(layersConfig.ToArray());
 

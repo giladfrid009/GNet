@@ -55,7 +55,7 @@ namespace GNet
 
                 case Activations.LeakyReLU: return (X) => X < 0.0 ? 0.01 : 1.0;
 
-                case Activations.ELU: return (X) => X < 0.0 ? Exp(X) : 1.0;
+                case Activations.ELU: return (X) => X < 0.0 ? X + 1.0 : 1.0;
 
                 case Activations.Sigmoid: return (X) => X * (1.0 - X);
 
@@ -69,6 +69,6 @@ namespace GNet
 
                 default: throw new ArgumentException("Unsupported activation");
             }
-        }       
+        }              
     }
 }

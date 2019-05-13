@@ -74,7 +74,7 @@ namespace GNet.Trainers
                         epochError += LossProvider.CalcTotalLoss(lossFunc, trainingData[index].Targets, network.Output(trainingData[index].Inputs));
 
                         // todo: calcDeltas should probably return (biasesDelta, weightsDelta). find best structure
-                        calcDeltas(trainingData[index].Targets);
+                        BackPropogate(trainingData[index].Targets);
                     }
 
                     UpdateNetwork();
@@ -87,7 +87,7 @@ namespace GNet.Trainers
             }
         }
 
-        protected abstract void calcDeltas(double[] targets);
+        protected abstract void BackPropogate(double[] targets);
 
         protected virtual double CalcGradient(int neuronLayer, int neuronIndex, ActivationFunc activationDerivative)
         {

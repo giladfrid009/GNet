@@ -1,4 +1,5 @@
 ﻿using GNet.Extensions;
+using GNet.Normalization;
 using System;
 
 namespace GNet
@@ -10,15 +11,15 @@ namespace GNet
 
         public Data() { }
 
-        public Data(double[] inputs, double[] targets)
+        public Data(double[] inputs, double[] targets, Normalizers inputNormalizer = Normalizers.None)
         {
-            Inputs = inputs.DeepClone();
+            Inputs = Normalizer.NormalizeVals(inputs, inputNormalizer);
             Targets = targets.DeepClone();
         }
 
-        public Data(Array inputs, Array targets)
+        public Data(Array inputs, Array targets, Normalizers inputNormalizer = Normalizers.None)
         {
-            Inputs = inputs.Flatten<double>();
+            Inputs = Normalizer.NormalizeVals(inputs.Flatten<double>(), inputNormalizer);
             Targets = targets.Flatten<double>();
         }
 

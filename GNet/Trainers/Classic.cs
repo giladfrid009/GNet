@@ -9,7 +9,7 @@
             LearningRate = learningRate;
         }
 
-        protected override void calcDeltas(double[] targets)
+        protected override void BackPropogate(double[] targets)
         {
             int outLayer = layersConfig.Length - 1;
 

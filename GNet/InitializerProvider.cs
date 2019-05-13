@@ -15,8 +15,6 @@ namespace GNet
 
     internal static class InitializerProvider
     {
-        private static readonly Random rnd = new Random();
-
         /// <summary>
         /// Returns an initialization function.
         /// </summary>
@@ -30,21 +28,21 @@ namespace GNet
 
                 case Initializers.One: return (nIn, nOut) => 1.0;
 
-                case Initializers.Uniform: return (nIn, nOut) => rnd.NextDouble(-1, 1);
+                case Initializers.Uniform: return (nIn, nOut) => GRandom.Rnd.NextDouble(-1, 1);
 
-                case Initializers.Normal: return (nIn, nOut) => rnd.NextGaussian();
+                case Initializers.Normal: return (nIn, nOut) => GRandom.Rnd.NextGaussian();
 
-                case Initializers.LeCunNormal: return (nIn, nOut) => rnd.NextGaussian() * Sqrt(1.0 / nIn);
+                case Initializers.LeCunNormal: return (nIn, nOut) => GRandom.Rnd.NextGaussian() * Sqrt(1.0 / nIn);
 
-                case Initializers.HeNormal: return (nIn, nOut) => rnd.NextGaussian() * Sqrt(2.0 / nIn);
+                case Initializers.HeNormal: return (nIn, nOut) => GRandom.Rnd.NextGaussian() * Sqrt(2.0 / nIn);
 
-                case Initializers.XavierNormal: return (nIn, nOut) => rnd.NextGaussian() * Sqrt(2.0 / (nIn + nOut));
+                case Initializers.XavierNormal: return (nIn, nOut) => GRandom.Rnd.NextGaussian() * Sqrt(2.0 / (nIn + nOut));
 
-                case Initializers.LeCunUniform: return (nIn, nOut) => rnd.NextDouble(Sqrt(3.0 / nIn));
+                case Initializers.LeCunUniform: return (nIn, nOut) => GRandom.Rnd.NextDouble(Sqrt(3.0 / nIn));
 
-                case Initializers.HeUniform: return (nIn, nOut) => rnd.NextDouble(Sqrt(6.0 / nIn));
+                case Initializers.HeUniform: return (nIn, nOut) => GRandom.Rnd.NextDouble(Sqrt(6.0 / nIn));
 
-                case Initializers.XavierUniform: return (nIn, nOut) => rnd.NextDouble(Sqrt(6.0 / (nIn + nOut)));
+                case Initializers.XavierUniform: return (nIn, nOut) => GRandom.Rnd.NextDouble(Sqrt(6.0 / (nIn + nOut)));
 
                 default: throw new ArgumentOutOfRangeException("Unknown initializer");
             }

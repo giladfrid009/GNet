@@ -3,10 +3,8 @@ using System.Collections.Generic;
 
 namespace GNet.Datasets
 {
-    class MathOperations
+    internal class MathOperations
     {
-        static Random rnd = new Random();
-
         public enum Ops { Add, Sub, Mul, Div, Pow, Root }
 
         public static List<Data> GenerateDataset(Ops mathOperation, double valueScale, int datasetLength)
@@ -39,16 +37,16 @@ namespace GNet.Datasets
                 double res = 0.0;
 
                 while (res == 0)
-                { 
-                    n1 = valueScale * rnd.NextDouble();
-                    n2 = valueScale * rnd.NextDouble();
+                {
+                    n1 = valueScale * GRandom.Rnd.NextDouble();
+                    n2 = valueScale * GRandom.Rnd.NextDouble();
                     res = operation(n1, n2);
                 }
-                
+
                 dataSet.Add(new Data(new double[] { n1, n2 }, new double[] { res }));
             }
 
             return dataSet;
-        }        
+        }
     }
 }

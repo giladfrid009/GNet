@@ -5,8 +5,6 @@ namespace GNet.Extensions
 {
     public static class Extensions
     {
-        private static readonly Random rnd = new Random();
-
         public static T[] DeepClone<T>(this T[] array)
         {
             return (T[])RecursiveClone(array);
@@ -82,7 +80,7 @@ namespace GNet.Extensions
             {
                 upperBound--;
 
-                int index = rnd.Next(upperBound + 1);
+                int index = GRandom.Rnd.Next(upperBound + 1);
 
                 T tempVal = list[index];
                 list[index] = list[upperBound];
