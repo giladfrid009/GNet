@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using GNet.Trainers;
 
 namespace GNet
@@ -8,22 +7,28 @@ namespace GNet
     {
         private static void Main()
         {
-            List<LayerConfig> layersConfig = new List<LayerConfig>();
-            layersConfig.Add(new LayerConfig(2, Activations.Identity, Initializers.Zero, Initializers.Zero));
-            layersConfig.Add(new LayerConfig(4, Activations.ELU, Initializers.HeNormal, Initializers.SmallConst));
-            layersConfig.Add(new LayerConfig(10, Activations.ELU, Initializers.HeNormal, Initializers.SmallConst));
-            layersConfig.Add(new LayerConfig(5, Activations.ELU, Initializers.HeNormal, Initializers.SmallConst));
-            layersConfig.Add(new LayerConfig(1, Activations.Sigmoid, Initializers.Normal, Initializers.Normal));
+            LayerConfig[] layersConfig = new LayerConfig[]
+            {
+                new LayerConfig(2, new Activations.Identity(), new Initializers.Zero(), new Initializers.Zero()),
+                new LayerConfig(4, new Activations.ELU(), new Initializers.Normal(), new Initializers.Zero()),
+                new LayerConfig(10, new Activations.ELU(), new Initializers.Normal(), new Initializers.Zero()),
+                new LayerConfig(5, new Activations.ELU(), new Initializers.Normal(), new Initializers.Zero()),
+                new LayerConfig(1, new Activations.Sigmoid(), new Initializers.Normal(), new Initializers.Zero())
+            };
 
-            Network net = new Network(layersConfig.ToArray());
+            Network net = new Network(layersConfig);
 
             var trainingData = Datasets.LogicGates.XOR;
 
-            Console.WriteLine(net.Validate(trainingData, Losses.Squared) + "\n");
+            var outp = net.Output(trainingData[0].Inputs);
 
-            TrainerMomentum trainer = new TrainerMomentum(net, Losses.Squared);
+            var loss = net.Validate(trainingData, new Losses.MSE());
 
-            trainer.Train(trainingData, 1, 50000, 0.002);
+            Console.WriteLine(net.Validate(trainingData, new Losses.MSE()) + "\n");
+
+            TrainerClassic trainer = new TrainerClassic(net, new Losses.MSE());
+
+            trainer.Train(trainingData, 1, true, 10000);
 
             foreach (double x in net.Output(new double[] { 0, 0 }))
                 Console.WriteLine(x);
@@ -37,7 +42,7 @@ namespace GNet
             foreach (double x in net.Output(new double[] { 1, 1 }))
                 Console.WriteLine(x);
 
-            Console.WriteLine("\n" + net.Validate(trainingData, Losses.Absolute));
+            Console.WriteLine("\n" + net.Validate(trainingData, new Losses.MSE()));
 
             Console.ReadKey();
         }        

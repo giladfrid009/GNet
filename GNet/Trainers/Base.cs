@@ -1,42 +1,40 @@
 ﻿using GNet.Extensions;
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace GNet.Trainers
 {
     public abstract class TrainerBase
     {
         private readonly Network network;
-        private readonly LossFunc lossFunc;
-        private readonly LossFunc lossDerivative;
         private readonly double[][] biases;
-        private readonly double[][] neurons;
-        private readonly double[][][] weights;
+        protected readonly double[][] neurons;
+        protected readonly double[][] activNeurons;
+        protected readonly double[][][] weights;
 
+        protected readonly ILoss loss;
         protected readonly LayerConfig[] layersConfig;
         protected readonly double[][] batchBiases;
         protected readonly double[][] gradients;
         protected readonly double[][][] batchWeights;
 
-        public TrainerBase(Network refNetwork, Losses loss)
+        public TrainerBase(Network network, ILoss loss)
         {
-            (layersConfig, neurons, biases, weights) = refNetwork.GetParamRefs();
+            this.network = network;
+            this.loss = loss;
 
-            network = refNetwork;
-
-            lossFunc = LossProvider.GetLoss(loss);
-            lossDerivative = LossProvider.GetDerivative(loss);
+            (layersConfig, neurons, activNeurons, biases, weights) = this.network.GetParamRefs();
 
             gradients = neurons.DeepClone();
             batchBiases = biases.DeepClone();
             batchWeights = weights.DeepClone();
         }
 
-        private void TestDataStructure(List<Data> data)
+        private void TestDataStructure(Data[] data)
         {
             int outIndex = layersConfig.Length - 1;
 
-            for (int i = 0; i < data.Count; i++)
+            for (int i = 0; i < data.Length; i++)
             {
                 if (data[i].Inputs.Length != layersConfig[0].NeuronNum)
                 {
@@ -49,69 +47,73 @@ namespace GNet.Trainers
             }
         }
 
-        public void Train(List<Data> trainingData, int batchSize, int maxEpochs, double minAvgError)
+        public void Train(Data[] trainingData, int batchSize, bool shuffle = true, int maxEpochs = int.MaxValue, double minError = double.NaN)
         {
             TestDataStructure(trainingData);
 
             for (int i = 0; i < maxEpochs; i++)
             {
-                trainingData.Shuffle();
+                var epochData = shuffle ? trainingData.Shuffle() : trainingData;
 
                 var epochError = 0.0;
                 var maxIndex = 0;
                 var index = 0;
 
-                for (; maxIndex <= trainingData.Count; maxIndex += batchSize)
+                for (; maxIndex <= epochData.Length; maxIndex += batchSize)
                 {
-                    if (maxIndex > trainingData.Count)
-                        maxIndex = trainingData.Count;
+                    if (maxIndex > epochData.Length)
+                        maxIndex = epochData.Length;
 
                     batchBiases.ClearRecursive();
                     batchWeights.ClearRecursive();
 
                     for (; index < maxIndex; index++)
                     {
-                        epochError += LossProvider.CalcTotalLoss(lossFunc, trainingData[index].Targets, network.Output(trainingData[index].Inputs));
+                        if (minError != double.NaN)
+                            epochError += loss.Compute(epochData[index].Targets, network.Output(epochData[index].Inputs));
 
                         // todo: calcDeltas should probably return (biasesDelta, weightsDelta). find best structure
-                        BackPropogate(trainingData[index].Targets);
+                        BackPropogate(epochData[index].Targets);
                     }
 
                     UpdateNetwork();
                 }
 
-                epochError /= trainingData.Count;
+                if (minError != double.NaN)
+                {
+                    epochError /= epochData.Length;
 
-                if (epochError < minAvgError)
-                    break;
+                    if (epochError < minError)
+                        break;
+                }                
             }
         }
 
         protected abstract void BackPropogate(double[] targets);
 
-        protected virtual double CalcGradient(int neuronLayer, int neuronIndex, ActivationFunc activationDerivative)
+        protected double CalcGradient(int neuronIndex ,double activDer, double[] outGrads, double[][] outWeights)
         {
-            double gradient = 0;
+            double grad = 0;
 
-            for (int k = 0; k < layersConfig[neuronLayer + 1].NeuronNum; k++)
+            for (int k = 0; k < outGrads.Length; k++)
             {
-                gradient += gradients[neuronLayer + 1][k] * weights[neuronLayer + 1][k][neuronIndex];
+                grad += outGrads[k] * outWeights[k][neuronIndex];
             }
 
-            return gradient *= activationDerivative(neurons[neuronLayer][neuronIndex]);
+            return grad *= activDer;
         }
 
-        protected virtual double CalcGradient(int neuronLayer, int neuronIndex, double targetValue, ActivationFunc activationDerivative)
+        protected double CalcGradient(double lossDer, double activDer)
         {
-            return -1 * lossDerivative(targetValue, neurons[neuronLayer][neuronIndex]) * activationDerivative(neurons[neuronLayer][neuronIndex]);
-        }
+            return -1 * lossDer * activDer;
+        }        
 
-        protected virtual double CalcBiasDelta(int biasLayer, int biasIndex, double learningRate)
+        protected double CalcBiasDelta(int biasLayer, int biasIndex, double learningRate)
         {
             return learningRate * gradients[biasLayer][biasIndex];
         }
 
-        protected virtual double CalcWeightDelta(int outNeuronLayer, int outNeuronIndex, int inNeuronIndex, double learningRate)
+        protected double CalcWeightDelta(int outNeuronLayer, int outNeuronIndex, int inNeuronIndex, double learningRate)
         {
             return learningRate * gradients[outNeuronLayer][outNeuronIndex] * neurons[outNeuronLayer - 1][inNeuronIndex];
         }
@@ -122,20 +124,14 @@ namespace GNet.Trainers
             {
                 for (int j = 0; j < weights[i].Length; j++)
                 {
+                    biases[i][j] += batchBiases[i][j];
+
                     for (int k = 0; k < weights[i][j].Length; k++)
                     {
                         weights[i][j][k] += batchWeights[i][j][k];
                     }
                 }
-            }
-
-            for (int i = 0; i < biases.Length; i++)
-            {
-                for (int j = 0; j < biases[i].Length; j++)
-                {
-                    biases[i][j] += batchBiases[i][j];
-                }
-            }
+            }            
         }
     }
 }

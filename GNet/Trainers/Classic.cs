@@ -4,7 +4,7 @@
     {
         public double LearningRate;
 
-        public TrainerClassic(Network net, Losses loss, double learningRate = 0.4) : base(net, loss)
+        public TrainerClassic(Network network, ILoss loss, double learningRate = 0.4) : base(network, loss)
         {
             LearningRate = learningRate;
         }
@@ -14,11 +14,13 @@
             int outLayer = layersConfig.Length - 1;
 
             // Output layer
+
+            var lossDer = loss.Derivative(targets, activNeurons[outLayer]);
+            var activDer = layersConfig[outLayer].Activation.Derivative(neurons[outLayer]);
+
             for (int j = 0; j < layersConfig[outLayer].NeuronNum; j++)
             {
-                var activationDerivative = ActivationProvider.GetDerivative(layersConfig[outLayer].Activation);
-
-                gradients[outLayer][j] = CalcGradient(outLayer, j, targets[j], activationDerivative);
+                gradients[outLayer][j] = CalcGradient(lossDer[j], activDer[j]);
                 batchBiases[outLayer][j] += CalcBiasDelta(outLayer, j, LearningRate);
 
                 for (int k = 0; k < layersConfig[outLayer - 1].NeuronNum; k++)
@@ -30,11 +32,11 @@
             // Hidden & Input layers
             for (int i = outLayer - 1; i > 0; i--)
             {
-                var derivative = ActivationProvider.GetDerivative(layersConfig[i].Activation);
+                activDer = layersConfig[i].Activation.Derivative(neurons[i]);
 
                 for (int j = 0; j < layersConfig[i].NeuronNum; j++)
                 {
-                    gradients[i][j] = CalcGradient(i, j, derivative);
+                    gradients[i][j] = CalcGradient(j, activDer[i], gradients[i + 1], weights[i + 1]);
                     batchBiases[i][j] += CalcBiasDelta(i, j, LearningRate);
 
                     for (int k = 0; k < layersConfig[i - 1].NeuronNum; k++)

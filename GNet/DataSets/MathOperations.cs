@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using GNet.GlobalRandom;
 
 namespace GNet.Datasets
 {
@@ -7,7 +7,7 @@ namespace GNet.Datasets
     {
         public enum Ops { Add, Sub, Mul, Div, Pow, Root }
 
-        public static List<Data> GenerateDataset(Ops mathOperation, double valueScale, int datasetLength)
+        public static Data[] GenerateDataset(Ops mathOperation, double valueScale, int datasetLength)
         {
             Func<double, double, double> operation;
 
@@ -28,7 +28,7 @@ namespace GNet.Datasets
                 default: throw new ArgumentOutOfRangeException("Unsupported mathOperation");
             }
 
-            List<Data> dataSet = new List<Data>();
+            Data[] dataSet = new Data[datasetLength];
 
             for (int i = 0; i < datasetLength; i++)
             {
@@ -38,12 +38,12 @@ namespace GNet.Datasets
 
                 while (res == 0)
                 {
-                    n1 = valueScale * GRandom.Rnd.NextDouble();
-                    n2 = valueScale * GRandom.Rnd.NextDouble();
+                    n1 = valueScale * GRandom.NextDouble();
+                    n2 = valueScale * GRandom.NextDouble();
                     res = operation(n1, n2);
                 }
 
-                dataSet.Add(new Data(new double[] { n1, n2 }, new double[] { res }));
+                dataSet[i] = new Data(new double[] { n1, n2 }, new double[] { res });
             }
 
             return dataSet;

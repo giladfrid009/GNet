@@ -1,6 +1,5 @@
 ﻿using System;
 using static System.Math;
-using System.Linq;
 using GNet.Extensions; 
 
 namespace GNet.Normalization
@@ -27,36 +26,21 @@ namespace GNet.Normalization
 
         private static double[] MinMax(double[] vals)
         {
-            double[] normalized = new double[vals.Length];
-
             var min = vals[0];
             var max = vals[0];
 
-            for (int i = 1; i < vals.Length; i++)
+            vals.ForEach(X => 
             {
-                if (vals[i] < min)
-                    min = vals[i];
+                if (X < min) min = X;
+                if (X > max) max = X;
+            });
 
-                else if (vals[i] > max)
-                    max = vals[i];
-            }
+            var diff = max - min;
 
-            if (min == max)
-            {
-                for (int i = 0; i < vals.Length; i++)
-                {
-                    normalized[i] = 0.5;
-                }
-            }
-            else
-            {
-                for (int i = 0; i < vals.Length; i++)
-                {
-                    normalized[i] = (vals[i] - min) / (max - min);
-                }
-            }
-
-            return normalized;
+            if (diff == 0)
+                return vals.Map(X => 0.5);
+                            
+            return vals.Map(X => (X - min) / diff);
         }
 
         private static double[] ZScore(double[] vals)
@@ -64,36 +48,23 @@ namespace GNet.Normalization
             double[] normalized = new double[vals.Length];
 
             var mean = vals.Sum() / vals.Length;
-            var standardDeviation = Sqrt(vals.Sum(a => (a - mean) * (a - mean)) / vals.Length);
+            var standardDeviation = Sqrt(vals.Accumulate(1, (R, X) => R + (X - mean) * (X - mean)) / vals.Length);
 
-            for (int i = 0; i < vals.Length; i++)
-            {
-                normalized[i] = (vals[i] - mean) / standardDeviation;
-            }
-
-            return normalized;
+            return vals.Map(X => (X - mean) / standardDeviation);
         }
 
         private static double[] DecimalScaling(double[] vals)
         {
-            double[] normalized = new double[vals.Length];
-
             var max = Abs(vals[0]);
 
-            for (int i = 1; i < vals.Length; i++)
+            vals.ForEach(X => 
             {
-                if (Abs(vals[i]) > max)
-                    max = Abs(vals[i]);
-            }
+                if (Abs(X) > max) max = Abs(X);
+            });
 
             var scale = (int)Log10(max) + 1;
 
-            for (int i = 0; i < vals.Length; i++)
-            {
-                normalized[i] = vals[i] / scale;
-            }
-
-            return normalized;
+            return vals.Map(X => X / scale);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace GNet.Trainers
         protected readonly double[][] biasesDelta;
         protected readonly double[][][] weightsDelta;
 
-        public TrainerMomentum(Network net, Losses loss, double learningRate = 0.4, double momentum = 0.9) : base(net, loss)
+        public TrainerMomentum(Network network, ILoss loss, double learningRate = 0.4, double momentum = 0.9) : base(network, loss)
         {
             LearningRate = learningRate;
             Momentum = momentum;
@@ -28,10 +28,10 @@ namespace GNet.Trainers
             // Output layer
             for (int j = 0; j < layersConfig[outLayer].NeuronNum; j++)
             {
-                var activationDerivative = ActivationProvider.GetDerivative(layersConfig[outLayer].Activation);
+                //var activationDerivative = ActivationProvider.GetDerivative(layersConfig[outLayer].Activation);
                 var oldBiasDelta = biasesDelta[outLayer][j];
 
-                gradients[outLayer][j] = CalcGradient(outLayer, j, targets[j], activationDerivative);
+                //gradients[outLayer][j] = CalcGradient(outLayer, j, targets[j], activationDerivative);
                 biasesDelta[outLayer][j] = CalcBiasDelta(outLayer, j, LearningRate);
                 batchBiases[outLayer][j] += biasesDelta[outLayer][j] + oldBiasDelta * Momentum;
 
@@ -47,13 +47,13 @@ namespace GNet.Trainers
             // Hidden & Input layers
             for (int i = outLayer - 1; i > 0; i--)
             {
-                var derivative = ActivationProvider.GetDerivative(layersConfig[i].Activation);
+                //var derivative = ActivationProvider.GetDerivative(layersConfig[i].Activation);
 
                 for (int j = 0; j < layersConfig[i].NeuronNum; j++)
                 {
                     var oldBiasDelta = biasesDelta[i][j];
 
-                    gradients[i][j] = CalcGradient(i, j, derivative);
+                    //gradients[i][j] = CalcGradient(i, j, derivative);
                     biasesDelta[i][j] = CalcBiasDelta(i, j, LearningRate);
                     batchBiases[i][j] += biasesDelta[i][j] + oldBiasDelta * Momentum;
 

@@ -5,21 +5,21 @@ namespace GNet
     public class LayerConfig : ICloneable
     {
         public int NeuronNum { get; private set; }
-        public Activations Activation { get; private set; }
-        public Initializers WeightsInitializer { get; private set; }
-        public Initializers BiasInitializer { get; private set; }
+        public IActivation Activation { get; private set; }
+        public IInitializer WeightsInit { get; private set; }
+        public IInitializer BiasInit { get; private set; }
 
-        public LayerConfig(int neuronNum, Activations activationFunction, Initializers weightInitializer, Initializers biasInitializer)
+        public LayerConfig(int neuronNum, IActivation activation, IInitializer weightInit, IInitializer biasInit)
         {
             NeuronNum = neuronNum;
-            Activation = activationFunction;
-            WeightsInitializer = weightInitializer;
-            BiasInitializer = biasInitializer;
+            Activation = activation;
+            WeightsInit = weightInit;
+            BiasInit = biasInit;
         }
 
         public object Clone()
         {
-            return new LayerConfig(NeuronNum, Activation, WeightsInitializer, BiasInitializer);
+            return new LayerConfig(NeuronNum, (IActivation)Activation.Clone(), (IInitializer)WeightsInit.Clone(), (IInitializer)BiasInit.Clone());
         }
     }
 }

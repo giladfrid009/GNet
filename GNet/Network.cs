@@ -1,13 +1,14 @@
 ﻿using GNet.Extensions;
 using System;
-using System.Collections.Generic;
 
 namespace GNet
 {
     public class Network : ICloneable
     {
+        // todo: rename layersConfig for clarity, or change class name of LayerConfig
         private readonly LayerConfig[] layersConfig;
         private readonly double[][] neurons;
+        private readonly double[][] aNeurons;
         private readonly double[][] biases;
         private readonly double[][][] weights;
 
@@ -17,6 +18,7 @@ namespace GNet
             neurons = CreateNeuronsArr(layersConfig);
             biases = CreateBiasArr(layersConfig);
             weights = CreateWeightsArr(layersConfig);
+            aNeurons = neurons.DeepClone();
 
             InitNetwork();
         }
@@ -28,6 +30,7 @@ namespace GNet
             this.weights = weights.DeepClone();
             neurons = biases.DeepClone();
             neurons.ClearRecursive();
+            aNeurons = neurons.DeepClone();
         }
 
         public object Clone()
@@ -35,37 +38,25 @@ namespace GNet
             return new Network(layersConfig, biases, weights);
         }
 
-        public (LayerConfig[] LayersConfig, double[][] Neurons, double[][] Biases, double[][][] Weights) GetParamRefs()
+        public (LayerConfig[] LayersConfig, double[][] Neurons, double[][] ActivatedNeurons, double[][] Biases, double[][][] Weights) GetParamRefs()
         {
-            return (layersConfig, neurons, biases, weights);
+            return (layersConfig, neurons, aNeurons, biases, weights);
         }
 
-        public (LayerConfig[] LayersConfig, double[][] Neurons, double[][] Biases, double[][][] Weights) GetParamCopies()
+        public (LayerConfig[] LayersConfig, double[][] Biases, double[][][] Weights) GetParamClones()
         {
-            return (layersConfig.DeepClone(), neurons.DeepClone(), biases.DeepClone(), weights.DeepClone());
+            return (layersConfig.DeepClone(), biases.DeepClone(), weights.DeepClone());
         }
 
         private double[][] CreateNeuronsArr(LayerConfig[] layersConfig)
         {
-            double[][] neurons = new double[layersConfig.Length][];
-
-            for (int i = 0; i < layersConfig.Length; i++)
-            {
-                neurons[i] = new double[layersConfig[i].NeuronNum];
-            }
-
-            return neurons;
+            return layersConfig.Map(C => new double[C.NeuronNum]);
         }
 
         private double[][] CreateBiasArr(LayerConfig[] layersConfig)
         {
-            double[][] biases = new double[layersConfig.Length][];
+            double[][] biases = layersConfig.Map(C => new double[C.NeuronNum]);
             biases[0] = new double[0];
-
-            for (int i = 1; i < layersConfig.Length; i++)
-            {
-                biases[i] = new double[layersConfig[i].NeuronNum];
-            }
 
             return biases;
         }
@@ -73,7 +64,6 @@ namespace GNet
         private double[][][] CreateWeightsArr(LayerConfig[] layersConfig)
         {
             double[][][] weights = new double[layersConfig.Length][][];
-
             weights[0] = new double[0][];
 
             for (int i = 1; i < layersConfig.Length; i++)
@@ -98,33 +88,21 @@ namespace GNet
 
                 for (int j = 0; j < weights[i].Length; j++)
                 {
-                    var initializer = InitializerProvider.GetInitializer(layersConfig[i].BiasInitializer);
+                    biases[i][j] = layersConfig[i].BiasInit.Init(nIn, nOut);
 
-                    biases[i][j] = initializer(nIn, nOut);
-
-                    initializer = InitializerProvider.GetInitializer(layersConfig[i].WeightsInitializer);
+                    var initializer = layersConfig[i].WeightsInit;
 
                     for (int k = 0; k < weights[i][j].Length; k++)
                     {
-                        weights[i][j][k] = initializer(nIn, nOut);
+                        weights[i][j][k] = initializer.Init(nIn, nOut);
                     }
                 }
             }            
         }
 
-        public double Validate(List<Data> testData, Losses loss)
+        public double Validate(Data[] testData, ILoss loss)
         {
-            double lossAvg = 0;
-            LossFunc lossFunc = LossProvider.GetLoss(loss);
-           
-            for (int i = 0; i < testData.Count; i++)
-            {
-                lossAvg += LossProvider.CalcTotalLoss(lossFunc, testData[i].Targets, Output(testData[i].Inputs));
-            }
-
-            lossAvg /= testData.Count;
-
-            return lossAvg;
+            return testData.Map(X => loss.Compute(X.Targets, Output(X.Inputs))).Accumulate(0.0, (R, X) => R + X);
         }
 
         public double[] Output(double[] inputs)
@@ -132,17 +110,10 @@ namespace GNet
             if (inputs.Length != layersConfig[0].NeuronNum)
                 throw new ArgumentException("input length mismatch");
 
-            var activationFunc = ActivationProvider.GetActivation(layersConfig[0].Activation);
-
-            for (int i = 0; i < layersConfig[0].NeuronNum; i++)
-            {
-                neurons[0][i] = activationFunc(inputs[i]);
-            }
+            neurons[0] = layersConfig[0].Activation.Activate(inputs);
 
             for (int i = 1; i < layersConfig.Length; i++)
             {
-                activationFunc = ActivationProvider.GetActivation(layersConfig[i].Activation);
-
                 for (int j = 0; j < layersConfig[i].NeuronNum; j++)
                 {
                     double neurovVal = 0;
@@ -152,11 +123,13 @@ namespace GNet
                         neurovVal += neurons[i - 1][k] * weights[i][j][k];
                     }
 
-                    neurons[i][j] = activationFunc(neurovVal + biases[i][j]);
+                    neurons[i][j] = neurovVal + biases[i][j];
                 }
+
+                aNeurons[i] = layersConfig[i].Activation.Activate(neurons[i]);
             }
 
-            return neurons[neurons.Length - 1].DeepClone();
+            return aNeurons[neurons.Length - 1].DeepClone();
         }
     }
 }

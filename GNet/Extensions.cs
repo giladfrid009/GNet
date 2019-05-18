@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using GNet.GlobalRandom;
 
 namespace GNet.Extensions
 {
     public static class Extensions
     {
-        public static T[] DeepClone<T>(this T[] array)
+        public static TSource[] DeepClone<TSource>(this TSource[] source)
         {
-            return (T[])RecursiveClone(array);
+            return (TSource[])RecursiveClone(source);
         }
 
-        private static object RecursiveClone(Array array)
+        private static object RecursiveClone(Array source)
         {
-            Array newArr = (Array)Activator.CreateInstance(array.GetType(), array.Length);
+            Array newArr = (Array)Activator.CreateInstance(source.GetType(), source.Length);
 
-            for (int i = 0; i < array.Length; i++)
+            for (int i = 0; i < source.Length; i++)
             {
-                var element = array.GetValue(i);
+                var element = source.GetValue(i);
 
                 if (element is Array)
                 {
@@ -35,19 +36,19 @@ namespace GNet.Extensions
             return newArr;
         }
 
-        public static T[] Flatten<T>(this Array array)
+        public static TSource[] Flatten<TSource>(this Array source)
         {
-            List<T> flattened = new List<T>();
+            List<TSource> flattened = new List<TSource>();
 
-            foreach (var element in array)
+            foreach (var element in source)
             {
                 if (element is Array)
                 {
-                    flattened.AddRange(Flatten<T>(element as Array));
+                    flattened.AddRange(Flatten<TSource>(element as Array));
                 }
-                else if (element is T)
+                else if (element is TSource)
                 {
-                    flattened.Add((T)element);
+                    flattened.Add((TSource)element);
                 }
                 else
                 {
@@ -58,49 +59,92 @@ namespace GNet.Extensions
             return flattened.ToArray();
         }
 
-        public static void ClearRecursive(this Array array)
+        public static void ClearRecursive(this Array source)
         {
-            if (array.GetType().GetElementType().IsArray == false)
+            if (source.GetType().GetElementType().IsArray == false)
             {
-                Array.Clear(array, 0, array.Length);
+                Array.Clear(source, 0, source.Length);
                 return;
             }
 
-            foreach (var element in array)
+            foreach (var element in source)
             {
                 ClearRecursive((Array)element);
             }
         }
 
-        public static void Shuffle<T>(this IList<T> list)
+        public static TSource[] Shuffle<TSource>(this TSource[] source)
         {
-            int upperBound = list.Count;
+            TSource[] shuffled = source.DeepClone();
 
-            while (upperBound > 1)
+            for (int i = 0; i < shuffled.Length; i++)
             {
-                upperBound--;
+                int index = GRandom.Next(i, shuffled.Length);
 
-                int index = GRandom.Rnd.Next(upperBound + 1);
-
-                T tempVal = list[index];
-                list[index] = list[upperBound];
-                list[upperBound] = tempVal;
+                var temp = shuffled[i];
+                shuffled[i] = shuffled[index];
+                shuffled[index] = temp;
             }
+
+            return shuffled;
         }
 
-        public static double NextDouble(this Random rnd, double minValue, double maxValue)
+        public static double Sum(this double[] source)
         {
-            return rnd.NextDouble() * (maxValue - minValue) + minValue;
+            double sum = default;
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                sum += source[i];
+            }
+
+            return sum;
         }
 
-        public static double NextDouble(this Random rnd, double range)
+        public static TOut[] Map<TSource, TOut>(this TSource[] source, Func<TSource, TOut> selector)
         {
-            return NextDouble(rnd, -range, range);
+            TOut[] mapped = new TOut[source.Length];
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                mapped[i] = selector(source[i]);
+            }
+
+            return mapped;
         }
 
-        public static double NextGaussian(this Random rnd)
+        public static TSource[] Combine<TSource>(this TSource[] source, TSource[] array, Func<TSource, TSource, TSource> selector)
         {
-            return Math.Sqrt(-2.0 * Math.Log(1.0 - rnd.NextDouble())) * Math.Sin(2.0 * Math.PI * (1.0 - rnd.NextDouble()));
+            int minIndex = Math.Min(source.Length, array.Length);
+
+            TSource[] combined = new TSource[minIndex];
+
+            for (int i = 0; i < minIndex; i++)
+            {
+                combined[i] = selector(source[i], array[i]);
+            }
+
+            return combined;
+        }
+
+        public static TSource Accumulate<TSource>(this TSource[] source, TSource seed, Func<TSource, TSource, TSource> accumulator)
+        {
+            TSource res = seed;
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                res = accumulator(res, source[i]);
+            }
+
+            return res;
+        }
+
+        public static void ForEach<TSource>(this TSource[] source, Action<TSource> action)
+        {
+            for (int i = 0; i < source.Length; i++)
+            {
+                action(source[i]);
+            }
         }
     }
 }
