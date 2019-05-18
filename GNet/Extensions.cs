@@ -113,11 +113,11 @@ namespace GNet.Extensions
             return mapped;
         }
 
-        public static TOut[] Combine<TSource, TOut>(this TSource[] source, TSource[] array, Func<TSource, TSource, TOut> selector)
+        public static TSource[] Combine<TSource, TOut>(this TSource[] source, TSource[] array, Func<TSource, TSource, TSource> selector)
         {
             int minIndex = Math.Min(source.Length, array.Length);
 
-            TOut[] combined = new TOut[minIndex];
+            TSource[] combined = new TSource[minIndex];
 
             for (int i = 0; i < minIndex; i++)
             {
