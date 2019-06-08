@@ -5,11 +5,11 @@ namespace GNet
 {
     public class Layer
     {
-        public readonly int Length;
-        public readonly IActivation Activation;
-        public readonly IInitializer WeightInit;
-        public readonly IInitializer BiasInit;
-        public Neuron[] Neurons = new Neuron[0];
+        public int Length { get; }
+        public IActivation Activation { get; }
+        public IInitializer WeightInit { get; }
+        public IInitializer BiasInit { get; }
+        public Neuron[] Neurons { get; } = new Neuron[0];
 
         public Layer(int length, IActivation activation, IInitializer weightInit, IInitializer biasInit)
         {
@@ -27,10 +27,10 @@ namespace GNet
 
         public void Connect(Layer inLayer)
         {
-            inLayer.Neurons.ForEach(N => N.OutSynapses = new Synapse[this.Length]);
-            this.Neurons.ForEach(N => N.InSynapses = new Synapse[inLayer.Length]);
+            inLayer.Neurons.ForEach(N => N.OutSynapses = new Synapse[Length]);
+            Neurons.ForEach(N => N.InSynapses = new Synapse[inLayer.Length]);
 
-            this.Neurons.ForEach((outN, i) =>
+            Neurons.ForEach((outN, i) =>
             {
                 inLayer.Neurons.ForEach((inN, j) =>
                 {

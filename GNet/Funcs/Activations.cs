@@ -92,8 +92,8 @@ namespace GNet.Activations
 
     public class LeCunTanh : IActivation
     {
-        private readonly double a = 1.7159;
-        private readonly double b = 2.0 / 3;
+        private const double a = 1.7159;
+        private const double b = 2.0 / 3;
 
         public double[] Activate(double[] Vals)
         {
@@ -102,7 +102,7 @@ namespace GNet.Activations
 
         public double[] Derivative(double[] Vals)
         {
-            return Vals.Select(X => a * b / Pow(Cosh(b * X), 2));            
+            return Vals.Select(X => a * b / Pow(Cosh(b * X), 2));
         }
 
         public IActivation Clone() => new LeCunTanh();
@@ -158,24 +158,24 @@ namespace GNet.Activations
     /// </summary>
     public class ISRU : IActivation
     {
-        private readonly double alpha;
+        public double Alpha { get; }
 
         public ISRU(double alpha)
         {
-            this.alpha = alpha;
+            Alpha = alpha;
         }
 
         public double[] Activate(double[] Vals)
         {
-            return Vals.Select(X => X / Sqrt(1 + alpha * X * X));
+            return Vals.Select(X => X / Sqrt(1 + Alpha * X * X));
         }
 
         public double[] Derivative(double[] Vals)
         {
-            return Vals.Select(X => Pow(X / Sqrt(1 + alpha * X * X), 3));
+            return Vals.Select(X => Pow(X / Sqrt(1 + Alpha * X * X), 3));
         }
 
-        public IActivation Clone() => new ISRU(alpha);
+        public IActivation Clone() => new ISRU(Alpha);
     }
 
     /// <summary>
@@ -183,24 +183,24 @@ namespace GNet.Activations
     /// </summary>
     public class ISRLU : IActivation
     {
-        private readonly double alpha;
+        public double Alpha { get; }
 
         public ISRLU(double alpha)
         {
-            this.alpha = alpha;
+            Alpha = alpha;
         }
 
         public double[] Activate(double[] Vals)
         {
-            return Vals.Select(X => X >= 0 ? X : X / Sqrt(1 + alpha * X * X));
+            return Vals.Select(X => X >= 0 ? X : X / Sqrt(1 + Alpha * X * X));
         }
 
         public double[] Derivative(double[] Vals)
         {
-            return Vals.Select(X => X >= 0 ? 1 : Pow(X / Sqrt(1 + alpha * X * X), 3));
+            return Vals.Select(X => X >= 0 ? 1 : Pow(X / Sqrt(1 + Alpha * X * X), 3));
         }
 
-        public IActivation Clone() => new ISRLU(alpha);
+        public IActivation Clone() => new ISRLU(Alpha);
     }
 
     /// <summary>
@@ -238,24 +238,24 @@ namespace GNet.Activations
     /// </summary>
     public class ReLu : IActivation
     {
-        private readonly double slope;
+        public double Slope { get; }
 
         public ReLu(double slope = 0)
         {
-            this.slope = slope;
+            Slope = slope;
         }
 
         public double[] Activate(double[] Vals)
         {
-            return Vals.Select(X => X < 0 ? slope * X : X);
+            return Vals.Select(X => X < 0 ? Slope * X : X);
         }
 
         public double[] Derivative(double[] Vals)
         {
-            return Vals.Select(X => X < 0 ? slope : 1);
+            return Vals.Select(X => X < 0 ? Slope : 1);
         }
 
-        public IActivation Clone() => new ReLu(slope);
+        public IActivation Clone() => new ReLu(Slope);
     }
 
     /// <summary>
@@ -263,29 +263,29 @@ namespace GNet.Activations
     /// </summary>
     public class RReLu : IActivation
     {
-        private readonly double slope;
+        public double Slope { get; }
 
         public RReLu()
         {
-            slope = GRandom.NextDouble();
+            Slope = GRandom.NextDouble();
         }
 
         private RReLu(double slope)
         {
-            this.slope = slope;
+            Slope = slope;
         }
 
         public double[] Activate(double[] Vals)
         {
-            return Vals.Select(X => X < 0 ? slope * X : X);
+            return Vals.Select(X => X < 0 ? Slope * X : X);
         }
 
         public double[] Derivative(double[] Vals)
         {
-            return Vals.Select(X => X < 0 ? slope : 1);
+            return Vals.Select(X => X < 0 ? Slope : 1);
         }
 
-        public IActivation Clone() => new RReLu(slope);
+        public IActivation Clone() => new RReLu(Slope);
     }
 
     /// <summary>
@@ -311,8 +311,8 @@ namespace GNet.Activations
     /// </summary>
     public class SELU : IActivation
     {
-        private readonly double a = 1.6732632423543772;
-        private readonly double scale = 1.0507009873554805;
+        private const double a = 1.6732632423543772;
+        private const double scale = 1.0507009873554805;
 
         public double[] Activate(double[] Vals)
         {
@@ -378,13 +378,13 @@ namespace GNet.Activations
 
     public class SoftExponential : IActivation
     {
-        private readonly double alpha;
+        public double Alpha { get; }
         private readonly Func<double, double> activation;
         private readonly Func<double, double> derivative;
 
         public SoftExponential(double alpha)
         {
-            this.alpha = alpha;
+            Alpha = alpha;
 
             if (alpha < 0)
             {
@@ -413,29 +413,29 @@ namespace GNet.Activations
             return Vals.Select(X => derivative(X));
         }
 
-        public IActivation Clone() => new SoftExponential(alpha);
+        public IActivation Clone() => new SoftExponential(Alpha);
     }
 
     public class SoftClipping : IActivation
     {
-        private readonly double alpha;
+        public double Alpha { get; }
 
         public SoftClipping(double alpha)
         {
-            this.alpha = alpha;
+            Alpha = alpha;
         }
 
         public double[] Activate(double[] Vals)
         {
-            return Vals.Select(X => 1 / alpha * Log((1 + Exp(alpha * X)) / (1 + Exp(alpha * X - alpha))));
+            return Vals.Select(X => 1 / Alpha * Log((1 + Exp(Alpha * X)) / (1 + Exp(Alpha * X - Alpha))));
         }
 
         public double[] Derivative(double[] Vals)
         {
-            return Vals.Select(X => 0.5 * Sinh(0.5 * alpha) * (1 / Cosh(0.5 * alpha * X)) * (1 / Cosh(0.5 * alpha * (1 - X))));
+            return Vals.Select(X => 0.5 * Sinh(0.5 * Alpha) * (1 / Cosh(0.5 * Alpha * X)) * (1 / Cosh(0.5 * Alpha * (1 - X))));
         }
 
-        public IActivation Clone() => new SoftClipping(alpha);
+        public IActivation Clone() => new SoftClipping(Alpha);
     }
 
     public class Sinusoid : IActivation

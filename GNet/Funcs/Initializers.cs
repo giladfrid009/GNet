@@ -27,16 +27,16 @@ namespace GNet.Initializers
 
     public class Const : IInitializer
     {
-        double value;
+        public double Value { get; }
 
         public Const(double value)
         {
-            this.value = value;
+            Value = value;
         }
 
-        public double Init(int nIn, int nOut) => value;
+        public double Init(int nIn, int nOut) => Value;
 
-        public IInitializer Clone() => new Const(value);
+        public IInitializer Clone() => new Const(Value);
     }
 
     public class One : IInitializer

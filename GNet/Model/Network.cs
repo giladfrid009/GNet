@@ -5,8 +5,8 @@ namespace GNet
 {
     public class Network
     {
-        public readonly int Length;
-        public readonly Layer[] Layers = new Layer[0];
+        public int Length { get; }
+        public Layer[] Layers { get; } = new Layer[0];
 
         public Network(Layer[] layers)
         {
@@ -52,18 +52,20 @@ namespace GNet
             }
         }
 
-        public void Train(Data[] trainingData, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError, bool shuffle = true)
+        public TrainingResult Train(Data[] trainingData, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError, bool shuffle = true)
         {
-            for (int epoch = 0; epoch < numEpoches; epoch++)
+            var epoch = 0;
+            var epochError = 0.0;
+            var staringTime = DateTime.Now;
+            
+            for (epoch = 0; epoch < numEpoches; epoch++)
             {
                 var epochData = shuffle ? trainingData.Shuffle() : trainingData;
-                var epochError = 0.0;
+                epochError = 0;
 
                 epochData.ForEach((D, index) =>
                 {
-                    var output = FeedForward(D.Inputs);
-
-                    epochError += loss.Compute(D.Targets, output);
+                    FeedForward(D.Inputs);
 
                     Backprop(loss, optimizer, D.Targets);
 
@@ -73,13 +75,13 @@ namespace GNet
                     }
                 });
 
-                epochError /= epochData.Length;
+                epochError = Validate(epochData, loss);
 
                 if (epochError < minError)
-                    return;
-
-                epochError = 0.0;
+                    break;
             }
+
+            return new TrainingResult(epoch, epochError, DateTime.Now - staringTime);
         }
     }
 }

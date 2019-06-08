@@ -57,18 +57,6 @@ namespace GNet.Extensions
             return selected;
         }
 
-        public static TOut[] Select<TSource, TOut>(this TSource[] source, Func<TSource, int, TOut> selector)
-        {
-            TOut[] selected = new TOut[source.Length];
-
-            for (int i = 0; i < source.Length; i++)
-            {
-                selected[i] = selector(source[i], i);
-            }
-
-            return selected;
-        }
-
         public static TSource[] Combine<TSource>(this TSource[] source, TSource[] array, Func<TSource, TSource, TSource> selector)
         {
             int minIndex = Math.Min(source.Length, array.Length);

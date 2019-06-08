@@ -2,14 +2,14 @@
 {
     public class Synapse
     {
-        public readonly Neuron InNeuron;
-        public readonly Neuron OutNeuron;
-        public double Weight;
+        public Neuron InNeuron { get; }
+        public Neuron OutNeuron { get; }
+        public double Weight { get; set; }
 
         // training related
-        public double Gradient = default;
-        public double SavedValue = default;
-        public double BatchWeight = default;
+        public double Gradient { get; set; }
+        public double SavedValue { get; set; }
+        public double BatchWeight { get; set; }
 
         public Synapse(Neuron inNeuron, Neuron outNeuron)
         {

@@ -222,57 +222,57 @@ namespace GNet.Losses
 
     public class Hinge : ILoss
     {
-        private readonly double margin;
+        public double Margin { get; }
 
         public Hinge(double margin = 1)
         {
-            this.margin = margin;
+            Margin = margin;
         }
         public double Compute(double[] targets, double[] outputs)
         {
             int N = Min(targets.Length, outputs.Length);
 
-            return targets.Combine(outputs, (T, O) => Max(0, margin - T * O)).Sum() / N;
+            return targets.Combine(outputs, (T, O) => Max(0, Margin - T * O)).Sum() / N;
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => T * O < margin ? -T : 0);
+            return targets.Combine(outputs, (T, O) => T * O < Margin ? -T : 0);
         }
 
-        public ILoss Clone() => new Hinge(margin);
+        public ILoss Clone() => new Hinge(Margin);
     }
 
     public class HingeSquared : ILoss
     {
-        private readonly double margin;
+        public double Margin { get; }
 
         public HingeSquared(double margin = 1)
         {
-            this.margin = margin;
+            Margin = margin;
         }
         public double Compute(double[] targets, double[] outputs)
         {
             int N = Min(targets.Length, outputs.Length);
 
-            return targets.Combine(outputs, (T, O) => Max(0, margin - T * O) * Max(0, margin - T * O)).Sum() / N;
+            return targets.Combine(outputs, (T, O) => Max(0, Margin - T * O) * Max(0, Margin - T * O)).Sum() / N;
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => T * O < margin ? -2 * T * (margin - T * O) : 0);
+            return targets.Combine(outputs, (T, O) => T * O < Margin ? -2 * T * (Margin - T * O) : 0);
         }
 
-        public ILoss Clone() => new HingeSquared(margin);
+        public ILoss Clone() => new HingeSquared(Margin);
     }
 
     public class Huber : ILoss
     {
-        private readonly double margin;
+        public double Margin { get; }
 
         public Huber(double margin)
         {
-            this.margin = margin;
+            Margin = margin;
         }
         public double Compute(double[] targets, double[] outputs)
         {
@@ -282,19 +282,19 @@ namespace GNet.Losses
             {
                 double diff = Abs(T - O);
 
-                if (diff <= margin)
+                if (diff <= Margin)
                     return O = 0.5 * diff * diff;
 
                 else
-                    return O = margin * (diff - 0.5 * margin);
+                    return O = Margin * (diff - 0.5 * Margin);
             }).Sum() / N;
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => Abs(T - O) <= margin ? O - T : -margin);
+            return targets.Combine(outputs, (T, O) => Abs(T - O) <= Margin ? O - T : -Margin);
         }
 
-        public ILoss Clone() => new Huber(margin);
+        public ILoss Clone() => new Huber(Margin);
     }
 }

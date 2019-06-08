@@ -5,9 +5,9 @@ namespace GNet
 {
     public class Data : ICloneable<Data>
     {
-        public readonly double[] Inputs;
-        public readonly double[] Targets;
-        public readonly INormalizer Normalizer;
+        public double[] Inputs { get; }
+        public double[] Targets { get; }
+        public INormalizer Normalizer { get; }
 
         public Data(double[] inputs, double[] targets, INormalizer normalizer = null)
         {
