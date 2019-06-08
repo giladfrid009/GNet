@@ -1,5 +1,5 @@
-﻿using static System.Math;
-using GNet.Extensions;
+﻿using GNet.Extensions;
+using static System.Math;
 
 namespace GNet
 {
@@ -17,7 +17,7 @@ namespace GNet.Optimizers
         public Default(double learningRate)
         {
             LearningRate = learningRate;
-        }        
+        }
 
         public void Optimize(Neuron[] neurons)
         {
@@ -82,9 +82,9 @@ namespace GNet.Optimizers
         {
             neurons.ForEach(N =>
             {
-                
+
             });
-        }        
+        }
 
         public IOptimizer Clone() => new NestrovMomentum(LearningRate, MomentumValue);
     }

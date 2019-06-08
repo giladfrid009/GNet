@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GNet
 {
@@ -8,13 +6,21 @@ namespace GNet
     {
         public int EpochesCompleted { get; }
         public double FinalError { get; }
-        public TimeSpan TrainingTime { get; }
+        public TimeSpan ExecutionTime { get; }
 
-        public TrainingResult(int epoches, double error, TimeSpan time)
+        public TrainingResult(int epochesCompleted, double finalError, TimeSpan executionTime)
         {
-            EpochesCompleted = epoches;
-            FinalError = error;
-            TrainingTime = time;
+            EpochesCompleted = epochesCompleted;
+            FinalError = finalError;
+            ExecutionTime = executionTime;
+        }
+
+        public void Print()
+        {
+            Console.WriteLine(" ---- Training Session Result ----");
+            Console.WriteLine(" Epoches Completed: {0}", EpochesCompleted);
+            Console.WriteLine(" Final Error:       {0}", FinalError);
+            Console.WriteLine(" Execution Time:    {0}", ExecutionTime);
         }
     }
 }

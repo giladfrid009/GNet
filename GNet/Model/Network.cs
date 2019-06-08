@@ -1,5 +1,5 @@
-﻿using System;
-using GNet.Extensions;
+﻿using GNet.Extensions;
+using System;
 
 namespace GNet
 {
@@ -20,7 +20,7 @@ namespace GNet
             {
                 Layers[i].Init(Layers[i - 1]);
             }
-        }
+        }        
 
         public double[] FeedForward(double[] inputs)
         {
@@ -54,10 +54,13 @@ namespace GNet
 
         public TrainingResult Train(Data[] trainingData, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError, bool shuffle = true)
         {
+            if (Datasets.Helpers.VerifyDataset(trainingData, Layers[0].Length, Layers[Layers.Length - 1].Length) == false)
+                throw new Exception("Invalid dataset structure");
+
             var epoch = 0;
             var epochError = 0.0;
             var staringTime = DateTime.Now;
-            
+
             for (epoch = 0; epoch < numEpoches; epoch++)
             {
                 var epochData = shuffle ? trainingData.Shuffle() : trainingData;
@@ -71,7 +74,7 @@ namespace GNet
 
                     if (index % batchSize == 0)
                     {
-                        Layers.ForEach(L => L.Update());                        
+                        Layers.ForEach(L => L.Update());
                     }
                 });
 

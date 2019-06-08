@@ -1,5 +1,5 @@
-﻿using static System.Math;
-using GNet.Extensions; 
+﻿using GNet.Extensions;
+using static System.Math;
 
 namespace GNet
 {
@@ -10,12 +10,29 @@ namespace GNet
 }
 
 namespace GNet.Normalizers
-{    
+{
     public class None : INormalizer
     {
         public double[] Normalize(double[] inVals) => inVals.Select(V => V);
 
         public INormalizer Clone() => new None();
+    }
+
+    public class Division : INormalizer
+    {
+        public double Divisor { get; } 
+
+        public Division(double divisor)
+        {
+            Divisor = divisor;
+        }
+
+        public double[] Normalize(double[] inVals)
+        {
+            return inVals.Select(X => X / Divisor);
+        }
+
+        public INormalizer Clone() => new Division(Divisor);
     }
 
     public class MinMax : INormalizer
@@ -72,5 +89,5 @@ namespace GNet.Normalizers
         }
 
         public INormalizer Clone() => new None();
-    }    
+    }
 }

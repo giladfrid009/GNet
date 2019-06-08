@@ -1,6 +1,6 @@
-﻿using System;
+﻿using GNet.GlobalRandom;
+using System;
 using System.Collections.Generic;
-using GNet.GlobalRandom;
 
 namespace GNet.Extensions
 {
@@ -105,7 +105,7 @@ namespace GNet.Extensions
             }
 
             return sum;
-        }          
+        }
 
         public static void ForEach<TSource>(this TSource[] source, Action<TSource> action)
         {

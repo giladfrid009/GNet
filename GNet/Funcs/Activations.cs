@@ -1,7 +1,7 @@
-﻿using System;
-using static System.Math;
+﻿using GNet.Extensions;
 using GNet.GlobalRandom;
-using GNet.Extensions;
+using System;
+using static System.Math;
 
 namespace GNet
 {
@@ -29,7 +29,7 @@ namespace GNet.Activations
 
         public IActivation Clone() => new Identity();
     }
-        
+
     public class BinaryStep : IActivation
     {
         public double[] Activate(double[] Vals)
@@ -64,7 +64,7 @@ namespace GNet.Activations
     {
         public double[] Activate(double[] Vals)
         {
-            return Vals.Select(X => X < -2.5 ? 0 : X > 2.5 ? 1 : 0.2 * X + 0.5);            
+            return Vals.Select(X => X < -2.5 ? 0 : X > 2.5 ? 1 : 0.2 * X + 0.5);
         }
 
         public double[] Derivative(double[] Vals)
@@ -117,7 +117,7 @@ namespace GNet.Activations
 
         public double[] Derivative(double[] Vals)
         {
-            return Vals.Select(X => 1 / (1 + X * X));           
+            return Vals.Select(X => 1 / (1 + X * X));
         }
 
         public IActivation Clone() => new ArcTan();
@@ -312,16 +312,16 @@ namespace GNet.Activations
     public class SELU : IActivation
     {
         private const double a = 1.6732632423543772;
-        private const double scale = 1.0507009873554805;
+        private const double b = 1.0507009873554805;
 
         public double[] Activate(double[] Vals)
         {
-            return Vals.Select(X => X < 0 ? scale * a * (Exp(X) - 1) : scale * X);
+            return Vals.Select(X => X < 0 ? b * a * (Exp(X) - 1) : b * X);
         }
 
         public double[] Derivative(double[] Vals)
         {
-            return Vals.Select(X => X < 0 ? scale * a * Exp(X) : scale);
+            return Vals.Select(X => X < 0 ? b * a * Exp(X) : b);
         }
 
         public IActivation Clone() => new SELU();
@@ -394,7 +394,7 @@ namespace GNet.Activations
             else if (alpha > 0)
             {
                 activation = (X) => (Exp(alpha * X) - 1) / alpha + alpha;
-                derivative = (X) => Exp(alpha * X);           
+                derivative = (X) => Exp(alpha * X);
             }
             else
             {

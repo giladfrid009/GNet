@@ -1,5 +1,5 @@
-﻿using static System.Math;
-using GNet.GlobalRandom;
+﻿using GNet.GlobalRandom;
+using static System.Math;
 
 namespace GNet
 {
@@ -10,7 +10,7 @@ namespace GNet
 }
 
 namespace GNet.Initializers
-{    
+{
     public class Nan : IInitializer
     {
         public double Init(int nIn, int nOut) => double.NaN;
