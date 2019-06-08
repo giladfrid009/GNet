@@ -6,36 +6,6 @@ namespace GNet.Extensions
 {
     public static class Extensions
     {
-        public static TSource[] DeepClone<TSource>(this TSource[] source)
-        {
-            return (TSource[])RecursiveClone(source);
-        }
-
-        private static object RecursiveClone(Array source)
-        {
-            Array newArr = (Array)Activator.CreateInstance(source.GetType(), source.Length);
-
-            for (int i = 0; i < source.Length; i++)
-            {
-                var element = source.GetValue(i);
-
-                if (element is Array)
-                {
-                    newArr.SetValue(RecursiveClone(element as Array), i);
-                }
-                else if (element is ICloneable)
-                {
-                    newArr.SetValue((element as ICloneable).Clone(), i);
-                }
-                else
-                {
-                    newArr.SetValue(element, i);
-                }
-            }
-
-            return newArr;
-        }
-
         public static TSource[] Flatten<TSource>(this Array source)
         {
             List<TSource> flattened = new List<TSource>();
@@ -59,23 +29,9 @@ namespace GNet.Extensions
             return flattened.ToArray();
         }
 
-        public static void ClearRecursive(this Array source)
-        {
-            if (source.GetType().GetElementType().IsArray == false)
-            {
-                Array.Clear(source, 0, source.Length);
-                return;
-            }
-
-            foreach (var element in source)
-            {
-                ClearRecursive((Array)element);
-            }
-        }
-
         public static TSource[] Shuffle<TSource>(this TSource[] source)
         {
-            TSource[] shuffled = source.DeepClone();
+            TSource[] shuffled = source.Select(X => X);
 
             for (int i = 0; i < shuffled.Length; i++)
             {
@@ -89,31 +45,31 @@ namespace GNet.Extensions
             return shuffled;
         }
 
-        public static double Sum(this double[] source)
+        public static TOut[] Select<TSource, TOut>(this TSource[] source, Func<TSource, TOut> selector)
         {
-            double sum = default;
+            TOut[] selected = new TOut[source.Length];
 
             for (int i = 0; i < source.Length; i++)
             {
-                sum += source[i];
+                selected[i] = selector(source[i]);
             }
 
-            return sum;
+            return selected;
         }
 
-        public static TOut[] Map<TSource, TOut>(this TSource[] source, Func<TSource, TOut> selector)
+        public static TOut[] Select<TSource, TOut>(this TSource[] source, Func<TSource, int, TOut> selector)
         {
-            TOut[] mapped = new TOut[source.Length];
+            TOut[] selected = new TOut[source.Length];
 
             for (int i = 0; i < source.Length; i++)
             {
-                mapped[i] = selector(source[i]);
+                selected[i] = selector(source[i], i);
             }
 
-            return mapped;
+            return selected;
         }
 
-        public static TSource[] Combine<TSource, TOut>(this TSource[] source, TSource[] array, Func<TSource, TSource, TSource> selector)
+        public static TSource[] Combine<TSource>(this TSource[] source, TSource[] array, Func<TSource, TSource, TSource> selector)
         {
             int minIndex = Math.Min(source.Length, array.Length);
 
@@ -139,11 +95,43 @@ namespace GNet.Extensions
             return res;
         }
 
+        public static double Sum(this double[] source)
+        {
+            double sum = default;
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                sum += source[i];
+            }
+
+            return sum;
+        }
+
+        public static double Sum<TSource>(this TSource[] source, Func<TSource, double> summer)
+        {
+            double sum = default;
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                sum += summer(source[i]);
+            }
+
+            return sum;
+        }          
+
         public static void ForEach<TSource>(this TSource[] source, Action<TSource> action)
         {
             for (int i = 0; i < source.Length; i++)
             {
                 action(source[i]);
+            }
+        }
+
+        public static void ForEach<TSource>(this TSource[] source, Action<TSource, int> action)
+        {
+            for (int i = 0; i < source.Length; i++)
+            {
+                action(source[i], i);
             }
         }
     }

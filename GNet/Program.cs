@@ -1,50 +1,44 @@
 ﻿using System;
-using GNet.Trainers;
+using GNet.Extensions;
 
 namespace GNet
 {
-    internal class Program
+    class Program
     {
-        private static void Main()
+        static void Main()
         {
-            LayerConfig[] layersConfig = new LayerConfig[]
+            Layer[] layers = new Layer[] 
             {
-                new LayerConfig(2, new Activations.Identity(), new Initializers.Zero(), new Initializers.Zero()),
-                new LayerConfig(4, new Activations.ELU(), new Initializers.Normal(), new Initializers.Zero()),
-                new LayerConfig(10, new Activations.ELU(), new Initializers.Normal(), new Initializers.Zero()),
-                new LayerConfig(5, new Activations.ELU(), new Initializers.Normal(), new Initializers.Zero()),
-                new LayerConfig(1, new Activations.Sigmoid(), new Initializers.Normal(), new Initializers.Zero())
+                new Layer(2, new Activations.Identity(), new Initializers.One(), new Initializers.Zero()),
+                new Layer(4, new Activations.Tanh(), new Initializers.Uniform(), new Initializers.Uniform()),
+                new Layer(1, new Activations.Sigmoid(), new Initializers.Uniform(), new Initializers.Uniform())
             };
 
-            Network net = new Network(layersConfig);
+            Network net = new Network(layers);
+            net.Init();
 
-            var trainingData = Datasets.LogicGates.XOR;
+            Console.WriteLine(net.Validate(Datasets.LogicGates.XOR, new Losses.MSE()));
 
-            var outp = net.Output(trainingData[0].Inputs);
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
 
-            var loss = net.Validate(trainingData, new Losses.MSE());
+            net.Train(Datasets.LogicGates.XOR, new Losses.MSE(), new Optimizers.Default(0.4), 1, 10000000, 0.0001);
 
-            Console.WriteLine(net.Validate(trainingData, new Losses.MSE()) + "\n");
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed);
 
-            TrainerClassic trainer = new TrainerClassic(net, new Losses.MSE());
+            Console.WriteLine(net.Validate(Datasets.LogicGates.XOR, new Losses.MSE()));            
 
-            trainer.Train(trainingData, 1, true, 10000);
-
-            foreach (double x in net.Output(new double[] { 0, 0 }))
-                Console.WriteLine(x);
-
-            foreach (double x in net.Output(new double[] { 0, 1 }))
-                Console.WriteLine(x);
-
-            foreach (double x in net.Output(new double[] { 1, 0 }))
-                Console.WriteLine(x);
-
-            foreach (double x in net.Output(new double[] { 1, 1 }))
-                Console.WriteLine(x);
-
-            Console.WriteLine("\n" + net.Validate(trainingData, new Losses.MSE()));
+            Datasets.LogicGates.XOR.ForEach(D => PrintOutput(net.FeedForward(D.Inputs)));
 
             Console.ReadKey();
-        }        
+
+        }
+
+        static void PrintOutput(double[] output)
+        {
+            foreach (double x in output)
+                Console.WriteLine(x);
+        }
     }
 }

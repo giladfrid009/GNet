@@ -1,31 +1,30 @@
 ﻿using GNet.Extensions;
-using GNet.Normalization;
 using System;
 
 namespace GNet
 {
-    public class Data : ICloneable
+    public class Data : ICloneable<Data>
     {
-        public double[] Inputs { get; private set; }
-        public double[] Targets { get; private set; }
+        public readonly double[] Inputs;
+        public readonly double[] Targets;
+        public readonly INormalizer Normalizer;
 
-        public Data() { }
-
-        public Data(double[] inputs, double[] targets, Normalizers inputNormalizer = Normalizers.None)
+        public Data(double[] inputs, double[] targets, INormalizer normalizer = null)
         {
-            Inputs = Normalizer.NormalizeVals(inputs, inputNormalizer);
-            Targets = targets.DeepClone();
+            Normalizer = normalizer ?? new Normalizers.None();
+
+            Inputs = Normalizer.Normalize(inputs);
+            Targets = targets.Select(T => T);
         }
 
-        public Data(Array inputs, Array targets, Normalizers inputNormalizer = Normalizers.None)
+        public Data(Array inputs, Array targets, INormalizer normalizer = null)
         {
-            Inputs = Normalizer.NormalizeVals(inputs.Flatten<double>(), inputNormalizer);
+            Normalizer = normalizer ?? new Normalizers.None();
+
+            Inputs = Normalizer.Normalize(inputs.Flatten<double>());
             Targets = targets.Flatten<double>();
         }
 
-        public object Clone()
-        {
-            return new Data(Inputs, Targets);
-        }
+        public Data Clone() => new Data(Inputs, Targets, Normalizer);
     }
 }

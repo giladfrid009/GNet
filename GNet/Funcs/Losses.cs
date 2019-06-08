@@ -1,10 +1,9 @@
 ﻿using GNet.Extensions;
-using System;
 using static System.Math;
 
 namespace GNet
 {
-    public interface ILoss
+    public interface ILoss : ICloneable<ILoss>
     {
         double Compute(double[] targets, double[] outputs);
 
@@ -23,13 +22,15 @@ namespace GNet.Losses
         {
             int N = Min(targets.Length, outputs.Length);
 
-            return targets.Combine(outputs, (T, O) => Abs(T - O) * Abs(T - O)).Sum() / N;
+            return targets.Combine(outputs, (T, O) => (T - O) * (T - O)).Sum() / N;
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
         {
             return targets.Combine(outputs, (T, O) => 2 * (O - T));
         }
+
+        public ILoss Clone() => new MSE();
     }
 
     /// <summary>
@@ -48,6 +49,8 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => -2 * (Log(T + 1) - Log(O + 1)) / (O + 1));
         }
+
+        public ILoss Clone() => new MSLE();
     }
 
     /// <summary>
@@ -66,6 +69,8 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => T > O ? 1 : -1);
         }
+
+        public ILoss Clone() => new MAE();
     }
 
     /// <summary>
@@ -84,6 +89,8 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => O * (T - O) / (Pow(T, 3) * Abs(1 - O / T)));
         }
+
+        public ILoss Clone() => new MAPE();
     }
 
     public class LogCosh : ILoss
@@ -99,6 +106,8 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => Tanh(O - T));
         }
+
+        public ILoss Clone() => new LogCosh();
     }
 
     public class KLDivergence : ILoss
@@ -114,6 +123,8 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => -T / O);
         }
+
+        public ILoss Clone() => new KLDivergence();
     }
 
     public class BinaryCrossEntropy : ILoss
@@ -129,6 +140,8 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => (T - O) / (O * O - O));
         }
+
+        public ILoss Clone() => new BinaryCrossEntropy();
     }
 
     public class CategoricalCrossEntropy : ILoss
@@ -144,6 +157,8 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => -T / O);
         }
+
+        public ILoss Clone() => new CategoricalCrossEntropy();
     }
 
     public class NegativeLogLiklihood : ILoss
@@ -159,6 +174,8 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => -1 / O);
         }
+
+        public ILoss Clone() => new NegativeLogLiklihood();
     }
 
     public class Poisson : ILoss
@@ -174,6 +191,8 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => 1 - (T / O));
         }
+
+        public ILoss Clone() => new Poisson();
     }
 
     public class CosineProximity : ILoss
@@ -185,7 +204,7 @@ namespace GNet.Losses
             double tSumSqr = targets.Accumulate(1, (R, X) => R + X * X);
             double oSumSqr = outputs.Accumulate(1, (R, X) => R + X * X);
 
-            return -1 * tProd * oProd / (Sqrt(tSumSqr) * Sqrt(oSumSqr));
+            return -tProd * oProd / (Sqrt(tSumSqr) * Sqrt(oSumSqr));
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -195,8 +214,10 @@ namespace GNet.Losses
             double tSumSqr = targets.Accumulate(1, (R, X) => R + X * X);
             double oSumSqr = outputs.Accumulate(1, (R, X) => R + X * X);
 
-            return outputs.Map(O => tProd * (oProd - O) * (oSumSqr - O * O) / (Sqrt(tSumSqr) * Pow(oSumSqr, 1.5)));
+            return outputs.Select(O => -tProd * (oProd / O) * Pow(oSumSqr - O * O, 2) / (Abs(tSumSqr) * Pow(oSumSqr, 1.5)));
         }
+
+        public ILoss Clone() => new CosineProximity();
     }
 
     public class Hinge : ILoss
@@ -218,6 +239,8 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => T * O < margin ? -T : 0);
         }
+
+        public ILoss Clone() => new Hinge(margin);
     }
 
     public class HingeSquared : ILoss
@@ -239,6 +262,8 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => T * O < margin ? -2 * T * (margin - T * O) : 0);
         }
+
+        public ILoss Clone() => new HingeSquared(margin);
     }
 
     public class Huber : ILoss
@@ -268,6 +293,8 @@ namespace GNet.Losses
         public double[] Derivative(double[] targets, double[] outputs)
         {
             return targets.Combine(outputs, (T, O) => Abs(T - O) <= margin ? O - T : -margin);
-        }        
+        }
+
+        public ILoss Clone() => new Huber(margin);
     }
 }
