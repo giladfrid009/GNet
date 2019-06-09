@@ -7,23 +7,21 @@ namespace GNet
     {
         public double[] Inputs { get; }
         public double[] Targets { get; }
-        public INormalizer Normalizer { get; }
+        public INormalizer InputNormalizer { get; }
+        public INormalizer OutputNormalizer { get; }
 
-        public Data(double[] inputs, double[] targets, INormalizer normalizer)
+        public Data(double[] inputs, double[] targets, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
         {
-            Normalizer = normalizer;
-            Inputs = Normalizer.Normalize(inputs);
-            Targets = targets.Select(T => T);
+            InputNormalizer = inputNormalizer ?? new Normalizers.None();
+            OutputNormalizer = outputNormalizer ?? new Normalizers.None();
+            Inputs = InputNormalizer.Normalize(inputs);
+            Targets = OutputNormalizer.Normalize(targets);
         }
 
-        public Data(Array inputs, Array targets, INormalizer normalizer)
-        {
-            Normalizer = normalizer;
-            Inputs = Normalizer.Normalize(inputs.Flatten<double>());
-            Targets = targets.Flatten<double>();
-        }
+        public Data(Array inputs, Array targets, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null) : 
+            this(inputs.Flatten<double>(), targets.Flatten<double>(), inputNormalizer, outputNormalizer) { }
 
-        public Data Clone() => new Data(Inputs, Targets, Normalizer);
+        public Data Clone() => new Data(Inputs, Targets, InputNormalizer, OutputNormalizer);
 
         public static bool VerifyStructure(Data[] dataArray, int inputLength, int outputLength)
         {

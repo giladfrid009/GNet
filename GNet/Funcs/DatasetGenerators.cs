@@ -9,7 +9,7 @@ namespace GNet.Datasets
         int InputLength { get; }
         int OutputLength { get; }
 
-        Data[] Generate(int length, INormalizer normalizer);
+        Data[] Generate(int length, INormalizer inputNormalizer, INormalizer outputNormalizer);
     }
 }
 
@@ -25,7 +25,7 @@ namespace GNet.Datasets.Generators
             InputLength = intputLength;
         }
 
-        public Data[] Generate(int length, INormalizer normalizer)
+        public Data[] Generate(int length, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
         {
             Data[] dataset = new Data[length];
 
@@ -42,7 +42,7 @@ namespace GNet.Datasets.Generators
 
                 double output = count % 2 == 0 ? 0 : 1;
 
-                dataset[i] = new Data(inputs, new double[] { output }, normalizer);
+                dataset[i] = new Data(inputs, new double[] { output }, inputNormalizer, outputNormalizer);
             }
 
             return dataset;
@@ -62,7 +62,7 @@ namespace GNet.Datasets.Generators
             OutputLength = IOLength;
         }
 
-        public Data[] Generate(int length, INormalizer normalizer)
+        public Data[] Generate(int length, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
         {
             Data[] dataset = new Data[length];
 
@@ -75,7 +75,7 @@ namespace GNet.Datasets.Generators
                     io[j] = GRandom.NextDouble() < 0.5 ? 0 : 1;
                 }
 
-                dataset[i] = new Data(io, io.Select(X => X), normalizer);
+                dataset[i] = new Data(io, io.Select(X => X), inputNormalizer, outputNormalizer);
             }
 
             return dataset;
@@ -127,7 +127,7 @@ namespace GNet.Datasets.Generators
             }
         }
 
-        public Data[] Generate(int length, INormalizer normalizer)
+        public Data[] Generate(int length, INormalizer inputNormalizer, INormalizer outputNormalizer)
         {
             Data[] dataSet = new Data[length];
 
@@ -142,7 +142,7 @@ namespace GNet.Datasets.Generators
                     res = mathFunc(num);
                 }
 
-                dataSet[i] = new Data(new double[] { num }, new double[] { res }, normalizer);
+                dataSet[i] = new Data(new double[] { num }, new double[] { res }, inputNormalizer, outputNormalizer);
             }
 
             return dataSet;
@@ -194,7 +194,7 @@ namespace GNet.Datasets.Generators
             }
         }
 
-        public Data[] Generate(int length, INormalizer normalizer)
+        public Data[] Generate(int length, INormalizer inputNormalizer, INormalizer outputNormalizer)
         {
             Data[] dataSet = new Data[length];
 
@@ -211,7 +211,7 @@ namespace GNet.Datasets.Generators
                     res = mathFunc(n1, n2);
                 }
 
-                dataSet[i] = new Data(new double[] { n1, n2 }, new double[] { res }, normalizer);
+                dataSet[i] = new Data(new double[] { n1, n2 }, new double[] { res }, inputNormalizer, outputNormalizer);
             }
 
             return dataSet;
