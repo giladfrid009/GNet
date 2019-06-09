@@ -54,7 +54,7 @@ namespace GNet
 
         public TrainingResult Train(Data[] trainingData, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError, bool shuffle = true)
         {
-            if (Datasets.Helpers.VerifyDataset(trainingData, Layers[0].Length, Layers[Layers.Length - 1].Length) == false)
+            if (Data.VerifyStructure(trainingData, Layers[0].Length, Layers[Layers.Length - 1].Length) == false)
                 throw new Exception("Invalid dataset structure");
 
             var epoch = 0;

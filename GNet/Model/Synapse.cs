@@ -16,10 +16,5 @@
             InNeuron = inNeuron;
             OutNeuron = outNeuron;
         }
-
-        public void CalcGradient()
-        {
-            Gradient = OutNeuron.Gradient * InNeuron.ActivatedValue;
-        }
     }
 }
