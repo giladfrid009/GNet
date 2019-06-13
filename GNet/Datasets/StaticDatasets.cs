@@ -8,7 +8,7 @@ namespace GNet
         int Length { get; }
         int InputLength { get; }
         int OutputLength { get; }
-        Data[] Dataset { get; }
+        Data[] DataCollection { get; }
     }
 }
 
@@ -22,7 +22,7 @@ namespace GNet.Datasets.Static
         public int Length { get; } = 4;
         public int InputLength { get; } = 2;
         public int OutputLength { get; } = 1;
-        public Data[] Dataset { get; private set; } = new Data[0];
+        public Data[] DataCollection { get; private set; } = new Data[0];
 
         public LogicGates(Gates logicGate)
         {
@@ -32,7 +32,7 @@ namespace GNet.Datasets.Static
             {
                 case Gates.AND:
                 {
-                    Dataset = new Data[]
+                    DataCollection = new Data[]
                     {
                         new Data(new double[] { 0, 0 }, new double[] { 0 }),
                         new Data(new double[] { 0, 1 }, new double[] { 0 }),
@@ -43,7 +43,7 @@ namespace GNet.Datasets.Static
                 }
                 case Gates.OR:
                 {
-                    Dataset = new Data[]
+                    DataCollection = new Data[]
                     {
                         new Data(new double[] { 0, 0 }, new double[] { 0 }),
                         new Data(new double[] { 0, 1 }, new double[] { 1 }),
@@ -54,7 +54,7 @@ namespace GNet.Datasets.Static
                 }
                 case Gates.XOR:
                 {
-                    Dataset = new Data[]
+                    DataCollection = new Data[]
                     {
                         new Data(new double[] { 0, 0 }, new double[] { 0 }),
                         new Data(new double[] { 0, 1 }, new double[] { 1 }),

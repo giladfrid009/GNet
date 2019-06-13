@@ -2,11 +2,12 @@
 using GNet.Extensions;
 using GNet.GlobalRandom;
 
+// todo: move to main namespace?
 namespace GNet.Datasets
 {
     public interface IDynamicDataset : IDataset
     {
-        Data[] Generate(int length, INormalizer inputNormalizer, INormalizer outputNormalizer);
+        void Create(int length, INormalizer inputNormalizer, INormalizer outputNormalizer);
     }
 }
 
@@ -14,10 +15,10 @@ namespace GNet.Datasets.Dynamic
 {
     public class EvenOdd : IDynamicDataset
     {
-        public int Length { get { return Dataset.Length; } }
+        public int Length { get { return DataCollection.Length; } }
         public int InputLength { get; }
         public int OutputLength { get; } = 1;
-        public Data[] Dataset { get; private set; } = new Data[0];
+        public Data[] DataCollection { get; private set; } = new Data[0];
 
         public EvenOdd(int intputLength)
         {
@@ -26,12 +27,12 @@ namespace GNet.Datasets.Dynamic
 
         private EvenOdd(int inputLength, Data[] dataset) : this(inputLength)
         {
-            Dataset = dataset.Select(D => D);
+            DataCollection = dataset.Select(D => D);
         }
 
-        public Data[] Generate(int length, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
+        public void Create(int length, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
         {
-            Dataset = new Data[length];
+            DataCollection = new Data[length];
 
             for (int i = 0; i < length; i++)
             {
@@ -46,21 +47,19 @@ namespace GNet.Datasets.Dynamic
 
                 double output = count % 2 == 0 ? 0 : 1;
 
-                Dataset[i] = new Data(inputs, new double[] { output }, inputNormalizer, outputNormalizer);
+                DataCollection[i] = new Data(inputs, new double[] { output }, inputNormalizer, outputNormalizer);
             }
-
-            return Dataset;
         }
 
-        public IDataset Clone() => new EvenOdd(InputLength, Dataset);
+        public IDataset Clone() => new EvenOdd(InputLength, DataCollection);
     }
 
     public class Uniform : IDynamicDataset
     {
-        public int Length { get { return Dataset.Length; } }
+        public int Length { get { return DataCollection.Length; } }
         public int InputLength { get; }
         public int OutputLength { get; }
-        public Data[] Dataset { get; private set; } = new Data[0];
+        public Data[] DataCollection { get; private set; } = new Data[0];
 
         public Uniform(int IOLength)
         {
@@ -70,12 +69,12 @@ namespace GNet.Datasets.Dynamic
 
         private Uniform(int IOLength, Data[] dataset): this(IOLength)
         {
-            Dataset = dataset.Select(D => D);
+            DataCollection = dataset.Select(D => D);
         }
 
-        public Data[] Generate(int length, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
+        public void Create(int length, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
         {
-            Dataset = new Data[length];
+            DataCollection = new Data[length];
 
             for (int i = 0; i < length; i++)
             {
@@ -86,23 +85,21 @@ namespace GNet.Datasets.Dynamic
                     io[j] = GRandom.NextDouble() < 0.5 ? 0 : 1;
                 }
 
-                Dataset[i] = new Data(io, io.Select(X => X), inputNormalizer, outputNormalizer);
+                DataCollection[i] = new Data(io, io.Select(X => X), inputNormalizer, outputNormalizer);
             }
-
-            return Dataset;
         }
 
-        public IDataset Clone() => new Uniform(InputLength, Dataset);
+        public IDataset Clone() => new Uniform(InputLength, DataCollection);
     }
 
     public class MathOp1 : IDynamicDataset
     {
         public enum Ops1 { Sin, Cos, Tan, Exp, Ln, Abs, Asin, Acos, Atan, Round }
 
-        public int Length { get { return Dataset.Length; } }
+        public int Length { get { return DataCollection.Length; } }
         public int InputLength { get; } = 1;
         public int OutputLength { get; } = 1;
-        public Data[] Dataset { get; private set; } = new Data[0];
+        public Data[] DataCollection { get; private set; } = new Data[0];
 
         public double Range { get; }
         public Ops1 Operation { get; }
@@ -142,12 +139,12 @@ namespace GNet.Datasets.Dynamic
 
         public MathOp1(Ops1 operation, double range, Data[] dataset) : this(operation, range)
         {
-            Dataset = dataset.Select(D => D);
+            DataCollection = dataset.Select(D => D);
         }
 
-        public Data[] Generate(int length, INormalizer inputNormalizer, INormalizer outputNormalizer)
+        public void Create(int length, INormalizer inputNormalizer, INormalizer outputNormalizer)
         {
-            Dataset = new Data[length];
+            DataCollection = new Data[length];
 
             for (int i = 0; i < length; i++)
             {
@@ -160,23 +157,21 @@ namespace GNet.Datasets.Dynamic
                     res = mathFunc(num);
                 }
 
-                Dataset[i] = new Data(new double[] { num }, new double[] { res }, inputNormalizer, outputNormalizer);
+                DataCollection[i] = new Data(new double[] { num }, new double[] { res }, inputNormalizer, outputNormalizer);
             }
-
-            return Dataset;
         }
 
-        public IDataset Clone() => new MathOp1(Operation, Range, Dataset);
+        public IDataset Clone() => new MathOp1(Operation, Range, DataCollection);
     }
 
     public class MathOp2 : IDynamicDataset
     {
         public enum Ops2 { Add, Sub, Mul, Div, Rem, Pow, Root, Log, Min, Max }
 
-        public int Length { get { return Dataset.Length; } }
+        public int Length { get { return DataCollection.Length; } }
         public int InputLength { get; } = 2;
         public int OutputLength { get; } = 1;
-        public Data[] Dataset { get; private set; } = new Data[0];
+        public Data[] DataCollection { get; private set; } = new Data[0];
 
         public double Range { get; }
         public Ops2 Operation { get; }
@@ -216,12 +211,12 @@ namespace GNet.Datasets.Dynamic
 
         private MathOp2(Ops2 operation, double range, Data[] dataset) : this(operation, range)
         {
-            Dataset = dataset.Select(D => D);
+            DataCollection = dataset.Select(D => D);
         }
 
-        public Data[] Generate(int length, INormalizer inputNormalizer, INormalizer outputNormalizer)
+        public void Create(int length, INormalizer inputNormalizer, INormalizer outputNormalizer)
         {
-            Dataset = new Data[length];
+            DataCollection = new Data[length];
 
             for (int i = 0; i < length; i++)
             {
@@ -236,12 +231,10 @@ namespace GNet.Datasets.Dynamic
                     res = mathFunc(n1, n2);
                 }
 
-                Dataset[i] = new Data(new double[] { n1, n2 }, new double[] { res }, inputNormalizer, outputNormalizer);
+                DataCollection[i] = new Data(new double[] { n1, n2 }, new double[] { res }, inputNormalizer, outputNormalizer);
             }
-
-            return Dataset;
         }
 
-        public IDataset Clone() => new MathOp2(Operation, Range, Dataset);
+        public IDataset Clone() => new MathOp2(Operation, Range, DataCollection);
     }    
 }

@@ -37,9 +37,9 @@ namespace GNet
             return Layers[Length - 1].Neurons.Select(N => N.ActivatedValue);
         }
 
-        public double Validate(Data[] testData, ILoss loss)
+        public double Validate(IDataset dataset, ILoss loss)
         {
-            return testData.Sum(D => loss.Compute(D.Targets, FeedForward(D.Inputs))) / testData.Length;
+            return dataset.DataCollection.Sum(D => loss.Compute(D.Targets, FeedForward(D.Inputs))) / dataset.Length;
         }
 
         private void Backprop(ILoss loss, IOptimizer optimizer, double[] targets)
@@ -52,21 +52,18 @@ namespace GNet
             }
         }
 
-        public TrainingResult Train(Data[] trainingData, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError, bool shuffle = true)
+        public TrainingResult Train(IDataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError, bool shuffle = true)
         {
-            if (Data.VerifyStructure(trainingData, Layers[0].Length, Layers[Layers.Length - 1].Length) == false)
-                throw new Exception("Invalid dataset structure");
-
             var epoch = 0;
             var epochError = 0.0;
             var staringTime = DateTime.Now;
 
             for (epoch = 0; epoch < numEpoches; epoch++)
             {
-                var epochData = shuffle ? trainingData.Shuffle() : trainingData;
-                epochError = 0;
+                if (shuffle)
+                    dataset.DataCollection.Shuffle();
 
-                epochData.ForEach((D, index) =>
+                dataset.DataCollection.ForEach((D, index) =>
                 {
                     FeedForward(D.Inputs);
 
@@ -78,7 +75,7 @@ namespace GNet
                     }
                 });
 
-                epochError = Validate(epochData, loss);
+                epochError = Validate(dataset, loss);
 
                 if (epochError < minError)
                     break;

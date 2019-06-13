@@ -27,23 +27,7 @@ namespace GNet.Extensions
             }
 
             return flattened.ToArray();
-        }
-
-        public static TSource[] Shuffle<TSource>(this TSource[] source)
-        {
-            TSource[] shuffled = source.Select(X => X);
-
-            for (int i = 0; i < shuffled.Length; i++)
-            {
-                int index = GRandom.Next(i, shuffled.Length);
-
-                var temp = shuffled[i];
-                shuffled[i] = shuffled[index];
-                shuffled[index] = temp;
-            }
-
-            return shuffled;
-        }
+        }        
 
         public static TOut[] Select<TSource, TOut>(this TSource[] source, Func<TSource, TOut> selector)
         {
@@ -120,6 +104,18 @@ namespace GNet.Extensions
             for (int i = 0; i < source.Length; i++)
             {
                 action(source[i], i);
+            }
+        }
+
+        public static void Shuffle<TSource>(this TSource[] source)
+        {
+            for (int i = 0; i < source.Length; i++)
+            {
+                int index = GRandom.Next(i, source.Length);
+
+                var temp = source[i];
+                source[i] = source[index];
+                source[index] = temp;
             }
         }
     }

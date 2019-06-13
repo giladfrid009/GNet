@@ -16,15 +16,17 @@ namespace GNet
             Network net = new Network(layers);
             net.Init();
 
-            var datasetGenerator = new Datasets.Dynamic.EvenOdd(10);
+            var trainingDataset = new Datasets.Dynamic.EvenOdd(10);
+            trainingDataset.Create(2000);
 
-            var dataset = datasetGenerator.Generate(2000, new Normalizers.None());
+            Console.WriteLine(net.Validate(trainingDataset, new Losses.MSE()));
 
-            Console.WriteLine(net.Validate(dataset, new Losses.MSE()));
+            net.Train(trainingDataset, new Losses.MSE(), new Optimizers.Default(0.4), 1, 2000, 0.0001).Print();
 
-            net.Train(dataset, new Losses.MSE(), new Optimizers.Default(0.4), 1, 2000, 0.0001).Print();
+            var validationDataset = new Datasets.Dynamic.EvenOdd(10);
+            validationDataset.Create(1000);
 
-            Console.WriteLine(net.Validate(datasetGenerator.Generate(1000, new Normalizers.None()), new Losses.MSE()));
+            Console.WriteLine(net.Validate(validationDataset, new Losses.MSE()));
 
             Console.ReadKey();
         }
