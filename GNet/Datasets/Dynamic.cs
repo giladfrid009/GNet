@@ -2,8 +2,7 @@
 using GNet.Extensions;
 using GNet.GlobalRandom;
 
-// todo: move to main namespace?
-namespace GNet.Datasets
+namespace GNet
 {
     public interface IDynamicDataset : IDataset
     {

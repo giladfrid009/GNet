@@ -2,7 +2,6 @@
 
 namespace GNet
 {
-    // todo: incorporate into the program.
     public interface IDataset : ICloneable<IDataset>
     {
         int Length { get; }
