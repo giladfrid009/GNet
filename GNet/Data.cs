@@ -22,19 +22,5 @@ namespace GNet
             this(inputs.Flatten<double>(), targets.Flatten<double>(), inputNormalizer, outputNormalizer) { }
 
         public Data Clone() => new Data(Inputs, Targets, InputNormalizer, OutputNormalizer);
-
-        public static bool VerifyStructure(Data[] dataArray, int inputLength, int outputLength)
-        {
-            foreach (Data D in dataArray)
-            {
-                if (D.Inputs.Length != inputLength)
-                    return false;
-
-                if (D.Targets.Length != outputLength)
-                    return false;
-            }
-
-            return true;
-        }
     }
 }

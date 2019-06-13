@@ -54,6 +54,9 @@ namespace GNet
 
         public TrainingResult Train(IDataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError, bool shuffle = true)
         {
+            if (dataset.InputLength != Layers[0].Length || dataset.OutputLength != Layers[Length - 1].Length)
+                throw new Exception("dataset structure mismatch with net structure.");
+
             var epoch = 0;
             var epochError = 0.0;
             var staringTime = DateTime.Now;

@@ -17,14 +17,14 @@ namespace GNet
             net.Init();
 
             var trainingDataset = new Datasets.Dynamic.EvenOdd(10);
-            trainingDataset.Create(2000);
+            trainingDataset.Generate(2000);
 
             Console.WriteLine(net.Validate(trainingDataset, new Losses.MSE()));
 
             net.Train(trainingDataset, new Losses.MSE(), new Optimizers.Default(0.4), 1, 2000, 0.0001).Print();
 
             var validationDataset = new Datasets.Dynamic.EvenOdd(10);
-            validationDataset.Create(1000);
+            validationDataset.Generate(1000);
 
             Console.WriteLine(net.Validate(validationDataset, new Losses.MSE()));
 

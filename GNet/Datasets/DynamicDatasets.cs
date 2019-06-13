@@ -7,7 +7,7 @@ namespace GNet.Datasets
 {
     public interface IDynamicDataset : IDataset
     {
-        void Create(int length, INormalizer inputNormalizer, INormalizer outputNormalizer);
+        void Generate(int length, INormalizer inputNormalizer, INormalizer outputNormalizer);
     }
 }
 
@@ -30,7 +30,7 @@ namespace GNet.Datasets.Dynamic
             DataCollection = dataset.Select(D => D);
         }
 
-        public void Create(int length, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
+        public void Generate(int length, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
         {
             DataCollection = new Data[length];
 
@@ -72,7 +72,7 @@ namespace GNet.Datasets.Dynamic
             DataCollection = dataset.Select(D => D);
         }
 
-        public void Create(int length, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
+        public void Generate(int length, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
         {
             DataCollection = new Data[length];
 
@@ -104,7 +104,7 @@ namespace GNet.Datasets.Dynamic
         public double Range { get; }
         public Ops1 Operation { get; }
 
-        private Func<double, double> mathFunc;
+        private readonly Func<double, double> mathFunc;
 
         public MathOp1(Ops1 operation, double range)
         {
@@ -142,7 +142,7 @@ namespace GNet.Datasets.Dynamic
             DataCollection = dataset.Select(D => D);
         }
 
-        public void Create(int length, INormalizer inputNormalizer, INormalizer outputNormalizer)
+        public void Generate(int length, INormalizer inputNormalizer, INormalizer outputNormalizer)
         {
             DataCollection = new Data[length];
 
@@ -176,7 +176,7 @@ namespace GNet.Datasets.Dynamic
         public double Range { get; }
         public Ops2 Operation { get; }
 
-        private Func<double, double, double> mathFunc;
+        private readonly Func<double, double, double> mathFunc;
 
         public MathOp2(Ops2 operation, double range)
         {
@@ -214,7 +214,7 @@ namespace GNet.Datasets.Dynamic
             DataCollection = dataset.Select(D => D);
         }
 
-        public void Create(int length, INormalizer inputNormalizer, INormalizer outputNormalizer)
+        public void Generate(int length, INormalizer inputNormalizer, INormalizer outputNormalizer)
         {
             DataCollection = new Data[length];
 
