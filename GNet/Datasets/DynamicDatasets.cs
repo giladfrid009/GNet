@@ -4,30 +4,34 @@ using GNet.GlobalRandom;
 
 namespace GNet.Datasets
 {
-    public interface IDatasetGenerator : ICloneable<IDatasetGenerator>
+    public interface IDynamicDataset : IDataset
     {
-        int InputLength { get; }
-        int OutputLength { get; }
-
         Data[] Generate(int length, INormalizer inputNormalizer, INormalizer outputNormalizer);
     }
 }
 
-namespace GNet.Datasets.Generators
+namespace GNet.Datasets.Dynamic
 {
-    public class EvenOdd : IDatasetGenerator
+    public class EvenOdd : IDynamicDataset
     {
+        public int Length { get { return Dataset.Length; } }
         public int InputLength { get; }
         public int OutputLength { get; } = 1;
+        public Data[] Dataset { get; private set; } = new Data[0];
 
         public EvenOdd(int intputLength)
         {
             InputLength = intputLength;
         }
 
+        private EvenOdd(int inputLength, Data[] dataset) : this(inputLength)
+        {
+            Dataset = dataset.Select(D => D);
+        }
+
         public Data[] Generate(int length, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
         {
-            Data[] dataset = new Data[length];
+            Dataset = new Data[length];
 
             for (int i = 0; i < length; i++)
             {
@@ -42,19 +46,21 @@ namespace GNet.Datasets.Generators
 
                 double output = count % 2 == 0 ? 0 : 1;
 
-                dataset[i] = new Data(inputs, new double[] { output }, inputNormalizer, outputNormalizer);
+                Dataset[i] = new Data(inputs, new double[] { output }, inputNormalizer, outputNormalizer);
             }
 
-            return dataset;
+            return Dataset;
         }
 
-        public IDatasetGenerator Clone() => new EvenOdd(InputLength);
+        public IDataset Clone() => new EvenOdd(InputLength, Dataset);
     }
 
-    public class Uniform : IDatasetGenerator
+    public class Uniform : IDynamicDataset
     {
+        public int Length { get { return Dataset.Length; } }
         public int InputLength { get; }
         public int OutputLength { get; }
+        public Data[] Dataset { get; private set; } = new Data[0];
 
         public Uniform(int IOLength)
         {
@@ -62,9 +68,14 @@ namespace GNet.Datasets.Generators
             OutputLength = IOLength;
         }
 
+        private Uniform(int IOLength, Data[] dataset): this(IOLength)
+        {
+            Dataset = dataset.Select(D => D);
+        }
+
         public Data[] Generate(int length, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
         {
-            Data[] dataset = new Data[length];
+            Dataset = new Data[length];
 
             for (int i = 0; i < length; i++)
             {
@@ -75,21 +86,23 @@ namespace GNet.Datasets.Generators
                     io[j] = GRandom.NextDouble() < 0.5 ? 0 : 1;
                 }
 
-                dataset[i] = new Data(io, io.Select(X => X), inputNormalizer, outputNormalizer);
+                Dataset[i] = new Data(io, io.Select(X => X), inputNormalizer, outputNormalizer);
             }
 
-            return dataset;
+            return Dataset;
         }
 
-        public IDatasetGenerator Clone() => new Uniform(InputLength);
+        public IDataset Clone() => new Uniform(InputLength, Dataset);
     }
 
-    public class MathOp1 : IDatasetGenerator
+    public class MathOp1 : IDynamicDataset
     {
         public enum Ops1 { Sin, Cos, Tan, Exp, Ln, Abs, Asin, Acos, Atan, Round }
 
+        public int Length { get { return Dataset.Length; } }
         public int InputLength { get; } = 1;
         public int OutputLength { get; } = 1;
+        public Data[] Dataset { get; private set; } = new Data[0];
 
         public double Range { get; }
         public Ops1 Operation { get; }
@@ -127,9 +140,14 @@ namespace GNet.Datasets.Generators
             }
         }
 
+        public MathOp1(Ops1 operation, double range, Data[] dataset) : this(operation, range)
+        {
+            Dataset = dataset.Select(D => D);
+        }
+
         public Data[] Generate(int length, INormalizer inputNormalizer, INormalizer outputNormalizer)
         {
-            Data[] dataSet = new Data[length];
+            Dataset = new Data[length];
 
             for (int i = 0; i < length; i++)
             {
@@ -142,21 +160,23 @@ namespace GNet.Datasets.Generators
                     res = mathFunc(num);
                 }
 
-                dataSet[i] = new Data(new double[] { num }, new double[] { res }, inputNormalizer, outputNormalizer);
+                Dataset[i] = new Data(new double[] { num }, new double[] { res }, inputNormalizer, outputNormalizer);
             }
 
-            return dataSet;
+            return Dataset;
         }
 
-        public IDatasetGenerator Clone() => new MathOp1(Operation, Range);
+        public IDataset Clone() => new MathOp1(Operation, Range, Dataset);
     }
 
-    public class MathOp2 : IDatasetGenerator
+    public class MathOp2 : IDynamicDataset
     {
         public enum Ops2 { Add, Sub, Mul, Div, Rem, Pow, Root, Log, Min, Max }
 
+        public int Length { get { return Dataset.Length; } }
         public int InputLength { get; } = 2;
         public int OutputLength { get; } = 1;
+        public Data[] Dataset { get; private set; } = new Data[0];
 
         public double Range { get; }
         public Ops2 Operation { get; }
@@ -194,9 +214,14 @@ namespace GNet.Datasets.Generators
             }
         }
 
+        private MathOp2(Ops2 operation, double range, Data[] dataset) : this(operation, range)
+        {
+            Dataset = dataset.Select(D => D);
+        }
+
         public Data[] Generate(int length, INormalizer inputNormalizer, INormalizer outputNormalizer)
         {
-            Data[] dataSet = new Data[length];
+            Dataset = new Data[length];
 
             for (int i = 0; i < length; i++)
             {
@@ -211,12 +236,12 @@ namespace GNet.Datasets.Generators
                     res = mathFunc(n1, n2);
                 }
 
-                dataSet[i] = new Data(new double[] { n1, n2 }, new double[] { res }, inputNormalizer, outputNormalizer);
+                Dataset[i] = new Data(new double[] { n1, n2 }, new double[] { res }, inputNormalizer, outputNormalizer);
             }
 
-            return dataSet;
+            return Dataset;
         }
 
-        public IDatasetGenerator Clone() => new MathOp2(Operation, Range);
-    }
+        public IDataset Clone() => new MathOp2(Operation, Range, Dataset);
+    }    
 }

@@ -16,7 +16,7 @@ namespace GNet
             Network net = new Network(layers);
             net.Init();
 
-            var datasetGenerator = new Datasets.Generators.EvenOdd(10);
+            var datasetGenerator = new Datasets.Dynamic.EvenOdd(10);
 
             var dataset = datasetGenerator.Generate(2000, new Normalizers.None());
 
