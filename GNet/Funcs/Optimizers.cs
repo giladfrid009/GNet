@@ -246,7 +246,7 @@ namespace GNet.Optimizers
 
                 N.InSynapses.ForEach(S =>
                 {
-                    S.Cache1 = Rho * N.Cache1 + (1 - Rho) * S.Gradient * S.Gradient;
+                    S.Cache1 = Rho * S.Cache1 + (1 - Rho) * S.Gradient * S.Gradient;
                     delta = -Sqrt(S.Cache2 + Epsilon) * S.Gradient / Sqrt(S.Cache1 + Epsilon);
                     S.Cache2 = Rho * S.Cache2 + (1 - Rho) * delta * delta;
                     S.BatchWeight += delta;
