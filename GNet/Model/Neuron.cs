@@ -10,7 +10,8 @@
 
         // training related
         public double Gradient { get; set; }
-        public double SavedValue { get; set; }
+        public double Cache1 { get; set; }
+        public double Cache2 { get; set; }
         public double BatchBias { get; set; }
     }
 }

@@ -40,6 +40,7 @@ namespace GNet.Datasets.Static
                     };
                     break;
                 }
+
                 case Gates.OR:
                 {
                     DataCollection = new Data[]
@@ -51,6 +52,7 @@ namespace GNet.Datasets.Static
                     };
                     break;
                 }
+
                 case Gates.XOR:
                 {
                     DataCollection = new Data[]
@@ -62,6 +64,7 @@ namespace GNet.Datasets.Static
                     };
                     break;
                 }
+
                 default:
                 {
                     throw new ArgumentOutOfRangeException("Unsupported Gate");

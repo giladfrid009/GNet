@@ -94,14 +94,13 @@ namespace GNet.Datasets.Dynamic
     public class MathOp1 : IDynamicDataset
     {
         public enum Ops1 { Sin, Cos, Tan, Exp, Ln, Abs, Asin, Acos, Atan, Round }
+        public double Range { get; }
+        public Ops1 Operation { get; }
 
         public int Length { get { return DataCollection.Length; } }
         public int InputLength { get; } = 1;
         public int OutputLength { get; } = 1;
         public Data[] DataCollection { get; private set; } = new Data[0];
-
-        public double Range { get; }
-        public Ops1 Operation { get; }
 
         private readonly Func<double, double> mathFunc;
 
@@ -166,14 +165,13 @@ namespace GNet.Datasets.Dynamic
     public class MathOp2 : IDynamicDataset
     {
         public enum Ops2 { Add, Sub, Mul, Div, Rem, Pow, Root, Log, Min, Max }
+        public double Range { get; }
+        public Ops2 Operation { get; }
 
         public int Length { get { return DataCollection.Length; } }
         public int InputLength { get; } = 2;
         public int OutputLength { get; } = 1;
-        public Data[] DataCollection { get; private set; } = new Data[0];
-
-        public double Range { get; }
-        public Ops2 Operation { get; }
+        public Data[] DataCollection { get; private set; } = new Data[0];   
 
         private readonly Func<double, double, double> mathFunc;
 
