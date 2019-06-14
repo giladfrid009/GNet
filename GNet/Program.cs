@@ -21,7 +21,7 @@ namespace GNet
 
             Console.WriteLine(net.Validate(trainingDataset, new Losses.MSE()));
 
-            net.Train(trainingDataset, new Losses.MSE(), new Optimizers.Momentum(0.4, 0.09), 1, 500, 0.01).Print();
+            net.Train(trainingDataset, new Losses.MSE(), new Optimizers.Adam(10), 10, 500, 0.01).Print();
 
             var validationDataset = new Datasets.Dynamic.EvenOdd(10);
             validationDataset.Generate(1000);

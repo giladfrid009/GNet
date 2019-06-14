@@ -1,5 +1,4 @@
-﻿using System;
-using GNet.Extensions;
+﻿using GNet.Extensions;
 using static System.Math;
 
 namespace GNet
@@ -10,41 +9,19 @@ namespace GNet
     }
 }
 
-// todo: test all algs.
-
 namespace GNet.Optimizers
 {
     public class Default : IOptimizer
     {
-        public enum DecayTypes { Step, Exponential, TimeBased }
+        public double LearningRate { get; }
 
-        public double LearningRate { get; private set; }
-        public double Decay { get; }
-        public DecayTypes DecayType { get; }
-
-        private int iteration = 0;
-        private readonly Func<double, double> decayFunc;
-
-        public Default(double learningRate, double decay = 0, DecayTypes decayType = DecayTypes.Step)
+        public Default(double learningRate = 0.01)
         {
             LearningRate = learningRate;
-            Decay = decay;
-            DecayType = decayType;
-
-            switch (DecayType)
-            {
-                case DecayTypes.Step: decayFunc = (LR) => LR - Decay; break;
-
-                case DecayTypes.Exponential: decayFunc = (LR) => LR * Exp(-Decay * iteration); break;
-
-                case DecayTypes.TimeBased: decayFunc = (LR) => LR / (1 + Decay * iteration); break;
-            }
         }
 
         public void Optimize(Neuron[] neurons)
         {
-            LearningRate = decayFunc(LearningRate);
-
             neurons.ForEach(N =>
             {
                 N.BatchBias += -LearningRate * N.Gradient;
@@ -54,46 +31,24 @@ namespace GNet.Optimizers
                     S.BatchWeight += -LearningRate * S.Gradient;
                 });
             });
-
-            iteration++;
         }
 
-        public IOptimizer Clone() => new Default(LearningRate, Decay, DecayType);
+        public IOptimizer Clone() => new Default(LearningRate);
     }
 
     public class Momentum : IOptimizer
     {
-        public enum DecayTypes { Step, Exponential, TimeBased }
-
-        public double LearningRate { get; private set; }
+        public double LearningRate { get; }
         public double MomentumValue { get; }
-        public double Decay { get; }
-        public DecayTypes DecayType { get; }
 
-        private int iteration = 0;
-        private readonly Func<double, double> decayFunc;
-
-        public Momentum(double learningRate, double momentum = 0.9, double decay = 0, DecayTypes decayType = DecayTypes.Step)
+        public Momentum(double learningRate = 0.01, double momentum = 0.9)
         {
             LearningRate = learningRate;
             MomentumValue = momentum;
-            Decay = decay;
-            DecayType = decayType;
-
-            switch (DecayType)
-            {
-                case DecayTypes.Step: decayFunc = (LR) => LR - Decay; break;
-
-                case DecayTypes.Exponential: decayFunc = (LR) => LR * Exp(-Decay * iteration); break;
-
-                case DecayTypes.TimeBased: decayFunc = (LR) => LR / (1 + Decay * iteration); break;
-            }
         }
 
         public void Optimize(Neuron[] neurons)
         {
-            LearningRate = decayFunc(LearningRate);
-
             neurons.ForEach(N =>
             {
                 N.Cache1 = -LearningRate * N.Gradient + MomentumValue * N.Cache1;
@@ -105,46 +60,25 @@ namespace GNet.Optimizers
                     S.BatchWeight += S.Cache1;
                 });
             });
-
-            iteration++;
         }
 
-        public IOptimizer Clone() => new Momentum(LearningRate, MomentumValue, Decay, DecayType);
+        public IOptimizer Clone() => new Momentum(LearningRate, MomentumValue);
     }
+
 
     public class NestrovMomentum : IOptimizer
     {
-        public enum DecayTypes { Step, Exponential, TimeBased }
-
-        public double LearningRate { get; private set; }
+        public double LearningRate { get; }
         public double MomentumValue { get; }
-        public double Decay { get; }
-        public DecayTypes DecayType { get; }
 
-        private int iteration = 0;
-        private readonly Func<double, double> decayFunc;
-
-        public NestrovMomentum(double learningRate, double momentum = 0.9, double decay = 0, DecayTypes decayType = DecayTypes.Step)
+        public NestrovMomentum(double learningRate = 0.01, double momentum = 0.9)
         {
             LearningRate = learningRate;
             MomentumValue = momentum;
-            Decay = decay;
-            DecayType = decayType;
-
-            switch (DecayType)
-            {
-                case DecayTypes.Step: decayFunc = (LR) => LR - Decay; break;
-
-                case DecayTypes.Exponential: decayFunc = (LR) => LR * Exp(-Decay * iteration); break;
-
-                case DecayTypes.TimeBased: decayFunc = (LR) => LR / (1 + Decay * iteration); break;
-            }
         }
 
         public void Optimize(Neuron[] neurons)
         {
-            LearningRate = decayFunc(LearningRate);
-
             neurons.ForEach(N =>
             {
                 var oldDelta = N.Cache1;
@@ -159,10 +93,9 @@ namespace GNet.Optimizers
                 });
             });
 
-            iteration++;
         }
 
-        public IOptimizer Clone() => new NestrovMomentum(LearningRate, MomentumValue, Decay, DecayType);
+        public IOptimizer Clone() => new NestrovMomentum(LearningRate, MomentumValue);
     }
 
     public class AdaGrad : IOptimizer
@@ -264,7 +197,7 @@ namespace GNet.Optimizers
         public double Decay { get; }
         public double Epsilon { get; } = 1e-8;
 
-        public RMSProp(double learningRate, double decay = 0.9)
+        public RMSProp(double learningRate = 0.001, double decay = 0.9)
         {
             LearningRate = learningRate;
             Decay = decay;
@@ -295,8 +228,13 @@ namespace GNet.Optimizers
         public double Beta2 { get; }
         public double Epsilon { get; } = 1e-8;
 
-        public Adam(double learningRate = 0.001, double beta1 = 0.9, double beta2 = 0.999)
+        private readonly int batchSize;
+        private int index = 0;
+        private int epoch = 0;
+
+        public Adam(int batchSize, double learningRate = 0.001, double beta1 = 0.9, double beta2 = 0.999)
         {
+            this.batchSize = batchSize;
             LearningRate = learningRate;
             Beta1 = beta1;
             Beta2 = beta2;
@@ -304,27 +242,30 @@ namespace GNet.Optimizers
 
         public void Optimize(Neuron[] neurons)
         {
+            if (index % batchSize == 0)
+                epoch++;
+
             neurons.ForEach(N =>
             {
                 N.Cache1 = Beta1 * N.Cache1 + (1 - Beta1) * N.Gradient;
                 N.Cache2 = Beta2 * N.Cache2 + (1 - Beta2) * N.Gradient * N.Gradient;
-                N.BatchBias += -LearningRate * N.Cache1 / (Sqrt(N.Cache2) + Epsilon);
+                var corr1 = N.Cache1 / (1 - Pow(Beta1, epoch + 1));
+                var corr2 = N.Cache2 / (1 - Pow(Beta2, epoch + 1));
+                N.BatchBias += -LearningRate * corr1 / (Sqrt(corr2) + Epsilon);
 
                 N.InSynapses.ForEach(S =>
                 {
                     S.Cache1 = Beta1 * S.Cache1 + (1 - Beta1) * S.Gradient;
                     S.Cache2 = Beta2 * S.Cache2 + (1 - Beta2) * S.Gradient * S.Gradient;
-                    S.BatchWeight += -LearningRate * S.Cache1 / (Sqrt(S.Cache2) + Epsilon);
+                    corr1 = S.Cache1 / (1 - Pow(Beta1, epoch + 1));
+                    corr2 = S.Cache2 / (1 - Pow(Beta2, epoch + 1));
+                    S.BatchWeight += -LearningRate * corr1 / (Sqrt(corr2) + Epsilon);
                 });
             });
+
+            index++;
         }
 
-        public IOptimizer Clone() => new Adam(LearningRate, Beta1, Beta2);
-    }
-
-    // todo: implement
-    public class AdaMax
-    {
-
-    }
+        public IOptimizer Clone() => new Adam(batchSize, LearningRate, Beta1, Beta2);
+    }    
 }
