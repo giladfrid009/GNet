@@ -4,13 +4,15 @@ namespace GNet
 {
     public class TrainingResult
     {
-        public int EpochesCompleted { get; }
-        public double FinalError { get; }
         public TimeSpan ExecutionTime { get; }
+        public double InitialError { get; }
+        public double FinalError { get; }
+        public int EpochesCompleted { get; }
 
-        public TrainingResult(int epochesCompleted, double finalError, TimeSpan executionTime)
+        public TrainingResult(int epochesCompleted, double initialError, double finalError, TimeSpan executionTime)
         {
             EpochesCompleted = epochesCompleted;
+            InitialError = initialError;
             FinalError = finalError;
             ExecutionTime = executionTime;
         }
@@ -18,9 +20,10 @@ namespace GNet
         public void Print()
         {
             Console.WriteLine(" ---- Training Session Result ----");
-            Console.WriteLine(" Epoches Completed: {0}", EpochesCompleted);
-            Console.WriteLine(" Final Error:       {0}", FinalError);
             Console.WriteLine(" Execution Time:    {0}", ExecutionTime);
+            Console.WriteLine(" Epoches Completed: {0}", EpochesCompleted);
+            Console.WriteLine(" Initial Error:     {0}", InitialError);
+            Console.WriteLine(" Final Error:       {0}", FinalError);
         }
     }
 }

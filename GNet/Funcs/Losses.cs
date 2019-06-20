@@ -20,9 +20,7 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            int N = Min(targets.Length, outputs.Length);
-
-            return targets.Combine(outputs, (T, O) => (T - O) * (T - O)).Sum() / N;
+            return targets.Combine(outputs, (T, O) => (T - O) * (T - O)).Mean();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -40,9 +38,7 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            int N = Min(targets.Length, outputs.Length);
-
-            return targets.Combine(outputs, (T, O) => (Log(T + 1) - Log(O + 1)) * (Log(T + 1) - Log(O + 1))).Sum() / N;
+            return targets.Combine(outputs, (T, O) => (Log(T + 1) - Log(O + 1)) * (Log(T + 1) - Log(O + 1))).Mean();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -60,9 +56,7 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            int N = Min(targets.Length, outputs.Length);
-
-            return targets.Combine(outputs, (T, O) => Abs(T - O)).Sum() / N;
+            return targets.Combine(outputs, (T, O) => Abs(T - O)).Mean();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -80,9 +74,7 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            int N = Min(targets.Length, outputs.Length);
-
-            return targets.Combine(outputs, (T, O) => Abs((T - O) / T)).Sum() / N;
+            return targets.Combine(outputs, (T, O) => Abs((T - O) / T)).Mean();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -97,9 +89,7 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            int N = Min(targets.Length, outputs.Length);
-
-            return targets.Combine(outputs, (T, O) => Log(Cosh(T - O))).Sum() / N;
+            return targets.Combine(outputs, (T, O) => Log(Cosh(T - O))).Mean();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -114,9 +104,7 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            int N = Min(targets.Length, outputs.Length);
-
-            return targets.Combine(outputs, (T, O) => T * Log(T / O)).Sum() / N;
+            return targets.Combine(outputs, (T, O) => T * Log(T / O)).Mean();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -131,9 +119,7 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            int N = Min(targets.Length, outputs.Length);
-
-            return targets.Combine(outputs, (T, O) => -T * Log(O) - (1 - T) * Log(1 - O)).Sum() / N;
+            return targets.Combine(outputs, (T, O) => -T * Log(O) - (1 - T) * Log(1 - O)).Mean();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -148,9 +134,7 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            int N = Min(targets.Length, outputs.Length);
-
-            return targets.Combine(outputs, (T, O) => -T * Log(O)).Sum() / N;
+            return targets.Combine(outputs, (T, O) => -T * Log(O)).Mean();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -165,9 +149,7 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            int N = Min(targets.Length, outputs.Length);
-
-            return targets.Combine(outputs, (T, O) => -Log(O)).Sum() / N;
+            return targets.Combine(outputs, (T, O) => -Log(O)).Mean();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -182,9 +164,7 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            int N = Min(targets.Length, outputs.Length);
-
-            return targets.Combine(outputs, (T, O) => O - T * Log(O)).Sum() / N;
+            return targets.Combine(outputs, (T, O) => O - T * Log(O)).Mean();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -199,20 +179,20 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            double tProd = targets.Accumulate(1, (R, X) => R * X);
-            double oProd = outputs.Accumulate(1, (R, X) => R * X);
-            double tSumSqr = targets.Accumulate(1, (R, X) => R + X * X);
-            double oSumSqr = outputs.Accumulate(1, (R, X) => R + X * X);
+            double tProd = targets.Accumulate(1.0, (R, X) => R * X);
+            double oProd = outputs.Accumulate(1.0, (R, X) => R * X);
+            double tSumSqr = targets.Accumulate(1.0, (R, X) => R + X * X);
+            double oSumSqr = outputs.Accumulate(1.0, (R, X) => R + X * X);
 
             return -tProd * oProd / (Sqrt(tSumSqr) * Sqrt(oSumSqr));
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
         {
-            double tProd = targets.Accumulate(1, (R, X) => R * X);
-            double oProd = outputs.Accumulate(1, (R, X) => R * X);
-            double tSumSqr = targets.Accumulate(1, (R, X) => R + X * X);
-            double oSumSqr = outputs.Accumulate(1, (R, X) => R + X * X);
+            double tProd = targets.Accumulate(1.0, (R, X) => R * X);
+            double oProd = outputs.Accumulate(1.0, (R, X) => R * X);
+            double tSumSqr = targets.Accumulate(1.0, (R, X) => R + X * X);
+            double oSumSqr = outputs.Accumulate(1.0, (R, X) => R + X * X);
 
             return outputs.Select(O => -tProd * (oProd / O) * Pow(oSumSqr - O * O, 2) / (Abs(tSumSqr) * Pow(oSumSqr, 1.5)));
         }
@@ -230,9 +210,7 @@ namespace GNet.Losses
         }
         public double Compute(double[] targets, double[] outputs)
         {
-            int N = Min(targets.Length, outputs.Length);
-
-            return targets.Combine(outputs, (T, O) => Max(0, Margin - T * O)).Sum() / N;
+            return targets.Combine(outputs, (T, O) => Max(0, Margin - T * O)).Mean();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -253,9 +231,7 @@ namespace GNet.Losses
         }
         public double Compute(double[] targets, double[] outputs)
         {
-            int N = Min(targets.Length, outputs.Length);
-
-            return targets.Combine(outputs, (T, O) => Max(0, Margin - T * O) * Max(0, Margin - T * O)).Sum() / N;
+            return targets.Combine(outputs, (T, O) => Max(0, Margin - T * O) * Max(0, Margin - T * O)).Mean();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -276,8 +252,6 @@ namespace GNet.Losses
         }
         public double Compute(double[] targets, double[] outputs)
         {
-            int N = Min(targets.Length, outputs.Length);
-
             return targets.Combine(outputs, (T, O) =>
             {
                 double diff = Abs(T - O);
@@ -287,7 +261,8 @@ namespace GNet.Losses
 
                 else
                     return O = Margin * (diff - 0.5 * Margin);
-            }).Sum() / N;
+            })
+            .Mean();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)

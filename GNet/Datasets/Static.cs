@@ -4,10 +4,10 @@ namespace GNet
 {
     public interface IDataset : ICloneable<IDataset>
     {
+        Data[] DataCollection { get; }
         int Length { get; }
         int InputLength { get; }
         int OutputLength { get; }
-        Data[] DataCollection { get; }
     }
 }
 
@@ -16,12 +16,12 @@ namespace GNet.Datasets.Static
     public class LogicGates : IDataset
     {
         public enum Gates { AND, OR, XOR }
-        public Gates Gate { get; }
 
+        public Data[] DataCollection { get; private set; } = new Data[0];
+        public Gates Gate { get; }
         public int Length { get; } = 4;
         public int InputLength { get; } = 2;
         public int OutputLength { get; } = 1;
-        public Data[] DataCollection { get; private set; } = new Data[0];
 
         public LogicGates(Gates logicGate)
         {

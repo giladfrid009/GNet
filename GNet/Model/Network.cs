@@ -5,8 +5,8 @@ namespace GNet
 {
     public class Network
     {
-        public int Length { get; }
         public Layer[] Layers { get; } = new Layer[0];
+        public int Length { get; }
 
         public Network(Layer[] layers)
         {
@@ -39,16 +39,16 @@ namespace GNet
 
         public double Validate(IDataset dataset, ILoss loss)
         {
-            return dataset.DataCollection.Sum(D => loss.Compute(D.Targets, FeedForward(D.Inputs))) / dataset.Length;
+            return dataset.DataCollection.Accumulate(0.0, (R,D) => R + loss.Compute(D.Targets, FeedForward(D.Inputs))) / dataset.Length;
         }
 
-        private void Backprop(ILoss loss, IOptimizer optimizer, double[] targets)
+        private void Backprop(IOptimizer optimizer, ILoss loss, double[] targets, int epoch)
         {
-            Layers[Length - 1].Backprop(optimizer, loss, targets);
+            Layers[Length - 1].Backprop(optimizer, loss, targets, epoch);
 
             for (int i = Length - 2; i > 0; i--)
             {
-                Layers[i].Backprop(optimizer);
+                Layers[i].Backprop(optimizer, epoch);
             }
         }
 
@@ -57,9 +57,11 @@ namespace GNet
             if (dataset.InputLength != Layers[0].Length || dataset.OutputLength != Layers[Length - 1].Length)
                 throw new Exception("dataset structure mismatch with net structure.");
 
-            var epoch = 0;
-            var epochError = 0.0;
             var staringTime = DateTime.Now;
+            var initialError = Validate(dataset, loss);
+
+            var epoch = 0;
+            var error = 0.0;
 
             for (epoch = 0; epoch < numEpoches; epoch++)
             {
@@ -70,7 +72,7 @@ namespace GNet
                 {
                     FeedForward(D.Inputs);
 
-                    Backprop(loss, optimizer, D.Targets);
+                    Backprop(optimizer, loss, D.Targets, epoch);
 
                     if (index % batchSize == 0)
                     {
@@ -78,13 +80,13 @@ namespace GNet
                     }
                 });
 
-                epochError = Validate(dataset, loss);
+                error = Validate(dataset, loss);
 
-                if (epochError < minError)
+                if (error < minError)
                     break;
             }
 
-            return new TrainingResult(epoch, epochError, DateTime.Now - staringTime);
+            return new TrainingResult(epoch, initialError, error, DateTime.Now - staringTime);
         }
     }
 }

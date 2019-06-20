@@ -55,42 +55,6 @@ namespace GNet.Extensions
             return combined;
         }
 
-        public static TSource Accumulate<TSource>(this TSource[] source, TSource seed, Func<TSource, TSource, TSource> accumulator)
-        {
-            TSource res = seed;
-
-            for (int i = 0; i < source.Length; i++)
-            {
-                res = accumulator(res, source[i]);
-            }
-
-            return res;
-        }
-
-        public static double Sum(this double[] source)
-        {
-            double sum = default;
-
-            for (int i = 0; i < source.Length; i++)
-            {
-                sum += source[i];
-            }
-
-            return sum;
-        }
-
-        public static double Sum<TSource>(this TSource[] source, Func<TSource, double> summer)
-        {
-            double sum = default;
-
-            for (int i = 0; i < source.Length; i++)
-            {
-                sum += summer(source[i]);
-            }
-
-            return sum;
-        }
-
         public static void ForEach<TSource>(this TSource[] source, Action<TSource> action)
         {
             for (int i = 0; i < source.Length; i++)
@@ -117,6 +81,70 @@ namespace GNet.Extensions
                 source[i] = source[index];
                 source[index] = temp;
             }
+        }
+
+        // ------- math
+        // todo: maybe remove it as extensions and implement it as a Math in GNet.Math? cuz after all it extends only for math ops and not for all arrays.
+
+        public static TOut Accumulate<TSource, TOut>(this TSource[] source, TOut seed, Func<TOut, TSource, TOut> accumulator)
+        {
+            TOut res = seed;
+
+            source.ForEach(X => res = accumulator(res, X));
+
+            return res;
+        }
+
+        public static double Sum(this double[] source)
+        {
+            double sum = default;
+
+            source.ForEach(X => sum += X);
+
+            return sum;
+        }
+
+        public static double Mean(this double[] source)
+        {
+            return source.Sum() / source.Length;
+        }
+
+        public static double Min(this double[] source)
+        {
+            double min = source[0];
+
+            source.ForEach(X =>
+            {
+                if (X < min)
+                    min = X;
+            });
+
+            return min;
+        }
+
+        public static double Max(this double[] source)
+        {
+            double max = source[0];
+
+            source.ForEach(X =>
+            {
+                if (X > max)
+                    max = X;
+            });
+
+            return max;
+        }
+
+        // ------- misc
+
+        public static void Print<TSource>(this TSource obj) where TSource : struct
+        {
+            Console.WriteLine(obj);
+        }
+
+        public static void Print<TSource>(this TSource[] objs) where TSource : struct
+        {
+            objs.ForEach(X => Console.WriteLine(X));
         }
     }
 }

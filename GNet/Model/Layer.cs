@@ -5,11 +5,11 @@ namespace GNet
 {
     public class Layer
     {
-        public int Length { get; }
+        public Neuron[] Neurons { get; } = new Neuron[0];
         public IActivation Activation { get; }
         public IInitializer WeightInit { get; }
         public IInitializer BiasInit { get; }
-        public Neuron[] Neurons { get; } = new Neuron[0];
+        public int Length { get; }
 
         public Layer(int length, IActivation activation, IInitializer weightInit, IInitializer biasInit)
         {
@@ -25,7 +25,7 @@ namespace GNet
             }
         }
 
-        public void Connect(Layer inLayer)
+        private void Connect(Layer inLayer)
         {
             inLayer.Neurons.ForEach(N => N.OutSynapses = new Synapse[Length]);
             Neurons.ForEach(N => N.InSynapses = new Synapse[inLayer.Length]);
@@ -68,14 +68,14 @@ namespace GNet
 
         public void FeedForward()
         {
-            Neurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Sum(W => W.Weight * W.InNeuron.ActivatedValue));
+            Neurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Accumulate(0.0, (R, W) => R + W.Weight * W.InNeuron.ActivatedValue));
 
             double[] activated = Activation.Activate(Neurons.Select(N => N.Value));
 
             Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }
 
-        public void CalcGradients(ILoss loss, double[] targets)
+        private void CalcGradients(ILoss loss, double[] targets)
         {
             double[] actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
             double[] lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
@@ -88,27 +88,27 @@ namespace GNet
             });
         }
 
-        public void CalcGradients()
+        private void CalcGradients()
         {
             double[] actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
 
             Neurons.ForEach((N, i) =>
             {
-                N.Gradient = N.OutSynapses.Sum(W => W.Weight * W.OutNeuron.Gradient) * actvDers[i];
+                N.Gradient = N.OutSynapses.Accumulate(0.0, (R, W) => R + W.Weight * W.OutNeuron.Gradient) * actvDers[i];
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
             });
         }
 
-        public void Backprop(IOptimizer optimizer, ILoss loss, double[] targets)
+        public void Backprop(IOptimizer optimizer, ILoss loss, double[] targets, int epoch)
         {
             CalcGradients(loss, targets);
-            optimizer.Optimize(Neurons);
+            optimizer.Optimize(Neurons, epoch);
         }
 
-        public void Backprop(IOptimizer optimizer)
+        public void Backprop(IOptimizer optimizer, int epoch)
         {
             CalcGradients();
-            optimizer.Optimize(Neurons);
+            optimizer.Optimize(Neurons, epoch);
         }
 
         public void Update()

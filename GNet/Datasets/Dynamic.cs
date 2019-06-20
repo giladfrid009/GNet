@@ -14,10 +14,10 @@ namespace GNet.Datasets.Dynamic
 {
     public class EvenOdd : IDynamicDataset
     {
-        public int Length { get { return DataCollection.Length; } }
+        public Data[] DataCollection { get; private set; } = new Data[0];
         public int InputLength { get; }
         public int OutputLength { get; } = 1;
-        public Data[] DataCollection { get; private set; } = new Data[0];
+        public int Length { get => DataCollection.Length; }
 
         public EvenOdd(int intputLength)
         {
@@ -55,10 +55,10 @@ namespace GNet.Datasets.Dynamic
 
     public class Uniform : IDynamicDataset
     {
-        public int Length { get { return DataCollection.Length; } }
+        public Data[] DataCollection { get; private set; } = new Data[0];
         public int InputLength { get; }
         public int OutputLength { get; }
-        public Data[] DataCollection { get; private set; } = new Data[0];
+        public int Length { get => DataCollection.Length;  }
 
         public Uniform(int IOLength)
         {
@@ -94,13 +94,13 @@ namespace GNet.Datasets.Dynamic
     public class MathOp1 : IDynamicDataset
     {
         public enum Ops1 { Sin, Cos, Tan, Exp, Ln, Abs, Asin, Acos, Atan, Round }
-        public double Range { get; }
-        public Ops1 Operation { get; }
 
-        public int Length { get { return DataCollection.Length; } }
+        public Data[] DataCollection { get; private set; } = new Data[0];
+        public Ops1 Operation { get; }
+        public double Range { get; }
         public int InputLength { get; } = 1;
         public int OutputLength { get; } = 1;
-        public Data[] DataCollection { get; private set; } = new Data[0];
+        public int Length { get => DataCollection.Length; }
 
         private readonly Func<double, double> mathFunc;
 
@@ -165,13 +165,13 @@ namespace GNet.Datasets.Dynamic
     public class MathOp2 : IDynamicDataset
     {
         public enum Ops2 { Add, Sub, Mul, Div, Rem, Pow, Root, Log, Min, Max }
-        public double Range { get; }
-        public Ops2 Operation { get; }
 
-        public int Length { get { return DataCollection.Length; } }
+        public Data[] DataCollection { get; private set; } = new Data[0];
+        public Ops2 Operation { get; }
+        public double Range { get; }
         public int InputLength { get; } = 2;
         public int OutputLength { get; } = 1;
-        public Data[] DataCollection { get; private set; } = new Data[0];   
+        public int Length { get => DataCollection.Length; }
 
         private readonly Func<double, double, double> mathFunc;
 
@@ -233,5 +233,35 @@ namespace GNet.Datasets.Dynamic
         }
 
         public IDataset Clone() => new MathOp2(Operation, Range, DataCollection);
-    }    
+    }
+
+    // todo: implement. limit length.
+    public class MNIST : IDynamicDataset
+    {
+        public Data[] DataCollection { get; private set; } = new Data[0];
+        public string Path { get; }
+        public int Length { get; }
+        public int InputLength { get; }
+        public int OutputLength { get; }
+
+        public MNIST(string path)
+        {
+            Path = path;
+        }
+
+        private MNIST(int length, int inputLength, int outputLength, Data[] dataCollection)
+        {
+            Length = length;
+            InputLength = inputLength;
+            OutputLength = outputLength;
+            DataCollection = dataCollection.Select(D => D);
+        }
+
+        public void Generate(int length, INormalizer inputNormalizer, INormalizer outputNormalizer)
+        {
+
+        }
+
+        public IDataset Clone() => new MNIST(Length, InputLength, OutputLength, DataCollection);
+    }
 }

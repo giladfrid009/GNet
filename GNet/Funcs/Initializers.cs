@@ -91,6 +91,7 @@ namespace GNet.Initializers
     public class HeUniform : IInitializer
     {
         public double Init(int nIn, int nOut) => GRandom.NextDouble(Sqrt(6.0 / nIn));
+
         public IInitializer Clone() => new HeUniform();
     }
 

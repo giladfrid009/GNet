@@ -5,17 +5,18 @@ namespace GNet
 {
     public class Data : ICloneable<Data>
     {
-        public double[] Inputs { get; }
-        public double[] Targets { get; }
         public INormalizer InputNormalizer { get; }
         public INormalizer OutputNormalizer { get; }
+        public double[] Inputs { get; }
+        public double[] Targets { get; }
 
         public Data(double[] inputs, double[] targets, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
         {
-            InputNormalizer = inputNormalizer ?? new Normalizers.None();
-            OutputNormalizer = outputNormalizer ?? new Normalizers.None();
+            InputNormalizer = inputNormalizer?.Clone() ?? new Normalizers.None();
+            OutputNormalizer = outputNormalizer?.Clone() ?? new Normalizers.None();
+
             Inputs = InputNormalizer.Normalize(inputs);
-            Targets = OutputNormalizer.Normalize(targets);
+            Targets = OutputNormalizer.Normalize(targets);            
         }
 
         public Data(Array inputs, Array targets, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null) : 

@@ -92,17 +92,17 @@ namespace GNet.Activations
 
     public class LeCunTanh : IActivation
     {
-        private const double a = 1.7159;
-        private const double b = 2.0 / 3;
+        public double A { get; } = 1.7159;
+        public double B { get; } = 2.0 / 3;
 
         public double[] Activate(double[] Vals)
         {
-            return Vals.Select(X => a * Math.Tanh(b * X));
+            return Vals.Select(X => A * Math.Tanh(B * X));
         }
 
         public double[] Derivative(double[] Vals)
         {
-            return Vals.Select(X => a * b / Pow(Cosh(b * X), 2));
+            return Vals.Select(X => A * B / Pow(Cosh(B * X), 2));
         }
 
         public IActivation Clone() => new LeCunTanh();
@@ -311,17 +311,17 @@ namespace GNet.Activations
     /// </summary>
     public class SELU : IActivation
     {
-        private const double a = 1.6732632423543772;
-        private const double b = 1.0507009873554805;
+        public double A { get; } = 1.0507009873554805;
+        public double B { get; } = 1.6732632423543772;
 
         public double[] Activate(double[] Vals)
         {
-            return Vals.Select(X => X < 0 ? b * a * (Exp(X) - 1) : b * X);
+            return Vals.Select(X => X < 0 ? A * B * (Exp(X) - 1) : A * X);
         }
 
         public double[] Derivative(double[] Vals)
         {
-            return Vals.Select(X => X < 0 ? b * a * Exp(X) : b);
+            return Vals.Select(X => X < 0 ? A * B * Exp(X) : A);
         }
 
         public IActivation Clone() => new SELU();
@@ -379,6 +379,7 @@ namespace GNet.Activations
     public class SoftExponential : IActivation
     {
         public double Alpha { get; }
+
         private readonly Func<double, double> activation;
         private readonly Func<double, double> derivative;
 
