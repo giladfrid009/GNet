@@ -1,4 +1,5 @@
-﻿using GNet.Extensions;
+﻿using GNet.Extensions.Generic;
+using GNet.Extensions.Math;
 using static System.Math;
 
 namespace GNet
@@ -20,12 +21,12 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => (T - O) * (T - O)).Mean();
+            return targets.Combine(outputs, (T, O) => (T - O) * (T - O)).Avarage();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => 2 * (O - T));
+            return targets.Combine(outputs, (T, O) => 2.0 * (O - T));
         }
 
         public ILoss Clone() => new MSE();
@@ -38,12 +39,12 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => (Log(T + 1) - Log(O + 1)) * (Log(T + 1) - Log(O + 1))).Mean();
+            return targets.Combine(outputs, (T, O) => (Log(T + 1.0) - Log(O + 1.0)) * (Log(T + 1.0) - Log(O + 1.0))).Avarage();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => -2 * (Log(T + 1) - Log(O + 1)) / (O + 1));
+            return targets.Combine(outputs, (T, O) => -2.0 * (Log(T + 1.0) - Log(O + 1.0)) / (O + 1.0));
         }
 
         public ILoss Clone() => new MSLE();
@@ -56,12 +57,12 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => Abs(T - O)).Mean();
+            return targets.Combine(outputs, (T, O) => Abs(T - O)).Avarage();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => T > O ? 1 : -1);
+            return targets.Combine(outputs, (T, O) => T > O ? 1.0 : -1.0);
         }
 
         public ILoss Clone() => new MAE();
@@ -74,12 +75,12 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => Abs((T - O) / T)).Mean();
+            return targets.Combine(outputs, (T, O) => Abs((T - O) / T)).Avarage();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => O * (T - O) / (Pow(T, 3) * Abs(1 - O / T)));
+            return targets.Combine(outputs, (T, O) => O * (T - O) / (Pow(T, 3.0) * Abs(1.0 - O / T)));
         }
 
         public ILoss Clone() => new MAPE();
@@ -89,7 +90,7 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => Log(Cosh(T - O))).Mean();
+            return targets.Combine(outputs, (T, O) => Log(Cosh(T - O))).Avarage();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -104,7 +105,7 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => T * Log(T / O)).Mean();
+            return targets.Combine(outputs, (T, O) => T * Log(T / O)).Avarage();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -119,7 +120,7 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => -T * Log(O) - (1 - T) * Log(1 - O)).Mean();
+            return targets.Combine(outputs, (T, O) => -T * Log(O) - (1.0 - T) * Log(1.0 - O)).Avarage();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -134,7 +135,7 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => -T * Log(O)).Mean();
+            return targets.Combine(outputs, (T, O) => -T * Log(O)).Avarage();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
@@ -149,12 +150,12 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => -Log(O)).Mean();
+            return targets.Combine(outputs, (T, O) => -Log(O)).Avarage();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => -1 / O);
+            return targets.Combine(outputs, (T, O) => -1.0 / O);
         }
 
         public ILoss Clone() => new NegativeLogLiklihood();
@@ -164,12 +165,12 @@ namespace GNet.Losses
     {
         public double Compute(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => O - T * Log(O)).Mean();
+            return targets.Combine(outputs, (T, O) => O - T * Log(O)).Avarage();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => 1 - (T / O));
+            return targets.Combine(outputs, (T, O) => 1.0 - (T / O));
         }
 
         public ILoss Clone() => new Poisson();
@@ -194,7 +195,7 @@ namespace GNet.Losses
             double tSumSqr = targets.Accumulate(1.0, (R, X) => R + X * X);
             double oSumSqr = outputs.Accumulate(1.0, (R, X) => R + X * X);
 
-            return outputs.Select(O => -tProd * (oProd / O) * Pow(oSumSqr - O * O, 2) / (Abs(tSumSqr) * Pow(oSumSqr, 1.5)));
+            return outputs.Select(O => -tProd * (oProd / O) * Pow(oSumSqr - O * O, 2.0) / (Abs(tSumSqr) * Pow(oSumSqr, 1.5)));
         }
 
         public ILoss Clone() => new CosineProximity();
@@ -204,18 +205,18 @@ namespace GNet.Losses
     {
         public double Margin { get; }
 
-        public Hinge(double margin = 1)
+        public Hinge(double margin = 1.0)
         {
             Margin = margin;
         }
         public double Compute(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => Max(0, Margin - T * O)).Mean();
+            return targets.Combine(outputs, (T, O) => Max(0, Margin - T * O)).Avarage();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => T * O < Margin ? -T : 0);
+            return targets.Combine(outputs, (T, O) => T * O < Margin ? -T : 0.0);
         }
 
         public ILoss Clone() => new Hinge(Margin);
@@ -225,18 +226,18 @@ namespace GNet.Losses
     {
         public double Margin { get; }
 
-        public HingeSquared(double margin = 1)
+        public HingeSquared(double margin = 1.0)
         {
             Margin = margin;
         }
         public double Compute(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => Max(0, Margin - T * O) * Max(0, Margin - T * O)).Mean();
+            return targets.Combine(outputs, (T, O) => Max(0.0, Margin - T * O) * Max(0.0, Margin - T * O)).Avarage();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)
         {
-            return targets.Combine(outputs, (T, O) => T * O < Margin ? -2 * T * (Margin - T * O) : 0);
+            return targets.Combine(outputs, (T, O) => T * O < Margin ? -2.0 * T * (Margin - T * O) : 0.0);
         }
 
         public ILoss Clone() => new HingeSquared(Margin);
@@ -262,7 +263,7 @@ namespace GNet.Losses
                 else
                     return O = Margin * (diff - 0.5 * Margin);
             })
-            .Mean();
+            .Avarage();
         }
 
         public double[] Derivative(double[] targets, double[] outputs)

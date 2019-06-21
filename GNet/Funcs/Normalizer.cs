@@ -1,4 +1,5 @@
-﻿using GNet.Extensions;
+﻿using GNet.Extensions.Generic;
+using GNet.Extensions.Math;
 using static System.Math;
 
 namespace GNet
@@ -11,13 +12,6 @@ namespace GNet
 
 namespace GNet.Normalizers
 {
-    public class None : INormalizer
-    {
-        public double[] Normalize(double[] vals) => vals.Select(V => V);
-
-        public INormalizer Clone() => new None();
-    }
-
     public class Division : INormalizer
     {
         public double Divisor { get; } 
@@ -43,27 +37,27 @@ namespace GNet.Normalizers
             double max = vals.Max();
             double diff = max - min;
 
-            if (diff == 0)
+            if (diff == 0.0)
                 return vals.Select(X => 0.5);
 
             return vals.Select(X => (X - min) / diff);
         }
 
-        public INormalizer Clone() => new None();
+        public INormalizer Clone() => new MinMax();
     }
 
     public class ZScore : INormalizer
     {
         public double[] Normalize(double[] vals)
         {
-            double mean = vals.Mean();
+            double mean = vals.Avarage();
 
             double sd = Sqrt(vals.Accumulate(1.0, (R, X) => R + (X - mean) * (X - mean)) / vals.Length);
 
             return vals.Select(X => (X - mean) / sd);
         }
 
-        public INormalizer Clone() => new None();
+        public INormalizer Clone() => new ZScore();
     }
 
     public class DecimalScale : INormalizer
@@ -77,6 +71,6 @@ namespace GNet.Normalizers
             return vals.Select(X => X / scale);
         }
 
-        public INormalizer Clone() => new None();
+        public INormalizer Clone() => new DecimalScale();
     }
 }

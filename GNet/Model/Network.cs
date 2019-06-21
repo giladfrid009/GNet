@@ -1,4 +1,5 @@
-﻿using GNet.Extensions;
+﻿using GNet.Extensions.Generic;
+using GNet.Extensions.Math;
 using System;
 
 namespace GNet
@@ -52,21 +53,22 @@ namespace GNet
             }
         }
 
-        public TrainingResult Train(IDataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError, bool shuffle = true)
+        public TrainingResult Train(IDataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError, ILoss validationLoss = null)
         {
             if (dataset.InputLength != Layers[0].Length || dataset.OutputLength != Layers[Length - 1].Length)
                 throw new Exception("dataset structure mismatch with net structure.");
 
-            var staringTime = DateTime.Now;
-            var initialError = Validate(dataset, loss);
+            if (validationLoss == null)
+                validationLoss = loss;
 
+            var staringTime = DateTime.Now;
             var epoch = 0;
             var error = 0.0;
+            var initialError = Validate(dataset, validationLoss);
 
             for (epoch = 0; epoch < numEpoches; epoch++)
             {
-                if (shuffle)
-                    dataset.DataCollection.Shuffle();
+                dataset.DataCollection.Shuffle();
 
                 dataset.DataCollection.ForEach((D, index) =>
                 {
@@ -80,7 +82,7 @@ namespace GNet
                     }
                 });
 
-                error = Validate(dataset, loss);
+                error = Validate(dataset, validationLoss);
 
                 if (error < minError)
                     break;

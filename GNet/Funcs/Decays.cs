@@ -12,15 +12,6 @@ namespace GNet
 
 namespace GNet.Optimizers.Decays
 {
-    public class None : IDecay
-    {
-        public double Decay { get; } = 0;
-
-        public double Compute(double value, int iteration) => value;
-
-        public IDecay Clone() => new None();
-    }
-
     public class Subtraction : IDecay
     {
         public double Decay { get; }
@@ -50,7 +41,7 @@ namespace GNet.Optimizers.Decays
         {
             Decay = decay;
             Interval = interval;
-            Multiplier = 1 - Decay;
+            Multiplier = 1.0 - Decay;
         }
 
         public double Compute(double value, int iteration)
@@ -89,7 +80,7 @@ namespace GNet.Optimizers.Decays
 
         public double Compute(double value, int iteration)
         {
-            return value / (1 + Decay * iteration);
+            return value / (1.0 + Decay * iteration);
         }
 
         public IDecay Clone() => new IterationBased(Decay);

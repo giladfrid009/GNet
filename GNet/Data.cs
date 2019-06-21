@@ -1,4 +1,4 @@
-﻿using GNet.Extensions;
+﻿using GNet.Extensions.Generic;
 using System;
 
 namespace GNet
@@ -12,11 +12,11 @@ namespace GNet
 
         public Data(double[] inputs, double[] targets, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
         {
-            InputNormalizer = inputNormalizer?.Clone() ?? new Normalizers.None();
-            OutputNormalizer = outputNormalizer?.Clone() ?? new Normalizers.None();
+            InputNormalizer = inputNormalizer?.Clone();
+            OutputNormalizer = outputNormalizer?.Clone();
 
-            Inputs = InputNormalizer.Normalize(inputs);
-            Targets = OutputNormalizer.Normalize(targets);            
+            Inputs = InputNormalizer?.Normalize(inputs) ?? inputs.Select(X => X);
+            Targets = OutputNormalizer?.Normalize(targets) ?? inputs.Select(X => X);            
         }
 
         public Data(Array inputs, Array targets, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null) : 

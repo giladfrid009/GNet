@@ -11,16 +11,9 @@ namespace GNet
 
 namespace GNet.Initializers
 {
-    public class Nan : IInitializer
-    {
-        public double Init(int nIn, int nOut) => double.NaN;
-
-        public IInitializer Clone() => new Nan();
-    }
-
     public class Zero : IInitializer
     {
-        public double Init(int nIn, int nOut) => 0;
+        public double Init(int nIn, int nOut) => 0.0;
 
         public IInitializer Clone() => new Zero();
     }
@@ -41,14 +34,14 @@ namespace GNet.Initializers
 
     public class One : IInitializer
     {
-        public double Init(int nIn, int nOut) => 1;
+        public double Init(int nIn, int nOut) => 1.0;
 
         public IInitializer Clone() => new One();
     }
 
     public class Uniform : IInitializer
     {
-        public double Init(int nIn, int nOut) => GRandom.NextDouble(-1, 1);
+        public double Init(int nIn, int nOut) => GRandom.NextDouble(-1.0, 1.0);
 
         public IInitializer Clone() => new Uniform();
     }

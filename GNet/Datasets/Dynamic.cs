@@ -1,5 +1,5 @@
 ﻿using System;
-using GNet.Extensions;
+using GNet.Extensions.Generic;
 using GNet.GlobalRandom;
 
 namespace GNet
@@ -40,11 +40,11 @@ namespace GNet.Datasets.Dynamic
 
                 for (int j = 0; j < InputLength; j++)
                 {
-                    inputs[j] = GRandom.NextDouble() < 0.5 ? 0 : 1;
-                    count += inputs[j] == 0 ? 0 : 1;
+                    inputs[j] = GRandom.NextDouble() < 0.5 ? 0.0 : 1.0;
+                    count += inputs[j] == 0.0 ? 0 : 1;
                 }
 
-                double output = count % 2 == 0 ? 0 : 1;
+                double output = count % 2 == 0 ? 0.0 : 1.0;
 
                 DataCollection[i] = new Data(inputs, new double[] { output }, inputNormalizer, outputNormalizer);
             }
@@ -81,7 +81,7 @@ namespace GNet.Datasets.Dynamic
 
                 for (int j = 0; j < InputLength; j++)
                 {
-                    io[j] = GRandom.NextDouble() < 0.5 ? 0 : 1;
+                    io[j] = GRandom.NextDouble() < 0.5 ? 0.0 : 1.0;
                 }
 
                 DataCollection[i] = new Data(io, io.Select(X => X), inputNormalizer, outputNormalizer);
@@ -221,7 +221,7 @@ namespace GNet.Datasets.Dynamic
                 double n2 = 0.0;
                 double res = 0.0;
 
-                while (res == 0)
+                while (res == 0.0)
                 {
                     n1 = Range * GRandom.NextDouble();
                     n2 = Range * GRandom.NextDouble();

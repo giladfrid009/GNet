@@ -1,4 +1,4 @@
-﻿using GNet.Extensions;
+﻿using GNet.Extensions.Generic;
 using static System.Math;
 
 namespace GNet
@@ -19,12 +19,12 @@ namespace GNet.Optimizers
         public Default(double learningRate = 0.01, IDecay decay = null)
         {
             LearningRate = learningRate;
-            Decay = decay?.Clone() ?? new Decays.None();
+            Decay = decay?.Clone();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
 
             neurons.ForEach(N =>
             {
@@ -50,13 +50,12 @@ namespace GNet.Optimizers
         {
             LearningRate = learningRate;
             MomentumValue = momentum;
-
-            Decay = decay?.Clone() ?? new Decays.None();
+            Decay = decay?.Clone();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
 
             neurons.ForEach(N =>
             {
@@ -84,25 +83,24 @@ namespace GNet.Optimizers
         {
             LearningRate = learningRate;
             MomentumValue = momentum;
-
-            Decay = decay?.Clone() ?? new Decays.None();
+            Decay = decay?.Clone();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
 
             neurons.ForEach(N =>
             {
                 var oldDelta = N.Cache1;
                 N.Cache1 = -lr * N.Gradient + MomentumValue * N.Cache1;
-                N.BatchBias += (1 + MomentumValue) * N.Cache1 - MomentumValue * oldDelta;
+                N.BatchBias += (1.0 + MomentumValue) * N.Cache1 - MomentumValue * oldDelta;
 
                 N.InSynapses.ForEach(S =>
                 {
                     oldDelta = S.Cache1;
                     S.Cache1 = -lr * S.Gradient + MomentumValue * S.Cache1;
-                    S.BatchWeight += (1 + MomentumValue) * S.Cache1 - MomentumValue * oldDelta;
+                    S.BatchWeight += (1.0 + MomentumValue) * S.Cache1 - MomentumValue * oldDelta;
                 });
             });
 
@@ -111,6 +109,7 @@ namespace GNet.Optimizers
         public IOptimizer Clone() => new NestrovMomentum(LearningRate, MomentumValue, Decay);
     }
 
+    // todo: test if working
     public class AdaGrad : IOptimizer
     {
         public IDecay Decay { get; }
@@ -121,13 +120,12 @@ namespace GNet.Optimizers
         {
             LearningRate = learningRate;
             Epsilon = epsilon;
-
-            Decay = decay?.Clone() ?? new Decays.None();
+            Decay = decay?.Clone();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
 
             neurons.ForEach(N =>
             {
@@ -158,22 +156,21 @@ namespace GNet.Optimizers
             LearningRate = learningRate;
             Rho = rho;
             Epsilon = epsilon;
-
-            Decay = decay?.Clone() ?? new Decays.None();
+            Decay = decay?.Clone();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
 
             neurons.ForEach(N =>
             {
-                N.Cache1 = Rho * N.Cache1 + (1 - Rho) * N.Gradient * N.Gradient;
+                N.Cache1 = Rho * N.Cache1 + (1.0 - Rho) * N.Gradient * N.Gradient;
                 N.BatchBias += -lr * N.Gradient / Sqrt(N.Cache1 + Epsilon);
 
                 N.InSynapses.ForEach(S =>
                 {
-                    S.Cache1 = Rho * S.Cache1 + (1 - Rho) * S.Gradient * S.Gradient;
+                    S.Cache1 = Rho * S.Cache1 + (1.0 - Rho) * S.Gradient * S.Gradient;
                     S.BatchWeight += -lr * S.Gradient / Sqrt(S.Cache1 + Epsilon);
                 });
             });
@@ -195,26 +192,25 @@ namespace GNet.Optimizers
             LearningRate = learningRate;
             Rho = rho;
             Epsilon = epsilon;
-
-            Decay = decay?.Clone() ?? new Decays.None();
+            Decay = decay?.Clone();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
 
             neurons.ForEach(N =>
             {
-                N.Cache1 = Rho * N.Cache1 + (1 - Rho) * N.Gradient * N.Gradient;
+                N.Cache1 = Rho * N.Cache1 + (1.0 - Rho) * N.Gradient * N.Gradient;
                 var delta = -Sqrt(N.Cache2 + Epsilon) * N.Gradient / Sqrt(N.Cache1 + Epsilon);
-                N.Cache2 = Rho * N.Cache2 + (1 - Rho) * delta * delta;
+                N.Cache2 = Rho * N.Cache2 + (1.0 - Rho) * delta * delta;
                 N.BatchBias += delta;
 
                 N.InSynapses.ForEach(S =>
                 {
-                    S.Cache1 = Rho * S.Cache1 + (1 - Rho) * S.Gradient * S.Gradient;
+                    S.Cache1 = Rho * S.Cache1 + (1.0 - Rho) * S.Gradient * S.Gradient;
                     delta = -Sqrt(S.Cache2 + Epsilon) * S.Gradient / Sqrt(S.Cache1 + Epsilon);
-                    S.Cache2 = Rho * S.Cache2 + (1 - Rho) * delta * delta;
+                    S.Cache2 = Rho * S.Cache2 + (1.0 - Rho) * delta * delta;
                     S.BatchWeight += lr * delta;
                 });
             });
@@ -236,22 +232,21 @@ namespace GNet.Optimizers
             LearningRate = learningRate;
             Rho = rho;
             Epsilon = epsilon;
-
-            Decay = decay?.Clone() ?? new Decays.None();
+            Decay = decay?.Clone();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
 
             neurons.ForEach(N =>
             {
-                N.Cache1 = Rho * N.Cache1 + (1 - Rho) * N.Gradient * N.Gradient;
+                N.Cache1 = Rho * N.Cache1 + (1.0 - Rho) * N.Gradient * N.Gradient;
                 N.BatchBias += -lr * N.Gradient / (Sqrt(N.Cache1) + Epsilon);
 
                 N.InSynapses.ForEach(S =>
                 {
-                    S.Cache1 = Rho * S.Cache1 + (1 - Rho) * S.Gradient * S.Gradient;
+                    S.Cache1 = Rho * S.Cache1 + (1.0 - Rho) * S.Gradient * S.Gradient;
                     S.BatchWeight += -lr * S.Gradient / (Sqrt(S.Cache1) + Epsilon);
                 });
             });
@@ -274,29 +269,28 @@ namespace GNet.Optimizers
             Beta1 = beta1;
             Beta2 = beta2;
             Epsilon = epsilon;
-
-            Decay = decay?.Clone() ?? new Decays.None();
+            Decay = decay?.Clone();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
 
             var val1 = 1 - Pow(Beta1, epoch);
             var val2 = 1 - Pow(Beta2, epoch);
 
             neurons.ForEach(N =>
             {
-                N.Cache1 = Beta1 * N.Cache1 + (1 - Beta1) * N.Gradient;
-                N.Cache2 = Beta2 * N.Cache2 + (1 - Beta2) * N.Gradient * N.Gradient;
+                N.Cache1 = Beta1 * N.Cache1 + (1.0 - Beta1) * N.Gradient;
+                N.Cache2 = Beta2 * N.Cache2 + (1.0 - Beta2) * N.Gradient * N.Gradient;
                 var corr1 = N.Cache1 / val1;
                 var corr2 = N.Cache2 / val2;
                 N.BatchBias += -lr * corr1 / (Sqrt(corr2) + Epsilon);
 
                 N.InSynapses.ForEach(S =>
                 {
-                    S.Cache1 = Beta1 * S.Cache1 + (1 - Beta1) * S.Gradient;
-                    S.Cache2 = Beta2 * S.Cache2 + (1 - Beta2) * S.Gradient * S.Gradient;
+                    S.Cache1 = Beta1 * S.Cache1 + (1.0 - Beta1) * S.Gradient;
+                    S.Cache2 = Beta2 * S.Cache2 + (1.0 - Beta2) * S.Gradient * S.Gradient;
                     corr1 = S.Cache1 / val1;
                     corr2 = S.Cache2 / val2;
                     S.BatchWeight += -lr * corr1 / (Sqrt(corr2) + Epsilon);
@@ -321,26 +315,25 @@ namespace GNet.Optimizers
             Beta1 = beta1;
             Beta2 = beta2;
             Epsilon = epsilon;
-
-            Decay = decay?.Clone() ?? new Decays.None();
+            Decay = decay?.Clone();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
 
             var val1 = 1 - Pow(Beta1, epoch);
 
             neurons.ForEach(N =>
             {
-                N.Cache1 = Beta1 * N.Cache1 + (1 - Beta1) * N.Gradient;
+                N.Cache1 = Beta1 * N.Cache1 + (1.0 - Beta1) * N.Gradient;
                 N.Cache2 = Max(Beta2 * N.Cache2, Abs(N.Gradient));
                 var corr1 = N.Cache1 / val1;
                 N.BatchBias += -lr * corr1 / (N.Cache2 + Epsilon);
 
                 N.InSynapses.ForEach(S =>
                 {
-                    S.Cache1 = Beta1 * S.Cache1 + (1 - Beta1) * S.Gradient;
+                    S.Cache1 = Beta1 * S.Cache1 + (1.0 - Beta1) * S.Gradient;
                     S.Cache2 = Max(Beta2 * S.Cache2, Abs(S.Gradient));
                     corr1 = S.Cache1 / val1;
                     S.BatchWeight += -lr * corr1 / (S.Cache2 + Epsilon);

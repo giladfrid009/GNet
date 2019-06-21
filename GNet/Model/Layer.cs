@@ -1,4 +1,5 @@
-﻿using GNet.Extensions;
+﻿using GNet.Extensions.Generic;
+using GNet.Extensions.Math;
 using System;
 
 namespace GNet
@@ -77,6 +78,9 @@ namespace GNet
 
         private void CalcGradients(ILoss loss, double[] targets)
         {
+            if (loss is IOutTransformer)
+                throw new ArgumentException("this loss doesn't support backpropogation");
+
             double[] actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
             double[] lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
             double[] grads = lossDers.Combine(actvDers, (LD, AD) => LD * AD);
