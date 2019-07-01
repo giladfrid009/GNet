@@ -21,12 +21,12 @@ namespace GNet
             {
                 Layers[i].Init(Layers[i - 1]);
             }
-        }        
+        }
 
         public double[] FeedForward(double[] inputs)
         {
             if (inputs.Length != Layers[0].Length)
-                throw new ArgumentOutOfRangeException("input length and input layer length mismatch");
+                throw new ArgumentOutOfRangeException("Input length and input layer length mismatch.");
 
             Layers[0].SetInput(inputs);
 
@@ -40,7 +40,7 @@ namespace GNet
 
         public double Validate(IDataset dataset, ILoss loss)
         {
-            return dataset.DataCollection.Accumulate(0.0, (R,D) => R + loss.Compute(D.Targets, FeedForward(D.Inputs))) / dataset.Length;
+            return dataset.DataCollection.Accumulate(0.0, (R, D) => R + loss.Compute(D.Targets, FeedForward(D.Inputs))) / dataset.DataLength;
         }
 
         private void Backprop(IOptimizer optimizer, ILoss loss, double[] targets, int epoch)
@@ -53,19 +53,16 @@ namespace GNet
             }
         }
 
-        public TrainingResult Train(IDataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError, ILoss validationLoss = null)
+        public TrainingResult Train(IDataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError)
         {
-            if (dataset.InputLength != Layers[0].Length || dataset.OutputLength != Layers[Length - 1].Length)
-                throw new Exception("dataset structure mismatch with net structure.");
-
-            if (validationLoss == null)
-                validationLoss = loss;
+            if (dataset.InputLength != Layers[0].Length || dataset.TargetLength != Layers[Length - 1].Length)
+                throw new Exception("Dataset structure mismatch with network structure.");
 
             var staringTime = DateTime.Now;
-            var epoch = 0;
             var error = 0.0;
-            var initialError = Validate(dataset, validationLoss);
+            var initialError = Validate(dataset, loss);
 
+            int epoch;
             for (epoch = 0; epoch < numEpoches; epoch++)
             {
                 dataset.DataCollection.Shuffle();
@@ -82,13 +79,53 @@ namespace GNet
                     }
                 });
 
-                error = Validate(dataset, validationLoss);
+                error = Validate(dataset, loss);
 
                 if (error < minError)
                     break;
             }
 
-            return new TrainingResult(epoch, initialError, error, DateTime.Now - staringTime);
+            return new TrainingResult(DateTime.Now - staringTime, epoch, initialError, error, double.NaN);
         }
+
+        public TrainingResult Train(IDataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double valMinError, IDataset valDataset, ILoss valLoss)
+        {
+            if (dataset.InputLength != Layers[0].Length || dataset.TargetLength != Layers[Length - 1].Length)
+                throw new Exception("Dataset structure mismatch with network structure.");
+
+            if (valDataset.InputLength != Layers[0].Length || valDataset.TargetLength != Layers[Length - 1].Length)
+                throw new Exception("ValDataset structure mismatch with network structure.");
+
+            var staringTime = DateTime.Now;
+            var valError = 0.0;
+            var initialError = Validate(dataset, loss);
+
+            int epoch;
+            for (epoch = 0; epoch < numEpoches; epoch++)
+            {
+                dataset.DataCollection.Shuffle();
+
+                dataset.DataCollection.ForEach((D, index) =>
+                {
+                    FeedForward(D.Inputs);
+
+                    Backprop(optimizer, loss, D.Targets, epoch);
+
+                    if (index % batchSize == 0)
+                    {
+                        Layers.ForEach(L => L.Update());
+                    }
+                });
+
+                valError = Validate(valDataset, valLoss);
+
+                if (valError < valMinError)
+                    break;
+            }
+
+            var finalError = Validate(dataset, loss);
+
+            return new TrainingResult(DateTime.Now - staringTime, epoch, initialError, finalError, valError);
+        }        
     }
 }

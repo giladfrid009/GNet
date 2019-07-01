@@ -7,14 +7,16 @@ namespace GNet
         public TimeSpan ExecutionTime { get; }
         public double InitialError { get; }
         public double FinalError { get; }
+        public double ValidationError { get; }
         public int EpochesCompleted { get; }
 
-        public TrainingResult(int epochesCompleted, double initialError, double finalError, TimeSpan executionTime)
+        public TrainingResult(TimeSpan executionTime, int epochesCompleted, double initialError, double finalError, double validationError)
         {
-            EpochesCompleted = epochesCompleted;
+            ExecutionTime = executionTime;
             InitialError = initialError;
             FinalError = finalError;
-            ExecutionTime = executionTime;
+            ValidationError = validationError;
+            EpochesCompleted = epochesCompleted;
         }
 
         public void Print()
@@ -24,6 +26,7 @@ namespace GNet
             Console.WriteLine(" Epoches Completed: {0}", EpochesCompleted);
             Console.WriteLine(" Initial Error:     {0}", InitialError);
             Console.WriteLine(" Final Error:       {0}", FinalError);
+            Console.WriteLine(" Validation Error:  {0}", ValidationError);
         }
     }
 }

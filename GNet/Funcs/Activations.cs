@@ -8,9 +8,9 @@ namespace GNet
 {
     public interface IActivation : ICloneable<IActivation>
     {
-        double[] Activate(double[] Vals);
+        double[] Activate(double[] vals);
 
-        double[] Derivative(double[] Vals);
+        double[] Derivative(double[] vals);
     }
 }
 
@@ -18,14 +18,14 @@ namespace GNet.Activations
 {
     public class Identity : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => X);
+            return vals.Select(X => X);
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => 1.0);
+            return vals.Select(X => 1.0);
         }
 
         public IActivation Clone() => new Identity();
@@ -33,14 +33,14 @@ namespace GNet.Activations
 
     public class BinaryStep : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => X > 0.0 ? 1.0 : 0.0);
+            return vals.Select(X => X > 0.0 ? 1.0 : 0.0);
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => 0.0);
+            return vals.Select(X => 0.0);
         }
 
         public IActivation Clone() => new BinaryStep();
@@ -48,14 +48,14 @@ namespace GNet.Activations
 
     public class Sigmoid : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => 1.0 / (1.0 + Exp(-X)));
+            return vals.Select(X => 1.0 / (1.0 + Exp(-X)));
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => Exp(X) / Pow(Exp(X) + 1.0, 2.0));
+            return vals.Select(X => Exp(X) / Pow(Exp(X) + 1.0, 2.0));
         }
 
         public IActivation Clone() => new Sigmoid();
@@ -63,14 +63,14 @@ namespace GNet.Activations
 
     public class HardSigmoid : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => X < -2.5 ? 0.0 : X > 2.5 ? 1.0 : 0.2 * X + 0.5);
+            return vals.Select(X => X < -2.5 ? 0.0 : X > 2.5 ? 1.0 : 0.2 * X + 0.5);
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => X < -2.5 || X > 2.5 ? 0.0 : 0.2);
+            return vals.Select(X => X < -2.5 || X > 2.5 ? 0.0 : 0.2);
         }
 
         public IActivation Clone() => new HardSigmoid();
@@ -78,14 +78,14 @@ namespace GNet.Activations
 
     public class Tanh : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => Math.Tanh(X));
+            return vals.Select(X => Math.Tanh(X));
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => 1.0 / Pow(Cosh(X), 2));
+            return vals.Select(X => 1.0 / Pow(Cosh(X), 2));
         }
 
         public IActivation Clone() => new Tanh();
@@ -96,14 +96,14 @@ namespace GNet.Activations
         public double A { get; } = 1.7159;
         public double B { get; } = 2.0 / 3.0;
 
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => A * Math.Tanh(B * X));
+            return vals.Select(X => A * Math.Tanh(B * X));
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => A * B / Pow(Cosh(B * X), 2.0));
+            return vals.Select(X => A * B / Pow(Cosh(B * X), 2.0));
         }
 
         public IActivation Clone() => new LeCunTanh();
@@ -111,14 +111,14 @@ namespace GNet.Activations
 
     public class ArcTan : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => Atan(X));
+            return vals.Select(X => Atan(X));
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => 1.0 / (1.0 + X * X));
+            return vals.Select(X => 1.0 / (1.0 + X * X));
         }
 
         public IActivation Clone() => new ArcTan();
@@ -126,14 +126,14 @@ namespace GNet.Activations
 
     public class ArSinh : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => Asinh(X));
+            return vals.Select(X => Asinh(X));
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => 1.0 / Sqrt(1.0 + X * X));
+            return vals.Select(X => 1.0 / Sqrt(1.0 + X * X));
         }
 
         public IActivation Clone() => new ArSinh();
@@ -141,14 +141,14 @@ namespace GNet.Activations
 
     public class SoftSign : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => X / (1.0 + Abs(X)));
+            return vals.Select(X => X / (1.0 + Abs(X)));
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => 1.0 / Pow(1.0 + Abs(X), 2));
+            return vals.Select(X => 1.0 / Pow(1.0 + Abs(X), 2));
         }
 
         public IActivation Clone() => new SoftSign();
@@ -166,14 +166,14 @@ namespace GNet.Activations
             Alpha = alpha;
         }
 
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => X / Sqrt(1.0 + Alpha * X * X));
+            return vals.Select(X => X / Sqrt(1.0 + Alpha * X * X));
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => Pow(X / Sqrt(1.0 + Alpha * X * X), 3.0));
+            return vals.Select(X => Pow(X / Sqrt(1.0 + Alpha * X * X), 3.0));
         }
 
         public IActivation Clone() => new ISRU(Alpha);
@@ -191,14 +191,14 @@ namespace GNet.Activations
             Alpha = alpha;
         }
 
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => X >= 0.0 ? X : X / Sqrt(1.0 + Alpha * X * X));
+            return vals.Select(X => X >= 0.0 ? X : X / Sqrt(1.0 + Alpha * X * X));
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => X >= 0.0 ? 1.0 : Pow(X / Sqrt(1.0 + Alpha * X * X), 3.0));
+            return vals.Select(X => X >= 0.0 ? 1.0 : Pow(X / Sqrt(1.0 + Alpha * X * X), 3.0));
         }
 
         public IActivation Clone() => new ISRLU(Alpha);
@@ -209,9 +209,9 @@ namespace GNet.Activations
     /// </summary>
     public class SQNL : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X =>
+            return vals.Select(X =>
             {
                 if (X > 2.0)
                     return 1.0;
@@ -226,9 +226,9 @@ namespace GNet.Activations
             });
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => X > 0.0 ? 1.0 - X / 2.0 : 1.0 + X / 2.0);
+            return vals.Select(X => X > 0.0 ? 1.0 - X / 2.0 : 1.0 + X / 2.0);
         }
 
         public IActivation Clone() => new SQNL();
@@ -246,14 +246,14 @@ namespace GNet.Activations
             Slope = slope;
         }
 
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => X < 0.0 ? Slope * X : X);
+            return vals.Select(X => X < 0.0 ? Slope * X : X);
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => X < 0.0 ? Slope : 1.0);
+            return vals.Select(X => X < 0.0 ? Slope : 1.0);
         }
 
         public IActivation Clone() => new ReLu(Slope);
@@ -276,14 +276,14 @@ namespace GNet.Activations
             Slope = slope;
         }
 
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => X < 0.0 ? Slope * X : X);
+            return vals.Select(X => X < 0.0 ? Slope * X : X);
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => X < 0.0 ? Slope : 1);
+            return vals.Select(X => X < 0.0 ? Slope : 1);
         }
 
         public IActivation Clone() => new RReLu(Slope);
@@ -294,14 +294,14 @@ namespace GNet.Activations
     /// </summary>
     public class ELU : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => X < 0.0 ? (Exp(X) - 1.0) : X);
+            return vals.Select(X => X < 0.0 ? (Exp(X) - 1.0) : X);
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => X < 0.0 ? Exp(X) : 1.0);
+            return vals.Select(X => X < 0.0 ? Exp(X) : 1.0);
         }
 
         public IActivation Clone() => new ELU();
@@ -315,14 +315,14 @@ namespace GNet.Activations
         public double A { get; } = 1.0507009873554805;
         public double B { get; } = 1.6732632423543772;
 
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => X < 0.0 ? A * B * (Exp(X) - 1.0) : A * X);
+            return vals.Select(X => X < 0.0 ? A * B * (Exp(X) - 1.0) : A * X);
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => X < 0.0 ? A * B * Exp(X) : A);
+            return vals.Select(X => X < 0.0 ? A * B * Exp(X) : A);
         }
 
         public IActivation Clone() => new SELU();
@@ -330,14 +330,14 @@ namespace GNet.Activations
 
     public class SoftPlus : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => Log(1.0 + Exp(X)));
+            return vals.Select(X => Log(1.0 + Exp(X)));
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => 1.0 / (1.0 + Exp(-X)));
+            return vals.Select(X => 1.0 / (1.0 + Exp(-X)));
         }
 
         public IActivation Clone() => new SoftPlus();
@@ -345,14 +345,14 @@ namespace GNet.Activations
 
     public class BentIdentity : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => (Sqrt(X * X + 1.0) - 1.0) / 2.0 + X);
+            return vals.Select(X => (Sqrt(X * X + 1.0) - 1.0) / 2.0 + X);
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => X / (2.0 * Sqrt(X * X + 1.0)) + 1.0);
+            return vals.Select(X => X / (2.0 * Sqrt(X * X + 1.0)) + 1.0);
         }
 
         public IActivation Clone() => new BentIdentity();
@@ -360,14 +360,14 @@ namespace GNet.Activations
 
     public class Swish : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => X / (Exp(-X) + 1.0));
+            return vals.Select(X => X / (Exp(-X) + 1.0));
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X =>
+            return vals.Select(X =>
             {
                 var exp = Exp(X);
                 return exp * (1.0 + exp + X) / Pow(1.0 + exp, 2.0);
@@ -405,14 +405,14 @@ namespace GNet.Activations
             }
         }
 
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => activation(X));
+            return vals.Select(X => activation(X));
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => derivative(X));
+            return vals.Select(X => derivative(X));
         }
 
         public IActivation Clone() => new SoftExponential(Alpha);
@@ -427,14 +427,14 @@ namespace GNet.Activations
             Alpha = alpha;
         }
 
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => 1.0 / Alpha * Log((1.0 + Exp(Alpha * X)) / (1.0 + Exp(Alpha * X - Alpha))));
+            return vals.Select(X => 1.0 / Alpha * Log((1.0 + Exp(Alpha * X)) / (1.0 + Exp(Alpha * X - Alpha))));
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => 0.5 * Sinh(0.5 * Alpha) * (1.0 / Cosh(0.5 * Alpha * X)) * (1.0 / Cosh(0.5 * Alpha * (1.0 - X))));
+            return vals.Select(X => 0.5 * Sinh(0.5 * Alpha) * (1.0 / Cosh(0.5 * Alpha * X)) * (1.0 / Cosh(0.5 * Alpha * (1.0 - X))));
         }
 
         public IActivation Clone() => new SoftClipping(Alpha);
@@ -442,14 +442,14 @@ namespace GNet.Activations
 
     public class Sinusoid : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => Sin(X));
+            return vals.Select(X => Sin(X));
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => Cos(X));
+            return vals.Select(X => Cos(X));
         }
 
         public IActivation Clone() => new Sinusoid();
@@ -457,14 +457,14 @@ namespace GNet.Activations
 
     public class Sinc : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => X != 0.0 ? Sin(X) / X : 1.0);
+            return vals.Select(X => X != 0.0 ? Sin(X) / X : 1.0);
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => X != 0.0 ? Cos(X) / X - Sin(X) / (X * X) : 0.0);
+            return vals.Select(X => X != 0.0 ? Cos(X) / X - Sin(X) / (X * X) : 0.0);
         }
 
         public IActivation Clone() => new Sinc();
@@ -472,14 +472,14 @@ namespace GNet.Activations
 
     public class Gaussian : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            return Vals.Select(X => Exp(-X * X));
+            return vals.Select(X => Exp(-X * X));
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            return Vals.Select(X => -2.0 * X * Exp(-X * X));
+            return vals.Select(X => -2.0 * X * Exp(-X * X));
         }
 
         public IActivation Clone() => new Gaussian();
@@ -487,18 +487,18 @@ namespace GNet.Activations
 
     public class Softmax : IActivation
     {
-        public double[] Activate(double[] Vals)
+        public double[] Activate(double[] vals)
         {
-            double[] exps = Vals.Select(X => Exp(X));
+            double[] exps = vals.Select(X => Exp(X));
 
             double sum = exps.Sum();
 
             return exps.Select(E => E / sum);
         }
 
-        public double[] Derivative(double[] Vals)
+        public double[] Derivative(double[] vals)
         {
-            double[] exps = Vals.Select(X => Exp(X));
+            double[] exps = vals.Select(X => Exp(X));
 
             double sum = exps.Sum();
 

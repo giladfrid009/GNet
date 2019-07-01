@@ -16,8 +16,8 @@ namespace GNet.Datasets.Dynamic
     {
         public Data[] DataCollection { get; private set; } = new Data[0];
         public int InputLength { get; }
-        public int OutputLength { get; } = 1;
-        public int Length { get => DataCollection.Length; }
+        public int TargetLength { get; } = 1;
+        public int DataLength { get => DataCollection.Length; }
 
         public EvenOdd(int intputLength)
         {
@@ -35,16 +35,16 @@ namespace GNet.Datasets.Dynamic
 
             for (int i = 0; i < length; i++)
             {
-                int count = 0;
+                int zeroCount = 0;
                 double[] inputs = new double[InputLength];
 
                 for (int j = 0; j < InputLength; j++)
                 {
                     inputs[j] = GRandom.NextDouble() < 0.5 ? 0.0 : 1.0;
-                    count += inputs[j] == 0.0 ? 0 : 1;
+                    zeroCount += inputs[j] == 0.0 ? 0 : 1;
                 }
 
-                double output = count % 2 == 0 ? 0.0 : 1.0;
+                double output = zeroCount % 2 == 0 ? 0.0 : 1.0;
 
                 DataCollection[i] = new Data(inputs, new double[] { output }, inputNormalizer, outputNormalizer);
             }
@@ -57,13 +57,13 @@ namespace GNet.Datasets.Dynamic
     {
         public Data[] DataCollection { get; private set; } = new Data[0];
         public int InputLength { get; }
-        public int OutputLength { get; }
-        public int Length { get => DataCollection.Length;  }
+        public int TargetLength { get; }
+        public int DataLength { get => DataCollection.Length;  }
 
         public Uniform(int IOLength)
         {
             InputLength = IOLength;
-            OutputLength = IOLength;
+            TargetLength = IOLength;
         }
 
         private Uniform(int IOLength, Data[] dataset): this(IOLength)
@@ -99,8 +99,8 @@ namespace GNet.Datasets.Dynamic
         public Ops1 Operation { get; }
         public double Range { get; }
         public int InputLength { get; } = 1;
-        public int OutputLength { get; } = 1;
-        public int Length { get => DataCollection.Length; }
+        public int TargetLength { get; } = 1;
+        public int DataLength { get => DataCollection.Length; }
 
         private readonly Func<double, double> mathFunc;
 
@@ -131,7 +131,7 @@ namespace GNet.Datasets.Dynamic
 
                 case Ops1.Round: mathFunc = (X) => Math.Round(X); break;
 
-                default: throw new ArgumentOutOfRangeException("Unsupported operation");
+                default: throw new ArgumentOutOfRangeException("Unsupported operation.");
             }
         }
 
@@ -170,8 +170,8 @@ namespace GNet.Datasets.Dynamic
         public Ops2 Operation { get; }
         public double Range { get; }
         public int InputLength { get; } = 2;
-        public int OutputLength { get; } = 1;
-        public int Length { get => DataCollection.Length; }
+        public int TargetLength { get; } = 1;
+        public int DataLength { get => DataCollection.Length; }
 
         private readonly Func<double, double, double> mathFunc;
 
@@ -202,7 +202,7 @@ namespace GNet.Datasets.Dynamic
 
                 case Ops2.Max: mathFunc = (X, Y) => Math.Max(X, Y); break;
 
-                default: throw new ArgumentOutOfRangeException("Unsupported operation");
+                default: throw new ArgumentOutOfRangeException("Unsupported operation.");
             }
         }
 
@@ -233,35 +233,5 @@ namespace GNet.Datasets.Dynamic
         }
 
         public IDataset Clone() => new MathOp2(Operation, Range, DataCollection);
-    }
-
-    // todo: implement. limit length.
-    public class MNIST : IDynamicDataset
-    {
-        public Data[] DataCollection { get; private set; } = new Data[0];
-        public string Path { get; }
-        public int Length { get; }
-        public int InputLength { get; }
-        public int OutputLength { get; }
-
-        public MNIST(string path)
-        {
-            Path = path;
-        }
-
-        private MNIST(int length, int inputLength, int outputLength, Data[] dataCollection)
-        {
-            Length = length;
-            InputLength = inputLength;
-            OutputLength = outputLength;
-            DataCollection = dataCollection.Select(D => D);
-        }
-
-        public void Generate(int length, INormalizer inputNormalizer, INormalizer outputNormalizer)
-        {
-
-        }
-
-        public IDataset Clone() => new MNIST(Length, InputLength, OutputLength, DataCollection);
     }
 }

@@ -58,7 +58,7 @@ namespace GNet.OutTransformers.Losses
 
         public double[] Derivative(double[] targets, double[] outputs)
         {
-            throw new Exception("This loss can't be used in backpropogation");
+            throw new Exception("This loss can't be used in backpropogation.");
         }
 
         public new ILoss Clone() => new BinaryRoundLoss(Bound);
@@ -73,7 +73,7 @@ namespace GNet.OutTransformers.Losses
 
         public double[] Derivative(double[] targets, double[] outputs)
         {
-            throw new Exception("This loss can't be used in backpropogation");
+            throw new Exception("This loss can't be used in backpropogation.");
         }
 
         public new ILoss Clone() => new BinaryMaxLoss();

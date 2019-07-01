@@ -1,27 +1,28 @@
 ﻿using System;
+using GNet.Extensions.Generic;
 
 namespace GNet
 {
     public interface IDataset : ICloneable<IDataset>
     {
         Data[] DataCollection { get; }
-        int Length { get; }
+        int DataLength { get; }
         int InputLength { get; }
-        int OutputLength { get; }
+        int TargetLength { get; }
     }
 }
 
 namespace GNet.Datasets.Static
-{
+{    
     public class LogicGates : IDataset
     {
-        public enum Gates { AND, OR, XOR }
+        public enum Gates { AND, OR, XOR, NAND, NOR, XNOR }
 
         public Data[] DataCollection { get; private set; } = new Data[0];
         public Gates Gate { get; }
-        public int Length { get; } = 4;
+        public int DataLength { get; } = 4;
         public int InputLength { get; } = 2;
-        public int OutputLength { get; } = 1;
+        public int TargetLength { get; } = 1;
 
         public LogicGates(Gates logicGate)
         {
@@ -65,9 +66,45 @@ namespace GNet.Datasets.Static
                     break;
                 }
 
+                case Gates.NAND:
+                {
+                    DataCollection = new Data[]
+                    {
+                        new Data(new double[] { 0.0, 0.0 }, new double[] { 1.0 }),
+                        new Data(new double[] { 0.0, 1.0 }, new double[] { 1.0 }),
+                        new Data(new double[] { 1.0, 0.0 }, new double[] { 1.0 }),
+                        new Data(new double[] { 1.0, 1.0 }, new double[] { 0.0 })
+                    };
+                    break;
+                }
+
+                case Gates.NOR:
+                {
+                    DataCollection = new Data[]
+                    {
+                        new Data(new double[] { 0.0, 0.0 }, new double[] { 1.0 }),
+                        new Data(new double[] { 0.0, 1.0 }, new double[] { 0.0 }),
+                        new Data(new double[] { 1.0, 0.0 }, new double[] { 0.0 }),
+                        new Data(new double[] { 1.0, 1.0 }, new double[] { 0.0 })
+                    };
+                    break;
+                }
+
+                case Gates.XNOR:
+                {
+                    DataCollection = new Data[]
+                    {
+                        new Data(new double[] { 0.0, 0.0 }, new double[] { 1.0 }),
+                        new Data(new double[] { 0.0, 1.0 }, new double[] { 0.0 }),
+                        new Data(new double[] { 1.0, 0.0 }, new double[] { 0.0 }),
+                        new Data(new double[] { 1.0, 1.0 }, new double[] { 1.0 })
+                    };
+                    break;
+                }
+
                 default:
                 {
-                    throw new ArgumentOutOfRangeException("Unsupported Gate");
+                    throw new ArgumentOutOfRangeException("unsupported logic gate.");
                 }
             }
         }      

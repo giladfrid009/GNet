@@ -16,7 +16,7 @@ namespace GNet
             OutputNormalizer = outputNormalizer?.Clone();
 
             Inputs = InputNormalizer?.Normalize(inputs) ?? inputs.Select(X => X);
-            Targets = OutputNormalizer?.Normalize(targets) ?? inputs.Select(X => X);            
+            Targets = OutputNormalizer?.Normalize(targets) ?? targets.Select(X => X);
         }
 
         public Data(Array inputs, Array targets, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null) : 
