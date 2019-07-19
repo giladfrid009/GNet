@@ -56,7 +56,7 @@ namespace GNet
         public void SetInput(double[] values)
         {
             if (values.Length != Length)
-                throw new ArgumentOutOfRangeException("values length mismatch");
+                throw new ArgumentOutOfRangeException("Values length mismatch.");
 
             double[] activated = Activation.Activate(values);
 
@@ -79,7 +79,7 @@ namespace GNet
         private void CalcGradients(ILoss loss, double[] targets)
         {
             if (loss is IOutTransformer)
-                throw new ArgumentException("this loss doesn't support backpropogation");
+                throw new ArgumentException("This loss doesn't support backpropogation.");
 
             double[] actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
             double[] lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));

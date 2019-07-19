@@ -11,8 +11,4 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\IDX Reader\IDX Reader\IDX Reader.csproj" />
-  </ItemGroup>
-
 </Project>

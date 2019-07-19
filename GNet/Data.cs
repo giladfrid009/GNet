@@ -1,27 +1,24 @@
 ﻿using GNet.Extensions.Generic;
-using System;
 
 namespace GNet
 {
     public class Data : ICloneable<Data>
     {
-        public INormalizer InputNormalizer { get; }
-        public INormalizer OutputNormalizer { get; }
-        public double[] Inputs { get; }
-        public double[] Targets { get; }
+        public double[] Inputs { get; private set; }
+        public double[] Outputs { get; private set; }
 
-        public Data(double[] inputs, double[] targets, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null)
+        public Data(double[] inputs, double[] outputs)
         {
-            InputNormalizer = inputNormalizer?.Clone();
-            OutputNormalizer = outputNormalizer?.Clone();
-
-            Inputs = InputNormalizer?.Normalize(inputs) ?? inputs.Select(X => X);
-            Targets = OutputNormalizer?.Normalize(targets) ?? targets.Select(X => X);
+            Inputs = inputs.Select(X => X);
+            Outputs = outputs.Select(X => X);
+        } 
+        
+        public void Normalize(INormalizer inputNormalizer, INormalizer outputNormalizer)
+        {
+            Inputs = inputNormalizer.Normalize(Inputs);
+            Outputs = outputNormalizer.Normalize(Outputs);
         }
 
-        public Data(Array inputs, Array targets, INormalizer inputNormalizer = null, INormalizer outputNormalizer = null) : 
-            this(inputs.Flatten<double>(), targets.Flatten<double>(), inputNormalizer, outputNormalizer) { }
-
-        public Data Clone() => new Data(Inputs, Targets, InputNormalizer, OutputNormalizer);
+        public Data Clone() => new Data(Inputs, Outputs);
     }
 }

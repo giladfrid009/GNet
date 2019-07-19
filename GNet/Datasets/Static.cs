@@ -1,5 +1,4 @@
 ﻿using System;
-using GNet.Extensions.Generic;
 
 namespace GNet
 {
@@ -7,8 +6,8 @@ namespace GNet
     {
         Data[] DataCollection { get; }
         int DataLength { get; }
-        int InputLength { get; }
-        int TargetLength { get; }
+        int InputLength { get; } 
+        int OutputLength { get; }        
     }
 }
 
@@ -18,11 +17,11 @@ namespace GNet.Datasets.Static
     {
         public enum Gates { AND, OR, XOR, NAND, NOR, XNOR }
 
-        public Data[] DataCollection { get; private set; } = new Data[0];
+        public Data[] DataCollection { get; } = new Data[0];
         public Gates Gate { get; }
         public int DataLength { get; } = 4;
         public int InputLength { get; } = 2;
-        public int TargetLength { get; } = 1;
+        public int OutputLength { get; } = 1;
 
         public LogicGates(Gates logicGate)
         {
@@ -104,7 +103,7 @@ namespace GNet.Datasets.Static
 
                 default:
                 {
-                    throw new ArgumentOutOfRangeException("unsupported logic gate.");
+                    throw new ArgumentOutOfRangeException("Unsupported logic gate.");
                 }
             }
         }      

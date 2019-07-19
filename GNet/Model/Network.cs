@@ -40,7 +40,7 @@ namespace GNet
 
         public double Validate(IDataset dataset, ILoss loss)
         {
-            return dataset.DataCollection.Accumulate(0.0, (R, D) => R + loss.Compute(D.Targets, FeedForward(D.Inputs))) / dataset.DataLength;
+            return dataset.DataCollection.Accumulate(0.0, (R, D) => R + loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.DataLength;
         }
 
         private void Backprop(IOptimizer optimizer, ILoss loss, double[] targets, int epoch)
@@ -55,7 +55,7 @@ namespace GNet
 
         public TrainingResult Train(IDataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError)
         {
-            if (dataset.InputLength != Layers[0].Length || dataset.TargetLength != Layers[Length - 1].Length)
+            if (dataset.InputLength != Layers[0].Length || dataset.OutputLength != Layers[Length - 1].Length)
                 throw new Exception("Dataset structure mismatch with network structure.");
 
             var staringTime = DateTime.Now;
@@ -71,7 +71,7 @@ namespace GNet
                 {
                     FeedForward(D.Inputs);
 
-                    Backprop(optimizer, loss, D.Targets, epoch);
+                    Backprop(optimizer, loss, D.Outputs, epoch);
 
                     if (index % batchSize == 0)
                     {
@@ -90,10 +90,10 @@ namespace GNet
 
         public TrainingResult Train(IDataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double valMinError, IDataset valDataset, ILoss valLoss)
         {
-            if (dataset.InputLength != Layers[0].Length || dataset.TargetLength != Layers[Length - 1].Length)
+            if (dataset.InputLength != Layers[0].Length || dataset.OutputLength != Layers[Length - 1].Length)
                 throw new Exception("Dataset structure mismatch with network structure.");
 
-            if (valDataset.InputLength != Layers[0].Length || valDataset.TargetLength != Layers[Length - 1].Length)
+            if (valDataset.InputLength != Layers[0].Length || valDataset.OutputLength != Layers[Length - 1].Length)
                 throw new Exception("ValDataset structure mismatch with network structure.");
 
             var staringTime = DateTime.Now;
@@ -109,7 +109,7 @@ namespace GNet
                 {
                     FeedForward(D.Inputs);
 
-                    Backprop(optimizer, loss, D.Targets, epoch);
+                    Backprop(optimizer, loss, D.Outputs, epoch);
 
                     if (index % batchSize == 0)
                     {

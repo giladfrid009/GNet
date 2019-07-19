@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GNet", "GNet\GNet.csproj", "{E3A5BDD3-B8C7-487B-A274-7CD1905031ED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IDX Reader", "..\IDX Reader\IDX Reader\IDX Reader.csproj", "{B7B200AD-5282-4C85-9A64-127941F72F0F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{E3A5BDD3-B8C7-487B-A274-7CD1905031ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3A5BDD3-B8C7-487B-A274-7CD1905031ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E3A5BDD3-B8C7-487B-A274-7CD1905031ED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7B200AD-5282-4C85-9A64-127941F72F0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7B200AD-5282-4C85-9A64-127941F72F0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7B200AD-5282-4C85-9A64-127941F72F0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7B200AD-5282-4C85-9A64-127941F72F0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

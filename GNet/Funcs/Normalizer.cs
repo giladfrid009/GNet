@@ -12,6 +12,16 @@ namespace GNet
 
 namespace GNet.Normalizers
 {
+    public class None : INormalizer
+    {
+        public double[] Normalize(double[] vals)
+        {
+            return vals.Select(X => X);
+        }
+
+        public INormalizer Clone() => new None();
+    }
+
     public class Division : INormalizer
     {
         public double Divisor { get; } 

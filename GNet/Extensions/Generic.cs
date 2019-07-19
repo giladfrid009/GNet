@@ -1,34 +1,10 @@
 ﻿using GNet.GlobalRandom;
 using System;
-using System.Collections.Generic;
 
 namespace GNet.Extensions.Generic
 {
     public static class ExtensionsGeneric
     {
-        public static TSource[] Flatten<TSource>(this Array source)
-        {
-            List<TSource> flattened = new List<TSource>();
-
-            foreach (var element in source)
-            {
-                if (element is Array)
-                {
-                    flattened.AddRange(Flatten<TSource>(element as Array));
-                }
-                else if (element is TSource)
-                {
-                    flattened.Add((TSource)element);
-                }
-                else
-                {
-                    throw new ArrayTypeMismatchException("array element type mismatch");
-                }
-            }
-
-            return flattened.ToArray();
-        }        
-
         public static TOut[] Select<TSource, TOut>(this TSource[] source, Func<TSource, TOut> selector)
         {
             TOut[] selected = new TOut[source.Length];

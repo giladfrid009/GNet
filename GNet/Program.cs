@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace GNet
 {
@@ -7,19 +6,6 @@ namespace GNet
     {
         private static void Main()
         {
-            var MNISTImages = IDXReader.Reader.ReadFileND<byte[,]>(@"D:\Users\Gilad\Documents\MNIST\train-images.idx3-ubyte", false).ToArray();
-
-            var MNISTLabels = IDXReader.Reader.ReadFile1D<byte>(@"D:\Users\Gilad\Documents\MNIST\train-labels.idx1-ubyte", false).ToArray(); 
-
-            Data[] dataCollection = new Data[MNISTImages.Length];
-
-            for (int i = 0; i < MNISTImages.Length; i++)
-            {
-                dataCollection[i] = new Data(MNISTImages[i], new double[] { MNISTLabels[i] }, new Normalizers.Division(255), new Normalizers.Division(255));
-            }
-
-            Datasets.Custom MNIST = new Datasets.Custom(dataCollection);
-
             Layer[] layers = new Layer[]
             {
                 new Layer(10, new Activations.Identity(), new Initializers.One(), new Initializers.Zero()),
@@ -34,8 +20,8 @@ namespace GNet
             var validationDataset = new Datasets.Dynamic.EvenOdd(10);
             var validationLoss = new OutTransformers.Losses.BinaryRoundLoss();
 
-            trainingDataset.Generate(2000);
-            validationDataset.Generate(1000);
+            trainingDataset.Initialize(2000);
+            validationDataset.Initialize(1000);
 
             net.Train(trainingDataset, new Losses.MSE(), new Optimizers.NestrovMomentum(), 30, 1000, 0.01, validationDataset, validationLoss).Print();
 
