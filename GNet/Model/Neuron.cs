@@ -4,14 +4,29 @@
     {
         public Synapse[] InSynapses { get; set; } = new Synapse[0];
         public Synapse[] OutSynapses { get; set; } = new Synapse[0];
-        public double Value { get; set; }
-        public double ActivatedValue { get; set; }
         public double Bias { get; set; }
 
+        public double Value;
+        public double ActivatedValue;
+
         // training related
-        public double Gradient { get; set; }
-        public double Cache1 { get; set; }
-        public double Cache2 { get; set; }
-        public double BatchBias { get; set; }
+        public double Gradient;
+        public double Cache1;
+        public double Cache2;
+        public double BatchBias;
+
+        public static Neuron Like(Neuron other)
+        {
+            return new Neuron
+            {
+                Value = other.Value,
+                ActivatedValue = other.ActivatedValue,
+                Bias = other.Bias,
+                Gradient = other.Gradient,
+                Cache1 = other.Cache1,
+                Cache2 = other.Cache2,
+                BatchBias = other.BatchBias
+            };         
+        }
     }
 }

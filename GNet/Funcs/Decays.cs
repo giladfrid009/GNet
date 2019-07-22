@@ -12,6 +12,15 @@ namespace GNet
 
 namespace GNet.Optimizers.Decays
 {
+    public class None : IDecay
+    {
+        public double Decay { get; } = 0;
+
+        public double Compute(double value, int iteration) => value;
+
+        public IDecay Clone() => new None();
+    }
+
     public class Subtraction : IDecay
     {
         public double Decay { get; }

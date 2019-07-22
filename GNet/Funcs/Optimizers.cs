@@ -19,12 +19,12 @@ namespace GNet.Optimizers
         public Default(double learningRate = 0.01, IDecay decay = null)
         {
             LearningRate = learningRate;
-            Decay = decay?.Clone();
+            Decay = decay?.Clone() ?? new Decays.None();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
+            var lr = Decay.Compute(LearningRate, epoch);
 
             neurons.ForEach(N =>
             {
@@ -50,12 +50,12 @@ namespace GNet.Optimizers
         {
             LearningRate = learningRate;
             MomentumValue = momentum;
-            Decay = decay?.Clone();
+            Decay = decay?.Clone() ?? new Decays.None();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
+            var lr = Decay.Compute(LearningRate, epoch);
 
             neurons.ForEach(N =>
             {
@@ -83,12 +83,12 @@ namespace GNet.Optimizers
         {
             LearningRate = learningRate;
             MomentumValue = momentum;
-            Decay = decay?.Clone();
+            Decay = decay?.Clone() ?? new Decays.None();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
+            var lr = Decay.Compute(LearningRate, epoch);
 
             neurons.ForEach(N =>
             {
@@ -119,12 +119,12 @@ namespace GNet.Optimizers
         {
             LearningRate = learningRate;
             Epsilon = epsilon;
-            Decay = decay?.Clone();
+            Decay = decay?.Clone() ?? new Decays.None();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
+            var lr = Decay.Compute(LearningRate, epoch);
 
             neurons.ForEach(N =>
             {
@@ -155,12 +155,12 @@ namespace GNet.Optimizers
             LearningRate = learningRate;
             Rho = rho;
             Epsilon = epsilon;
-            Decay = decay?.Clone();
+            Decay = decay?.Clone() ?? new Decays.None();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
+            var lr = Decay.Compute(LearningRate, epoch);
 
             neurons.ForEach(N =>
             {
@@ -191,12 +191,12 @@ namespace GNet.Optimizers
             LearningRate = learningRate;
             Rho = rho;
             Epsilon = epsilon;
-            Decay = decay?.Clone();
+            Decay = decay?.Clone() ?? new Decays.None();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
+            var lr = Decay.Compute(LearningRate, epoch);
 
             neurons.ForEach(N =>
             {
@@ -231,12 +231,12 @@ namespace GNet.Optimizers
             LearningRate = learningRate;
             Rho = rho;
             Epsilon = epsilon;
-            Decay = decay?.Clone();
+            Decay = decay?.Clone() ?? new Decays.None();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
+            var lr = Decay.Compute(LearningRate, epoch);
 
             neurons.ForEach(N =>
             {
@@ -268,12 +268,12 @@ namespace GNet.Optimizers
             Beta1 = beta1;
             Beta2 = beta2;
             Epsilon = epsilon;
-            Decay = decay?.Clone();
+            Decay = decay?.Clone() ?? new Decays.None();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
+            var lr = Decay.Compute(LearningRate, epoch);
 
             var val1 = 1.0 - Pow(Beta1, epoch + 1.0);
             var val2 = 1.0 - Pow(Beta2, epoch + 1.0);
@@ -313,12 +313,12 @@ namespace GNet.Optimizers
             LearningRate = learningRate;
             Beta1 = beta1;
             Beta2 = beta2;
-            Decay = decay?.Clone();
+            Decay = decay?.Clone() ?? new Decays.None();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
+            var lr = Decay.Compute(LearningRate, epoch);
 
             var val1 = 1.0 - Pow(Beta1, epoch + 1.0);
 
@@ -356,12 +356,12 @@ namespace GNet.Optimizers
             Beta1 = beta1;
             Beta2 = beta2;
             Epsilon = epsilon;
-            Decay = decay?.Clone();
+            Decay = decay?.Clone() ?? new Decays.None();
         }
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
+            var lr = Decay.Compute(LearningRate, epoch);
 
             var val1 = 1.0 - Pow(Beta1, epoch + 1.0);
             var val2 = 1.0 - Pow(Beta2, epoch + 1.0);

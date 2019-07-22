@@ -26,7 +26,7 @@ namespace GNet
             }
         }
 
-        private void Connect(Layer inLayer)
+        public void Connect(Layer inLayer)
         {
             inLayer.Neurons.ForEach(N => N.OutSynapses = new Synapse[Length]);
             Neurons.ForEach(N => N.InSynapses = new Synapse[inLayer.Length]);
@@ -120,16 +120,25 @@ namespace GNet
             Neurons.ForEach(N =>
             {
                 N.Bias += N.BatchBias;
-                N.Gradient = default;
-                N.BatchBias = default;
+                N.Gradient = 0.0;
+                N.BatchBias = 0.0;
 
                 N.InSynapses.ForEach(S =>
                 {
                     S.Weight += S.BatchWeight;
-                    S.Gradient = default;
-                    S.BatchWeight = default;
+                    S.Gradient = 0.0;
+                    S.BatchWeight = 0.0;
                 });
             });
+        }
+
+        public static Layer Like(Layer other)
+        {
+            Layer L = new Layer(other.Length, other.Activation, other.WeightInit, other.BiasInit);
+
+            L.Neurons.ForEach((N, i) => L.Neurons[i] = Neuron.Like(other.Neurons[i]));
+
+            return L;
         }
     }
 }

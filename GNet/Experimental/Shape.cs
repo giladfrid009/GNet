@@ -1,7 +1,7 @@
 ﻿using System;
 
 // todo: maybe only layers need to have shapes? and data shouldn't?
-namespace GNet
+namespace GNet.Experimental
 {
     public struct Shape : IEquatable<Shape>
     {

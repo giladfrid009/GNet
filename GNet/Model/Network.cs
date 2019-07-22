@@ -4,7 +4,7 @@ using System;
 
 namespace GNet
 {
-    public class Network
+    public class Network : ICloneable<Network>
     {
         public Layer[] Layers { get; } = new Layer[0];
         public int Length { get; }
@@ -126,6 +126,28 @@ namespace GNet
             var finalError = Validate(dataset, loss);
 
             return new TrainingResult(DateTime.Now - staringTime, epoch, initialError, finalError, valError);
+        }        
+
+        public Network Clone()
+        {
+            Network Net = new Network(Layers.Select(L => Layer.Like(L)));
+
+            for (int i = 1; i < Length; i++)
+            {
+                Net.Layers[i].Connect(Net.Layers[i - 1]);
+
+                Net.Layers[i].Neurons.ForEach((N, j) =>
+                {
+                    N.InSynapses = N.InSynapses.Select((S, k) => Synapse.Like(S.InNeuron, S.OutNeuron, Layers[i].Neurons[j].InSynapses[k]));
+                });
+            }
+
+            Net.Layers[Length - 1].Neurons.ForEach((N, j) =>
+            {
+                N.OutSynapses = N.OutSynapses.Select((S, k) => Synapse.Like(S.InNeuron, S.OutNeuron, Layers[Length - 1].Neurons[j].OutSynapses[k]));
+            });
+
+            return Net;
         }        
     }
 }

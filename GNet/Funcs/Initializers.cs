@@ -48,28 +48,28 @@ namespace GNet.Initializers
 
     public class Normal : IInitializer
     {
-        public double Init(int nIn, int nOut) => GRandom.NextGaussian();
+        public double Init(int nIn, int nOut) => GRandom.NextNormal();
 
         public IInitializer Clone() => new Normal();
     }
 
     public class LeCunNormal : IInitializer
     {
-        public double Init(int nIn, int nOut) => GRandom.NextGaussian() * Sqrt(1.0 / nIn);
+        public double Init(int nIn, int nOut) => GRandom.NextNormal() * Sqrt(1.0 / nIn);
 
         public IInitializer Clone() => new LeCunNormal();
     }
 
     public class HeNormal : IInitializer
     {
-        public double Init(int nIn, int nOut) => GRandom.NextGaussian() * Sqrt(2.0 / nIn);
+        public double Init(int nIn, int nOut) => GRandom.NextNormal() * Sqrt(2.0 / nIn);
 
         public IInitializer Clone() => new HeNormal();
     }
 
     public class GlorotNormal : IInitializer
     {
-        public double Init(int nIn, int nOut) => GRandom.NextGaussian() * Sqrt(2.0 / (nIn + nOut));
+        public double Init(int nIn, int nOut) => GRandom.NextNormal() * Sqrt(2.0 / (nIn + nOut));
 
         public IInitializer Clone() => new GlorotNormal();
     }

@@ -18,6 +18,6 @@ namespace GNet.GlobalRandom
 
         public static double NextDouble(double range) => NextDouble(-range, range);
 
-        public static double NextGaussian() => Math.Sqrt(-2.0 * Math.Log(1.0 - rnd.NextDouble())) * Math.Sin(2.0 * Math.PI * (1.0 - rnd.NextDouble()));
+        public static double NextNormal() => Math.Sqrt(-2.0 * Math.Log(1.0 - rnd.NextDouble())) * Math.Sin(2.0 * Math.PI * (1.0 - rnd.NextDouble()));
     }
 }
