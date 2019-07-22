@@ -15,18 +15,15 @@
         public double Cache2;
         public double BatchBias;
 
-        public static Neuron Like(Neuron other)
+        public void CloneVals(Neuron other)
         {
-            return new Neuron
-            {
-                Value = other.Value,
-                ActivatedValue = other.ActivatedValue,
-                Bias = other.Bias,
-                Gradient = other.Gradient,
-                Cache1 = other.Cache1,
-                Cache2 = other.Cache2,
-                BatchBias = other.BatchBias
-            };         
+            Value = other.Value;
+            ActivatedValue = other.ActivatedValue;
+            Bias = other.Bias;
+            Gradient = other.Gradient;
+            Cache1 = other.Cache1;
+            Cache2 = other.Cache2;
+            BatchBias = other.BatchBias;
         }
     }
 }

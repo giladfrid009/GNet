@@ -18,16 +18,13 @@
             OutNeuron = outNeuron;
         }
 
-        public static Synapse Like(Synapse other, Neuron inNeuron, Neuron outNeuron)
+        public void CloneVals(Synapse other)
         {
-            return new Synapse(inNeuron, outNeuron)
-            {
-                Weight = other.Weight,
-                Gradient = other.Gradient,
-                Cache1 = other.Cache1,
-                Cache2 = other.Cache2,
-                BatchWeight = other.BatchWeight
-            };
+            Weight = other.Weight;
+            Gradient = other.Gradient;
+            Cache1 = other.Cache1;
+            Cache2 = other.Cache2;
+            BatchWeight = other.BatchWeight;
         }
     }
 }

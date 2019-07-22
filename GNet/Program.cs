@@ -15,6 +15,7 @@ namespace GNet
 
             Network net = new Network(layers);
             net.Init();
+            net.Clone();
 
             var trainingDataset = new Datasets.Dynamic.EvenOdd(10);
             var validationDataset = new Datasets.Dynamic.EvenOdd(10);
