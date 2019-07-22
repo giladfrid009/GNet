@@ -18,7 +18,7 @@
             OutNeuron = outNeuron;
         }
 
-        public static Synapse Like(Neuron inNeuron, Neuron outNeuron, Synapse other)
+        public static Synapse Like(Synapse other, Neuron inNeuron, Neuron outNeuron)
         {
             return new Synapse(inNeuron, outNeuron)
             {

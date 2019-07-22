@@ -140,5 +140,25 @@ namespace GNet
 
             return L;
         }
+
+        public static Layer Like(Layer other, Layer inLayer)
+        {
+            Layer L = Like(other);
+
+            inLayer.Neurons.ForEach(N => N.OutSynapses = new Synapse[L.Length]);
+            L.Neurons.ForEach(N => N.InSynapses = new Synapse[inLayer.Length]);
+
+            L.Neurons.ForEach((outN, i) =>
+            {
+                inLayer.Neurons.ForEach((inN, j) =>
+                {
+                    Synapse W = Synapse.Like(other.Neurons[i].InSynapses[j], inN, outN);
+                    inN.OutSynapses[i] = W;
+                    outN.InSynapses[j] = W;
+                });
+            });
+
+            return L;
+        }
     }
 }

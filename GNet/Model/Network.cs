@@ -130,24 +130,16 @@ namespace GNet
 
         public Network Clone()
         {
-            Network Net = new Network(Layers.Select(L => Layer.Like(L)));
+            Layer[] layers = new Layer[Length];
+
+            layers[0] = Layer.Like(Layers[0]);
 
             for (int i = 1; i < Length; i++)
             {
-                Net.Layers[i].Connect(Net.Layers[i - 1]);
-
-                Net.Layers[i].Neurons.ForEach((N, j) =>
-                {
-                    N.InSynapses = N.InSynapses.Select((S, k) => Synapse.Like(S.InNeuron, S.OutNeuron, Layers[i].Neurons[j].InSynapses[k]));
-                });
+                layers[i] = Layer.Like(Layers[i], layers[i - 1]);
             }
 
-            Net.Layers[Length - 1].Neurons.ForEach((N, j) =>
-            {
-                N.OutSynapses = N.OutSynapses.Select((S, k) => Synapse.Like(S.InNeuron, S.OutNeuron, Layers[Length - 1].Neurons[j].OutSynapses[k]));
-            });
-
-            return Net;
-        }        
+            return new Network(layers);
+        }
     }
 }
