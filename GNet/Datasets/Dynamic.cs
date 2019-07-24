@@ -1,6 +1,6 @@
-﻿using System;
-using GNet.Extensions.Generic;
+﻿using GNet.Extensions.Generic;
 using GNet.GlobalRandom;
+using System;
 
 namespace GNet
 {
@@ -14,12 +14,13 @@ namespace GNet
 
 namespace GNet.Datasets.Dynamic
 {
+    [Serializable]
     public class EvenOdd : IDynamicDataset
     {
         public Data[] DataCollection { get; private set; } = new Data[0];
         public int InputLength { get; }
         public int OutputLength { get; } = 1;
-        public int DataLength { get => DataCollection.Length; }
+        public int DataLength { get; private set; }
 
         public EvenOdd(int intputLength)
         {
@@ -33,6 +34,7 @@ namespace GNet.Datasets.Dynamic
 
         public void Initialize(int length)
         {
+            DataLength = length;
             DataCollection = new Data[length];
 
             for (int i = 0; i < length; i++)
@@ -60,12 +62,13 @@ namespace GNet.Datasets.Dynamic
         public IDataset Clone() => new EvenOdd(InputLength, DataCollection);
     }
 
+    [Serializable]
     public class Uniform : IDynamicDataset
     {
         public Data[] DataCollection { get; private set; } = new Data[0];
         public int InputLength { get; }
         public int OutputLength { get; }
-        public int DataLength { get => DataCollection.Length;  }
+        public int DataLength { get; private set; }
 
         public Uniform(int length)
         {
@@ -73,13 +76,14 @@ namespace GNet.Datasets.Dynamic
             OutputLength = length;
         }
 
-        private Uniform(int length, Data[] dataset): this(length)
+        private Uniform(int length, Data[] dataset) : this(length)
         {
             DataCollection = dataset.Select(D => D);
         }
 
         public void Initialize(int length)
         {
+            DataLength = length;
             DataCollection = new Data[length];
 
             for (int i = 0; i < length; i++)
@@ -103,6 +107,7 @@ namespace GNet.Datasets.Dynamic
         public IDataset Clone() => new Uniform(InputLength, DataCollection);
     }
 
+    [Serializable]
     public class Func1 : IDynamicDataset
     {
         public Data[] DataCollection { get; private set; } = new Data[0];
@@ -110,7 +115,7 @@ namespace GNet.Datasets.Dynamic
         public double Range { get; }
         public int InputLength { get; } = 1;
         public int OutputLength { get; } = 1;
-        public int DataLength { get => DataCollection.Length; }
+        public int DataLength { get; private set; }
 
         public Func1(Func<double, double> ioFunc, double range)
         {
@@ -125,6 +130,7 @@ namespace GNet.Datasets.Dynamic
 
         public void Initialize(int length)
         {
+            DataLength = length;
             DataCollection = new Data[length];
 
             for (int i = 0; i < length; i++)
@@ -150,6 +156,7 @@ namespace GNet.Datasets.Dynamic
         public IDataset Clone() => new Func1(IOFunc, Range, DataCollection);
     }
 
+    [Serializable]
     public class Func2 : IDynamicDataset
     {
         public Data[] DataCollection { get; private set; } = new Data[0];
@@ -157,7 +164,7 @@ namespace GNet.Datasets.Dynamic
         public double Range { get; }
         public int InputLength { get; } = 2;
         public int OutputLength { get; } = 1;
-        public int DataLength { get => DataCollection.Length; }
+        public int DataLength { get; private set; }
 
         public Func2(Func<double, double, double> ioFunc, double range)
         {
@@ -172,6 +179,7 @@ namespace GNet.Datasets.Dynamic
 
         public void Initialize(int length)
         {
+            DataLength = length;
             DataCollection = new Data[length];
 
             for (int i = 0; i < length; i++)

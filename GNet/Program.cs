@@ -2,6 +2,7 @@
 
 namespace GNet
 {
+    // todo: use structs where possible? (with in / out and ref args)
     internal class Program
     {
         private static void Main()
@@ -15,7 +16,6 @@ namespace GNet
 
             Network net = new Network(layers);
             net.Init();
-            net.Clone();
 
             var trainingDataset = new Datasets.Dynamic.EvenOdd(10);
             var validationDataset = new Datasets.Dynamic.EvenOdd(10);
@@ -27,7 +27,6 @@ namespace GNet
             net.Train(trainingDataset, new Losses.MSE(), new Optimizers.NestrovMomentum(), 30, 1000, 0.01, validationDataset, validationLoss).Print();
 
             Console.ReadKey();
-
         }
     }
 }

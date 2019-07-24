@@ -1,5 +1,8 @@
-﻿namespace GNet
+﻿using System;
+
+namespace GNet
 {
+    [Serializable]
     public class Synapse
     {
         public Neuron InNeuron { get; }

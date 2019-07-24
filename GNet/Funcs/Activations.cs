@@ -16,6 +16,7 @@ namespace GNet
 
 namespace GNet.Activations
 {
+    [Serializable]
     public class Identity : IActivation
     {
         public double[] Activate(double[] vals)
@@ -31,6 +32,7 @@ namespace GNet.Activations
         public IActivation Clone() => new Identity();
     }
 
+    [Serializable]
     public class BinaryStep : IActivation
     {
         public double[] Activate(double[] vals)
@@ -46,6 +48,7 @@ namespace GNet.Activations
         public IActivation Clone() => new BinaryStep();
     }
 
+    [Serializable]
     public class Sigmoid : IActivation
     {
         public double[] Activate(double[] vals)
@@ -61,6 +64,7 @@ namespace GNet.Activations
         public IActivation Clone() => new Sigmoid();
     }
 
+    [Serializable]
     public class HardSigmoid : IActivation
     {
         public double[] Activate(double[] vals)
@@ -76,6 +80,7 @@ namespace GNet.Activations
         public IActivation Clone() => new HardSigmoid();
     }
 
+    [Serializable]
     public class Tanh : IActivation
     {
         public double[] Activate(double[] vals)
@@ -91,6 +96,7 @@ namespace GNet.Activations
         public IActivation Clone() => new Tanh();
     }
 
+    [Serializable]
     public class LeCunTanh : IActivation
     {
         public double A { get; } = 1.7159;
@@ -109,6 +115,7 @@ namespace GNet.Activations
         public IActivation Clone() => new LeCunTanh();
     }
 
+    [Serializable]
     public class ArcTan : IActivation
     {
         public double[] Activate(double[] vals)
@@ -124,6 +131,7 @@ namespace GNet.Activations
         public IActivation Clone() => new ArcTan();
     }
 
+    [Serializable]
     public class ArSinh : IActivation
     {
         public double[] Activate(double[] vals)
@@ -139,6 +147,7 @@ namespace GNet.Activations
         public IActivation Clone() => new ArSinh();
     }
 
+    [Serializable]
     public class SoftSign : IActivation
     {
         public double[] Activate(double[] vals)
@@ -154,6 +163,7 @@ namespace GNet.Activations
         public IActivation Clone() => new SoftSign();
     }
 
+    [Serializable]
     /// <summary>
     /// Inverse Square Root Unit
     /// </summary>
@@ -179,6 +189,7 @@ namespace GNet.Activations
         public IActivation Clone() => new ISRU(Alpha);
     }
 
+    [Serializable]
     /// <summary>
     /// Inverse Square Root Linear Unit
     /// </summary>
@@ -204,6 +215,7 @@ namespace GNet.Activations
         public IActivation Clone() => new ISRLU(Alpha);
     }
 
+    [Serializable]
     /// <summary>
     /// Square Nonlinearity 
     /// </summary>
@@ -234,6 +246,7 @@ namespace GNet.Activations
         public IActivation Clone() => new SQNL();
     }
 
+    [Serializable]
     /// <summary>
     /// Rectified Linear Unit
     /// </summary>
@@ -259,6 +272,7 @@ namespace GNet.Activations
         public IActivation Clone() => new ReLu(Slope);
     }
 
+    [Serializable]
     /// <summary>
     /// Randomized Rectified Linear Unit
     /// </summary>
@@ -289,6 +303,7 @@ namespace GNet.Activations
         public IActivation Clone() => new RReLu(Slope);
     }
 
+    [Serializable]
     /// <summary>
     /// Exponential Linear Unit
     /// </summary>
@@ -307,6 +322,7 @@ namespace GNet.Activations
         public IActivation Clone() => new ELU();
     }
 
+    [Serializable]
     /// <summary>
     /// Scaled Exponential Linear Unit
     /// </summary>
@@ -328,6 +344,7 @@ namespace GNet.Activations
         public IActivation Clone() => new SELU();
     }
 
+    [Serializable]
     public class SoftPlus : IActivation
     {
         public double[] Activate(double[] vals)
@@ -343,6 +360,7 @@ namespace GNet.Activations
         public IActivation Clone() => new SoftPlus();
     }
 
+    [Serializable]
     public class BentIdentity : IActivation
     {
         public double[] Activate(double[] vals)
@@ -358,6 +376,7 @@ namespace GNet.Activations
         public IActivation Clone() => new BentIdentity();
     }
 
+    [Serializable]
     public class Swish : IActivation
     {
         public double[] Activate(double[] vals)
@@ -377,6 +396,7 @@ namespace GNet.Activations
         public IActivation Clone() => new Swish();
     }
 
+    [Serializable]
     public class SoftExponential : IActivation
     {
         public double Alpha { get; }
@@ -418,6 +438,7 @@ namespace GNet.Activations
         public IActivation Clone() => new SoftExponential(Alpha);
     }
 
+    [Serializable]
     public class SoftClipping : IActivation
     {
         public double Alpha { get; }
@@ -440,6 +461,7 @@ namespace GNet.Activations
         public IActivation Clone() => new SoftClipping(Alpha);
     }
 
+    [Serializable]
     public class Sinusoid : IActivation
     {
         public double[] Activate(double[] vals)
@@ -455,6 +477,7 @@ namespace GNet.Activations
         public IActivation Clone() => new Sinusoid();
     }
 
+    [Serializable]
     public class Sinc : IActivation
     {
         public double[] Activate(double[] vals)
@@ -470,6 +493,7 @@ namespace GNet.Activations
         public IActivation Clone() => new Sinc();
     }
 
+    [Serializable]
     public class Gaussian : IActivation
     {
         public double[] Activate(double[] vals)
@@ -485,6 +509,7 @@ namespace GNet.Activations
         public IActivation Clone() => new Gaussian();
     }
 
+    [Serializable]
     public class Softmax : IActivation
     {
         public double[] Activate(double[] vals)

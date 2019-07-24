@@ -2,6 +2,7 @@
 
 namespace GNet
 {
+    [Serializable]
     public class TrainingResult
     {
         public TimeSpan ExecutionTime { get; }

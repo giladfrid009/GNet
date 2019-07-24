@@ -4,6 +4,7 @@ using System;
 
 namespace GNet
 {
+    [Serializable]
     public class Network : ICloneable<Network>
     {
         public Layer[] Layers { get; } = new Layer[0];
@@ -126,26 +127,30 @@ namespace GNet
             var finalError = Validate(dataset, loss);
 
             return new TrainingResult(DateTime.Now - staringTime, epoch, initialError, finalError, valError);
-        }        
+        }
 
         public Network Clone()
         {
             Layer[] layers = Layers.Select(L => new Layer(L.Length, L.Activation, L.WeightInit, L.BiasInit));
 
-            Network Net = new Network(layers);
-            Net.Init();
+            Network newNet = new Network(layers);
+            newNet.Init();
 
-            Net.Layers.ForEach((L, i) =>
+            newNet.Layers.ForEach((L, i) =>
             {
                 L.Neurons.ForEach((N, j) =>
                 {
                     N.CloneVals(Layers[i].Neurons[j]);
                     N.InSynapses.ForEach((S, k) => S.CloneVals(Layers[i].Neurons[j].InSynapses[k]));
-                    N.OutSynapses.ForEach((S, k) => S.CloneVals(Layers[i].Neurons[j].OutSynapses[k]));
                 });
             });
 
-            return Net;
+            newNet.Layers[Length - 1].Neurons.ForEach((N, j) =>
+            {
+                N.OutSynapses.ForEach((S, k) => S.CloneVals(Layers[Length - 1].Neurons[j].OutSynapses[k]));
+            });
+
+            return newNet;
         }
     }
 }

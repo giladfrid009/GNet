@@ -24,7 +24,7 @@ namespace GNet.Normalizers
 
     public class Division : INormalizer
     {
-        public double Divisor { get; } 
+        public double Divisor { get; }
 
         public Division(double divisor)
         {

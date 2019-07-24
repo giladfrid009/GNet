@@ -6,13 +6,14 @@ namespace GNet
     {
         Data[] DataCollection { get; }
         int DataLength { get; }
-        int InputLength { get; } 
-        int OutputLength { get; }        
+        int InputLength { get; }
+        int OutputLength { get; }
     }
 }
 
 namespace GNet.Datasets.Static
-{    
+{
+    [Serializable]
     public class LogicGates : IDataset
     {
         public enum Gates { AND, OR, XOR, NAND, NOR, XNOR }
@@ -106,7 +107,7 @@ namespace GNet.Datasets.Static
                     throw new ArgumentOutOfRangeException("Unsupported logic gate.");
                 }
             }
-        }      
+        }
 
         public IDataset Clone() => new LogicGates(Gate);
     }

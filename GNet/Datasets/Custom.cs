@@ -1,8 +1,9 @@
-﻿using System;
-using GNet.Extensions.Generic;
+﻿using GNet.Extensions.Generic;
+using System;
 
 namespace GNet.Datasets
 {
+    [Serializable]
     public class Custom : IDataset
     {
         public Data[] DataCollection { get; }
@@ -21,7 +22,7 @@ namespace GNet.Datasets
                     throw new ArgumentException($"DataCollection[{i}] structure mismatch.");
             });
 
-            DataCollection = dataCollection.Select(D => D);
+            DataCollection = dataCollection.Select(D => D.Clone());
 
             DataLength = DataCollection.Length;
         }

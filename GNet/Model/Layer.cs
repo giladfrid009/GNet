@@ -4,6 +4,7 @@ using System;
 
 namespace GNet
 {
+    [Serializable]
     public class Layer
     {
         public Neuron[] Neurons { get; } = new Neuron[0];
@@ -120,16 +121,14 @@ namespace GNet
             Neurons.ForEach(N =>
             {
                 N.Bias += N.BatchBias;
-                N.Gradient = 0.0;
                 N.BatchBias = 0.0;
 
                 N.InSynapses.ForEach(S =>
                 {
                     S.Weight += S.BatchWeight;
-                    S.Gradient = 0.0;
                     S.BatchWeight = 0.0;
                 });
             });
-        }       
+        }
     }
 }

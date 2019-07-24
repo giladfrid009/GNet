@@ -41,7 +41,7 @@ namespace GNet.Extensions.Generic
             }
 
             return combined;
-        }        
+        }
 
         public static void ForEach<TSource>(this TSource[] source, Action<TSource> action)
         {

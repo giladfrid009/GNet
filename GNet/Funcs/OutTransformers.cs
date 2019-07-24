@@ -1,6 +1,6 @@
-﻿using System;
-using GNet.Extensions.Generic;
+﻿using GNet.Extensions.Generic;
 using GNet.Extensions.Math;
+using System;
 
 namespace GNet
 {

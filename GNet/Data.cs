@@ -1,7 +1,9 @@
 ﻿using GNet.Extensions.Generic;
+using System;
 
 namespace GNet
 {
+    [Serializable]
     public class Data : ICloneable<Data>
     {
         public double[] Inputs { get; private set; }
@@ -11,8 +13,8 @@ namespace GNet
         {
             Inputs = inputs.Select(X => X);
             Outputs = outputs.Select(X => X);
-        } 
-        
+        }
+
         public void Normalize(INormalizer inputNormalizer, INormalizer outputNormalizer)
         {
             Inputs = inputNormalizer.Normalize(Inputs);
