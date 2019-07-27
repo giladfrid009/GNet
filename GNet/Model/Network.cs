@@ -7,36 +7,47 @@ namespace GNet
     [Serializable]
     public class Network : ICloneable<Network>
     {
-        public Layer[] Layers { get; } = new Layer[0];
+        public Layers.Input InputLayer { get; }
+        public Layers.Hidden[] HiddenLayers { get; } = new Layers.Hidden[0];
+        public Layers.Output OutputLayer { get; }
         public int Length { get; }
 
-        public Network(Layer[] layers)
+        public Network (Layers.Input inputLayer, Layers.Hidden[] hiddenLayers, Layers.Output outputLayer)
         {
-            Length = layers.Length;
-            Layers = layers.Select(L => L);
-        }
+            InputLayer = (Layers.Input)inputLayer.Clone();
+            HiddenLayers = hiddenLayers.Select(L => (Layers.Hidden)L.Clone());
+            OutputLayer = (Layers.Output)outputLayer.Clone();
+
+            Length = hiddenLayers.Length + 2;
+        }        
 
         public void Init()
         {
-            for (int i = 1; i < Length; i++)
+            HiddenLayers[0].Init(InputLayer);
+
+            for (int i = 1; i < HiddenLayers.Length; i++)
             {
-                Layers[i].Init(Layers[i - 1]);
+                HiddenLayers[i].Init(HiddenLayers[i - 1]);
             }
+
+            OutputLayer.Init(HiddenLayers[HiddenLayers.Length - 1]);
         }
 
         public double[] FeedForward(double[] inputs)
         {
-            if (inputs.Length != Layers[0].Length)
+            if (inputs.Length != InputLayer.Length)
                 throw new ArgumentOutOfRangeException("Input length and input layer length mismatch.");
 
-            Layers[0].SetInput(inputs);
+            InputLayer.SetInput(inputs);
 
-            for (int i = 1; i < Length; i++)
+            for (int i = 0; i < HiddenLayers.Length; i++)
             {
-                Layers[i].FeedForward();
+                HiddenLayers[i].FeedForward();
             }
 
-            return Layers[Length - 1].Neurons.Select(N => N.ActivatedValue);
+            OutputLayer.FeedForward();
+
+            return OutputLayer.Neurons.Select(N => N.ActivatedValue);
         }
 
         public double Validate(IDataset dataset, ILoss loss)
@@ -44,19 +55,25 @@ namespace GNet
             return dataset.DataCollection.Accumulate(0.0, (R, D) => R + loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.DataLength;
         }
 
-        private void Backprop(IOptimizer optimizer, ILoss loss, double[] targets, int epoch)
+        private void FeedBackward(IOptimizer optimizer, ILoss loss, double[] targets, int epoch)
         {
-            Layers[Length - 1].Backprop(optimizer, loss, targets, epoch);
+            OutputLayer.FeedBackward(optimizer, loss, targets, epoch);
 
-            for (int i = Length - 2; i > 0; i--)
+            for (int i = HiddenLayers.Length - 1; i >= 0; i--)
             {
-                Layers[i].Backprop(optimizer, epoch);
+                HiddenLayers[i].FeedBackward(optimizer, epoch);
             }
+        }
+
+        private void Update()
+        {
+            HiddenLayers.ForEach(L => L.Update());
+            OutputLayer.Update();
         }
 
         public TrainingResult Train(IDataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError)
         {
-            if (dataset.InputLength != Layers[0].Length || dataset.OutputLength != Layers[Length - 1].Length)
+            if (dataset.InputLength != InputLayer.Length || dataset.OutputLength != OutputLayer.Length)
                 throw new Exception("Dataset structure mismatch with network structure.");
 
             var staringTime = DateTime.Now;
@@ -72,11 +89,11 @@ namespace GNet
                 {
                     FeedForward(D.Inputs);
 
-                    Backprop(optimizer, loss, D.Outputs, epoch);
+                    FeedBackward(optimizer, loss, D.Outputs, epoch);
 
                     if (index % batchSize == 0)
                     {
-                        Layers.ForEach(L => L.Update());
+                        Update();
                     }
                 });
 
@@ -91,10 +108,10 @@ namespace GNet
 
         public TrainingResult Train(IDataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double valMinError, IDataset valDataset, ILoss valLoss)
         {
-            if (dataset.InputLength != Layers[0].Length || dataset.OutputLength != Layers[Length - 1].Length)
+            if (dataset.InputLength != InputLayer.Length || dataset.OutputLength != OutputLayer.Length)
                 throw new Exception("Dataset structure mismatch with network structure.");
 
-            if (valDataset.InputLength != Layers[0].Length || valDataset.OutputLength != Layers[Length - 1].Length)
+            if (valDataset.InputLength != InputLayer.Length || valDataset.OutputLength != OutputLayer.Length)
                 throw new Exception("ValDataset structure mismatch with network structure.");
 
             var staringTime = DateTime.Now;
@@ -110,11 +127,11 @@ namespace GNet
                 {
                     FeedForward(D.Inputs);
 
-                    Backprop(optimizer, loss, D.Outputs, epoch);
+                    FeedBackward(optimizer, loss, D.Outputs, epoch);
 
                     if (index % batchSize == 0)
                     {
-                        Layers.ForEach(L => L.Update());
+                        Update();
                     }
                 });
 
@@ -131,23 +148,28 @@ namespace GNet
 
         public Network Clone()
         {
-            Layer[] layers = Layers.Select(L => new Layer(L.Length, L.Activation, L.WeightInit, L.BiasInit));
+            Network newNet = new Network(InputLayer, HiddenLayers, OutputLayer);
 
-            Network newNet = new Network(layers);
             newNet.Init();
 
-            newNet.Layers.ForEach((L, i) =>
+            newNet.InputLayer.Neurons.ForEach((N, i) =>
+            {
+                N.CloneVals(InputLayer.Neurons[i]);
+            });
+
+            newNet.HiddenLayers.ForEach((L, i) =>
             {
                 L.Neurons.ForEach((N, j) =>
                 {
-                    N.CloneVals(Layers[i].Neurons[j]);
-                    N.InSynapses.ForEach((S, k) => S.CloneVals(Layers[i].Neurons[j].InSynapses[k]));
+                    N.CloneVals(HiddenLayers[i].Neurons[j]);
+                    N.InSynapses.ForEach((S, k) => S.CloneVals(HiddenLayers[i].Neurons[j].InSynapses[k]));
                 });
             });
 
-            newNet.Layers[Length - 1].Neurons.ForEach((N, j) =>
+            newNet.OutputLayer.Neurons.ForEach((N, i) =>
             {
-                N.OutSynapses.ForEach((S, k) => S.CloneVals(Layers[Length - 1].Neurons[j].OutSynapses[k]));
+                N.CloneVals(OutputLayer.Neurons[i]);
+                N.InSynapses.ForEach((S, j) => S.CloneVals(OutputLayer.Neurons[i].InSynapses[j]));
             });
 
             return newNet;

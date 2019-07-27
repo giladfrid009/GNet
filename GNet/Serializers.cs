@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace GNet.Serializer
+namespace GNet.Serializers
 {
     public static class Binary
     {
@@ -12,15 +12,14 @@ namespace GNet.Serializer
             {
                 using (FileStream stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
-                    BinaryFormatter serializer = new BinaryFormatter();
-                    serializer.Serialize(stream, obj);
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(stream, obj);
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                Console.ReadKey();
-                Environment.Exit(0);
+                throw new Exception(e.Message, e);
             }
         }
 
@@ -30,8 +29,8 @@ namespace GNet.Serializer
             {
                 using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None))
                 {
-                    BinaryFormatter serializer = new BinaryFormatter();
-                    return (TObject)serializer.Deserialize(stream);
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    return (TObject)formatter.Deserialize(stream);
                 }
             }
             catch (Exception e)

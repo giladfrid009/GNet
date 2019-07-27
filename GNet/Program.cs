@@ -2,19 +2,19 @@
 
 namespace GNet
 {
-    // todo: use structs where possible? (with in / out and ref args)
     internal class Program
     {
         private static void Main()
         {
-            Layer[] layers = new Layer[]
+            var inputLayer = new Layers.Input(10);
+            var hiddenLayers = new Layers.Hidden[] 
             {
-                new Layer(10, new Activations.Identity(), new Initializers.One(), new Initializers.Zero()),
-                new Layer(10, new Activations.Tanh(), new Initializers.LeCunNormal(), new Initializers.Zero()),
-                new Layer(1, new Activations.Sigmoid(), new Initializers.Normal(), new Initializers.Zero())
+                new Layers.Hidden(10, new Activations.Tanh(), new Initializers.LeCunNormal(), new Initializers.Zero())
             };
+            var outputLayer = new Layers.Output(1, new Activations.Sigmoid(), new Initializers.Normal(), new Initializers.Zero());
 
-            Network net = new Network(layers);
+            Network net = new Network(inputLayer, hiddenLayers, outputLayer);
+
             net.Init();
 
             var trainingDataset = new Datasets.Dynamic.EvenOdd(10);
