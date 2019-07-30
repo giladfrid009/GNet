@@ -6,7 +6,7 @@ namespace GNet
 {
     public interface IDynamicDataset : IDataset
     {
-        void Initialize(int length);
+        void Generate(int length);
 
         void Normalize(INormalizer inputNormalizer, INormalizer outputNormalizer);
     }
@@ -32,7 +32,7 @@ namespace GNet.Datasets.Dynamic
             DataCollection = dataset.Select(D => D);
         }
 
-        public void Initialize(int length)
+        public void Generate(int length)
         {
             DataLength = length;
             DataCollection = new Data[length];
@@ -81,7 +81,7 @@ namespace GNet.Datasets.Dynamic
             DataCollection = dataset.Select(D => D);
         }
 
-        public void Initialize(int length)
+        public void Generate(int length)
         {
             DataLength = length;
             DataCollection = new Data[length];
@@ -128,7 +128,7 @@ namespace GNet.Datasets.Dynamic
             DataCollection = dataCollection.Select(D => D);
         }
 
-        public void Initialize(int length)
+        public void Generate(int length)
         {
             DataLength = length;
             DataCollection = new Data[length];
@@ -177,7 +177,7 @@ namespace GNet.Datasets.Dynamic
             DataCollection = dataCollection.Select(D => D);
         }
 
-        public void Initialize(int length)
+        public void Generate(int length)
         {
             DataLength = length;
             DataCollection = new Data[length];

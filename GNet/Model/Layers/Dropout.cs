@@ -1,29 +1,29 @@
-﻿using System;
+﻿using GNet.Extensions.Generic;
 using GNet.GlobalRandom;
-using GNet.Extensions.Generic;
+using System;
 
-namespace GNet.Layers
+namespace GNet
 {
     [Serializable]
-    public class Dropout : Hidden
+    public class Dropout : Layer
     {
-        public double DropProb { get; }
+        public double DropChance { get; }
 
         private Synapse[,] droppedCache;
-        private readonly Synapse disconnectedSynapse;
+        private readonly Synapse blankSynapse;
 
-        public Dropout(int length, IActivation activation, IInitializer weightInit, IInitializer biasInit, double dropProb) : base(length, activation, weightInit, biasInit)
+        public Dropout(int length, IActivation activation, IInitializer weightInit, IInitializer biasInit, double dropChance) : base(length, activation, weightInit, biasInit)
         {
-            if (dropProb < 0 || DropProb > 1)
-                throw new ArgumentOutOfRangeException("DropProb must be in range 0 - 1.");
+            if (dropChance < 0.0 || dropChance > 1.0)
+                throw new ArgumentOutOfRangeException("DropProbability must be in range (0 - 1).");
 
-            DropProb = dropProb;
-            disconnectedSynapse = new Synapse(new Neuron(), new Neuron());
+            DropChance = dropChance;
+            blankSynapse = new Synapse(new Neuron(), new Neuron());
         }
 
-        public override void Init(Base inLayer)
+        public override void Connect(Layer inLayer)
         {
-            base.Init(inLayer);
+            base.Connect(inLayer);
 
             droppedCache = new Synapse[Length, inLayer.Length];
 
@@ -33,22 +33,22 @@ namespace GNet.Layers
         public override void Update()
         {
             base.Update();
+
             Drop();
         }
 
-        // todo: is it right?
         private void Drop()
         {
             Neurons.ForEach((N, i) =>
             {
                 N.InSynapses.ForEach((S, j) =>
                 {
-                    if (GRandom.NextDouble() < DropProb)
+                    if (GRandom.NextDouble() < DropChance)
                     {
                         if (droppedCache[i, j] == null)
                             droppedCache[i, j] = S;
 
-                        N.InSynapses[j] = disconnectedSynapse;                
+                        N.InSynapses[j] = blankSynapse;
                     }
                     else if (droppedCache[i, j] != null)
                     {
@@ -59,6 +59,6 @@ namespace GNet.Layers
             });
         }
 
-        public override Base Clone() => new Hidden(Length, Activation, WeightInit, BiasInit);
+        public override Layer Clone() => new Dropout(Length, Activation, WeightInit, BiasInit, DropChance);
     }
 }

@@ -6,7 +6,7 @@ namespace GNet
 {
     public interface IInitializer : ICloneable<IInitializer>
     {
-        double Init(int nIn, int nOut);
+        double Initialize(int nIn, int nOut);
     }
 }
 
@@ -15,7 +15,7 @@ namespace GNet.Initializers
     [Serializable]
     public class Zero : IInitializer
     {
-        public double Init(int nIn, int nOut) => 0.0;
+        public double Initialize(int nIn, int nOut) => 0.0;
 
         public IInitializer Clone() => new Zero();
     }
@@ -30,7 +30,7 @@ namespace GNet.Initializers
             Value = value;
         }
 
-        public double Init(int nIn, int nOut) => Value;
+        public double Initialize(int nIn, int nOut) => Value;
 
         public IInitializer Clone() => new Const(Value);
     }
@@ -38,7 +38,7 @@ namespace GNet.Initializers
     [Serializable]
     public class One : IInitializer
     {
-        public double Init(int nIn, int nOut) => 1.0;
+        public double Initialize(int nIn, int nOut) => 1.0;
 
         public IInitializer Clone() => new One();
     }
@@ -46,7 +46,7 @@ namespace GNet.Initializers
     [Serializable]
     public class Uniform : IInitializer
     {
-        public double Init(int nIn, int nOut) => GRandom.NextDouble(-1.0, 1.0);
+        public double Initialize(int nIn, int nOut) => GRandom.NextDouble(-1.0, 1.0);
 
         public IInitializer Clone() => new Uniform();
     }
@@ -54,7 +54,7 @@ namespace GNet.Initializers
     [Serializable]
     public class Normal : IInitializer
     {
-        public double Init(int nIn, int nOut) => GRandom.NextNormal();
+        public double Initialize(int nIn, int nOut) => GRandom.NextNormal();
 
         public IInitializer Clone() => new Normal();
     }
@@ -62,7 +62,7 @@ namespace GNet.Initializers
     [Serializable]
     public class LeCunNormal : IInitializer
     {
-        public double Init(int nIn, int nOut) => GRandom.NextNormal() * Sqrt(1.0 / nIn);
+        public double Initialize(int nIn, int nOut) => GRandom.NextNormal() * Sqrt(1.0 / nIn);
 
         public IInitializer Clone() => new LeCunNormal();
     }
@@ -70,7 +70,7 @@ namespace GNet.Initializers
     [Serializable]
     public class HeNormal : IInitializer
     {
-        public double Init(int nIn, int nOut) => GRandom.NextNormal() * Sqrt(2.0 / nIn);
+        public double Initialize(int nIn, int nOut) => GRandom.NextNormal() * Sqrt(2.0 / nIn);
 
         public IInitializer Clone() => new HeNormal();
     }
@@ -78,7 +78,7 @@ namespace GNet.Initializers
     [Serializable]
     public class GlorotNormal : IInitializer
     {
-        public double Init(int nIn, int nOut) => GRandom.NextNormal() * Sqrt(2.0 / (nIn + nOut));
+        public double Initialize(int nIn, int nOut) => GRandom.NextNormal() * Sqrt(2.0 / (nIn + nOut));
 
         public IInitializer Clone() => new GlorotNormal();
     }
@@ -86,7 +86,7 @@ namespace GNet.Initializers
     [Serializable]
     public class LeCunUniform : IInitializer
     {
-        public double Init(int nIn, int nOut) => GRandom.NextDouble(Sqrt(3.0 / nIn));
+        public double Initialize(int nIn, int nOut) => GRandom.NextDouble(Sqrt(3.0 / nIn));
 
         public IInitializer Clone() => new LeCunUniform();
     }
@@ -94,7 +94,7 @@ namespace GNet.Initializers
     [Serializable]
     public class HeUniform : IInitializer
     {
-        public double Init(int nIn, int nOut) => GRandom.NextDouble(Sqrt(6.0 / nIn));
+        public double Initialize(int nIn, int nOut) => GRandom.NextDouble(Sqrt(6.0 / nIn));
 
         public IInitializer Clone() => new HeUniform();
     }
@@ -102,7 +102,7 @@ namespace GNet.Initializers
     [Serializable]
     public class GlorotUniform : IInitializer
     {
-        public double Init(int nIn, int nOut) => GRandom.NextDouble(Sqrt(6.0 / (nIn + nOut)));
+        public double Initialize(int nIn, int nOut) => GRandom.NextDouble(Sqrt(6.0 / (nIn + nOut)));
 
         public IInitializer Clone() => new GlorotUniform();
     }
