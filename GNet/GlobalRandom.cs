@@ -4,7 +4,12 @@ namespace GNet.GlobalRandom
 {
     public static class GRandom
     {
-        private static readonly Random rnd = new Random();
+        private static Random rnd = new Random();
+
+        public static void SetSeed(int seed)
+        {
+            rnd = new Random(seed);
+        }
 
         public static int Next() => rnd.Next();
 
