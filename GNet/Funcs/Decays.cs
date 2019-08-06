@@ -1,6 +1,4 @@
-﻿using static System.Math;
-
-namespace GNet
+﻿namespace GNet
 {
     public interface IDecay : ICloneable<IDecay>
     {
@@ -12,6 +10,8 @@ namespace GNet
 
 namespace GNet.Optimizers.Decays
 {
+    using static System.Math;
+
     public class None : IDecay
     {
         public double Decay { get; } = 0;

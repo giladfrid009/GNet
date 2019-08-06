@@ -46,7 +46,7 @@ namespace GNet
 
         public void Initialize()
         {
-            int inLength = Neurons[0]?.InSynapses.Length ?? throw new Exception("Layer is not connected, so cannot initialize.");
+            int inLength = Neurons[0].InSynapses.Length;
 
             Neurons.ForEach(N =>
             {
@@ -70,7 +70,7 @@ namespace GNet
             double[] activated = Activation.Activate(Neurons.Select(N => N.Value));
 
             Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
-        }
+        }        
 
         public void FeedBackward(IOptimizer optimizer, ILoss loss, double[] targets, int epoch)
         {

@@ -6,7 +6,38 @@ namespace GNet.Serializers
 {
     public static class Binary
     {
-        public static void Serialize<TObject>(TObject obj, string filePath)
+        public static MemoryStream Serialize<TObject>(TObject obj)
+        {
+            try
+            {
+                MemoryStream stream = new MemoryStream();
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(stream, obj);
+                return stream;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw new Exception(e.Message, e);
+            }
+        }
+
+        public static TObject Deserialize<TObject>(MemoryStream stream)
+        {
+            try
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                stream.Position = 0;
+                return (TObject)formatter.Deserialize(stream);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw new Exception(e.Message, e);
+            }
+        }
+
+        public static void Save<TObject>(TObject obj, string filePath)
         {
             try
             {
@@ -23,7 +54,7 @@ namespace GNet.Serializers
             }
         }
 
-        public static TObject Deserialize<TObject>(string filePath)
+        public static TObject Load<TObject>(string filePath)
         {
             try
             {
