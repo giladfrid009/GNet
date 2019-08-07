@@ -21,6 +21,9 @@ namespace GNet
             Outputs = outputNormalizer.Normalize(Outputs);
         }
 
-        public Data Clone() => new Data(Inputs, Outputs);
+        public Data Clone()
+        {
+            return new Data(Inputs, Outputs);
+        }
     }
 }

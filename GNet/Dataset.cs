@@ -1,5 +1,5 @@
-﻿using System;
-using GNet.Extensions.Generic;
+﻿using GNet.Extensions.Generic;
+using System;
 
 namespace GNet
 {
@@ -19,7 +19,9 @@ namespace GNet
             dataCollection.ForEach((D, i) =>
             {
                 if (D.Inputs.Length != InputLength || D.Outputs.Length != OutputLength)
+                {
                     throw new ArgumentException($"DataCollection[{i}] structure mismatch.");
+                }
             });
 
             DataLength = dataCollection.Length;
@@ -31,6 +33,9 @@ namespace GNet
             DataCollection.ForEach(D => D.Normalize(inputNormalizer, outputNormalizer));
         }
 
-        public Dataset Clone() => new Dataset(DataCollection);
+        public Dataset Clone()
+        {
+            return new Dataset(DataCollection);
+        }
     }
 }

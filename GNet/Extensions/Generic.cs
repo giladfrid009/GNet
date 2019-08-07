@@ -65,7 +65,7 @@ namespace GNet.Extensions.Generic
             {
                 int index = GRandom.Next(i, source.Length);
 
-                var temp = source[i];
+                TSource temp = source[i];
                 source[i] = source[index];
                 source[index] = temp;
             }

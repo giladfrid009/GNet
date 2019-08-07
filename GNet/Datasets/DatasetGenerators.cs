@@ -1,5 +1,5 @@
-﻿using System;
-using GNet.GlobalRandom;
+﻿using GNet.GlobalRandom;
+using System;
 
 namespace GNet
 {
@@ -44,7 +44,10 @@ namespace GNet.Datasets.Generators
             return new Dataset(dataCollection);
         }
 
-        public IDatasetGenerator Clone() => new EvenOdd(InputLength);
+        public IDatasetGenerator Clone()
+        {
+            return new EvenOdd(InputLength);
+        }
     }
 
     [Serializable]
@@ -76,7 +79,10 @@ namespace GNet.Datasets.Generators
             return new Dataset(dataCollection);
         }
 
-        public IDatasetGenerator Clone() => new Uniform(IOLength);
+        public IDatasetGenerator Clone()
+        {
+            return new Uniform(IOLength);
+        }
     }
 
     [Serializable]
@@ -112,7 +118,10 @@ namespace GNet.Datasets.Generators
             return new Dataset(dataCollection);
         }
 
-        public IDatasetGenerator Clone() => new Func1(IOFunc, Range);
+        public IDatasetGenerator Clone()
+        {
+            return new Func1(IOFunc, Range);
+        }
     }
 
     [Serializable]
@@ -150,6 +159,9 @@ namespace GNet.Datasets.Generators
             return new Dataset(dataCollection);
         }
 
-        public IDatasetGenerator Clone() => new Func2(IOFunc, Range);
+        public IDatasetGenerator Clone()
+        {
+            return new Func2(IOFunc, Range);
+        }
     }
 }

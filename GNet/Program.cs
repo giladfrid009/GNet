@@ -17,11 +17,11 @@ namespace GNet
 
             net.Initialize();
 
-            var datasetGenerator = new Datasets.Generators.EvenOdd(10);
+            Datasets.Generators.EvenOdd datasetGenerator = new Datasets.Generators.EvenOdd(10);
 
-            var trainingDataset = datasetGenerator.Generate(2000);
-            var validationDataset = datasetGenerator.Generate(1000);
-            var validationLoss = new OutTransformers.Losses.BinaryRoundLoss();
+            Dataset trainingDataset = datasetGenerator.Generate(2000);
+            Dataset validationDataset = datasetGenerator.Generate(1000);
+            OutTransformers.Losses.BinaryRoundLoss validationLoss = new OutTransformers.Losses.BinaryRoundLoss();
 
             net.Train(trainingDataset, new Losses.MSE(), new Optimizers.NestrovMomentum(), 30, 1000, 0.01, validationDataset, validationLoss);
 

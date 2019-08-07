@@ -19,7 +19,10 @@ namespace GNet.Normalizers
             return vals.Select(X => X);
         }
 
-        public INormalizer Clone() => new None();
+        public INormalizer Clone()
+        {
+            return new None();
+        }
     }
 
     public class Division : INormalizer
@@ -36,7 +39,10 @@ namespace GNet.Normalizers
             return vals.Select(X => X / Divisor);
         }
 
-        public INormalizer Clone() => new Division(Divisor);
+        public INormalizer Clone()
+        {
+            return new Division(Divisor);
+        }
     }
 
     public class MinMax : INormalizer
@@ -48,12 +54,17 @@ namespace GNet.Normalizers
             double diff = max - min;
 
             if (diff == 0.0)
+            {
                 return vals.Select(X => 0.5);
+            }
 
             return vals.Select(X => (X - min) / diff);
         }
 
-        public INormalizer Clone() => new MinMax();
+        public INormalizer Clone()
+        {
+            return new MinMax();
+        }
     }
 
     public class ZScore : INormalizer
@@ -67,7 +78,10 @@ namespace GNet.Normalizers
             return vals.Select(X => (X - mean) / sd);
         }
 
-        public INormalizer Clone() => new ZScore();
+        public INormalizer Clone()
+        {
+            return new ZScore();
+        }
     }
 
     public class DecimalScale : INormalizer
@@ -81,7 +95,10 @@ namespace GNet.Normalizers
             return vals.Select(X => X / scale);
         }
 
-        public INormalizer Clone() => new DecimalScale();
+        public INormalizer Clone()
+        {
+            return new DecimalScale();
+        }
     }
 
     public class ActivationFunc : INormalizer
@@ -98,6 +115,9 @@ namespace GNet.Normalizers
             return Activation.Activate(vals);
         }
 
-        public INormalizer Clone() => new ActivationFunc(Activation);
+        public INormalizer Clone()
+        {
+            return new ActivationFunc(Activation);
+        }
     }
 }

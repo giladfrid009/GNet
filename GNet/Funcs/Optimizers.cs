@@ -24,7 +24,7 @@ namespace GNet.Optimizers
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            double lr = Decay.Compute(LearningRate, epoch);
 
             neurons.ForEach(N =>
             {
@@ -37,7 +37,10 @@ namespace GNet.Optimizers
             });
         }
 
-        public IOptimizer Clone() => new Default(LearningRate, Decay);
+        public IOptimizer Clone()
+        {
+            return new Default(LearningRate, Decay);
+        }
     }
 
     public class Momentum : IOptimizer
@@ -55,7 +58,7 @@ namespace GNet.Optimizers
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            double lr = Decay.Compute(LearningRate, epoch);
 
             neurons.ForEach(N =>
             {
@@ -70,7 +73,10 @@ namespace GNet.Optimizers
             });
         }
 
-        public IOptimizer Clone() => new Momentum(LearningRate, MomentumValue, Decay);
+        public IOptimizer Clone()
+        {
+            return new Momentum(LearningRate, MomentumValue, Decay);
+        }
     }
 
     public class NestrovMomentum : IOptimizer
@@ -88,11 +94,11 @@ namespace GNet.Optimizers
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            double lr = Decay.Compute(LearningRate, epoch);
 
             neurons.ForEach(N =>
             {
-                var oldDelta = N.Cache1;
+                double oldDelta = N.Cache1;
                 N.Cache1 = -lr * N.Gradient + MomentumValue * N.Cache1;
                 N.BatchBias += (1.0 + MomentumValue) * N.Cache1 - MomentumValue * oldDelta;
 
@@ -106,7 +112,10 @@ namespace GNet.Optimizers
 
         }
 
-        public IOptimizer Clone() => new NestrovMomentum(LearningRate, MomentumValue, Decay);
+        public IOptimizer Clone()
+        {
+            return new NestrovMomentum(LearningRate, MomentumValue, Decay);
+        }
     }
 
     public class AdaGrad : IOptimizer
@@ -124,7 +133,7 @@ namespace GNet.Optimizers
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            double lr = Decay.Compute(LearningRate, epoch);
 
             neurons.ForEach(N =>
             {
@@ -140,7 +149,10 @@ namespace GNet.Optimizers
         }
 
 
-        public IOptimizer Clone() => new AdaGrad(LearningRate, Epsilon, Decay);
+        public IOptimizer Clone()
+        {
+            return new AdaGrad(LearningRate, Epsilon, Decay);
+        }
     }
 
     public class AdaGradWindow : IOptimizer
@@ -160,7 +172,7 @@ namespace GNet.Optimizers
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            double lr = Decay.Compute(LearningRate, epoch);
 
             neurons.ForEach(N =>
             {
@@ -176,7 +188,10 @@ namespace GNet.Optimizers
         }
 
 
-        public IOptimizer Clone() => new AdaGradWindow(LearningRate, Rho, Epsilon, Decay);
+        public IOptimizer Clone()
+        {
+            return new AdaGradWindow(LearningRate, Rho, Epsilon, Decay);
+        }
     }
 
     public class AdaDelta : IOptimizer
@@ -196,12 +211,12 @@ namespace GNet.Optimizers
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            double lr = Decay.Compute(LearningRate, epoch);
 
             neurons.ForEach(N =>
             {
                 N.Cache1 = Rho * N.Cache1 + (1.0 - Rho) * N.Gradient * N.Gradient;
-                var delta = -Sqrt(N.Cache2 + Epsilon) * N.Gradient / Sqrt(N.Cache1 + Epsilon);
+                double delta = -Sqrt(N.Cache2 + Epsilon) * N.Gradient / Sqrt(N.Cache1 + Epsilon);
                 N.Cache2 = Rho * N.Cache2 + (1.0 - Rho) * delta * delta;
                 N.BatchBias += delta;
 
@@ -216,7 +231,10 @@ namespace GNet.Optimizers
         }
 
 
-        public IOptimizer Clone() => new AdaDelta(LearningRate, Rho, Epsilon, Decay);
+        public IOptimizer Clone()
+        {
+            return new AdaDelta(LearningRate, Rho, Epsilon, Decay);
+        }
     }
 
     public class RMSProp : IOptimizer
@@ -236,7 +254,7 @@ namespace GNet.Optimizers
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            double lr = Decay.Compute(LearningRate, epoch);
 
             neurons.ForEach(N =>
             {
@@ -251,7 +269,10 @@ namespace GNet.Optimizers
             });
         }
 
-        public IOptimizer Clone() => new RMSProp(LearningRate, Rho, Epsilon, Decay);
+        public IOptimizer Clone()
+        {
+            return new RMSProp(LearningRate, Rho, Epsilon, Decay);
+        }
     }
 
     public class Adam : IOptimizer
@@ -273,17 +294,17 @@ namespace GNet.Optimizers
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            double lr = Decay.Compute(LearningRate, epoch);
 
-            var val1 = 1.0 - Pow(Beta1, epoch + 1.0);
-            var val2 = 1.0 - Pow(Beta2, epoch + 1.0);
+            double val1 = 1.0 - Pow(Beta1, epoch + 1.0);
+            double val2 = 1.0 - Pow(Beta2, epoch + 1.0);
 
             neurons.ForEach(N =>
             {
                 N.Cache1 = Beta1 * N.Cache1 + (1.0 - Beta1) * N.Gradient;
                 N.Cache2 = Beta2 * N.Cache2 + (1.0 - Beta2) * N.Gradient * N.Gradient;
-                var corr1 = N.Cache1 / val1;
-                var corr2 = N.Cache2 / val2;
+                double corr1 = N.Cache1 / val1;
+                double corr2 = N.Cache2 / val2;
                 N.BatchBias += -lr * corr1 / (Sqrt(corr2) + Epsilon);
 
                 N.InSynapses.ForEach(S =>
@@ -297,7 +318,10 @@ namespace GNet.Optimizers
             });
         }
 
-        public IOptimizer Clone() => new Adam(LearningRate, Beta1, Beta2, Epsilon, Decay);
+        public IOptimizer Clone()
+        {
+            return new Adam(LearningRate, Beta1, Beta2, Epsilon, Decay);
+        }
     }
 
     public class AdaMax : IOptimizer
@@ -318,15 +342,15 @@ namespace GNet.Optimizers
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            double lr = Decay.Compute(LearningRate, epoch);
 
-            var val1 = 1.0 - Pow(Beta1, epoch + 1.0);
+            double val1 = 1.0 - Pow(Beta1, epoch + 1.0);
 
             neurons.ForEach(N =>
             {
                 N.Cache1 = Beta1 * N.Cache1 + (1.0 - Beta1) * N.Gradient;
                 N.Cache2 = Max(Beta2 * N.Cache2, Abs(N.Gradient));
-                var corr1 = N.Cache1 / val1;
+                double corr1 = N.Cache1 / val1;
                 N.BatchBias += -lr * corr1 / (N.Cache2 + Epsilon);
 
                 N.InSynapses.ForEach(S =>
@@ -339,7 +363,10 @@ namespace GNet.Optimizers
             });
         }
 
-        public IOptimizer Clone() => new AdaMax(LearningRate, Beta1, Beta2, Decay);
+        public IOptimizer Clone()
+        {
+            return new AdaMax(LearningRate, Beta1, Beta2, Decay);
+        }
     }
 
     public class Nadam : IOptimizer
@@ -361,17 +388,17 @@ namespace GNet.Optimizers
 
         public void Optimize(Neuron[] neurons, int epoch)
         {
-            var lr = Decay.Compute(LearningRate, epoch);
+            double lr = Decay.Compute(LearningRate, epoch);
 
-            var val1 = 1.0 - Pow(Beta1, epoch + 1.0);
-            var val2 = 1.0 - Pow(Beta2, epoch + 1.0);
+            double val1 = 1.0 - Pow(Beta1, epoch + 1.0);
+            double val2 = 1.0 - Pow(Beta2, epoch + 1.0);
 
             neurons.ForEach(N =>
             {
                 N.Cache1 = Beta1 * N.Cache1 + (1.0 - Beta1) * N.Gradient;
                 N.Cache2 = Beta2 * N.Cache2 + (1.0 - Beta2) * N.Gradient * N.Gradient;
-                var corr1 = N.Cache1 / val1 + (1.0 - Beta1) * N.Gradient / val1;
-                var corr2 = N.Cache2 / val2;
+                double corr1 = N.Cache1 / val1 + (1.0 - Beta1) * N.Gradient / val1;
+                double corr2 = N.Cache2 / val2;
                 N.BatchBias += -lr * corr1 / (Sqrt(corr2) + Epsilon);
 
                 N.InSynapses.ForEach(S =>
@@ -385,6 +412,9 @@ namespace GNet.Optimizers
             });
         }
 
-        public IOptimizer Clone() => new Nadam(LearningRate, Beta1, Beta2, Epsilon, Decay);
+        public IOptimizer Clone()
+        {
+            return new Nadam(LearningRate, Beta1, Beta2, Epsilon, Decay);
+        }
     }
 }

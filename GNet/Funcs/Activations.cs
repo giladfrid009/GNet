@@ -29,7 +29,10 @@ namespace GNet.Activations
             return vals.Select(X => 1.0);
         }
 
-        public IActivation Clone() => new Identity();
+        public IActivation Clone()
+        {
+            return new Identity();
+        }
     }
 
     [Serializable]
@@ -45,7 +48,10 @@ namespace GNet.Activations
             return vals.Select(X => 0.0);
         }
 
-        public IActivation Clone() => new BinaryStep();
+        public IActivation Clone()
+        {
+            return new BinaryStep();
+        }
     }
 
     [Serializable]
@@ -61,7 +67,10 @@ namespace GNet.Activations
             return vals.Select(X => Exp(X) / Pow(Exp(X) + 1.0, 2.0));
         }
 
-        public IActivation Clone() => new Sigmoid();
+        public IActivation Clone()
+        {
+            return new Sigmoid();
+        }
     }
 
     [Serializable]
@@ -77,7 +86,10 @@ namespace GNet.Activations
             return vals.Select(X => X < -2.5 || X > 2.5 ? 0.0 : 0.2);
         }
 
-        public IActivation Clone() => new HardSigmoid();
+        public IActivation Clone()
+        {
+            return new HardSigmoid();
+        }
     }
 
     [Serializable]
@@ -93,7 +105,10 @@ namespace GNet.Activations
             return vals.Select(X => 1.0 / Pow(Cosh(X), 2));
         }
 
-        public IActivation Clone() => new Tanh();
+        public IActivation Clone()
+        {
+            return new Tanh();
+        }
     }
 
     [Serializable]
@@ -112,7 +127,10 @@ namespace GNet.Activations
             return vals.Select(X => A * B / Pow(Cosh(B * X), 2.0));
         }
 
-        public IActivation Clone() => new LeCunTanh();
+        public IActivation Clone()
+        {
+            return new LeCunTanh();
+        }
     }
 
     [Serializable]
@@ -128,7 +146,10 @@ namespace GNet.Activations
             return vals.Select(X => 1.0 / (1.0 + X * X));
         }
 
-        public IActivation Clone() => new ArcTan();
+        public IActivation Clone()
+        {
+            return new ArcTan();
+        }
     }
 
     [Serializable]
@@ -144,7 +165,10 @@ namespace GNet.Activations
             return vals.Select(X => 1.0 / Sqrt(1.0 + X * X));
         }
 
-        public IActivation Clone() => new ArSinh();
+        public IActivation Clone()
+        {
+            return new ArSinh();
+        }
     }
 
     [Serializable]
@@ -160,7 +184,10 @@ namespace GNet.Activations
             return vals.Select(X => 1.0 / Pow(1.0 + Abs(X), 2));
         }
 
-        public IActivation Clone() => new SoftSign();
+        public IActivation Clone()
+        {
+            return new SoftSign();
+        }
     }
 
     [Serializable]
@@ -186,7 +213,10 @@ namespace GNet.Activations
             return vals.Select(X => Pow(X / Sqrt(1.0 + Alpha * X * X), 3.0));
         }
 
-        public IActivation Clone() => new ISRU(Alpha);
+        public IActivation Clone()
+        {
+            return new ISRU(Alpha);
+        }
     }
 
     [Serializable]
@@ -212,7 +242,10 @@ namespace GNet.Activations
             return vals.Select(X => X >= 0.0 ? 1.0 : Pow(X / Sqrt(1.0 + Alpha * X * X), 3.0));
         }
 
-        public IActivation Clone() => new ISRLU(Alpha);
+        public IActivation Clone()
+        {
+            return new ISRLU(Alpha);
+        }
     }
 
     [Serializable]
@@ -226,13 +259,19 @@ namespace GNet.Activations
             return vals.Select(X =>
             {
                 if (X > 2.0)
+                {
                     return 1.0;
+                }
 
                 if (X >= 0.0 && X <= 2.0)
+                {
                     return X - X * X / 4.0;
+                }
 
                 if (X >= -2.0 && X < 0.0)
+                {
                     return X - X * X / 4.0;
+                }
 
                 return -1.0;
             });
@@ -243,7 +282,10 @@ namespace GNet.Activations
             return vals.Select(X => X > 0.0 ? 1.0 - X / 2.0 : 1.0 + X / 2.0);
         }
 
-        public IActivation Clone() => new SQNL();
+        public IActivation Clone()
+        {
+            return new SQNL();
+        }
     }
 
     [Serializable]
@@ -269,7 +311,10 @@ namespace GNet.Activations
             return vals.Select(X => X < 0.0 ? Slope : 1.0);
         }
 
-        public IActivation Clone() => new ReLu(Slope);
+        public IActivation Clone()
+        {
+            return new ReLu(Slope);
+        }
     }
 
     [Serializable]
@@ -300,7 +345,10 @@ namespace GNet.Activations
             return vals.Select(X => X < 0.0 ? Slope : 1);
         }
 
-        public IActivation Clone() => new RReLu(Slope);
+        public IActivation Clone()
+        {
+            return new RReLu(Slope);
+        }
     }
 
     [Serializable]
@@ -319,7 +367,10 @@ namespace GNet.Activations
             return vals.Select(X => X < 0.0 ? Exp(X) : 1.0);
         }
 
-        public IActivation Clone() => new ELU();
+        public IActivation Clone()
+        {
+            return new ELU();
+        }
     }
 
     [Serializable]
@@ -341,7 +392,10 @@ namespace GNet.Activations
             return vals.Select(X => X < 0.0 ? A * B * Exp(X) : A);
         }
 
-        public IActivation Clone() => new SELU();
+        public IActivation Clone()
+        {
+            return new SELU();
+        }
     }
 
     [Serializable]
@@ -357,7 +411,10 @@ namespace GNet.Activations
             return vals.Select(X => 1.0 / (1.0 + Exp(-X)));
         }
 
-        public IActivation Clone() => new SoftPlus();
+        public IActivation Clone()
+        {
+            return new SoftPlus();
+        }
     }
 
     [Serializable]
@@ -373,7 +430,10 @@ namespace GNet.Activations
             return vals.Select(X => X / (2.0 * Sqrt(X * X + 1.0)) + 1.0);
         }
 
-        public IActivation Clone() => new BentIdentity();
+        public IActivation Clone()
+        {
+            return new BentIdentity();
+        }
     }
 
     [Serializable]
@@ -388,12 +448,15 @@ namespace GNet.Activations
         {
             return vals.Select(X =>
             {
-                var exp = Exp(X);
+                double exp = Exp(X);
                 return exp * (1.0 + exp + X) / Pow(1.0 + exp, 2.0);
             });
         }
 
-        public IActivation Clone() => new Swish();
+        public IActivation Clone()
+        {
+            return new Swish();
+        }
     }
 
     [Serializable]
@@ -435,7 +498,10 @@ namespace GNet.Activations
             return vals.Select(X => derivative(X));
         }
 
-        public IActivation Clone() => new SoftExponential(Alpha);
+        public IActivation Clone()
+        {
+            return new SoftExponential(Alpha);
+        }
     }
 
     [Serializable]
@@ -458,7 +524,10 @@ namespace GNet.Activations
             return vals.Select(X => 0.5 * Sinh(0.5 * Alpha) * (1.0 / Cosh(0.5 * Alpha * X)) * (1.0 / Cosh(0.5 * Alpha * (1.0 - X))));
         }
 
-        public IActivation Clone() => new SoftClipping(Alpha);
+        public IActivation Clone()
+        {
+            return new SoftClipping(Alpha);
+        }
     }
 
     [Serializable]
@@ -474,7 +543,10 @@ namespace GNet.Activations
             return vals.Select(X => Cos(X));
         }
 
-        public IActivation Clone() => new Sinusoid();
+        public IActivation Clone()
+        {
+            return new Sinusoid();
+        }
     }
 
     [Serializable]
@@ -490,7 +562,10 @@ namespace GNet.Activations
             return vals.Select(X => X != 0.0 ? Cos(X) / X - Sin(X) / (X * X) : 0.0);
         }
 
-        public IActivation Clone() => new Sinc();
+        public IActivation Clone()
+        {
+            return new Sinc();
+        }
     }
 
     [Serializable]
@@ -506,7 +581,10 @@ namespace GNet.Activations
             return vals.Select(X => -2.0 * X * Exp(-X * X));
         }
 
-        public IActivation Clone() => new Gaussian();
+        public IActivation Clone()
+        {
+            return new Gaussian();
+        }
     }
 
     [Serializable]
@@ -530,6 +608,9 @@ namespace GNet.Activations
             return exps.Select(E => E * (sum - E) / (sum * sum));
         }
 
-        public IActivation Clone() => new Softmax();
+        public IActivation Clone()
+        {
+            return new Softmax();
+        }
     }
 }

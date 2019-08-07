@@ -26,7 +26,10 @@ namespace GNet.OutTransformers
             return output.Select(X => X < Bound ? 0.0 : 1);
         }
 
-        public IOutTransformer Clone() => new BinaryRound(Bound);
+        public IOutTransformer Clone()
+        {
+            return new BinaryRound(Bound);
+        }
     }
 
     public class BinaryMax : IOutTransformer
@@ -38,7 +41,10 @@ namespace GNet.OutTransformers
             return output.Select(X => X != max ? 0.0 : 1);
         }
 
-        public IOutTransformer Clone() => new BinaryMax();
+        public IOutTransformer Clone()
+        {
+            return new BinaryMax();
+        }
     }
 }
 
@@ -61,7 +67,10 @@ namespace GNet.OutTransformers.Losses
             throw new NotSupportedException("This loss can't be used in backpropogation.");
         }
 
-        public new ILoss Clone() => new BinaryRoundLoss(Bound);
+        public new ILoss Clone()
+        {
+            return new BinaryRoundLoss(Bound);
+        }
     }
 
     public class BinaryMaxLoss : BinaryMax, ILoss
@@ -76,6 +85,9 @@ namespace GNet.OutTransformers.Losses
             throw new NotSupportedException("This loss can't be used in backpropogation.");
         }
 
-        public new ILoss Clone() => new BinaryMaxLoss();
+        public new ILoss Clone()
+        {
+            return new BinaryMaxLoss();
+        }
     }
 }

@@ -15,7 +15,9 @@ namespace GNet
         public Dropout(int length, IActivation activation, IInitializer weightInit, IInitializer biasInit, double dropChance) : base(length, activation, weightInit, biasInit)
         {
             if (dropChance < 0.0 || dropChance > 1.0)
+            {
                 throw new ArgumentOutOfRangeException("DropProbability must be in range (0 - 1).");
+            }
 
             DropChance = dropChance;
             blankSynapse = new Synapse(new Neuron(), new Neuron());
@@ -46,7 +48,9 @@ namespace GNet
                     if (GRandom.NextDouble() < DropChance)
                     {
                         if (droppedCache[i, j] == null)
+                        {
                             droppedCache[i, j] = S;
+                        }
 
                         N.InSynapses[j] = blankSynapse;
                     }
@@ -59,6 +63,9 @@ namespace GNet
             });
         }
 
-        public override Layer Clone() => new Dropout(Length, Activation, WeightInit, BiasInit, DropChance);
+        public override Layer Clone()
+        {
+            return new Dropout(Length, Activation, WeightInit, BiasInit, DropChance);
+        }
     }
 }

@@ -58,7 +58,9 @@ namespace GNet
         public void SetInputs(double[] values)
         {
             if (values.Length != Length)
+            {
                 throw new ArgumentOutOfRangeException("Values length mismatch.");
+            }
 
             Neurons.ForEach((N, i) => N.ActivatedValue = values[i]);
         }
@@ -70,12 +72,14 @@ namespace GNet
             double[] activated = Activation.Activate(Neurons.Select(N => N.Value));
 
             Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
-        }        
+        }
 
         public void FeedBackward(IOptimizer optimizer, ILoss loss, double[] targets, int epoch)
         {
             if (loss is IOutTransformer)
+            {
                 throw new ArgumentException("This loss doesn't support backpropogation.");
+            }
 
             double[] actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
             double[] lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
@@ -118,6 +122,9 @@ namespace GNet
             });
         }
 
-        public virtual Layer Clone() => new Layer(Length, Activation, WeightInit, BiasInit);
+        public virtual Layer Clone()
+        {
+            return new Layer(Length, Activation, WeightInit, BiasInit);
+        }
     }
 }

@@ -47,7 +47,9 @@ namespace GNet.Extensions.Math
             for (int i = 1; i < source.Length; i++)
             {
                 if (source[i] < min)
+                {
                     min = source[i];
+                }
             }
 
             return min;
@@ -60,7 +62,9 @@ namespace GNet.Extensions.Math
             for (int i = 1; i < source.Length; i++)
             {
                 if (source[i] > max)
+                {
                     max = source[i];
+                }
             }
 
             return max;

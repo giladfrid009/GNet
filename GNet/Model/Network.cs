@@ -37,7 +37,9 @@ namespace GNet
         public double[] FeedForward(double[] inputs)
         {
             if (inputs.Length != Layers[0].Length)
+            {
                 throw new ArgumentOutOfRangeException("Input length and input layer length mismatch.");
+            }
 
             Layers[0].SetInputs(inputs);
 
@@ -75,7 +77,9 @@ namespace GNet
         public Log Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError)
         {
             if (dataset.InputLength != Layers[0].Length || dataset.OutputLength != Layers[Length - 1].Length)
+            {
                 throw new Exception("Dataset structure mismatch with network structure.");
+            }
 
             Log trainingLog = new Log();
 
@@ -120,10 +124,14 @@ namespace GNet
         public Log Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double valMinError, Dataset valDataset, ILoss valLoss)
         {
             if (dataset.InputLength != Layers[0].Length || dataset.OutputLength != Layers[Length - 1].Length)
+            {
                 throw new Exception("Dataset structure mismatch with network structure.");
+            }
 
             if (valDataset.InputLength != Layers[0].Length || valDataset.OutputLength != Layers[Length - 1].Length)
+            {
                 throw new Exception("ValDataset structure mismatch with network structure.");
+            }
 
             Log trainingLog = new Log();
 
@@ -131,7 +139,7 @@ namespace GNet
             trainingLog.Add("Initial loss: " + Validate(dataset, loss), true, true);
             trainingLog.Add("Initial validation error: " + Validate(valDataset, valLoss), true, true);
 
-            var valError = 0.0;
+            double valError = 0.0;
             int epoch;
             for (epoch = 0; epoch < numEpoches; epoch++)
             {
