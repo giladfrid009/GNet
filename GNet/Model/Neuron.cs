@@ -11,8 +11,6 @@ namespace GNet
 
         public double Value;
         public double ActivatedValue;
-
-        // training related
         public double Gradient;
         public double Cache1;
         public double Cache2;

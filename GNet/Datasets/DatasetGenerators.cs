@@ -1,7 +1,7 @@
 ﻿using GNet.GlobalRandom;
 using System;
 
-namespace GNet
+namespace GNet.Datasets
 {
     public interface IDatasetGenerator : ICloneable<IDatasetGenerator>
     {

@@ -6,11 +6,11 @@ namespace GNet
     {
         private static void Main()
         {
-            Layer[] layers = new Layer[]
+            Dense[] layers = new Dense[]
             {
-                new Layer(10, new Activations.Identity(), new Initializers.Zero(), new Initializers.Zero()),
-                new Layer(10, new Activations.Tanh(), new Initializers.LeCunNormal(), new Initializers.Zero()),
-                new Layer(1, new Activations.Sigmoid(), new Initializers.Normal(), new Initializers.Zero())
+                new Dense(10, new Activations.Identity(), new Initializers.Zero(), new Initializers.Zero()),
+                new Dense(10, new Activations.Tanh(), new Initializers.LeCunNormal(), new Initializers.Zero()),
+                new Dense(1, new Activations.Sigmoid(), new Initializers.Normal(), new Initializers.Zero())
             };
 
             Network net = new Network(layers);
@@ -18,12 +18,10 @@ namespace GNet
             net.Initialize();
 
             Datasets.Generators.EvenOdd datasetGenerator = new Datasets.Generators.EvenOdd(10);
-
             Dataset trainingDataset = datasetGenerator.Generate(2000);
             Dataset validationDataset = datasetGenerator.Generate(1000);
-            OutTransformers.Losses.BinaryRoundLoss validationLoss = new OutTransformers.Losses.BinaryRoundLoss();
 
-            net.Train(trainingDataset, new Losses.MSE(), new Optimizers.NestrovMomentum(), 30, 1000, 0.01, validationDataset, validationLoss);
+            net.Train(trainingDataset, new Losses.MSE(), new Optimizers.NestrovMomentum(), 30, 100, 0.01, validationDataset, new OutTransformers.Losses.BinaryRoundLoss());
 
             Console.ReadKey();
         }

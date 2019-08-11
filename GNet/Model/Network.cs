@@ -7,10 +7,10 @@ namespace GNet
     [Serializable]
     public class Network : ICloneable<Network>
     {
-        public Layer[] Layers { get; } = new Layer[0];
+        public Dense[] Layers { get; } = new Dense[0];
         public int Length { get; }
 
-        public Network(Layer[] layers)
+        public Network(Dense[] layers)
         {
             Length = layers.Length;
             Layers = layers.Select(L => L.Clone());
@@ -28,6 +28,11 @@ namespace GNet
 
         private void Connect()
         {
+            //Parallel.For(1, Length, (i) =>
+            //{
+            //    Layers[i].Connect(Layers[i - 1]);
+            //});
+
             for (int i = 1; i < Length; i++)
             {
                 Layers[i].Connect(Layers[i - 1]);
@@ -56,13 +61,26 @@ namespace GNet
             return dataset.DataCollection.Accumulate(0.0, (R, D) => R + loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.DataLength;
         }
 
-        private void FeedBackward(IOptimizer optimizer, ILoss loss, double[] targets, int epoch)
+        private void CalcGrads(ILoss loss, double[] targets)
         {
-            Layers[Length - 1].FeedBackward(optimizer, loss, targets, epoch);
+            Layers[Length - 1].CalcGrads(loss, targets);
 
             for (int i = Length - 2; i > 0; i--)
             {
-                Layers[i].FeedBackward(optimizer, epoch);
+                Layers[i].CalcGrads();
+            }
+        }
+
+        private void Optimize(IOptimizer optimizer, int epoch)
+        {
+            //Parallel.For(1, Length, (i) =>
+            //{
+            //    optimizer.Optimize(Layers[i], epoch);
+            //});
+
+            for (int i = 1; i < Length; i++)
+            {
+                optimizer.Optimize(Layers[i], epoch);
             }
         }
 
@@ -82,22 +100,27 @@ namespace GNet
             }
 
             Log trainingLog = new Log();
-
-            trainingLog.Add("Training started.", true, true);
-            trainingLog.Add("Initial error: " + Validate(dataset, loss), true, true);
-
-            double error = 0.0;
+            double error = Validate(dataset, loss);
             int epoch;
+
+            trainingLog.Add("Training started.", true);
+            trainingLog.Add("Initial error: " + error, true);
 
             for (epoch = 0; epoch < numEpoches; epoch++)
             {
+                if (error < minError)
+                {
+                    trainingLog.Add("Error has reached the destination value.", true);
+                    break;
+                }
+
                 dataset.DataCollection.Shuffle();
 
                 dataset.DataCollection.ForEach((D, index) =>
                 {
                     FeedForward(D.Inputs);
-
-                    FeedBackward(optimizer, loss, D.Outputs, epoch);
+                    CalcGrads(loss, D.Outputs);
+                    Optimize(optimizer, epoch);
 
                     if (index % batchSize == 0)
                     {
@@ -106,17 +129,11 @@ namespace GNet
                 });
 
                 error = Validate(dataset, loss);
-
-                if (error < minError)
-                {
-                    trainingLog.Add("Error has reached the destination value.", true, true);
-                    break;
-                }
             }
 
-            trainingLog.Add("Epoches completed " + epoch, true, true);
-            trainingLog.Add("Final error: " + error, true, true);
-            trainingLog.Add("Training completed.", true, true);
+            trainingLog.Add("Epoches completed " + epoch, true);
+            trainingLog.Add("Final error: " + error, true);
+            trainingLog.Add("Training completed.", true);
 
             return trainingLog;
         }
@@ -134,22 +151,28 @@ namespace GNet
             }
 
             Log trainingLog = new Log();
-
-            trainingLog.Add("Training started.", true, true);
-            trainingLog.Add("Initial loss: " + Validate(dataset, loss), true, true);
-            trainingLog.Add("Initial validation error: " + Validate(valDataset, valLoss), true, true);
-
-            double valError = 0.0;
+            double valError = Validate(valDataset, valLoss);
             int epoch;
+
+            trainingLog.Add("Training started.", true);
+            trainingLog.Add("Initial error: " + Validate(dataset, loss), true);
+            trainingLog.Add("Initial validation error: " + valError, true);
+
             for (epoch = 0; epoch < numEpoches; epoch++)
             {
+                if (valError < valMinError)
+                {
+                    trainingLog.Add("Validation error has reached the destination value.", true);
+                    break;
+                }
+
                 dataset.DataCollection.Shuffle();
 
                 dataset.DataCollection.ForEach((D, index) =>
                 {
                     FeedForward(D.Inputs);
-
-                    FeedBackward(optimizer, loss, D.Outputs, epoch);
+                    CalcGrads(loss, D.Outputs);
+                    Optimize(optimizer, epoch);
 
                     if (index % batchSize == 0)
                     {
@@ -158,18 +181,12 @@ namespace GNet
                 });
 
                 valError = Validate(valDataset, valLoss);
-
-                if (valError < valMinError)
-                {
-                    trainingLog.Add("Validation error has reached the destination value.", true, true);
-                    break;
-                }
             }
 
-            trainingLog.Add("Epoches completed " + epoch, true, true);
-            trainingLog.Add("Final error: " + Validate(dataset, loss), true, true);
-            trainingLog.Add("Final validation error: " + valError, true, true);
-            trainingLog.Add("Training completed.", true, true);
+            trainingLog.Add("Epoches completed " + epoch, true);
+            trainingLog.Add("Final error: " + Validate(dataset, loss), true);
+            trainingLog.Add("Final validation error: " + valError, true);
+            trainingLog.Add("Training completed.", true);
 
             return trainingLog;
         }
@@ -185,11 +202,6 @@ namespace GNet
                     N.CloneVals(Layers[i].Neurons[j]);
                     N.InSynapses.ForEach((S, k) => S.CloneVals(Layers[i].Neurons[j].InSynapses[k]));
                 });
-            });
-
-            newNet.Layers[Length - 1].Neurons.ForEach((N, j) =>
-            {
-                N.OutSynapses.ForEach((S, k) => S.CloneVals(Layers[Length - 1].Neurons[j].OutSynapses[k]));
             });
 
             return newNet;

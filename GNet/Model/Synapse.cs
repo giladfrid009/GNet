@@ -5,12 +5,9 @@ namespace GNet
     [Serializable]
     public class Synapse
     {
-        // todo: maybe it should be IUnit InUnit and IUnit OutUnit. IUnit represents a neuron / a convolutional kernel.
         public Neuron InNeuron { get; }
         public Neuron OutNeuron { get; }
         public double Weight { get; set; }
-
-        // training related
         public double Gradient;
         public double Cache1;
         public double Cache2;

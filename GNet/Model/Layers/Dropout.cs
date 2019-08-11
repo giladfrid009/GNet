@@ -5,7 +5,7 @@ using System;
 namespace GNet
 {
     [Serializable]
-    public class Dropout : Layer
+    public class Dropout : Dense
     {
         public double DropChance { get; }
 
@@ -23,7 +23,7 @@ namespace GNet
             blankSynapse = new Synapse(new Neuron(), new Neuron());
         }
 
-        public override void Connect(Layer inLayer)
+        public override void Connect(Dense inLayer)
         {
             base.Connect(inLayer);
 
@@ -63,7 +63,7 @@ namespace GNet
             });
         }
 
-        public override Layer Clone()
+        public override Dense Clone()
         {
             return new Dropout(Length, Activation, WeightInit, BiasInit, DropChance);
         }

@@ -5,7 +5,7 @@ using System;
 namespace GNet
 {
     [Serializable]
-    public class Layer : ICloneable<Layer>
+    public class Dense : ICloneable<Dense>
     {
         public Neuron[] Neurons { get; } = new Neuron[0];
         public IActivation Activation { get; }
@@ -13,7 +13,7 @@ namespace GNet
         public IInitializer BiasInit { get; }
         public int Length { get; }
 
-        public Layer(int length, IActivation activation, IInitializer weightInit, IInitializer biasInit)
+        public Dense(int length, IActivation activation, IInitializer weightInit, IInitializer biasInit)
         {
             Length = length;
             Activation = activation.Clone();
@@ -28,7 +28,7 @@ namespace GNet
             }
         }
 
-        public virtual void Connect(Layer inLayer)
+        public virtual void Connect(Dense inLayer)
         {
             inLayer.Neurons.ForEach(N => N.OutSynapses = new Synapse[Length]);
             Neurons.ForEach(N => N.InSynapses = new Synapse[inLayer.Length]);
@@ -74,7 +74,7 @@ namespace GNet
             Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }
 
-        public void FeedBackward(IOptimizer optimizer, ILoss loss, double[] targets, int epoch)
+        public void CalcGrads(ILoss loss, double[] targets)
         {
             if (loss is IOutTransformer)
             {
@@ -90,11 +90,9 @@ namespace GNet
                 N.Gradient = grads[i];
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
             });
-
-            optimizer.Optimize(Neurons, epoch);
         }
 
-        public void FeedBackward(IOptimizer optimizer, int epoch)
+        public void CalcGrads()
         {
             double[] actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
 
@@ -103,8 +101,6 @@ namespace GNet
                 N.Gradient = N.OutSynapses.Accumulate(0.0, (R, W) => R + W.Weight * W.OutNeuron.Gradient) * actvDers[i];
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
             });
-
-            optimizer.Optimize(Neurons, epoch);
         }
 
         public virtual void Update()
@@ -122,9 +118,9 @@ namespace GNet
             });
         }
 
-        public virtual Layer Clone()
+        public virtual Dense Clone()
         {
-            return new Layer(Length, Activation, WeightInit, BiasInit);
+            return new Dense(Length, Activation, WeightInit, BiasInit);
         }
     }
 }
