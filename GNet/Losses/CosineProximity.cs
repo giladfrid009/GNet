@@ -10,8 +10,8 @@ namespace GNet.Losses
         {
             double tProd = targets.Accumulate(1.0, (R, X) => R * X);
             double oProd = outputs.Accumulate(1.0, (R, X) => R * X);
-            double tSumSqr = targets.Accumulate(1.0, (R, X) => R + X * X);
-            double oSumSqr = outputs.Accumulate(1.0, (R, X) => R + X * X);
+            double tSumSqr = targets.Sum(X => X * X);
+            double oSumSqr = outputs.Sum(X =>X * X);
 
             return -tProd * oProd / (Sqrt(tSumSqr) * Sqrt(oSumSqr));
         }
@@ -20,8 +20,8 @@ namespace GNet.Losses
         {
             double tProd = targets.Accumulate(1.0, (R, X) => R * X);
             double oProd = outputs.Accumulate(1.0, (R, X) => R * X);
-            double tSumSqr = targets.Accumulate(1.0, (R, X) => R + X * X);
-            double oSumSqr = outputs.Accumulate(1.0, (R, X) => R + X * X);
+            double tSumSqr = targets.Sum(X => X * X);
+            double oSumSqr = outputs.Sum(X => X * X);
 
             return outputs.Select(O => -tProd * (oProd / O) * Pow(oSumSqr - O * O, 2.0) / (Abs(tSumSqr) * Pow(oSumSqr, 1.5)));
         }

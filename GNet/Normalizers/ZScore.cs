@@ -4,20 +4,42 @@ using static System.Math;
 
 namespace GNet.Normalizers
 {
+    // todo: shoulf calc mean and sd of whole dataset.
     public class ZScore : INormalizer
     {
+        public enum DataVector { Input, Output }
+
+        public double Mean { get; }
+        public double SD { get; }
+
+        public ZScore(Dataset dataset, DataVector dataVector)
+        {
+            if (dataVector == DataVector.Input)
+            {
+                Mean = dataset.DataCollection.Sum(D => D.Inputs.Avarage()) / dataset.DataLength;
+                SD = Sqrt(dataset.DataCollection.Sum(D => D.Inputs.Sum(X => (X - Mean) * (X - Mean))) / (dataset.DataLength * dataset.InputLength));
+            }
+            else
+            {
+                Mean = dataset.DataCollection.Sum(D => D.Outputs.Avarage()) / dataset.DataLength;
+                SD = Sqrt(dataset.DataCollection.Sum(D => D.Outputs.Sum(X => (X - Mean) * (X - Mean))) / (dataset.DataLength * dataset.OutputLength));
+            }         
+        }
+
+        private ZScore(double mean, double sd)
+        {
+            Mean = mean;
+            SD = sd;
+        }
+
         public double[] Normalize(double[] vals)
         {
-            double mean = vals.Avarage();
-
-            double sd = Sqrt(vals.Accumulate(1.0, (R, X) => R + (X - mean) * (X - mean)) / vals.Length);
-
-            return vals.Select(X => (X - mean) / sd);
+            return vals.Select(X => (X - Mean) / SD);
         }
 
         public INormalizer Clone()
         {
-            return new ZScore();
+            return new ZScore(Mean, SD);
         }
     }
 }

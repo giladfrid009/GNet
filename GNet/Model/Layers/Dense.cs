@@ -67,7 +67,7 @@ namespace GNet
 
         public void FeedForward()
         {
-            Neurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Accumulate(0.0, (R, W) => R + W.Weight * W.InNeuron.ActivatedValue));
+            Neurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Sum(W => W.Weight * W.InNeuron.ActivatedValue));
 
             double[] activated = Activation.Activate(Neurons.Select(N => N.Value));
 
@@ -98,7 +98,7 @@ namespace GNet
 
             Neurons.ForEach((N, i) =>
             {
-                N.Gradient = N.OutSynapses.Accumulate(0.0, (R, W) => R + W.Weight * W.OutNeuron.Gradient) * actvDers[i];
+                N.Gradient = N.OutSynapses.Sum(W => W.Weight * W.OutNeuron.Gradient) * actvDers[i];
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
             });
         }

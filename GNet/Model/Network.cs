@@ -58,7 +58,7 @@ namespace GNet
 
         public double Validate(Dataset dataset, ILoss loss)
         {
-            return dataset.DataCollection.Accumulate(0.0, (R, D) => R + loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.DataLength;
+            return dataset.DataCollection.Sum(D => loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.DataLength;
         }
 
         private void CalcGrads(ILoss loss, double[] targets)
