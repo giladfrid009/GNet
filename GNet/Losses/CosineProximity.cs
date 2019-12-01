@@ -11,7 +11,7 @@ namespace GNet.Losses
             double tProd = targets.Accumulate(1.0, (R, X) => R * X);
             double oProd = outputs.Accumulate(1.0, (R, X) => R * X);
             double tSumSqr = targets.Sum(X => X * X);
-            double oSumSqr = outputs.Sum(X =>X * X);
+            double oSumSqr = outputs.Sum(X => X * X);
 
             return -tProd * oProd / (Sqrt(tSumSqr) * Sqrt(oSumSqr));
         }

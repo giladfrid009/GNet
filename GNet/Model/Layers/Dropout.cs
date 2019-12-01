@@ -9,7 +9,7 @@ namespace GNet
     {
         public double DropChance { get; }
 
-        private Synapse[,] droppedCache;
+        private Synapse?[,]? droppedCache;
         private readonly Synapse blankSynapse;
 
         public Dropout(int length, IActivation activation, IInitializer weightInit, IInitializer biasInit, double dropChance) : base(length, activation, weightInit, biasInit)
@@ -41,6 +41,11 @@ namespace GNet
 
         private void Drop()
         {
+            if (droppedCache == null)
+            {
+                throw new InvalidOperationException("Layer hasn't been connected.");
+            }
+
             Neurons.ForEach((N, i) =>
             {
                 N.InSynapses.ForEach((S, j) =>
@@ -56,7 +61,7 @@ namespace GNet
                     }
                     else if (droppedCache[i, j] != null)
                     {
-                        N.InSynapses[j] = droppedCache[i, j];
+                        N.InSynapses[j] = droppedCache[i, j] ?? throw new Exception();
                         droppedCache[i, j] = null;
                     }
                 });

@@ -4,7 +4,6 @@ using static System.Math;
 
 namespace GNet.Normalizers
 {
-    // todo: shoulf calc mean and sd of whole dataset.
     public class ZScore : INormalizer
     {
         public enum DataVector { Input, Output }
@@ -23,7 +22,7 @@ namespace GNet.Normalizers
             {
                 Mean = dataset.DataCollection.Sum(D => D.Outputs.Avarage()) / dataset.DataLength;
                 SD = Sqrt(dataset.DataCollection.Sum(D => D.Outputs.Sum(X => (X - Mean) * (X - Mean))) / (dataset.DataLength * dataset.OutputLength));
-            }         
+            }
         }
 
         private ZScore(double mean, double sd)

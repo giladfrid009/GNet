@@ -11,7 +11,7 @@ namespace GNet.Optimizers
         public double Beta2 { get; }
         public double Epsilon { get; }
 
-        public AdaMax(double learningRate = 0.002, double beta1 = 0.9, double beta2 = 0.999, IDecay decay = null)
+        public AdaMax(double learningRate = 0.002, double beta1 = 0.9, double beta2 = 0.999, IDecay? decay = null)
         {
             LearningRate = learningRate;
             Beta1 = beta1;

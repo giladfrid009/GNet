@@ -3,7 +3,7 @@
 namespace GNet.Extensions.Math
 {
     public static class ExtensionsMath
-    {       
+    {
         public static TOut Accumulate<TSource, TOut>(this TSource[] source, TOut seed, Func<TOut, TSource, TOut> accumulator)
         {
             TOut res = seed;
@@ -15,7 +15,7 @@ namespace GNet.Extensions.Math
 
             return res;
         }
-       
+
         public static double Sum<TSource>(this TSource[] source, Func<TSource, double> selector)
         {
             double sum = default;

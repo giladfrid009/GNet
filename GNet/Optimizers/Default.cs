@@ -7,7 +7,7 @@ namespace GNet.Optimizers
         public IDecay Decay { get; }
         public double LearningRate { get; }
 
-        public Default(double learningRate = 0.01, IDecay decay = null)
+        public Default(double learningRate = 0.01, IDecay? decay = null)
         {
             LearningRate = learningRate;
             Decay = decay?.Clone() ?? new Decays.None();

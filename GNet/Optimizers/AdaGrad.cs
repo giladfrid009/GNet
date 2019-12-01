@@ -9,7 +9,7 @@ namespace GNet.Optimizers
         public double LearningRate { get; }
         public double Epsilon { get; }
 
-        public AdaGrad(double learningRate = 0.01, double epsilon = 1e-8, IDecay decay = null)
+        public AdaGrad(double learningRate = 0.01, double epsilon = 1e-8, IDecay? decay = null)
         {
             LearningRate = learningRate;
             Epsilon = epsilon;

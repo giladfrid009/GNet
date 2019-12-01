@@ -8,7 +8,7 @@ namespace GNet.Optimizers
         public double LearningRate { get; }
         public double MomentumValue { get; }
 
-        public Momentum(double learningRate = 0.01, double momentum = 0.9, IDecay decay = null)
+        public Momentum(double learningRate = 0.01, double momentum = 0.9, IDecay? decay = null)
         {
             LearningRate = learningRate;
             MomentumValue = momentum;

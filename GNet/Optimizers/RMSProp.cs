@@ -10,7 +10,7 @@ namespace GNet.Optimizers
         public double Rho { get; }
         public double Epsilon { get; }
 
-        public RMSProp(double learningRate = 0.001, double rho = 0.9, double epsilon = 1e-8, IDecay decay = null)
+        public RMSProp(double learningRate = 0.001, double rho = 0.9, double epsilon = 1e-8, IDecay? decay = null)
         {
             LearningRate = learningRate;
             Rho = rho;
