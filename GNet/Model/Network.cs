@@ -7,7 +7,7 @@ namespace GNet
     [Serializable]
     public class Network : ICloneable<Network>
     {
-        public Dense[] Layers { get; } = new Dense[0];
+        public Dense[] Layers { get; }
         public int Length { get; }
 
         public Network(Dense[] layers)

@@ -21,7 +21,7 @@ namespace GNet
             Dataset trainingDataset = datasetGenerator.Generate(2000);
             Dataset validationDataset = datasetGenerator.Generate(1000);
 
-            net.Train(trainingDataset, new Losses.MSE(), new Optimizers.NestrovMomentum(), 30, 100, 0.01, validationDataset, new OutTransformers.Losses.BinaryRoundLoss());
+            net.Train(trainingDataset, new Losses.MSE(), new Optimizers.NestrovMomentum(), 20, 1000, 0.01, validationDataset, new OutTransformers.Losses.BinaryRoundLoss());
 
             Console.ReadKey();
         }

@@ -8,6 +8,7 @@ namespace GNet
         public Neuron InNeuron { get; }
         public Neuron OutNeuron { get; }
         public double Weight { get; set; }
+
         public double Gradient;
         public double Cache1;
         public double Cache2;

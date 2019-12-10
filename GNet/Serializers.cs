@@ -6,7 +6,7 @@ namespace GNet.Serializers
 {
     public static class Binary
     {
-        public static MemoryStream Serialize<TObject>(TObject obj)
+        public static Stream Serialize<TObject>(TObject obj)
         {
             try
             {
@@ -22,7 +22,7 @@ namespace GNet.Serializers
             }
         }
 
-        public static TObject Deserialize<TObject>(MemoryStream stream)
+        public static TObject Deserialize<TObject>(Stream stream)
         {
             try
             {

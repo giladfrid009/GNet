@@ -7,7 +7,7 @@ namespace GNet
     [Serializable]
     public class Dense : ICloneable<Dense>
     {
-        public Neuron[] Neurons { get; } = new Neuron[0];
+        public Neuron[] Neurons { get; }
         public IActivation Activation { get; }
         public IInitializer WeightInit { get; }
         public IInitializer BiasInit { get; }
