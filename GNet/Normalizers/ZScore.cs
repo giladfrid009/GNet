@@ -6,39 +6,63 @@ namespace GNet.Normalizers
 {
     public class ZScore : INormalizer
     {
-        public enum DataVector { Input, Output }
+        public bool NormalizeInputs { get; set; }
+        public bool NormalizeOutputs { get; set; }
 
-        public double Mean { get; }
-        public double SD { get; }
+        private double mean;
+        private double sd;
 
-        public ZScore(Dataset dataset, DataVector dataVector)
+        public void ExtractParams(Dataset dataset)
         {
-            if (dataVector == DataVector.Input)
-            {
-                Mean = dataset.DataCollection.Sum(D => D.Inputs.Avarage()) / dataset.DataLength;
-                SD = Sqrt(dataset.DataCollection.Sum(D => D.Inputs.Sum(X => (X - Mean) * (X - Mean))) / (dataset.DataLength * dataset.InputLength));
-            }
-            else
-            {
-                Mean = dataset.DataCollection.Sum(D => D.Outputs.Avarage()) / dataset.DataLength;
-                SD = Sqrt(dataset.DataCollection.Sum(D => D.Outputs.Sum(X => (X - Mean) * (X - Mean))) / (dataset.DataLength * dataset.OutputLength));
-            }
-        }
+            double meanInput = 0;
+            double meanOutput = 0;
+            double varianceInput = 0;
+            double varianceOutput = 0;
+            double numVals = 0;
 
-        private ZScore(double mean, double sd)
-        {
-            Mean = mean;
-            SD = sd;
+            if (NormalizeInputs)
+            {
+                meanInput = dataset.DataCollection.Sum(D => D.Inputs.Avarage()) / dataset.Length;
+            }
+
+            if (NormalizeOutputs)
+            {
+                meanOutput = dataset.DataCollection.Sum(D => D.Outputs.Avarage()) / dataset.Length;
+            }
+
+            mean = (meanInput + meanOutput) / 2;
+
+            if (NormalizeInputs)
+            {
+                varianceInput = dataset.DataCollection.Sum(D => D.Inputs.Sum(X => (X - mean) * (X - mean)));
+                numVals += dataset.InputLength;
+            }
+
+            if (NormalizeOutputs)
+            {
+                varianceOutput = dataset.DataCollection.Sum(D => D.Outputs.Sum(X => (X - mean) * (X - mean)));
+                numVals += dataset.OutputLength;
+            }
+
+            numVals *= dataset.Length;
+
+            sd = Sqrt((varianceInput + varianceOutput) / numVals);
         }
 
         public double[] Normalize(double[] vals)
         {
-            return vals.Select(X => (X - Mean) / SD);
+            return vals.Select(X => (X - mean) / sd);
         }
 
         public INormalizer Clone()
         {
-            return new ZScore(Mean, SD);
+            return new ZScore()
+            {
+                NormalizeInputs = NormalizeInputs,
+                NormalizeOutputs = NormalizeOutputs,
+                mean = mean,
+                sd = sd
+            };
         }
     }
 }

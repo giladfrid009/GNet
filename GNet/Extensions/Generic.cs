@@ -5,18 +5,6 @@ namespace GNet.Extensions.Generic
 {
     public static class ExtensionsGeneric
     {
-        public static TOut[] Select<TSource, TOut>(this TSource[] source, Func<TSource, TOut> selector)
-        {
-            TOut[] selected = new TOut[source.Length];
-
-            for (int i = 0; i < source.Length; i++)
-            {
-                selected[i] = selector(source[i]);
-            }
-
-            return selected;
-        }
-
         public static TOut[] Select<TSource, TOut>(this TSource[] source, Func<TSource, int, TOut> selector)
         {
             TOut[] selected = new TOut[source.Length];
@@ -27,6 +15,11 @@ namespace GNet.Extensions.Generic
             }
 
             return selected;
+        }
+
+        public static TOut[] Select<TSource, TOut>(this TSource[] source, Func<TSource, TOut> selector)
+        {
+            return source.Select((X, i) => selector(X));
         }
 
         public static TSource[] Combine<TSource>(this TSource[] source, TSource[] array, Func<TSource, TSource, TSource> selector)
@@ -43,20 +36,17 @@ namespace GNet.Extensions.Generic
             return combined;
         }
 
-        public static void ForEach<TSource>(this TSource[] source, Action<TSource> action)
-        {
-            for (int i = 0; i < source.Length; i++)
-            {
-                action(source[i]);
-            }
-        }
-
         public static void ForEach<TSource>(this TSource[] source, Action<TSource, int> action)
         {
             for (int i = 0; i < source.Length; i++)
             {
                 action(source[i], i);
             }
+        }
+
+        public static void ForEach<TSource>(this TSource[] source, Action<TSource> action)
+        {
+            source.ForEach((X, i) => action(X));
         }
 
         public static void Shuffle<TSource>(this TSource[] source)

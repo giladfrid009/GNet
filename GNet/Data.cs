@@ -6,19 +6,13 @@ namespace GNet
     [Serializable]
     public class Data : ICloneable<Data>
     {
-        public double[] Inputs { get; private set; }
-        public double[] Outputs { get; private set; }
+        public double[] Inputs { get; }
+        public double[] Outputs { get; }
 
         public Data(double[] inputs, double[] outputs)
         {
             Inputs = inputs.Select(X => X);
             Outputs = outputs.Select(X => X);
-        }
-
-        public void Normalize(INormalizer inputNormalizer, INormalizer outputNormalizer)
-        {
-            Inputs = inputNormalizer.Normalize(Inputs);
-            Outputs = outputNormalizer.Normalize(Outputs);
         }
 
         public Data Clone()
