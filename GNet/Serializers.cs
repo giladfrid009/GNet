@@ -6,7 +6,7 @@ namespace GNet.Serializers
 {
     public static class Binary
     {
-        public static Stream Serialize<TObject>(TObject obj)
+        public static MemoryStream Serialize(object obj)
         {
             try
             {
@@ -22,12 +22,12 @@ namespace GNet.Serializers
             }
         }
 
-        public static TObject Deserialize<TObject>(Stream stream)
+        public static TObject Deserialize<TObject>(MemoryStream stream)
         {
             try
             {
-                BinaryFormatter formatter = new BinaryFormatter();
                 stream.Position = 0;
+                BinaryFormatter formatter = new BinaryFormatter();
                 return (TObject)formatter.Deserialize(stream);
             }
             catch (Exception e)
@@ -37,13 +37,13 @@ namespace GNet.Serializers
             }
         }
 
-        public static void Save<TObject>(TObject obj, string filePath)
+        public static void Save(object obj, string filePath)
         {
             try
             {
-                using FileStream stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+                using FileStream file = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
                 BinaryFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(stream, obj);
+                formatter.Serialize(file, obj);
             }
             catch (Exception e)
             {
@@ -56,9 +56,9 @@ namespace GNet.Serializers
         {
             try
             {
-                using FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None);
+                using FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None);
                 BinaryFormatter formatter = new BinaryFormatter();
-                return (TObject)formatter.Deserialize(stream);
+                return (TObject)formatter.Deserialize(file);
             }
             catch (Exception e)
             {

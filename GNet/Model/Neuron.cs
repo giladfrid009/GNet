@@ -5,9 +5,15 @@ namespace GNet
     [Serializable]
     public class Neuron
     {
-        public Synapse[] InSynapses { get; set; } = new Synapse[0];
-        public Synapse[] OutSynapses { get; set; } = new Synapse[0];
+        public Synapse[] InSynapses { get; set; }
+        public Synapse[] OutSynapses { get; set; }
         public double Bias { get; set; }
+
+        public Neuron()
+        {
+            InSynapses = Array.Empty<Synapse>();
+            OutSynapses = Array.Empty<Synapse>();
+        }
 
         public double Value;
         public double ActivatedValue;

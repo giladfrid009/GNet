@@ -33,6 +33,14 @@ namespace GNet
             //    Layers[i].Connect(Layers[i - 1]);
             //});
 
+            //Parallel.ForEach(Partitioner.Create(1, Length), (range) =>
+            //{
+            //    for (int i = range.Item1; i < range.Item2; i++)
+            //    {
+            //        Layers[i].Connect(Layers[i - 1]);
+            //    }
+            //});
+
             for (int i = 1; i < Length; i++)
             {
                 Layers[i].Connect(Layers[i - 1]);
@@ -76,6 +84,14 @@ namespace GNet
             //Parallel.For(1, Length, (i) =>
             //{
             //    optimizer.Optimize(Layers[i], epoch);
+            //});
+
+            //Parallel.ForEach(Partitioner.Create(1, Length), (range) =>
+            //{
+            //    for (int i = range.Item1; i < range.Item2; i++)
+            //    {
+            //        optimizer.Optimize(Layers[i], epoch);
+            //    }
             //});
 
             for (int i = 1; i < Length; i++)
