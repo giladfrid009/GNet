@@ -1,26 +1,25 @@
-﻿using GNet.Extensions.Generic;
+﻿using GNet.Extensions.Array.Generic;
 using System;
 
 namespace GNet
 {
-    [Serializable]
     public class Dataset : ICloneable<Dataset>
     {
         public Data[] DataCollection { get; private set; }
         public int Length { get; }
-        public int InputLength { get; }
-        public int OutputLength { get; }
+        public Shape InputShape { get; }
+        public Shape OutputShape { get; }
 
         public Data this[int index] => DataCollection[index];
 
         public Dataset(Data[] dataCollection)
         {
-            InputLength = dataCollection[0].Inputs.Length;
-            OutputLength = dataCollection[0].Outputs.Length;
+            InputShape = dataCollection[0].Inputs.Shape;
+            OutputShape = dataCollection[0].Outputs.Shape;
 
             dataCollection.ForEach((D, i) =>
             {
-                if (D.Inputs.Length != InputLength || D.Outputs.Length != OutputLength)
+                if (D.Inputs.Shape.Equals(InputShape) == false || D.Outputs.Shape.Equals(OutputShape) == false)
                 {
                     throw new ArgumentException($"DataCollection[{i}] structure mismatch.");
                 }

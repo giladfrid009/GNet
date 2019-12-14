@@ -1,9 +1,9 @@
 ﻿using GNet.GlobalRandom;
 using System;
 
-namespace GNet.Extensions.Generic
+namespace GNet.Extensions.Array.Generic
 {
-    public static class ExtensionsGeneric
+    public static class ExtensionsArrayGeneric
     {
         public static TOut[] Select<TSource, TOut>(this TSource[] source, Func<TSource, int, TOut> selector)
         {

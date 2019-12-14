@@ -5,14 +5,14 @@ namespace GNet
     [Serializable]
     public class Neuron
     {
-        public Synapse[] InSynapses { get; set; }
-        public Synapse[] OutSynapses { get; set; }
+        public ShapedArray<Synapse> InSynapses { get; set; }
+        public ShapedArray<Synapse> OutSynapses { get; set; }
         public double Bias { get; set; }
 
         public Neuron()
         {
-            InSynapses = Array.Empty<Synapse>();
-            OutSynapses = Array.Empty<Synapse>();
+            InSynapses = new ShapedArray<Synapse>(new Shape(0));
+            OutSynapses = new ShapedArray<Synapse>(new Shape(0));
         }
 
         public double Value;

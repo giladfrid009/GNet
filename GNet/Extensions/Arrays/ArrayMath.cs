@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace GNet.Extensions.Math
+namespace GNet.Extensions.Array.Math
 {
-    public static class ExtensionsMath
+    public static class ExtensionsArrayMath
     {
         public static TOut Accumulate<TSource, TOut>(this TSource[] source, TOut seed, Func<TOut, TSource, TOut> accumulator)
         {

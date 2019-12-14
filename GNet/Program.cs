@@ -6,13 +6,11 @@ namespace GNet
     {
         private static void Main()
         {
-            Console.WriteLine("test");
-
             Dense[] layers = new Dense[]
             {
-                new Dense(10, new Activations.Identity(), new Initializers.Zero(), new Initializers.Zero()),
-                new Dense(10, new Activations.Tanh(), new Initializers.LeCunNormal(), new Initializers.Zero()),
-                new Dense(1, new Activations.Sigmoid(), new Initializers.Normal(), new Initializers.Zero())
+                new Dense(new Shape(10), new Activations.Identity(), new Initializers.Zero(), new Initializers.Zero()),
+                new Dense(new Shape(5,2), new Activations.Tanh(), new Initializers.LeCunNormal(), new Initializers.Zero()),
+                new Dense(new Shape(1), new Activations.Sigmoid(), new Initializers.Normal(), new Initializers.Zero())
             };
 
             Network net = new Network(layers);

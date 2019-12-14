@@ -1,18 +1,14 @@
-﻿using GNet.Extensions.Generic;
-using System;
-
-namespace GNet
+﻿namespace GNet
 {
-    [Serializable]
     public class Data : ICloneable<Data>
     {
-        public double[] Inputs { get; }
-        public double[] Outputs { get; }
+        public ShapedArray<double> Inputs { get; }
+        public ShapedArray<double> Outputs { get; }
 
-        public Data(double[] inputs, double[] outputs)
+        public Data(ShapedArray<double> inputs, ShapedArray<double> outputs)
         {
-            Inputs = inputs.Select(X => X);
-            Outputs = outputs.Select(X => X);
+            Inputs = inputs.Clone();
+            Outputs = outputs.Clone();
         }
 
         public Data Clone()

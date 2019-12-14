@@ -26,7 +26,9 @@ namespace GNet.Datasets.Generators
                     io[j] = GRandom.NextDouble() < 0.5 ? 0.0 : 1.0;
                 }
 
-                dataCollection[i] = new Data(io, io);
+                dataCollection[i] = new Data(
+                    new ShapedArray<double>(new Shape(io.Length), io),
+                    new ShapedArray<double>(new Shape(io.Length), io));
             }
 
             return new Dataset(dataCollection);

@@ -1,17 +1,19 @@
-﻿using GNet.Extensions.Generic;
-using GNet.Extensions.Math;
+﻿using GNet.Extensions.Array.Generic;
+using GNet.Extensions.Array.Math;
+using GNet.Extensions.ShapedArray.Generic;
+using GNet.Extensions.ShapedArray.Math;
 using static System.Math;
 
 namespace GNet.Losses
 {
     public class CategoricalCrossEntropy : ILoss
     {
-        public double Compute(double[] targets, double[] outputs)
+        public double Compute(ShapedArray<double> targets, ShapedArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => -T * Log(O)).Avarage();
         }
 
-        public double[] Derivative(double[] targets, double[] outputs)
+        public ShapedArray<double> Derivative(ShapedArray<double> targets, ShapedArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => -T / O);
         }

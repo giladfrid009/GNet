@@ -1,5 +1,7 @@
-﻿using GNet.Extensions.Generic;
-using GNet.Extensions.Math;
+﻿using GNet.Extensions.Array.Generic;
+using GNet.Extensions.Array.Math;
+using GNet.Extensions.ShapedArray.Generic;
+using GNet.Extensions.ShapedArray.Math;
 using static System.Math;
 
 namespace GNet.Normalizers
@@ -35,13 +37,13 @@ namespace GNet.Normalizers
             if (NormalizeInputs)
             {
                 varianceInput = dataset.DataCollection.Sum(D => D.Inputs.Sum(X => (X - mean) * (X - mean)));
-                numVals += dataset.InputLength;
+                numVals += dataset.InputShape.Length();
             }
 
             if (NormalizeOutputs)
             {
                 varianceOutput = dataset.DataCollection.Sum(D => D.Outputs.Sum(X => (X - mean) * (X - mean)));
-                numVals += dataset.OutputLength;
+                numVals += dataset.OutputShape.Length();
             }
 
             numVals *= dataset.Length;
@@ -49,7 +51,7 @@ namespace GNet.Normalizers
             sd = Sqrt((varianceInput + varianceOutput) / numVals);
         }
 
-        public double[] Normalize(double[] vals)
+        public ShapedArray<double> Normalize(ShapedArray<double> vals)
         {
             return vals.Select(X => (X - mean) / sd);
         }

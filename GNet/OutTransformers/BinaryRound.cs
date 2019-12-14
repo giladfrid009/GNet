@@ -1,5 +1,5 @@
-﻿using GNet.Extensions.Generic;
-
+﻿using GNet.Extensions.Array.Generic;
+using GNet.Extensions.ShapedArray.Generic;
 namespace GNet.OutTransformers
 {
     public class BinaryRound : IOutTransformer
@@ -11,7 +11,7 @@ namespace GNet.OutTransformers
             Bound = bound;
         }
 
-        public double[] Transform(double[] output)
+        public ShapedArray<double> Transform(ShapedArray<double> output)
         {
             return output.Select(X => X < Bound ? 0.0 : 1);
         }

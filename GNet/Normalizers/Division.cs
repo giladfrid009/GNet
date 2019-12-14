@@ -1,5 +1,5 @@
-﻿using GNet.Extensions.Generic;
-
+﻿using GNet.Extensions.Array.Generic;
+using GNet.Extensions.ShapedArray.Generic;
 namespace GNet.Normalizers
 {
     public class Division : INormalizer
@@ -15,7 +15,7 @@ namespace GNet.Normalizers
 
         public void ExtractParams(Dataset dataset) { }
 
-        public double[] Normalize(double[] vals)
+        public ShapedArray<double> Normalize(ShapedArray<double> vals)
         {
             return vals.Select(X => X / Divisor);
         }
