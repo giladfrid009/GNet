@@ -1,4 +1,5 @@
-﻿using GNet.Extensions.Generic;
+﻿using GNet.Extensions.Array.Generic;
+using GNet.Extensions.ShapedArray.Generic;
 using System;
 
 namespace GNet.Activations
@@ -9,7 +10,7 @@ namespace GNet.Activations
     /// </summary>
     public class SQNL : IActivation
     {
-        public double[] Activate(double[] vals)
+        public ShapedArray<double> Activate(ShapedArray<double> vals)
         {
             return vals.Select(X =>
             {
@@ -32,7 +33,7 @@ namespace GNet.Activations
             });
         }
 
-        public double[] Derivative(double[] vals)
+        public ShapedArray<double> Derivative(ShapedArray<double> vals)
         {
             return vals.Select(X => X > 0.0 ? 1.0 - X / 2.0 : 1.0 + X / 2.0);
         }

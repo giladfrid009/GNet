@@ -30,7 +30,9 @@ namespace GNet.Datasets.Generators
                     res = IOFunc(num);
                 }
 
-                dataCollection[i] = new Data(new double[] { num }, new double[] { res });
+                dataCollection[i] = new Data(
+                    new ShapedArray<double>(new Shape(1), num),
+                    new ShapedArray<double>(new Shape(1), res));
             }
 
             return new Dataset(dataCollection);

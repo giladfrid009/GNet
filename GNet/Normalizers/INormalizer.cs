@@ -7,6 +7,6 @@
 
         void ExtractParams(Dataset dataset);
 
-        double[] Normalize(double[] vals);
+        ShapedArray<double> Normalize(ShapedArray<double> vals);
     }
 }

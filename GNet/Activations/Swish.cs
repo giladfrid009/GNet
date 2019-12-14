@@ -1,4 +1,5 @@
-﻿using GNet.Extensions.Generic;
+﻿using GNet.Extensions.Array.Generic;
+using GNet.Extensions.ShapedArray.Generic;
 using System;
 using static System.Math;
 
@@ -7,12 +8,12 @@ namespace GNet.Activations
     [Serializable]
     public class Swish : IActivation
     {
-        public double[] Activate(double[] vals)
+        public ShapedArray<double> Activate(ShapedArray<double> vals)
         {
             return vals.Select(X => X / (Exp(-X) + 1.0));
         }
 
-        public double[] Derivative(double[] vals)
+        public ShapedArray<double> Derivative(ShapedArray<double> vals)
         {
             return vals.Select(X =>
             {

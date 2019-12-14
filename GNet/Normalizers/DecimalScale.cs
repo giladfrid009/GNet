@@ -1,5 +1,7 @@
-﻿using GNet.Extensions.Generic;
-using GNet.Extensions.Math;
+﻿using GNet.Extensions.Array.Generic;
+using GNet.Extensions.Array.Math;
+using GNet.Extensions.ShapedArray.Generic;
+using GNet.Extensions.ShapedArray.Math;
 using static System.Math;
 
 namespace GNet.Normalizers
@@ -31,7 +33,7 @@ namespace GNet.Normalizers
             scale = (int)Log10(max) + 1;
         }
 
-        public double[] Normalize(double[] vals)
+        public ShapedArray<double> Normalize(ShapedArray<double> vals)
         {
             return vals.Select(X => X / scale);
         }

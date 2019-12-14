@@ -1,5 +1,7 @@
-﻿using GNet.Extensions.Generic;
-using GNet.Extensions.Math;
+﻿using GNet.Extensions.Array.Generic;
+using GNet.Extensions.Array.Math;
+using GNet.Extensions.ShapedArray.Generic;
+using GNet.Extensions.ShapedArray.Math;
 using System;
 
 namespace GNet
@@ -47,11 +49,11 @@ namespace GNet
             }
         }
 
-        public double[] FeedForward(double[] inputs)
+        public ShapedArray<double> FeedForward(ShapedArray<double> inputs)
         {
-            if (inputs.Length != Layers[0].Length)
+            if (inputs.Shape.Equals(Layers[0].Shape) == false)
             {
-                throw new ArgumentOutOfRangeException("Input length and input layer length mismatch.");
+                throw new ArgumentOutOfRangeException("Input shape and input layer shape mismatch.");
             }
 
             Layers[0].SetInputs(inputs);
@@ -69,7 +71,7 @@ namespace GNet
             return dataset.DataCollection.Sum(D => loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.Length;
         }
 
-        private void CalcGrads(ILoss loss, double[] targets)
+        private void CalcGrads(ILoss loss, ShapedArray<double> targets)
         {
             Layers[Length - 1].CalcGrads(loss, targets);
 
@@ -110,9 +112,9 @@ namespace GNet
 
         public Log Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError)
         {
-            if (dataset.InputLength != Layers[0].Length || dataset.OutputLength != Layers[Length - 1].Length)
+            if (dataset.InputShape.Equals(Layers[0].Shape) == false || dataset.OutputShape.Equals(Layers[Length - 1].Shape) == false)
             {
-                throw new Exception("Dataset structure mismatch with network structure.");
+                throw new Exception("Dataset structure mismatch with network input structure.");
             }
 
             Log trainingLog = new Log();
@@ -156,14 +158,14 @@ namespace GNet
 
         public Log Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double valMinError, Dataset valDataset, ILoss valLoss)
         {
-            if (dataset.InputLength != Layers[0].Length || dataset.OutputLength != Layers[Length - 1].Length)
+            if (dataset.InputShape.Equals(Layers[0].Shape) == false || dataset.OutputShape.Equals(Layers[Length - 1].Shape) == false)
             {
-                throw new Exception("Dataset structure mismatch with network structure.");
+                throw new Exception("Dataset structure mismatch with network input structure.");
             }
 
-            if (valDataset.InputLength != Layers[0].Length || valDataset.OutputLength != Layers[Length - 1].Length)
+            if (valDataset.InputShape.Equals(Layers[0].Shape) == false || valDataset.OutputShape.Equals(Layers[Length - 1].Shape) == false)
             {
-                throw new Exception("ValDataset structure mismatch with network structure.");
+                throw new Exception("Dataset structure mismatch with network input structure.");
             }
 
             Log trainingLog = new Log();

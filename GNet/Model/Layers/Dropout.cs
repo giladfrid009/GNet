@@ -1,4 +1,5 @@
-﻿using GNet.Extensions.Generic;
+﻿using GNet.Extensions.Array.Generic;
+using GNet.Extensions.ShapedArray.Generic;
 using GNet.GlobalRandom;
 using System;
 
@@ -12,7 +13,7 @@ namespace GNet
         private Synapse?[,]? droppedCache;
         private readonly Synapse blankSynapse;
 
-        public Dropout(int length, IActivation activation, IInitializer weightInit, IInitializer biasInit, double dropChance) : base(length, activation, weightInit, biasInit)
+        public Dropout(Shape shape, IActivation activation, IInitializer weightInit, IInitializer biasInit, double dropChance) : base(shape, activation, weightInit, biasInit)
         {
             if (dropChance < 0.0 || dropChance > 1.0)
             {
@@ -27,7 +28,8 @@ namespace GNet
         {
             base.Connect(inLayer);
 
-            droppedCache = new Synapse[Length, inLayer.Length];
+            // todo: is it right?
+            droppedCache = new Synapse[Shape.Length(), inLayer.Shape.Length()];
 
             Drop();
         }
@@ -70,7 +72,7 @@ namespace GNet
 
         public override Dense Clone()
         {
-            return new Dropout(Length, Activation, WeightInit, BiasInit, DropChance);
+            return new Dropout(Shape, Activation, WeightInit, BiasInit, DropChance);
         }
     }
 }

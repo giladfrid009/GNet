@@ -1,5 +1,7 @@
-﻿using GNet.Extensions.Generic;
-using GNet.Extensions.Math;
+﻿using GNet.Extensions.Array.Generic;
+using GNet.Extensions.Array.Math;
+using GNet.Extensions.ShapedArray.Generic;
+using GNet.Extensions.ShapedArray.Math;
 using System;
 
 namespace GNet.OutTransformers.Losses
@@ -11,12 +13,12 @@ namespace GNet.OutTransformers.Losses
             Bound = bound;
         }
 
-        public double Compute(double[] targets, double[] outputs)
+        public double Compute(ShapedArray<double> targets, ShapedArray<double> outputs)
         {
             return targets.Combine(Transform(outputs), (T, O) => T == O ? 0.0 : 1.0).Avarage();
         }
 
-        public double[] Derivative(double[] targets, double[] outputs)
+        public ShapedArray<double> Derivative(ShapedArray<double> targets, ShapedArray<double> outputs)
         {
             throw new NotSupportedException("This loss can't be used in backpropogation.");
         }

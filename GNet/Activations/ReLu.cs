@@ -1,4 +1,5 @@
-﻿using GNet.Extensions.Generic;
+﻿using GNet.Extensions.Array.Generic;
+using GNet.Extensions.ShapedArray.Generic;
 using System;
 
 namespace GNet.Activations
@@ -16,12 +17,12 @@ namespace GNet.Activations
             Slope = slope;
         }
 
-        public double[] Activate(double[] vals)
+        public ShapedArray<double> Activate(ShapedArray<double> vals)
         {
             return vals.Select(X => X < 0.0 ? Slope * X : X);
         }
 
-        public double[] Derivative(double[] vals)
+        public ShapedArray<double> Derivative(ShapedArray<double> vals)
         {
             return vals.Select(X => X < 0.0 ? Slope : 1.0);
         }

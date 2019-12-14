@@ -1,5 +1,5 @@
-﻿using GNet.Extensions.Generic;
-
+﻿using GNet.Extensions.Array.Generic;
+using GNet.Extensions.ShapedArray.Generic;
 namespace GNet.Optimizers
 {
     public class Momentum : IOptimizer

@@ -1,5 +1,7 @@
-﻿using GNet.Extensions.Generic;
-using GNet.Extensions.Math;
+﻿using GNet.Extensions.Array.Generic;
+using GNet.Extensions.Array.Math;
+using GNet.Extensions.ShapedArray.Generic;
+using GNet.Extensions.ShapedArray.Math;
 using System;
 using static System.Math;
 
@@ -8,18 +10,18 @@ namespace GNet.Activations
     [Serializable]
     public class Softmax : IActivation
     {
-        public double[] Activate(double[] vals)
+        public ShapedArray<double> Activate(ShapedArray<double> vals)
         {
-            double[] exps = vals.Select(X => Exp(X));
+            ShapedArray<double> exps = vals.Select(X => Exp(X));
 
             double sum = exps.Sum(x => x);
 
             return exps.Select(E => E / sum);
         }
 
-        public double[] Derivative(double[] vals)
+        public ShapedArray<double> Derivative(ShapedArray<double> vals)
         {
-            double[] exps = vals.Select(X => Exp(X));
+            ShapedArray<double> exps = vals.Select(X => Exp(X));
 
             double sum = exps.Sum(x => x);
 
