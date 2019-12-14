@@ -6,6 +6,8 @@ namespace GNet
     {
         private static void Main()
         {
+            Console.WriteLine("test");
+
             Dense[] layers = new Dense[]
             {
                 new Dense(10, new Activations.Identity(), new Initializers.Zero(), new Initializers.Zero()),
