@@ -7,12 +7,12 @@ namespace GNet.Activations
 {
     public class Exponential : IActivation
     {
-        public ShapedReadOnlyArray<double> Activate(ShapedReadOnlyArray<double> vals)
+        public ShapedArray<double> Activate(ShapedArray<double> vals)
         {
             return vals.Select(X => Exp(X));
         }
 
-        public ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> vals)
+        public ShapedArray<double> Derivative(ShapedArray<double> vals)
         {
             return vals.Select(X => Exp(X));
         }

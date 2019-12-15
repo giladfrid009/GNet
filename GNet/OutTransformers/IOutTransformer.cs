@@ -2,6 +2,6 @@
 {
     public interface IOutTransformer : ICloneable<IOutTransformer>
     {
-        ShapedReadOnlyArray<double> Transform(ShapedReadOnlyArray<double> output);
+        ShapedArray<double> Transform(ShapedArray<double> output);
     }
 }

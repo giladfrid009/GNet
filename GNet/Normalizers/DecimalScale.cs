@@ -29,7 +29,7 @@ namespace GNet.Normalizers
             scale = (int)Log10(max) + 1;
         }
 
-        public ShapedReadOnlyArray<double> Normalize(ShapedReadOnlyArray<double> vals)
+        public ShapedArray<double> Normalize(ShapedArray<double> vals)
         {
             return vals.Select(X => X / scale);
         }

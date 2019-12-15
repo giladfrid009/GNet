@@ -11,12 +11,12 @@ namespace GNet.OutTransformers.Losses
             Bound = bound;
         }
 
-        public double Compute(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
+        public double Compute(ShapedArray<double> targets, ShapedArray<double> outputs)
         {
             return targets.Combine(Transform(outputs), (T, O) => T == O ? 0.0 : 1.0).Avarage();
         }
 
-        public ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
+        public ShapedArray<double> Derivative(ShapedArray<double> targets, ShapedArray<double> outputs)
         {
             throw new NotSupportedException("This loss can't be used in backpropogation.");
         }

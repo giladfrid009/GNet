@@ -3,19 +3,19 @@
 namespace GNet
 {
     [Serializable]
-    public class ShapedArray<T> : ShapedReadOnlyArray<T>, ICloneable<ShapedArray<T>>
+    public class ShapedArrayMutable<T> : ShapedArray<T>, ICloneable<ShapedArrayMutable<T>>
     {
-        public ShapedArray(Shape shape) : base(shape)
+        public ShapedArrayMutable(Shape shape) : base(shape)
         {
 
         }
 
-        public ShapedArray(Shape shape, Array array) : base(shape, array)
+        public ShapedArrayMutable(Shape shape, Array array) : base(shape, array)
         {
 
         }
 
-        public ShapedArray(Shape shape, params T[] array) : base(shape, (Array)array)
+        public ShapedArrayMutable(Shape shape, params T[] array) : base(shape, (Array)array)
         {
 
         }
@@ -32,9 +32,9 @@ namespace GNet
             set => array[index] = value;
         }
 
-        public new ShapedArray<T> Clone()
+        public new ShapedArrayMutable<T> Clone()
         {
-            return new ShapedArray<T>(Shape, array);
+            return new ShapedArrayMutable<T>(Shape, array);
         }
     }
 }

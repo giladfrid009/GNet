@@ -31,8 +31,8 @@ namespace GNet.Datasets.Generators
                 double output = zeroCount % 2 == 0 ? 0.0 : 1.0;
 
                 dataCollection[i] = new Data(
-                    new ShapedReadOnlyArray<double>(new Shape(inputs.Length), inputs),
-                    new ShapedReadOnlyArray<double>(new Shape(1), output));
+                    new ShapedArray<double>(new Shape(inputs.Length), inputs),
+                    new ShapedArray<double>(new Shape(1), output));
             }
 
             return new Dataset(dataCollection);

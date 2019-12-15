@@ -12,7 +12,7 @@ namespace GNet.Losses
         {
             Margin = margin;
         }
-        public double Compute(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
+        public double Compute(ShapedArray<double> targets, ShapedArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) =>
             {
@@ -30,7 +30,7 @@ namespace GNet.Losses
             .Avarage();
         }
 
-        public ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
+        public ShapedArray<double> Derivative(ShapedArray<double> targets, ShapedArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => Abs(T - O) <= Margin ? O - T : -Margin);
         }

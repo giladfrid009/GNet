@@ -7,7 +7,7 @@ namespace GNet.Losses
 {
     public class CosineProximity : ILoss
     {
-        public double Compute(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
+        public double Compute(ShapedArray<double> targets, ShapedArray<double> outputs)
         {
             double tProd = targets.Accumulate(1.0, (R, X) => R * X);
             double oProd = outputs.Accumulate(1.0, (R, X) => R * X);
@@ -17,7 +17,7 @@ namespace GNet.Losses
             return -tProd * oProd / (Sqrt(tSumSqr) * Sqrt(oSumSqr));
         }
 
-        public ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
+        public ShapedArray<double> Derivative(ShapedArray<double> targets, ShapedArray<double> outputs)
         {
             double tProd = targets.Accumulate(1.0, (R, X) => R * X);
             double oProd = outputs.Accumulate(1.0, (R, X) => R * X);

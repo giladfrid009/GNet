@@ -8,12 +8,12 @@ namespace GNet.Activations
     [Serializable]
     public class Sinusoid : IActivation
     {
-        public ShapedReadOnlyArray<double> Activate(ShapedReadOnlyArray<double> vals)
+        public ShapedArray<double> Activate(ShapedArray<double> vals)
         {
             return vals.Select(X => Sin(X));
         }
 
-        public ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> vals)
+        public ShapedArray<double> Derivative(ShapedArray<double> vals)
         {
             return vals.Select(X => Cos(X));
         }

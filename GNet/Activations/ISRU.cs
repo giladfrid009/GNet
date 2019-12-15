@@ -18,12 +18,12 @@ namespace GNet.Activations
             Alpha = alpha;
         }
 
-        public ShapedReadOnlyArray<double> Activate(ShapedReadOnlyArray<double> vals)
+        public ShapedArray<double> Activate(ShapedArray<double> vals)
         {
             return vals.Select(X => X / Sqrt(1.0 + Alpha * X * X));
         }
 
-        public ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> vals)
+        public ShapedArray<double> Derivative(ShapedArray<double> vals)
         {
             return vals.Select(X => Pow(X / Sqrt(1.0 + Alpha * X * X), 3.0));
         }
