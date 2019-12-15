@@ -11,7 +11,7 @@ namespace GNet.OutTransformers
             Bound = bound;
         }
 
-        public ShapedArray<double> Transform(ShapedReadOnlyArray<double> output)
+        public ShapedReadOnlyArray<double> Transform(ShapedReadOnlyArray<double> output)
         {
             return output.Select(X => X < Bound ? 0.0 : 1);
         }

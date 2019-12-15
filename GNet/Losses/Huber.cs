@@ -30,7 +30,7 @@ namespace GNet.Losses
             .Avarage();
         }
 
-        public ShapedArray<double> Derivative(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
+        public ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => Abs(T - O) <= Margin ? O - T : -Margin);
         }

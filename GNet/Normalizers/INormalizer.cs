@@ -7,6 +7,6 @@
 
         void ExtractParams(Dataset dataset);
 
-        ShapedArray<double> Normalize(ShapedReadOnlyArray<double> vals);
+        ShapedReadOnlyArray<double> Normalize(ShapedReadOnlyArray<double> vals);
     }
 }

@@ -11,7 +11,7 @@ namespace GNet.OutTransformers
             return new BinaryMax();
         }
 
-        public ShapedArray<double> Transform(ShapedReadOnlyArray<double> output)
+        public ShapedReadOnlyArray<double> Transform(ShapedReadOnlyArray<double> output)
         {
             double max = output.Max();
 

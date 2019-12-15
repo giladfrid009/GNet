@@ -7,17 +7,17 @@ namespace GNet
     {
         public ShapedArray(Shape shape) : base(shape)
         {
-            
+
         }
 
         public ShapedArray(Shape shape, Array array) : base(shape, array)
         {
-            
+
         }
 
         public ShapedArray(Shape shape, params T[] array) : base(shape, (Array)array)
         {
-            
+
         }
 
         public new T this[params int[] indices]
@@ -30,7 +30,7 @@ namespace GNet
         {
             get => array[index];
             set => array[index] = value;
-        }        
+        }
 
         public new ShapedArray<T> Clone()
         {

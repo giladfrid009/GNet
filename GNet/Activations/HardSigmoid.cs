@@ -7,12 +7,12 @@ namespace GNet.Activations
     [Serializable]
     public class HardSigmoid : IActivation
     {
-        public ShapedArray<double> Activate(ShapedReadOnlyArray<double> vals)
+        public ShapedReadOnlyArray<double> Activate(ShapedReadOnlyArray<double> vals)
         {
             return vals.Select(X => X < -2.5 ? 0.0 : X > 2.5 ? 1.0 : 0.2 * X + 0.5);
         }
 
-        public ShapedArray<double> Derivative(ShapedReadOnlyArray<double> vals)
+        public ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> vals)
         {
             return vals.Select(X => X < -2.5 || X > 2.5 ? 0.0 : 0.2);
         }

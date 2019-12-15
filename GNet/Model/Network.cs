@@ -51,7 +51,7 @@ namespace GNet
             }
         }
 
-        public ShapedArray<double> FeedForward(ShapedReadOnlyArray<double> inputs)
+        public ShapedReadOnlyArray<double> FeedForward(ShapedReadOnlyArray<double> inputs)
         {
             if (inputs.Shape.Equals(layers[0].Shape) == false)
             {
