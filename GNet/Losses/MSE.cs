@@ -8,12 +8,12 @@ namespace GNet.Losses
     /// </summary>
     public class MSE : ILoss
     {
-        public double Compute(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
+        public double Compute(ShapedArray<double> targets, ShapedArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => (T - O) * (T - O)).Avarage();
         }
 
-        public ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
+        public ShapedArray<double> Derivative(ShapedArray<double> targets, ShapedArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => 2.0 * (O - T));
         }

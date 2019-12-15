@@ -3,7 +3,7 @@
 namespace GNet
 {
     [Serializable]
-    public class ShapedReadOnlyArray<T> : IArray<T>, ICloneable<ShapedReadOnlyArray<T>>
+    public class ShapedArray<T> : IArray<T>, ICloneable<ShapedArray<T>>
     {
         public Shape Shape { get; }
 
@@ -21,14 +21,14 @@ namespace GNet
             get => array[index];
         }
 
-        public ShapedReadOnlyArray(Shape shape)
+        public ShapedArray(Shape shape)
         {
             Shape = shape.Clone();
             Length = shape.Length();
             array = new T[Length];
         }
 
-        public ShapedReadOnlyArray(Shape shape, Array array) : this(shape)
+        public ShapedArray(Shape shape, Array array) : this(shape)
         {
             if (array.Length != Length)
             {
@@ -38,7 +38,7 @@ namespace GNet
             Array.Copy(array, 0, this.array, 0, Length);
         }
 
-        public ShapedReadOnlyArray(Shape shape, params T[] array) : this(shape, (Array)array)
+        public ShapedArray(Shape shape, params T[] array) : this(shape, (Array)array)
         {
             if (array.Length != Length)
             {
@@ -48,9 +48,9 @@ namespace GNet
             Array.Copy(array, 0, this.array, 0, Length);
         }
 
-        public ShapedReadOnlyArray<T> Clone()
+        public ShapedArray<T> Clone()
         {
-            return new ShapedReadOnlyArray<T>(Shape, array);
+            return new ShapedArray<T>(Shape, array);
         }
     }
 }

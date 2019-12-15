@@ -17,12 +17,12 @@ namespace GNet.Activations
             Slope = slope;
         }
 
-        public ShapedReadOnlyArray<double> Activate(ShapedReadOnlyArray<double> vals)
+        public ShapedArray<double> Activate(ShapedArray<double> vals)
         {
             return vals.Select(X => X < 0.0 ? Slope * X : X);
         }
 
-        public ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> vals)
+        public ShapedArray<double> Derivative(ShapedArray<double> vals)
         {
             return vals.Select(X => X < 0.0 ? Slope : 1.0);
         }

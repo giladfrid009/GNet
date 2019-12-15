@@ -27,8 +27,8 @@ namespace GNet.Datasets.Generators
                 }
 
                 dataCollection[i] = new Data(
-                    new ShapedReadOnlyArray<double>(new Shape(io.Length), io),
-                    new ShapedReadOnlyArray<double>(new Shape(io.Length), io));
+                    new ShapedArray<double>(new Shape(io.Length), io),
+                    new ShapedArray<double>(new Shape(io.Length), io));
             }
 
             return new Dataset(dataCollection);

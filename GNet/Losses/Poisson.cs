@@ -6,12 +6,12 @@ namespace GNet.Losses
 {
     public class Poisson : ILoss
     {
-        public double Compute(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
+        public double Compute(ShapedArray<double> targets, ShapedArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => O - T * Log(O)).Avarage();
         }
 
-        public ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
+        public ShapedArray<double> Derivative(ShapedArray<double> targets, ShapedArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => 1.0 - (T / O));
         }

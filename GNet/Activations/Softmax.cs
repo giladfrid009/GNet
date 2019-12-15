@@ -9,18 +9,18 @@ namespace GNet.Activations
     [Serializable]
     public class Softmax : IActivation
     {
-        public ShapedReadOnlyArray<double> Activate(ShapedReadOnlyArray<double> vals)
+        public ShapedArray<double> Activate(ShapedArray<double> vals)
         {
-            ShapedReadOnlyArray<double> exps = vals.Select(X => Exp(X));
+            ShapedArray<double> exps = vals.Select(X => Exp(X));
 
             double sum = exps.Sum(x => x);
 
             return exps.Select(E => E / sum);
         }
 
-        public ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> vals)
+        public ShapedArray<double> Derivative(ShapedArray<double> vals)
         {
-            ShapedReadOnlyArray<double> exps = vals.Select(X => Exp(X));
+            ShapedArray<double> exps = vals.Select(X => Exp(X));
 
             double sum = exps.Sum(x => x);
 

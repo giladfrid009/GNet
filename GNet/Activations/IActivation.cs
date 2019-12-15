@@ -2,8 +2,8 @@
 {
     public interface IActivation : ICloneable<IActivation>
     {
-        ShapedReadOnlyArray<double> Activate(ShapedReadOnlyArray<double> vals);
+        ShapedArray<double> Activate(ShapedArray<double> vals);
 
-        ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> vals);
+        ShapedArray<double> Derivative(ShapedArray<double> vals);
     }
 }
