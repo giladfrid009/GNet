@@ -1,5 +1,5 @@
-﻿using GNet.Extensions.Array.Generic;
-using GNet.Extensions.ShapedArray.Generic;
+﻿using GNet.Extensions.Array;
+using GNet.Extensions.ShapedArray;
 using System;
 
 namespace GNet.Activations
@@ -7,12 +7,12 @@ namespace GNet.Activations
     [Serializable]
     public class Identity : IActivation
     {
-        public ShapedArray<double> Activate(ShapedArray<double> vals)
+        public ShapedArray<double> Activate(ShapedReadOnlyArray<double> vals)
         {
             return vals.Select(X => X);
         }
 
-        public ShapedArray<double> Derivative(ShapedArray<double> vals)
+        public ShapedArray<double> Derivative(ShapedReadOnlyArray<double> vals)
         {
             return vals.Select(X => 1.0);
         }

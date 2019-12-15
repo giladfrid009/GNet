@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace GNet.Extensions.Array.Math
+namespace GNet.Extensions.IArray
 {
-    public static class ExtensionsArrayMath
+    public static class IArrayExtensions
     {
-        public static TOut Accumulate<TSource, TOut>(this TSource[] source, TOut seed, Func<TOut, TSource, TOut> accumulator)
+        public static TOut Accumulate<TSource, TOut>(this IArray<TSource> source, TOut seed, Func<TOut, TSource, TOut> accumulator)
         {
             TOut res = seed;
 
@@ -16,7 +16,7 @@ namespace GNet.Extensions.Array.Math
             return res;
         }
 
-        public static double Sum<TSource>(this TSource[] source, Func<TSource, double> selector)
+        public static double Sum<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
         {
             double sum = default;
 
@@ -28,7 +28,7 @@ namespace GNet.Extensions.Array.Math
             return sum;
         }
 
-        public static double Avarage(this double[] source)
+        public static double Avarage(this IArray<double> source)
         {
             double sum = default;
 
@@ -40,7 +40,7 @@ namespace GNet.Extensions.Array.Math
             return sum / source.Length;
         }
 
-        public static double Min(this double[] source)
+        public static double Min(this IArray<double> source)
         {
             double min = source[0];
 
@@ -55,7 +55,7 @@ namespace GNet.Extensions.Array.Math
             return min;
         }
 
-        public static double Max(this double[] source)
+        public static double Max(this IArray<double> source)
         {
             double max = source[0];
 
@@ -68,6 +68,19 @@ namespace GNet.Extensions.Array.Math
             }
 
             return max;
+        }
+
+        public static void ForEach<TSource>(this IArray<TSource> source, Action<TSource, int> action)
+        {
+            for (int i = 0; i < source.Length; i++)
+            {
+                action(source[i], i);
+            }
+        }
+
+        public static void ForEach<TSource>(this IArray<TSource> source, Action<TSource> action)
+        {
+            source.ForEach((X, i) => action(X));
         }
     }
 }

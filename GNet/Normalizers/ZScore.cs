@@ -1,7 +1,6 @@
-﻿using GNet.Extensions.Array.Generic;
-using GNet.Extensions.Array.Math;
-using GNet.Extensions.ShapedArray.Generic;
-using GNet.Extensions.ShapedArray.Math;
+﻿using GNet.Extensions.Array;
+using GNet.Extensions.IArray;
+using GNet.Extensions.ShapedArray;
 using static System.Math;
 
 namespace GNet.Normalizers
@@ -24,25 +23,25 @@ namespace GNet.Normalizers
 
             if (NormalizeInputs)
             {
-                meanInput = dataset.DataCollection.Sum(D => D.Inputs.Avarage()) / dataset.Length;
+                meanInput = dataset.Sum(D => D.Inputs.Avarage()) / dataset.Length;
             }
 
             if (NormalizeOutputs)
             {
-                meanOutput = dataset.DataCollection.Sum(D => D.Outputs.Avarage()) / dataset.Length;
+                meanOutput = dataset.Sum(D => D.Outputs.Avarage()) / dataset.Length;
             }
 
             mean = (meanInput + meanOutput) / 2;
 
             if (NormalizeInputs)
             {
-                varianceInput = dataset.DataCollection.Sum(D => D.Inputs.Sum(X => (X - mean) * (X - mean)));
+                varianceInput = dataset.Sum(D => D.Inputs.Sum(X => (X - mean) * (X - mean)));
                 numVals += dataset.InputShape.Length();
             }
 
             if (NormalizeOutputs)
             {
-                varianceOutput = dataset.DataCollection.Sum(D => D.Outputs.Sum(X => (X - mean) * (X - mean)));
+                varianceOutput = dataset.Sum(D => D.Outputs.Sum(X => (X - mean) * (X - mean)));
                 numVals += dataset.OutputShape.Length();
             }
 
@@ -51,7 +50,7 @@ namespace GNet.Normalizers
             sd = Sqrt((varianceInput + varianceOutput) / numVals);
         }
 
-        public ShapedArray<double> Normalize(ShapedArray<double> vals)
+        public ShapedArray<double> Normalize(ShapedReadOnlyArray<double> vals)
         {
             return vals.Select(X => (X - mean) / sd);
         }

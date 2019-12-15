@@ -1,7 +1,6 @@
-﻿using GNet.Extensions.Array.Generic;
-using GNet.Extensions.Array.Math;
-using GNet.Extensions.ShapedArray.Generic;
-using GNet.Extensions.ShapedArray.Math;
+﻿using GNet.Extensions.Array;
+using GNet.Extensions.IArray;
+using GNet.Extensions.ShapedArray;
 using static System.Math;
 
 namespace GNet.Normalizers
@@ -16,28 +15,23 @@ namespace GNet.Normalizers
 
         public void ExtractParams(Dataset dataset)
         {
-            double maxInput = 0;
-            double maxOutput = 0;
-            double minInput = 0;
-            double minOutput = 0;
+            max = 0;
+            min = 0;
 
             if (NormalizeInputs)
             {
-                maxInput = dataset.DataCollection.Select(D => D.Inputs.Max()).Max();
-                minInput = dataset.DataCollection.Select(D => D.Inputs.Min()).Min();
+                dataset.ForEach(D => max = Max(max, D.Inputs.Max()));
+                dataset.ForEach(D => min = Min(min, D.Inputs.Min()));
             }
 
             if (NormalizeOutputs)
             {
-                maxOutput = dataset.DataCollection.Select(D => D.Outputs.Max()).Max();
-                minOutput = dataset.DataCollection.Select(D => D.Outputs.Min()).Min();
+                dataset.ForEach(D => max = Max(max, D.Outputs.Max()));
+                dataset.ForEach(D => min = Min(min, D.Inputs.Min()));
             }
-
-            max = Max(maxInput, maxOutput);
-            min = Min(minInput, minOutput);
         }
 
-        public ShapedArray<double> Normalize(ShapedArray<double> vals)
+        public ShapedArray<double> Normalize(ShapedReadOnlyArray<double> vals)
         {
             return vals.Select(X => (X - min) / (max - min));
         }

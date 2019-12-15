@@ -3,54 +3,36 @@
 namespace GNet
 {
     [Serializable]
-    public class ShapedArray<T> : ICloneable<ShapedArray<T>>
+    public class ShapedArray<T> : ShapedReadOnlyArray<T>, ICloneable<ShapedArray<T>>
     {
-        public Shape Shape { get; }
+        public ShapedArray(Shape shape) : base(shape)
+        {
+            
+        }
 
-        private readonly T[] array;
+        public ShapedArray(Shape shape, Array array) : base(shape, array)
+        {
+            
+        }
 
-        public int Length { get; }
+        public ShapedArray(Shape shape, params T[] array) : base(shape, (Array)array)
+        {
+            
+        }
 
-        public T this[params int[] indices]
+        public new T this[params int[] indices]
         {
             get => array[Shape.FlattenIndices(indices)];
             set => array[Shape.FlattenIndices(indices)] = value;
         }
 
-        public T this[int index]
+        public new T this[int index]
         {
             get => array[index];
             set => array[index] = value;
-        }
+        }        
 
-        public ShapedArray(Shape shape)
-        {
-            Shape = shape.Clone();
-            Length = shape.Length();
-            array = new T[Length];
-        }
-
-        public ShapedArray(Shape shape, Array array) : this(shape)
-        {
-            if (array.Length != Length)
-            {
-                throw new ArgumentException("array length and shape mismatch.");
-            }
-
-            Array.Copy(array, 0, this.array, 0, Length);
-        }
-
-        public ShapedArray(Shape shape, params T[] array) : this(shape, (Array)array)
-        {
-            if (array.Length != Length)
-            {
-                throw new ArgumentException("array length and shape mismatch.");
-            }
-
-            Array.Copy(array, 0, this.array, 0, Length);
-        }
-
-        public ShapedArray<T> Clone()
+        public new ShapedArray<T> Clone()
         {
             return new ShapedArray<T>(Shape, array);
         }

@@ -2,10 +2,10 @@
 {
     public class Data : ICloneable<Data>
     {
-        public ShapedArray<double> Inputs { get; }
-        public ShapedArray<double> Outputs { get; }
+        public ShapedReadOnlyArray<double> Inputs { get; }
+        public ShapedReadOnlyArray<double> Outputs { get; }
 
-        public Data(ShapedArray<double> inputs, ShapedArray<double> outputs)
+        public Data(ShapedReadOnlyArray<double> inputs, ShapedReadOnlyArray<double> outputs)
         {
             Inputs = inputs.Clone();
             Outputs = outputs.Clone();
