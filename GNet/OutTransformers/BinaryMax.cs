@@ -1,7 +1,6 @@
-﻿using GNet.Extensions.Array.Generic;
-using GNet.Extensions.Array.Math;
-using GNet.Extensions.ShapedArray.Generic;
-using GNet.Extensions.ShapedArray.Math;
+﻿using GNet.Extensions.Array;
+using GNet.Extensions.IArray;
+using GNet.Extensions.ShapedArray;
 
 namespace GNet.OutTransformers
 {
@@ -12,7 +11,7 @@ namespace GNet.OutTransformers
             return new BinaryMax();
         }
 
-        public ShapedArray<double> Transform(ShapedArray<double> output)
+        public ShapedArray<double> Transform(ShapedReadOnlyArray<double> output)
         {
             double max = output.Max();
 

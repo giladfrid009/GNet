@@ -1,7 +1,6 @@
-﻿using GNet.Extensions.Array.Generic;
-using GNet.Extensions.Array.Math;
-using GNet.Extensions.ShapedArray.Generic;
-using GNet.Extensions.ShapedArray.Math;
+﻿using GNet.Extensions.Array;
+using GNet.Extensions.IArray;
+using GNet.Extensions.ShapedArray;
 using static System.Math;
 
 namespace GNet.Normalizers
@@ -15,25 +14,22 @@ namespace GNet.Normalizers
 
         public void ExtractParams(Dataset dataset)
         {
-            double maxInput = 0;
-            double maxOutput = 0;
+            double max = 0;
 
             if (NormalizeInputs)
             {
-                maxInput = dataset.DataCollection.Select(D => D.Inputs.Select(X => Abs(X)).Max()).Max();
+                dataset.ForEach(D => max = Max(max, D.Inputs.Max()));
             }
 
             if (NormalizeOutputs)
             {
-                maxOutput = dataset.DataCollection.Select(D => D.Outputs.Select(X => Abs(X)).Max()).Max();
+                dataset.ForEach(D => max = Max(max, D.Outputs.Max()));
             }
-
-            double max = Max(maxInput, maxOutput);
 
             scale = (int)Log10(max) + 1;
         }
 
-        public ShapedArray<double> Normalize(ShapedArray<double> vals)
+        public ShapedArray<double> Normalize(ShapedReadOnlyArray<double> vals)
         {
             return vals.Select(X => X / scale);
         }

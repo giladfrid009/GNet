@@ -1,7 +1,6 @@
-﻿using GNet.Extensions.Array.Generic;
-using GNet.Extensions.Array.Math;
-using GNet.Extensions.ShapedArray.Generic;
-using GNet.Extensions.ShapedArray.Math;
+﻿using GNet.Extensions.Array;
+
+using GNet.Extensions.ShapedArray;
 using System;
 
 namespace GNet
@@ -9,9 +8,9 @@ namespace GNet
     [Serializable]
     public class Shape : IEquatable<Shape>, ICloneable<Shape>
     {
-        public int[] Dimensions { get; }
-
         public int NumDimentions { get; }
+
+        private readonly int[] dimensions;
 
         public Shape(params int[] dimensions)
         {
@@ -23,27 +22,27 @@ namespace GNet
                 }
             });
 
-            Dimensions = dimensions.Select(X => X);
+            this.dimensions = dimensions.Select(X => X);
             NumDimentions = dimensions.Length;
         }
 
         public int Length()
         {
-            return Dimensions.Accumulate(1, (R, X) => R * X);
+            return dimensions.Accumulate(1, (R, X) => R * X);
         }
 
         public int FlattenIndices(params int[] indices)
         {
             indices.ForEach((X, i) =>
             {
-                if (indices[i] > Dimensions[i] - 1 || indices[i] < 0)
+                if (indices[i] > dimensions[i] - 1 || indices[i] < 0)
                 {
                     throw new IndexOutOfRangeException($"Indices {i} is out of range.");
                 }
             });
 
             int index = 0;
-            return indices.Accumulate(0, (R, X) => R * Dimensions[index++] + X);
+            return indices.Accumulate(0, (R, X) => R * dimensions[index++] + X);
         }
 
         public bool Equals(Shape? other)
@@ -60,7 +59,7 @@ namespace GNet
 
             for (int i = 0; i < NumDimentions; i++)
             {
-                if (Dimensions[i] != other.Dimensions[i])
+                if (dimensions[i] != other.dimensions[i])
                 {
                     return false;
                 }
@@ -81,12 +80,12 @@ namespace GNet
 
         public override int GetHashCode()
         {
-            return NumDimentions + Dimensions.Accumulate(1, (R, X) => unchecked(R * 314159 + X));
+            return NumDimentions + dimensions.Accumulate(1, (R, X) => unchecked(R * 314159 + X));
         }
 
         public Shape Clone()
         {
-            return new Shape(Dimensions);
+            return new Shape(dimensions);
         }
     }
 }

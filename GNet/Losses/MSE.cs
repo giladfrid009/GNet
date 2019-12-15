@@ -1,7 +1,5 @@
-﻿using GNet.Extensions.Array.Generic;
-using GNet.Extensions.Array.Math;
-using GNet.Extensions.ShapedArray.Generic;
-using GNet.Extensions.ShapedArray.Math;
+﻿using GNet.Extensions.IArray;
+using GNet.Extensions.ShapedArray;
 
 namespace GNet.Losses
 {
@@ -10,12 +8,12 @@ namespace GNet.Losses
     /// </summary>
     public class MSE : ILoss
     {
-        public double Compute(ShapedArray<double> targets, ShapedArray<double> outputs)
+        public double Compute(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => (T - O) * (T - O)).Avarage();
         }
 
-        public ShapedArray<double> Derivative(ShapedArray<double> targets, ShapedArray<double> outputs)
+        public ShapedArray<double> Derivative(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => 2.0 * (O - T));
         }

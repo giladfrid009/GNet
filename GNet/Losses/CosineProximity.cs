@@ -1,14 +1,13 @@
-﻿using GNet.Extensions.Array.Generic;
-using GNet.Extensions.Array.Math;
-using GNet.Extensions.ShapedArray.Generic;
-using GNet.Extensions.ShapedArray.Math;
+﻿using GNet.Extensions.Array;
+using GNet.Extensions.IArray;
+using GNet.Extensions.ShapedArray;
 using static System.Math;
 
 namespace GNet.Losses
 {
     public class CosineProximity : ILoss
     {
-        public double Compute(ShapedArray<double> targets, ShapedArray<double> outputs)
+        public double Compute(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
         {
             double tProd = targets.Accumulate(1.0, (R, X) => R * X);
             double oProd = outputs.Accumulate(1.0, (R, X) => R * X);
@@ -18,7 +17,7 @@ namespace GNet.Losses
             return -tProd * oProd / (Sqrt(tSumSqr) * Sqrt(oSumSqr));
         }
 
-        public ShapedArray<double> Derivative(ShapedArray<double> targets, ShapedArray<double> outputs)
+        public ShapedArray<double> Derivative(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
         {
             double tProd = targets.Accumulate(1.0, (R, X) => R * X);
             double oProd = outputs.Accumulate(1.0, (R, X) => R * X);

@@ -1,16 +1,18 @@
-﻿using GNet.Extensions.Array.Generic;
+﻿using GNet.Extensions.Array;
+using GNet.GlobalRandom;
 using System;
 
 namespace GNet
 {
-    public class Dataset : ICloneable<Dataset>
+    public class Dataset : IArray<Data>, ICloneable<Dataset>
     {
-        public Data[] DataCollection { get; private set; }
         public int Length { get; }
         public Shape InputShape { get; }
         public Shape OutputShape { get; }
 
-        public Data this[int index] => DataCollection[index];
+        private Data[] dataCollection;
+
+        public Data this[int index] => dataCollection[index];
 
         public Dataset(Data[] dataCollection)
         {
@@ -26,14 +28,24 @@ namespace GNet
             });
 
             Length = dataCollection.Length;
-            DataCollection = dataCollection.Select(D => D.Clone());
+            this.dataCollection = dataCollection.Select(D => D.Clone());
+        }
+
+        public void Shuffle()
+        {
+            dataCollection.ForEach((D, i) =>
+            {
+                int iRnd = GRandom.Next(i, Length);
+                dataCollection[i] = dataCollection[iRnd];
+                dataCollection[iRnd] = D;
+            });
         }
 
         public void Normalize(INormalizer normalizer)
         {
             normalizer.ExtractParams(this);
 
-            DataCollection = DataCollection.Select(D => NormalizeData(D, normalizer));
+            dataCollection = dataCollection.Select(D => NormalizeData(D, normalizer));
         }
 
         private Data NormalizeData(Data data, INormalizer normalizer)
@@ -46,7 +58,7 @@ namespace GNet
 
         public Dataset Clone()
         {
-            return new Dataset(DataCollection);
+            return new Dataset(dataCollection);
         }
     }
 }

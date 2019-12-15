@@ -1,21 +1,23 @@
-﻿using GNet.Extensions.Array.Generic;
-using GNet.Extensions.Array.Math;
-using GNet.Extensions.ShapedArray.Generic;
-using GNet.Extensions.ShapedArray.Math;
+﻿using GNet.Extensions.Array;
+using GNet.Extensions.ShapedArray;
+using GNet.Extensions.IArray;
 using System;
 
 namespace GNet
 {
     [Serializable]
-    public class Network : ICloneable<Network>
+    public class Network : IArray<Dense>, ICloneable<Network>
     {
-        public Dense[] Layers { get; }
         public int Length { get; }
+
+        private readonly Dense[] layers;
+
+        public Dense this[int index] => layers[index];
 
         public Network(Dense[] layers)
         {
             Length = layers.Length;
-            Layers = layers.Select(L => L.Clone());
+            this.layers = layers.Select(L => L.Clone());
 
             Connect();
         }
@@ -24,7 +26,7 @@ namespace GNet
         {
             for (int i = 1; i < Length; i++)
             {
-                Layers[i].Initialize();
+                layers[i].Initialize();
             }
         }
 
@@ -45,39 +47,39 @@ namespace GNet
 
             for (int i = 1; i < Length; i++)
             {
-                Layers[i].Connect(Layers[i - 1]);
+                layers[i].Connect(layers[i - 1]);
             }
         }
 
-        public ShapedArray<double> FeedForward(ShapedArray<double> inputs)
+        public ShapedArray<double> FeedForward(ShapedReadOnlyArray<double> inputs)
         {
-            if (inputs.Shape.Equals(Layers[0].Shape) == false)
+            if (inputs.Shape.Equals(layers[0].Shape) == false)
             {
-                throw new ArgumentOutOfRangeException("Input shape and input layer shape mismatch.");
+                throw new ArgumentOutOfRangeException("inputs shape and input layer shape mismatch.");
             }
 
-            Layers[0].SetInputs(inputs);
+            layers[0].SetInputs(inputs);
 
             for (int i = 1; i < Length; i++)
             {
-                Layers[i].FeedForward();
+                layers[i].FeedForward();
             }
 
-            return Layers[Length - 1].Neurons.Select(N => N.ActivatedValue);
+            return layers[Length - 1].Neurons.Select(N => N.ActivatedValue);
         }
 
         public double Validate(Dataset dataset, ILoss loss)
         {
-            return dataset.DataCollection.Sum(D => loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.Length;
+            return dataset.Sum(D => loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.Length;
         }
 
-        private void CalcGrads(ILoss loss, ShapedArray<double> targets)
+        private void CalcGrads(ILoss loss, ShapedReadOnlyArray<double> targets)
         {
-            Layers[Length - 1].CalcGrads(loss, targets);
+            layers[Length - 1].CalcGrads(loss, targets);
 
             for (int i = Length - 2; i > 0; i--)
             {
-                Layers[i].CalcGrads();
+                layers[i].CalcGrads();
             }
         }
 
@@ -98,7 +100,7 @@ namespace GNet
 
             for (int i = 1; i < Length; i++)
             {
-                optimizer.Optimize(Layers[i], epoch);
+                optimizer.Optimize(layers[i], epoch);
             }
         }
 
@@ -106,15 +108,15 @@ namespace GNet
         {
             for (int i = 1; i < Length; i++)
             {
-                Layers[i].Update();
+                layers[i].Update();
             }
         }
 
         public Log Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError)
         {
-            if (dataset.InputShape.Equals(Layers[0].Shape) == false || dataset.OutputShape.Equals(Layers[Length - 1].Shape) == false)
+            if (dataset.InputShape.Equals(layers[0].Shape) == false || dataset.OutputShape.Equals(layers[Length - 1].Shape) == false)
             {
-                throw new Exception("Dataset structure mismatch with network input structure.");
+                throw new Exception("dataset structure mismatch with network input structure.");
             }
 
             Log trainingLog = new Log();
@@ -132,9 +134,9 @@ namespace GNet
                     break;
                 }
 
-                dataset.DataCollection.Shuffle();
+                dataset.Shuffle();
 
-                dataset.DataCollection.ForEach((D, index) =>
+                dataset.ForEach((D, index) =>
                 {
                     FeedForward(D.Inputs);
                     CalcGrads(loss, D.Outputs);
@@ -158,14 +160,14 @@ namespace GNet
 
         public Log Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double valMinError, Dataset valDataset, ILoss valLoss)
         {
-            if (dataset.InputShape.Equals(Layers[0].Shape) == false || dataset.OutputShape.Equals(Layers[Length - 1].Shape) == false)
+            if (dataset.InputShape.Equals(layers[0].Shape) == false || dataset.OutputShape.Equals(layers[Length - 1].Shape) == false)
             {
-                throw new Exception("Dataset structure mismatch with network input structure.");
+                throw new Exception("dataset structure mismatch with network input structure.");
             }
 
-            if (valDataset.InputShape.Equals(Layers[0].Shape) == false || valDataset.OutputShape.Equals(Layers[Length - 1].Shape) == false)
+            if (valDataset.InputShape.Equals(layers[0].Shape) == false || valDataset.OutputShape.Equals(layers[Length - 1].Shape) == false)
             {
-                throw new Exception("Dataset structure mismatch with network input structure.");
+                throw new Exception("dataset structure mismatch with network input structure.");
             }
 
             Log trainingLog = new Log();
@@ -184,9 +186,9 @@ namespace GNet
                     break;
                 }
 
-                dataset.DataCollection.Shuffle();
+                dataset.Shuffle();
 
-                dataset.DataCollection.ForEach((D, index) =>
+                dataset.ForEach((D, index) =>
                 {
                     FeedForward(D.Inputs);
                     CalcGrads(loss, D.Outputs);
@@ -211,14 +213,14 @@ namespace GNet
 
         public Network Clone()
         {
-            Network newNet = new Network(Layers);
+            Network newNet = new Network(layers);
 
-            newNet.Layers.ForEach((L, i) =>
+            newNet.layers.ForEach((L, i) =>
             {
                 L.Neurons.ForEach((N, j) =>
                 {
-                    N.CloneVals(Layers[i].Neurons[j]);
-                    N.InSynapses.ForEach((S, k) => S.CloneVals(Layers[i].Neurons[j].InSynapses[k]));
+                    N.CloneVals(layers[i].Neurons[j]);
+                    N.InSynapses.ForEach((S, k) => S.CloneVals(layers[i].Neurons[j].InSynapses[k]));
                 });
             });
 

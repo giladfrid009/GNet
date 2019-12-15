@@ -1,5 +1,5 @@
-﻿using GNet.Extensions.Array.Generic;
-using GNet.Extensions.ShapedArray.Generic;
+﻿using GNet.Extensions.Array;
+using GNet.Extensions.ShapedArray;
 using System;
 using static System.Math;
 
@@ -15,12 +15,12 @@ namespace GNet.Activations
             Alpha = alpha;
         }
 
-        public ShapedArray<double> Activate(ShapedArray<double> vals)
+        public ShapedArray<double> Activate(ShapedReadOnlyArray<double> vals)
         {
             return vals.Select(X => 1.0 / Alpha * Log((1.0 + Exp(Alpha * X)) / (1.0 + Exp(Alpha * X - Alpha))));
         }
 
-        public ShapedArray<double> Derivative(ShapedArray<double> vals)
+        public ShapedArray<double> Derivative(ShapedReadOnlyArray<double> vals)
         {
             return vals.Select(X => 0.5 * Sinh(0.5 * Alpha) * (1.0 / Cosh(0.5 * Alpha * X)) * (1.0 / Cosh(0.5 * Alpha * (1.0 - X))));
         }

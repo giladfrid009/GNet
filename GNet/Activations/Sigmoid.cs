@@ -1,5 +1,5 @@
-﻿using GNet.Extensions.Array.Generic;
-using GNet.Extensions.ShapedArray.Generic;
+﻿using GNet.Extensions.Array;
+using GNet.Extensions.ShapedArray;
 using System;
 using static System.Math;
 
@@ -8,12 +8,12 @@ namespace GNet.Activations
     [Serializable]
     public class Sigmoid : IActivation
     {
-        public ShapedArray<double> Activate(ShapedArray<double> vals)
+        public ShapedArray<double> Activate(ShapedReadOnlyArray<double> vals)
         {
             return vals.Select(X => 1.0 / (1.0 + Exp(-X)));
         }
 
-        public ShapedArray<double> Derivative(ShapedArray<double> vals)
+        public ShapedArray<double> Derivative(ShapedReadOnlyArray<double> vals)
         {
             return vals.Select(X => Exp(X) / Pow(Exp(X) + 1.0, 2.0));
         }

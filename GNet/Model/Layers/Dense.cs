@@ -1,7 +1,7 @@
-﻿using GNet.Extensions.Array.Generic;
-using GNet.Extensions.Array.Math;
-using GNet.Extensions.ShapedArray.Generic;
-using GNet.Extensions.ShapedArray.Math;
+﻿using System.Linq;
+using GNet.Extensions.Array;
+using GNet.Extensions.IArray;
+using GNet.Extensions.ShapedArray;
 using System;
 
 namespace GNet
@@ -9,7 +9,7 @@ namespace GNet
     [Serializable]
     public class Dense : ICloneable<Dense>
     {
-        public ShapedArray<Neuron> Neurons { get; }
+        public ShapedReadOnlyArray<Neuron> Neurons { get; }
         public IActivation Activation { get; }
         public IInitializer WeightInit { get; }
         public IInitializer BiasInit { get; }
@@ -22,12 +22,8 @@ namespace GNet
             WeightInit = weightInit.Clone();
             BiasInit = biasInit.Clone();
 
-            Neurons = new ShapedArray<Neuron>(Shape);
-
-            for (int i = 0; i < Neurons.Length; i++)
-            {
-                Neurons[i] = new Neuron();
-            }
+            Neurons = new ShapedReadOnlyArray<Neuron>(Shape, 
+                Enumerable.Range(0, Shape.Length()).Select(X => new Neuron()).ToArray());
         }
 
         public virtual void Connect(Dense inLayer)
@@ -58,11 +54,11 @@ namespace GNet
             });
         }
 
-        public void SetInputs(ShapedArray<double> values)
+        public void SetInputs(ShapedReadOnlyArray<double> values)
         {
             if (values.Shape.Equals(Shape) == false)
             {
-                throw new ArgumentOutOfRangeException("Values length mismatch.");
+                throw new ArgumentOutOfRangeException("values length mismatch.");
             }
 
             Neurons.ForEach((N, i) => N.ActivatedValue = values[i]);
@@ -72,12 +68,12 @@ namespace GNet
         {
             Neurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Sum(W => W.Weight * W.InNeuron.ActivatedValue));
 
-            ShapedArray<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
+            ShapedReadOnlyArray<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
 
             Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }
 
-        public void CalcGrads(ILoss loss, ShapedArray<double> targets)
+        public void CalcGrads(ILoss loss, ShapedReadOnlyArray<double> targets)
         {
             if (targets.Shape.Equals(Shape) == false)
             {
@@ -86,12 +82,12 @@ namespace GNet
 
             if (loss is IOutTransformer)
             {
-                throw new ArgumentException("This loss doesn't support backpropogation.");
+                throw new ArgumentException($"{nameof(loss)} loss doesn't support backpropogation.");
             }
 
-            ShapedArray<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
-            ShapedArray<double> lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
-            ShapedArray<double> grads = lossDers.Combine(actvDers, (LD, AD) => LD * AD);
+            ShapedReadOnlyArray<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
+            ShapedReadOnlyArray<double> lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
+            ShapedReadOnlyArray<double> grads = lossDers.Combine(actvDers, (LD, AD) => LD * AD);
 
             Neurons.ForEach((N, i) =>
             {
@@ -102,7 +98,7 @@ namespace GNet
 
         public void CalcGrads()
         {
-            ShapedArray<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
+            ShapedReadOnlyArray<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
 
             Neurons.ForEach((N, i) =>
             {
