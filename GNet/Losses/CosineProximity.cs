@@ -17,7 +17,7 @@ namespace GNet.Losses
             return -tProd * oProd / (Sqrt(tSumSqr) * Sqrt(oSumSqr));
         }
 
-        public ShapedArray<double> Derivative(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
+        public ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
         {
             double tProd = targets.Accumulate(1.0, (R, X) => R * X);
             double oProd = outputs.Accumulate(1.0, (R, X) => R * X);

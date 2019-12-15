@@ -8,12 +8,12 @@ namespace GNet.Activations
     [Serializable]
     public class SoftPlus : IActivation
     {
-        public ShapedArray<double> Activate(ShapedReadOnlyArray<double> vals)
+        public ShapedReadOnlyArray<double> Activate(ShapedReadOnlyArray<double> vals)
         {
             return vals.Select(X => Log(1.0 + Exp(X)));
         }
 
-        public ShapedArray<double> Derivative(ShapedReadOnlyArray<double> vals)
+        public ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> vals)
         {
             return vals.Select(X => 1.0 / (1.0 + Exp(-X)));
         }

@@ -14,7 +14,7 @@ namespace GNet.Losses
             return targets.Combine(outputs, (T, O) => Abs(T - O)).Avarage();
         }
 
-        public ShapedArray<double> Derivative(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
+        public ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => T > O ? 1.0 : -1.0);
         }

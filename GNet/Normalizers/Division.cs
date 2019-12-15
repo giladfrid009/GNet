@@ -15,7 +15,7 @@ namespace GNet.Normalizers
 
         public void ExtractParams(Dataset dataset) { }
 
-        public ShapedArray<double> Normalize(ShapedReadOnlyArray<double> vals)
+        public ShapedReadOnlyArray<double> Normalize(ShapedReadOnlyArray<double> vals)
         {
             return vals.Select(X => X / Divisor);
         }

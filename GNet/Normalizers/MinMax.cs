@@ -31,7 +31,7 @@ namespace GNet.Normalizers
             }
         }
 
-        public ShapedArray<double> Normalize(ShapedReadOnlyArray<double> vals)
+        public ShapedReadOnlyArray<double> Normalize(ShapedReadOnlyArray<double> vals)
         {
             return vals.Select(X => (X - min) / (max - min));
         }

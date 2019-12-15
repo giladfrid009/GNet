@@ -4,6 +4,6 @@
     {
         double Compute(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs);
 
-        ShapedArray<double> Derivative(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs);
+        ShapedReadOnlyArray<double> Derivative(ShapedReadOnlyArray<double> targets, ShapedReadOnlyArray<double> outputs);
     }
 }
