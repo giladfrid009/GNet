@@ -4,6 +4,11 @@ namespace GNet.Extensions.Array
 {
     public static class ArrayExtensions
     {
+        public static ArrayImmutable<TSource> ToImmutable<TSource>(this TSource[] source)
+        {
+            return new ArrayImmutable<TSource>(source);
+        }
+
         public static TOut[] Select<TSource, TOut>(this TSource[] source, Func<TSource, TOut> selector)
         {
             TOut[] selected = new TOut[source.Length];
