@@ -36,7 +36,7 @@ namespace GNet
                 throw new ArgumentException("Shape volume and array length mismatch.");
             }
 
-            internalArray = array.ToMutable();            
+            internalArray = array.ToMutable();
             Shape = shape;
         }
 

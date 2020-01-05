@@ -73,7 +73,7 @@ namespace GNet
 
         public T[] ToMutable()
         {
-            T[] array = new T[Length];
+            var array = new T[Length];
 
             Array.Copy(internalArray, 0, array, 0, Length);
 

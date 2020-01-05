@@ -32,8 +32,8 @@ namespace GNet
 
         public void Save(string filePath)
         {
-            using FileStream stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
-            using StreamWriter writer = new StreamWriter(stream);
+            using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+            using var writer = new StreamWriter(stream);
             logLines.ForEach(L => writer.WriteLine(L));
         }
     }

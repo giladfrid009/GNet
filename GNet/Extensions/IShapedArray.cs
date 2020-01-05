@@ -6,7 +6,7 @@ namespace GNet.Extensions.IShapedArray
     {
         public static ShapedArrayImmutable<TOut> Select<TSource, TOut>(this IShapedArray<TSource> source, Func<TSource, TOut> selector)
         {
-            TOut[] selected = new TOut[source.Length];
+            var selected = new TOut[source.Length];
 
             for (int i = 0; i < source.Length; i++)
             {
@@ -23,7 +23,7 @@ namespace GNet.Extensions.IShapedArray
                 throw new ArgumentException("source and array length mismatch.");
             }
 
-            TSource[] combined = new TSource[source.Length];
+            var combined = new TSource[source.Length];
 
             for (int i = 0; i < source.Length; i++)
             {

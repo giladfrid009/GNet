@@ -27,7 +27,6 @@ namespace GNet
         {
             base.Connect(inLayer);
 
-            // todo: is it right?
             droppedCache = new Synapse[Shape.Volume, inLayer.Shape.Volume];
 
             Drop();

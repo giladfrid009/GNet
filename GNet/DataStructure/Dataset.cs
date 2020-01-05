@@ -1,6 +1,6 @@
-﻿using GNet.Extensions.Array;
+﻿using System;
+using GNet.Extensions.Array;
 using GNet.GlobalRandom;
-using System;
 
 namespace GNet
 {
@@ -48,10 +48,10 @@ namespace GNet
             dataCollection = dataCollection.Select(D => NormalizeData(D, normalizer));
         }
 
-        private Data NormalizeData(Data data, INormalizer normalizer)
+        private static Data NormalizeData(Data data, INormalizer normalizer)
         {
-            var inputs = normalizer.NormalizeInputs ? normalizer.Normalize(data.Inputs) : data.Inputs;
-            var outptus = normalizer.NormalizeInputs ? normalizer.Normalize(data.Outputs) : data.Outputs;
+            ShapedArrayImmutable<double> inputs = normalizer.NormalizeInputs ? normalizer.Normalize(data.Inputs) : data.Inputs;
+            ShapedArrayImmutable<double> outptus = normalizer.NormalizeInputs ? normalizer.Normalize(data.Outputs) : data.Outputs;
 
             return new Data(inputs, outptus);
         }

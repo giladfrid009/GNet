@@ -6,7 +6,7 @@ namespace GNet
     {
         private static void Main()
         {
-            Network net = new Network
+            var net = new Network
             (
                 new Dense(new Shape(10), new Activations.Identity(), new Initializers.Zero(), new Initializers.Zero()),
                 new Dense(new Shape(5, 2), new Activations.Tanh(), new Initializers.LeCunNormal(), new Initializers.Zero()),
@@ -15,7 +15,7 @@ namespace GNet
 
             net.Initialize();
 
-            Datasets.Generators.EvenOdd datasetGenerator = new Datasets.Generators.EvenOdd(10);
+            var datasetGenerator = new Datasets.Generators.EvenOdd(10);
             Dataset trainingDataset = datasetGenerator.Generate(2000);
             Dataset validationDataset = datasetGenerator.Generate(1000);
 

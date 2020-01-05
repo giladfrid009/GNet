@@ -1,4 +1,4 @@
-﻿using GNet.Extensions.Array;
+﻿
 using GNet.Extensions.IArray;
 namespace GNet.Optimizers
 {
@@ -21,10 +21,7 @@ namespace GNet.Optimizers
             {
                 N.BatchBias += -lr * N.Gradient;
 
-                N.InSynapses.ForEach(S =>
-                {
-                    S.BatchWeight += -lr * S.Gradient;
-                });
+                N.InSynapses.ForEach(S => S.BatchWeight += -lr * S.Gradient);
             });
         }
 

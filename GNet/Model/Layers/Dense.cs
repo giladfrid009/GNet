@@ -32,9 +32,9 @@ namespace GNet
             {
                 inLayer.Neurons.ForEach((inN, j) =>
                 {
-                    Synapse W = new Synapse(inN, outN);
-                    inN.OutSynapses[i] = W;
-                    outN.InSynapses[j] = W;
+                    var S = new Synapse(inN, outN);
+                    inN.OutSynapses[i] = S;
+                    outN.InSynapses[j] = S;
                 });
             });
         }

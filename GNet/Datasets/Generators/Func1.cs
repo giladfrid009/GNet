@@ -17,7 +17,7 @@ namespace GNet.Datasets.Generators
 
         public Dataset Generate(int length)
         {
-            Data[] dataCollection = new Data[length];
+            var dataCollection = new Data[length];
 
             for (int i = 0; i < length; i++)
             {

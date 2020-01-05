@@ -3,7 +3,7 @@
     public static class LogicGates
     {
         public static Dataset AND { get; } = new Dataset
-        (        
+        (
             new Data(new ShapedArrayImmutable<double>(new Shape(2), 0.0, 0.0), new ShapedArrayImmutable<double>(new Shape(1), 0.0)),
             new Data(new ShapedArrayImmutable<double>(new Shape(2), 0.0, 1.0), new ShapedArrayImmutable<double>(new Shape(1), 0.0)),
             new Data(new ShapedArrayImmutable<double>(new Shape(2), 1.0, 0.0), new ShapedArrayImmutable<double>(new Shape(1), 0.0)),

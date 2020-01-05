@@ -119,7 +119,7 @@ namespace GNet
                 throw new Exception("dataset structure mismatch with network input structure.");
             }
 
-            Log trainingLog = new Log();
+            var trainingLog = new Log();
             double error = Validate(dataset, loss);
             int epoch;
 
@@ -170,7 +170,7 @@ namespace GNet
                 throw new Exception("dataset structure mismatch with network input structure.");
             }
 
-            Log trainingLog = new Log();
+            var trainingLog = new Log();
             double valError = Validate(valDataset, valLoss);
             int epoch;
 
@@ -213,7 +213,7 @@ namespace GNet
 
         public Network Clone()
         {
-            Network newNet = new Network(Layers);
+            var newNet = new Network(Layers);
 
             newNet.Layers.ForEach((L, i) =>
             {

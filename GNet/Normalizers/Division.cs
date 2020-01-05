@@ -1,4 +1,4 @@
-﻿using GNet.Extensions.Array;
+﻿
 using GNet.Extensions.IShapedArray;
 namespace GNet.Normalizers
 {

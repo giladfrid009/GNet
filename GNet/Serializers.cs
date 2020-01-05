@@ -10,8 +10,8 @@ namespace GNet.Serializers
         {
             try
             {
-                MemoryStream stream = new MemoryStream();
-                BinaryFormatter formatter = new BinaryFormatter();
+                var stream = new MemoryStream();
+                var formatter = new BinaryFormatter();
                 formatter.Serialize(stream, obj);
                 return stream;
             }
@@ -27,7 +27,7 @@ namespace GNet.Serializers
             try
             {
                 stream.Position = 0;
-                BinaryFormatter formatter = new BinaryFormatter();
+                var formatter = new BinaryFormatter();
                 return (TObject)formatter.Deserialize(stream);
             }
             catch (Exception e)
@@ -41,8 +41,8 @@ namespace GNet.Serializers
         {
             try
             {
-                using FileStream file = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
-                BinaryFormatter formatter = new BinaryFormatter();
+                using var file = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+                var formatter = new BinaryFormatter();
                 formatter.Serialize(file, obj);
             }
             catch (Exception e)
@@ -56,8 +56,8 @@ namespace GNet.Serializers
         {
             try
             {
-                using FileStream file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None);
-                BinaryFormatter formatter = new BinaryFormatter();
+                using var file = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.None);
+                var formatter = new BinaryFormatter();
                 return (TObject)formatter.Deserialize(file);
             }
             catch (Exception e)

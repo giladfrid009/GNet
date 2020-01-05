@@ -1,8 +1,7 @@
-﻿
+﻿using static System.Math;
+
 namespace GNet.Optimizers.Decays
 {
-    using static System.Math;
-
     public class Multiplication : IDecay
     {
         public double Decay { get; }

@@ -11,7 +11,7 @@ namespace GNet.Extensions.Array
 
         public static TOut[] Select<TSource, TOut>(this TSource[] source, Func<TSource, TOut> selector)
         {
-            TOut[] selected = new TOut[source.Length];
+            var selected = new TOut[source.Length];
 
             for (int i = 0; i < source.Length; i++)
             {
