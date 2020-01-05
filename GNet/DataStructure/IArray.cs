@@ -5,4 +5,6 @@
         int Length { get; }
         T this[int index] { get; }
     }
+
+
 }

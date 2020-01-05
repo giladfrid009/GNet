@@ -36,13 +36,13 @@ namespace GNet.Normalizers
             if (NormalizeInputs)
             {
                 varianceInput = dataset.Sum(D => D.Inputs.Sum(X => (X - mean) * (X - mean)));
-                numVals += dataset.InputShape.Length();
+                numVals += dataset.InputShape.Volume;
             }
 
             if (NormalizeOutputs)
             {
                 varianceOutput = dataset.Sum(D => D.Outputs.Sum(X => (X - mean) * (X - mean)));
-                numVals += dataset.OutputShape.Length();
+                numVals += dataset.OutputShape.Volume;
             }
 
             numVals *= dataset.Length;

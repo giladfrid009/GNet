@@ -16,7 +16,6 @@ namespace GNet.Extensions.ShapedArray
             return new ShapedArray<TOut>(source.Shape, selected);
         }
 
-        // todo: use to multiply between a kernel and the input
         public static ShapedArray<TSource> Combine<TSource>(this ShapedArray<TSource> source, ShapedArray<TSource> array, Func<TSource, TSource, TSource> selector)
         {
             if (source.Length != array.Length)

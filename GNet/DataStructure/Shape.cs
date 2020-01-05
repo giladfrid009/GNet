@@ -1,91 +1,80 @@
-﻿using GNet.Extensions.Array;
-
-using GNet.Extensions.ShapedArray;
+﻿using GNet.Extensions.IArray;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace GNet
 {
     [Serializable]
-    public class Shape : IEquatable<Shape>, ICloneable<Shape>
+    public struct Shape : IEquatable<Shape>
     {
-        public int NumDimentions { get; }
-
-        private readonly int[] dimensions;
+        public ArrayImmutable<int> Dimensions { get; }
+        public int NumDimentions { get => Dimensions.Length; }
+        public int Volume { get; }
 
         public Shape(params int[] dimensions)
         {
-            dimensions.ForEach((X, i) =>
+            for (int i = 0; i < dimensions.Length; i++)
             {
-                if (X < 0)
-                {
-                    throw new ArgumentOutOfRangeException($"Dimension {i} is out of range.");
-                }
-            });
+                if (dimensions[i] < 0)
+                    throw new ArgumentOutOfRangeException($"Dimensions {i} is out of range.");
+            }
 
-            this.dimensions = dimensions.Select(X => X);
-            NumDimentions = dimensions.Length;
-        }
+            Dimensions = new ArrayImmutable<int>(dimensions);
 
-        public int Length()
-        {
-            return dimensions.Accumulate(1, (R, X) => R * X);
+            Volume = Dimensions.Accumulate(1, (R, X) => R * X);
         }
 
         public int FlattenIndices(params int[] indices)
         {
-            indices.ForEach((X, i) =>
+            if(indices.Length > NumDimentions)
             {
-                if (indices[i] > dimensions[i] - 1 || indices[i] < 0)
-                {
-                    throw new IndexOutOfRangeException($"Indices {i} is out of range.");
-                }
-            });
-
-            int index = 0;
-            return indices.Accumulate(0, (R, X) => R * dimensions[index++] + X);
-        }
-
-        public bool Equals(Shape? other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
-            if (NumDimentions != other.NumDimentions)
-            {
-                return false;
+                throw new ArgumentOutOfRangeException("Indices length is out of range.");
             }
 
             for (int i = 0; i < NumDimentions; i++)
             {
-                if (dimensions[i] != other.dimensions[i])
+                if (indices[i] < 0 || indices[i] > Dimensions[i] - 1)
                 {
-                    return false;
+                    throw new IndexOutOfRangeException($"Indices {i} is out of range.");
                 }
             }
 
-            return true;
+            int flatIndex = 0;
+
+            for (int i = 0; i < NumDimentions; i++)
+            {
+                flatIndex = flatIndex * Dimensions[i] + indices[i];
+            }
+
+            return flatIndex;
+        }
+
+        public bool Equals([AllowNull] Shape other)
+        {
+            if (other == null)
+                return false;
+
+            return Dimensions == other.Dimensions;
         }
 
         public override bool Equals(object? obj)
         {
-            if (obj == null)
-            {
-                return false;
-            }
+            return Equals(obj);
+        }
 
-            return Equals((Shape)obj);
+        public static bool operator ==(Shape left, Shape right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Shape left, Shape right)
+        {
+            return !(left == right);
         }
 
         public override int GetHashCode()
         {
-            return NumDimentions + dimensions.Accumulate(1, (R, X) => unchecked(R * 314159 + X));
-        }
-
-        public Shape Clone()
-        {
-            return new Shape(dimensions);
+            return Dimensions.GetHashCode() + Volume * 17;
         }
     }
 }

@@ -17,12 +17,12 @@ namespace GNet
 
         public Dense(Shape shape, IActivation activation, IInitializer weightInit, IInitializer biasInit)
         {
-            Shape = shape.Clone();
+            Shape = shape;
             Activation = activation.Clone();
             WeightInit = weightInit.Clone();
             BiasInit = biasInit.Clone();
 
-            Neurons = new ShapedArray<Neuron>(Shape, new int[Shape.Length()].Select(X => new Neuron()));
+            Neurons = new ShapedArray<Neuron>(Shape, new int[Shape.Volume].Select(X => new Neuron()));
         }
 
         public virtual void Connect(Dense inLayer)
@@ -44,7 +44,7 @@ namespace GNet
         public void Initialize()
         {
             int inLength = Neurons[0].InSynapses.Length;
-            int outLength = Shape.Length();
+            int outLength = Shape.Volume;
 
             Neurons.ForEach(N =>
             {
@@ -55,7 +55,7 @@ namespace GNet
 
         public void SetInputs(ShapedArray<double> values)
         {
-            if (values.Shape.Equals(Shape) == false)
+            if (values.Shape != Shape)
             {
                 throw new ArgumentOutOfRangeException("values length mismatch.");
             }

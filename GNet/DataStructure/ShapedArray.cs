@@ -23,8 +23,8 @@ namespace GNet
 
         public ShapedArray(Shape shape)
         {
-            Shape = shape.Clone();
-            Length = shape.Length();
+            Shape = shape;
+            Length = shape.Volume;
             array = new T[Length];
         }
 

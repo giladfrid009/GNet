@@ -21,7 +21,7 @@ namespace GNet
 
             dataCollection.ForEach((D, i) =>
             {
-                if (D.Inputs.Shape.Equals(InputShape) == false || D.Outputs.Shape.Equals(OutputShape) == false)
+                if (D.Inputs.Shape != InputShape || D.Outputs.Shape != OutputShape)
                 {
                     throw new ArgumentException($"DataCollection[{i}] structure mismatch.");
                 }
