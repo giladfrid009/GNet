@@ -12,12 +12,12 @@ namespace GNet.Losses
         {
             Margin = margin;
         }
-        public double Compute(ShapedArray<double> targets, ShapedArray<double> outputs)
+        public double Compute(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => Max(0.0, Margin - T * O) * Max(0.0, Margin - T * O)).Avarage();
         }
 
-        public ShapedArray<double> Derivative(ShapedArray<double> targets, ShapedArray<double> outputs)
+        public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => T * O < Margin ? -2.0 * T * (Margin - T * O) : 0.0);
         }

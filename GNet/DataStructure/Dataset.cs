@@ -28,7 +28,7 @@ namespace GNet
             });
 
             Length = dataCollection.Length;
-            this.dataCollection = dataCollection.Select(D => D.Clone());
+            this.dataCollection = dataCollection.Select(D => D);
         }
 
         public void Shuffle()

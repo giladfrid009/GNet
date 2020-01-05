@@ -10,7 +10,7 @@ namespace GNet.Activations
     /// </summary>
     public class SQNL : IActivation
     {
-        public ShapedArray<double> Activate(ShapedArray<double> vals)
+        public ShapedArrayImmutable<double> Activate(ShapedArrayImmutable<double> vals)
         {
             return vals.Select(X =>
             {
@@ -33,7 +33,7 @@ namespace GNet.Activations
             });
         }
 
-        public ShapedArray<double> Derivative(ShapedArray<double> vals)
+        public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> vals)
         {
             return vals.Select(X => X > 0.0 ? 1.0 - X / 2.0 : 1.0 + X / 2.0);
         }

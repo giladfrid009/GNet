@@ -1,19 +1,45 @@
-﻿namespace GNet
-{
-    public class Data : ICloneable<Data>
-    {
-        public ShapedArray<double> Inputs { get; }
-        public ShapedArray<double> Outputs { get; }
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
-        public Data(ShapedArray<double> inputs, ShapedArray<double> outputs)
+namespace GNet
+{
+    public struct Data : IEquatable<Data>
+    {
+        public ShapedArrayImmutable<double> Inputs { get; }
+        public ShapedArrayImmutable<double> Outputs { get; }
+
+        public Data(ShapedArrayImmutable<double> inputs, ShapedArrayImmutable<double> outputs)
         {
-            Inputs = inputs.Clone();
-            Outputs = outputs.Clone();
+            Inputs = inputs;
+            Outputs = outputs;
         }
 
-        public Data Clone()
+        public bool Equals([AllowNull] Data other)
         {
-            return new Data(Inputs, Outputs);
+            if (other == null)
+                return false;
+
+            return (Inputs, Outputs) == (other.Inputs, other.Outputs);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj);
+        }
+
+        public static bool operator ==(Data left, Data right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Data left, Data right)
+        {
+            return !(left == right);
+        }
+
+        public override int GetHashCode()
+        {
+            return Inputs.GetHashCode() + Outputs.GetHashCode();
         }
     }
 }

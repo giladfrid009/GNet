@@ -8,12 +8,12 @@ namespace GNet.Activations
     [Serializable]
     public class Sinc : IActivation
     {
-        public ShapedArray<double> Activate(ShapedArray<double> vals)
+        public ShapedArrayImmutable<double> Activate(ShapedArrayImmutable<double> vals)
         {
             return vals.Select(X => X != 0.0 ? Sin(X) / X : 1.0);
         }
 
-        public ShapedArray<double> Derivative(ShapedArray<double> vals)
+        public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> vals)
         {
             return vals.Select(X => X != 0.0 ? Cos(X) / X - Sin(X) / (X * X) : 0.0);
         }

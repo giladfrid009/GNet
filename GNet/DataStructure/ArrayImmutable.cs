@@ -8,7 +8,6 @@ namespace GNet
     public struct ArrayImmutable<T> : IArray<T>, IEquatable<ArrayImmutable<T>>
     {
         public int Length => internalArray.Length;
-
         public T this[int index] => internalArray[index];
 
         private readonly T[] internalArray;
@@ -18,7 +17,7 @@ namespace GNet
             this = array;
         }
 
-        public ArrayImmutable(T[] array)
+        public ArrayImmutable(params T[] array)
         {
             internalArray = new T[array.Length];
 
@@ -60,6 +59,15 @@ namespace GNet
             {
                 internalArray[i++] = x;
             }
+        }
+
+        public T[] ToMutable()
+        {
+            T[] array = new T[Length];
+
+            Array.Copy(internalArray, 0, array, 0, Length);
+
+            return array;
         }
 
         public bool Equals([AllowNull] ArrayImmutable<T> other)

@@ -8,12 +8,12 @@ namespace GNet.Activations
     [Serializable]
     public class BentIdentity : IActivation
     {
-        public ShapedArray<double> Activate(ShapedArray<double> vals)
+        public ShapedArrayImmutable<double> Activate(ShapedArrayImmutable<double> vals)
         {
             return vals.Select(X => (Sqrt(X * X + 1.0) - 1.0) / 2.0 + X);
         }
 
-        public ShapedArray<double> Derivative(ShapedArray<double> vals)
+        public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> vals)
         {
             return vals.Select(X => X / (2.0 * Sqrt(X * X + 1.0)) + 1.0);
         }

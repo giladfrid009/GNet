@@ -7,12 +7,12 @@ namespace GNet.Activations
     [Serializable]
     public class Identity : IActivation
     {
-        public ShapedArray<double> Activate(ShapedArray<double> vals)
+        public ShapedArrayImmutable<double> Activate(ShapedArrayImmutable<double> vals)
         {
             return vals.Select(X => X);
         }
 
-        public ShapedArray<double> Derivative(ShapedArray<double> vals)
+        public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> vals)
         {
             return vals.Select(X => 1.0);
         }

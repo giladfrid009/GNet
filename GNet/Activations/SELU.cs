@@ -14,12 +14,12 @@ namespace GNet.Activations
         public double A { get; } = 1.0507009873554805;
         public double B { get; } = 1.6732632423543772;
 
-        public ShapedArray<double> Activate(ShapedArray<double> vals)
+        public ShapedArrayImmutable<double> Activate(ShapedArrayImmutable<double> vals)
         {
             return vals.Select(X => X < 0.0 ? A * B * (Exp(X) - 1.0) : A * X);
         }
 
-        public ShapedArray<double> Derivative(ShapedArray<double> vals)
+        public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> vals)
         {
             return vals.Select(X => X < 0.0 ? A * B * Exp(X) : A);
         }

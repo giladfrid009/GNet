@@ -14,7 +14,7 @@ namespace GNet.Normalizers
 
         public void ExtractParams(Dataset dataset) { }
 
-        public ShapedArray<double> Normalize(ShapedArray<double> vals)
+        public ShapedArrayImmutable<double> Normalize(ShapedArrayImmutable<double> vals)
         {
             return Activation.Activate(vals);
         }

@@ -9,12 +9,12 @@ namespace GNet.Losses
     /// </summary>
     public class MAE : ILoss
     {
-        public double Compute(ShapedArray<double> targets, ShapedArray<double> outputs)
+        public double Compute(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => Abs(T - O)).Avarage();
         }
 
-        public ShapedArray<double> Derivative(ShapedArray<double> targets, ShapedArray<double> outputs)
+        public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => T > O ? 1.0 : -1.0);
         }

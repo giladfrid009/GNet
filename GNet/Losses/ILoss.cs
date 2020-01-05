@@ -2,8 +2,8 @@
 {
     public interface ILoss : ICloneable<ILoss>
     {
-        double Compute(ShapedArray<double> targets, ShapedArray<double> outputs);
+        double Compute(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs);
 
-        ShapedArray<double> Derivative(ShapedArray<double> targets, ShapedArray<double> outputs);
+        ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs);
     }
 }

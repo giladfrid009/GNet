@@ -50,7 +50,7 @@ namespace GNet.Normalizers
             sd = Sqrt((varianceInput + varianceOutput) / numVals);
         }
 
-        public ShapedArray<double> Normalize(ShapedArray<double> vals)
+        public ShapedArrayImmutable<double> Normalize(ShapedArrayImmutable<double> vals)
         {
             return vals.Select(X => (X - mean) / sd);
         }

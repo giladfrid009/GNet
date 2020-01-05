@@ -11,7 +11,7 @@ namespace GNet.OutTransformers
             return new BinaryMax();
         }
 
-        public ShapedArray<double> Transform(ShapedArray<double> output)
+        public ShapedArrayImmutable<double> Transform(ShapedArrayImmutable<double> output)
         {
             double max = output.Max();
 

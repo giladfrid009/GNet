@@ -8,7 +8,7 @@ namespace GNet
     public struct Shape : IEquatable<Shape>
     {
         public ArrayImmutable<int> Dimensions { get; }
-        public int NumDimentions { get => Dimensions.Length; }
+        public int NumDimentions => Dimensions.Length;
         public int Volume { get; }
 
         public Shape(params int[] dimensions)

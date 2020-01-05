@@ -7,6 +7,6 @@
 
         void ExtractParams(Dataset dataset);
 
-        ShapedArray<double> Normalize(ShapedArray<double> vals);
+        ShapedArrayImmutable<double> Normalize(ShapedArrayImmutable<double> vals);
     }
 }

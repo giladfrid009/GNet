@@ -11,12 +11,12 @@ namespace GNet.Activations
     /// </summary>
     public class ELU : IActivation
     {
-        public ShapedArray<double> Activate(ShapedArray<double> vals)
+        public ShapedArrayImmutable<double> Activate(ShapedArrayImmutable<double> vals)
         {
             return vals.Select(X => X < 0.0 ? (Exp(X) - 1.0) : X);
         }
 
-        public ShapedArray<double> Derivative(ShapedArray<double> vals)
+        public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> vals)
         {
             return vals.Select(X => X < 0.0 ? Exp(X) : 1.0);
         }

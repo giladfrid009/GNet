@@ -2,9 +2,9 @@
 
 namespace GNet.Extensions.ShapedArray
 {
-    public static class ExtensionsShapedGeneric
+    public static class IShapedArrayExtensions
     {
-        public static ShapedArray<TOut> Select<TSource, TOut>(this ShapedArray<TSource> source, Func<TSource, TOut> selector)
+        public static ShapedArrayImmutable<TOut> Select<TSource, TOut>(this IShapedArray<TSource> source, Func<TSource, TOut> selector)
         {
             TOut[] selected = new TOut[source.Length];
 
@@ -13,10 +13,10 @@ namespace GNet.Extensions.ShapedArray
                 selected[i] = selector(source[i]);
             }
 
-            return new ShapedArray<TOut>(source.Shape, selected);
+            return new ShapedArrayImmutable<TOut>(source.Shape, selected);
         }
 
-        public static ShapedArray<TSource> Combine<TSource>(this ShapedArray<TSource> source, ShapedArray<TSource> array, Func<TSource, TSource, TSource> selector)
+        public static ShapedArrayImmutable<TSource> Combine<TSource>(this IShapedArray<TSource> source, IShapedArray<TSource> array, Func<TSource, TSource, TSource> selector)
         {
             if (source.Length != array.Length)
             {
@@ -30,10 +30,10 @@ namespace GNet.Extensions.ShapedArray
                 combined[i] = selector(source[i], array[i]);
             }
 
-            return new ShapedArray<TSource>(source.Shape, combined);
+            return new ShapedArrayImmutable<TSource>(source.Shape, combined);
         }
 
-        public static ShapedArray<double> Multiply(this ShapedArray<double> source, ShapedArray<double> array)
+        public static ShapedArrayImmutable<double> Multiply(this IShapedArray<double> source, IShapedArray<double> array)
         {
             return source.Combine(array, (X, Y) => X * Y);
         }

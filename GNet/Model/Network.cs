@@ -51,7 +51,7 @@ namespace GNet
             }
         }
 
-        public ShapedArray<double> FeedForward(ShapedArray<double> inputs)
+        public ShapedArrayImmutable<double> FeedForward(ShapedArrayImmutable<double> inputs)
         {
             if (inputs.Shape.Equals(layers[0].Shape) == false)
             {
@@ -73,7 +73,7 @@ namespace GNet
             return dataset.Sum(D => loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.Length;
         }
 
-        private void CalcGrads(ILoss loss, ShapedArray<double> targets)
+        private void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
         {
             layers[Length - 1].CalcGrads(loss, targets);
 
