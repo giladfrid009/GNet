@@ -1,5 +1,5 @@
 ﻿using GNet.Extensions.Array;
-using GNet.Extensions.ShapedArray;
+using GNet.Extensions.IShapedArray;
 using static System.Math;
 
 

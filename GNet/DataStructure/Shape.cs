@@ -16,7 +16,9 @@ namespace GNet
             for (int i = 0; i < dimensions.Length; i++)
             {
                 if (dimensions[i] < 0)
+                {
                     throw new ArgumentOutOfRangeException($"Dimensions {i} is out of range.");
+                }
             }
 
             Dimensions = new ArrayImmutable<int>(dimensions);
@@ -26,7 +28,7 @@ namespace GNet
 
         public int FlattenIndices(params int[] indices)
         {
-            if(indices.Length > NumDimentions)
+            if (indices.Length > NumDimentions)
             {
                 throw new ArgumentOutOfRangeException("Indices length is out of range.");
             }
@@ -52,7 +54,9 @@ namespace GNet
         public bool Equals([AllowNull] Shape other)
         {
             if (other == null)
+            {
                 return false;
+            }
 
             return Dimensions == other.Dimensions;
         }

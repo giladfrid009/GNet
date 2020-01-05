@@ -1,11 +1,9 @@
-﻿using GNet.Extensions.Array;
-using GNet.Extensions.IArray;
-using GNet.Extensions.ShapedArray;
+﻿using GNet.Extensions.IArray;
+using GNet.Extensions.IShapedArray;
 using System;
 
 namespace GNet
 {
-    // todo: implement iarray? or ishapedArray ?
     [Serializable]
     public class Dense : ICloneable<Dense>
     {
@@ -22,7 +20,7 @@ namespace GNet
             WeightInit = weightInit.Clone();
             BiasInit = biasInit.Clone();
 
-            Neurons = new ShapedArrayImmutable<Neuron>(Shape, new int[Shape.Volume].Select(X => new Neuron()));
+            Neurons = new ShapedArrayImmutable<Neuron>(Shape, () => new Neuron());
         }
 
         public virtual void Connect(Dense inLayer)

@@ -1,6 +1,6 @@
 ﻿using GNet.Extensions.Array;
 using GNet.Extensions.IArray;
-using GNet.Extensions.ShapedArray;
+using GNet.Extensions.IShapedArray;
 
 namespace GNet.OutTransformers
 {

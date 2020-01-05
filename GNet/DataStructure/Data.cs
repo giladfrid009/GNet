@@ -17,7 +17,9 @@ namespace GNet
         public bool Equals([AllowNull] Data other)
         {
             if (other == null)
+            {
                 return false;
+            }
 
             return (Inputs, Outputs) == (other.Inputs, other.Outputs);
         }

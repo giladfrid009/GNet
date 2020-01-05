@@ -8,7 +8,7 @@ namespace GNet
     {
         public Shape Shape { get; }
         public int Length => internalArray.Length;
-        
+
         public T this[int index]
         {
             get => internalArray[index];
@@ -23,88 +23,83 @@ namespace GNet
 
         private readonly T[] internalArray;
 
+        public ShapedArray(Shape shape)
+        {
+            internalArray = new T[shape.Volume];
+            Shape = shape;
+        }
+
         public ShapedArray(Shape shape, ArrayImmutable<T> array)
         {
-            internalArray = array.ToMutable();
-
-            if (shape.Volume != internalArray.Length)
+            if (shape.Volume != array.Length)
             {
                 throw new ArgumentException("Shape volume and array length mismatch.");
             }
 
+            internalArray = array.ToMutable();            
             Shape = shape;
         }
 
-        public ShapedArray(Shape shape, params T[] array)
+        public ShapedArray(Shape shape, params T[] array) : this(shape)
         {
-            internalArray = new T[array.Length];
+            if (shape.Volume != array.Length)
+            {
+                throw new ArgumentException("Shape volume and array length mismatch.");
+            }
 
             Array.Copy(array, 0, internalArray, 0, array.Length);
+        }
 
-            if (shape.Volume != internalArray.Length)
+        public ShapedArray(Shape shape, Array array) : this(shape)
+        {
+            if (shape.Volume != array.Length)
             {
                 throw new ArgumentException("Shape volume and array length mismatch.");
             }
 
-            Shape = shape;
-        }
-
-        public ShapedArray(Shape shape, Array array)
-        {
             if (array.GetType().GetElementType() != typeof(T))
             {
                 throw new ArgumentException();
             }
 
-            internalArray = new T[array.Length];
-
             Array.Copy(array, 0, internalArray, 0, array.Length);
-
-            if (shape.Volume != internalArray.Length)
-            {
-                throw new ArgumentException("Shape volume and array length mismatch.");
-            }
-
-            Shape = shape;
         }
 
-        public ShapedArray(Shape shape, IList<T> list)
+        public ShapedArray(Shape shape, IList<T> list) : this(shape)
         {
-            int length = list.Count;
+            if (shape.Volume != list.Count)
+            {
+                throw new ArgumentException("Shape volume and list length mismatch.");
+            }
 
-            internalArray = new T[length];
+            int length = list.Count;
 
             for (int i = 0; i < length; i++)
             {
                 internalArray[i] = list[i];
             }
-
-            if (shape.Volume != internalArray.Length)
-            {
-                throw new ArgumentException("Shape volume and array length mismatch.");
-            }
-
-            Shape = shape;
         }
 
-        public ShapedArray(Shape shape, IEnumerable<T> enumerable)
+        public ShapedArray(Shape shape, IEnumerable<T> enumerable) : this(shape)
         {
-            int length = System.Linq.Enumerable.Count(enumerable);
-
-            internalArray = new T[length];
+            if (shape.Volume != System.Linq.Enumerable.Count(enumerable))
+            {
+                throw new ArgumentException("Shape volume and enumerable length mismatch.");
+            }
 
             int i = 0;
             foreach (var x in enumerable)
             {
                 internalArray[i++] = x;
             }
+        }
 
-            if (shape.Volume != internalArray.Length)
+        public ShapedArray(Shape shape, Func<T> element) : this(shape)
+        {
+            for (int i = 0; i < Length; i++)
             {
-                throw new ArgumentException("Shape volume and array length mismatch.");
+                internalArray[i] = element();
             }
-
-            Shape = shape;
         }
 
         public ShapedArrayImmutable<T> ToImmutable()

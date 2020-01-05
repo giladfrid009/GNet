@@ -26,7 +26,7 @@ namespace GNet
 
         public ArrayImmutable(Array array)
         {
-            if(array.GetType().GetElementType() != typeof(T))
+            if (array.GetType().GetElementType() != typeof(T))
             {
                 throw new ArgumentException();
             }
@@ -61,6 +61,16 @@ namespace GNet
             }
         }
 
+        public ArrayImmutable(int length, Func<T> element)
+        {
+            internalArray = new T[length];
+
+            for (int i = 0; i < Length; i++)
+            {
+                internalArray[i] = element();
+            }
+        }
+
         public T[] ToMutable()
         {
             T[] array = new T[Length];
@@ -73,10 +83,14 @@ namespace GNet
         public bool Equals([AllowNull] ArrayImmutable<T> other)
         {
             if (other == null)
+            {
                 return false;
+            }
 
             if (other.Length != Length)
+            {
                 return false;
+            }
 
             for (int i = 0; i < Length; i++)
             {
@@ -97,7 +111,7 @@ namespace GNet
         public override bool Equals(object? obj)
         {
             return Equals(obj);
-        }     
+        }
 
         public static bool operator ==(ArrayImmutable<T> left, ArrayImmutable<T> right)
         {

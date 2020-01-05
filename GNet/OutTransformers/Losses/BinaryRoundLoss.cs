@@ -1,5 +1,5 @@
 ﻿using GNet.Extensions.IArray;
-using GNet.Extensions.ShapedArray;
+using GNet.Extensions.IShapedArray;
 using System;
 
 namespace GNet.OutTransformers.Losses

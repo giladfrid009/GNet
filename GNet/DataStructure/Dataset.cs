@@ -14,7 +14,7 @@ namespace GNet
 
         public Data this[int index] => dataCollection[index];
 
-        public Dataset(Data[] dataCollection)
+        public Dataset(params Data[] dataCollection)
         {
             InputShape = dataCollection[0].Inputs.Shape;
             OutputShape = dataCollection[0].Outputs.Shape;

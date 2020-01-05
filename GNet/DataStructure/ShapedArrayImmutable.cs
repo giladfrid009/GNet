@@ -8,7 +8,7 @@ namespace GNet
     public struct ShapedArrayImmutable<T> : IShapedArray<T>, IEquatable<ShapedArrayImmutable<T>>
     {
         public Shape Shape { get; }
-        public int Length => internalArray.Length;     
+        public int Length => internalArray.Length;
         public T this[int index] => internalArray[index];
         public T this[params int[] indices] => internalArray[Shape.FlattenIndices(indices)];
 
@@ -16,68 +16,46 @@ namespace GNet
 
         public ShapedArrayImmutable(Shape shape, ArrayImmutable<T> array)
         {
-            internalArray = array;
-
-            if(shape.Volume != internalArray.Length)
+            if (shape.Volume != array.Length)
             {
                 throw new ArgumentException("Shape volume and array length mismatch.");
             }
 
+            internalArray = array;            
             Shape = shape;
         }
 
-        public ShapedArrayImmutable(Shape shape, params T[] array)
+        public ShapedArrayImmutable(Shape shape, params T[] array) : this(shape, new ArrayImmutable<T>(array))
         {
-            internalArray = new ArrayImmutable<T>(array);
-
-            if (shape.Volume != internalArray.Length)
-            {
-                throw new ArgumentException("Shape volume and array length mismatch.");
-            }
-
-            Shape = shape;
+            
         }
 
-        public ShapedArrayImmutable(Shape shape, Array array)
+        public ShapedArrayImmutable(Shape shape, Array array) : this(shape, new ArrayImmutable<T>(array))
         {
-            internalArray = new ArrayImmutable<T>(array);
-
-            if (shape.Volume != internalArray.Length)
-            {
-                throw new ArgumentException("Shape volume and array length mismatch.");
-            }
-
-            Shape = shape;
+            
         }
 
-        public ShapedArrayImmutable(Shape shape, IList<T> list)
+        public ShapedArrayImmutable(Shape shape, IList<T> list) : this(shape, new ArrayImmutable<T>(list))
         {
-            internalArray = new ArrayImmutable<T>(list);
-
-            if (shape.Volume != internalArray.Length)
-            {
-                throw new ArgumentException("Shape volume and array length mismatch.");
-            }
-
-            Shape = shape;
+            
         }
 
-        public ShapedArrayImmutable(Shape shape, IEnumerable<T> enumerable)
+        public ShapedArrayImmutable(Shape shape, IEnumerable<T> enumerable) : this(shape, new ArrayImmutable<T>(enumerable))
         {
-            internalArray = new ArrayImmutable<T>(enumerable);
+            
+        }
 
-            if (shape.Volume != internalArray.Length)
-            {
-                throw new ArgumentException("Shape volume and array length mismatch.");
-            }
+        public ShapedArrayImmutable(Shape shape, Func<T> element) : this(shape, new ArrayImmutable<T>(shape.Volume, element))
+        {
 
-            Shape = shape;
         }
 
         public bool Equals([AllowNull] ShapedArrayImmutable<T> other)
         {
             if (other == null)
+            {
                 return false;
+            }
 
             return (Shape, internalArray) == (other.Shape, other.internalArray);
         }

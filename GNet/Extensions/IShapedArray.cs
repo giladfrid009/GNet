@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GNet.Extensions.ShapedArray
+namespace GNet.Extensions.IShapedArray
 {
     public static class IShapedArrayExtensions
     {
