@@ -36,7 +36,6 @@ namespace GNet.Optimizers
             });
         }
 
-
         public IOptimizer Clone()
         {
             return new AdaGradWindow(LearningRate, Rho, Epsilon, Decay);

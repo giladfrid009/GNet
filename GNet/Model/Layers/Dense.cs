@@ -1,6 +1,6 @@
-﻿using GNet.Extensions.IArray;
+﻿using System;
+using GNet.Extensions.IArray;
 using GNet.Extensions.IShapedArray;
-using System;
 
 namespace GNet
 {
@@ -72,7 +72,7 @@ namespace GNet
 
         public void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
         {
-            if (targets.Shape.Equals(Shape) == false)
+            if (targets.Shape != Shape)
             {
                 throw new ArgumentException("targets shape mismatch.");
             }

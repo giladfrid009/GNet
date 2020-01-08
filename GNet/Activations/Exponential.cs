@@ -1,7 +1,6 @@
 ﻿using GNet.Extensions.IShapedArray;
 using static System.Math;
 
-
 namespace GNet.Activations
 {
     public class Exponential : IActivation

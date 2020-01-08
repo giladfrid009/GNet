@@ -13,7 +13,7 @@ namespace GNet.Losses
 
         public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)
         {
-            return targets.Combine(outputs, (T, O) => 1.0 - (T / O));
+            return targets.Combine(outputs, (T, O) => 1.0 - T / O);
         }
 
         public ILoss Clone()

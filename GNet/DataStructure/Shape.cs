@@ -1,11 +1,10 @@
-﻿using GNet.Extensions.IArray;
-using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using GNet.Extensions.IArray;
 
 namespace GNet
 {
     [Serializable]
-    public struct Shape : IEquatable<Shape>
+    public readonly struct Shape : IEquatable<Shape>
     {
         public ArrayImmutable<int> Dimensions { get; }
         public int NumDimentions => Dimensions.Length;
@@ -51,7 +50,7 @@ namespace GNet
             return flatIndex;
         }
 
-        public bool Equals([AllowNull] Shape other)
+        public bool Equals(Shape other)
         {
             if (other == null)
             {
@@ -63,7 +62,7 @@ namespace GNet
 
         public override bool Equals(object? obj)
         {
-            return Equals(obj);
+            return (obj is Shape shape) && Equals(shape);
         }
 
         public static bool operator ==(Shape left, Shape right)
@@ -73,7 +72,7 @@ namespace GNet
 
         public static bool operator !=(Shape left, Shape right)
         {
-            return !(left == right);
+            return !left.Equals(right);
         }
 
         public override int GetHashCode()

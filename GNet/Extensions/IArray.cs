@@ -80,7 +80,7 @@ namespace GNet.Extensions.IArray
 
         public static void ForEach<TSource>(this IArray<TSource> source, Action<TSource> action)
         {
-            source.ForEach((X, i) => action(X));
+            source.ForEach((X, _) => action(X));
         }
     }
 }

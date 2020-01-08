@@ -1,6 +1,6 @@
-﻿using GNet.Extensions.IArray;
+﻿using System;
+using GNet.Extensions.IArray;
 using GNet.GlobalRandom;
-using System;
 
 namespace GNet
 {

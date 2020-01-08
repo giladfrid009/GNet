@@ -1,5 +1,5 @@
-﻿using GNet.GlobalRandom;
-using System;
+﻿using System;
+using GNet.GlobalRandom;
 using static System.Math;
 
 namespace GNet.Initializers

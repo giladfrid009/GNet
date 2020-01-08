@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace GNet
 {
     [Serializable]
-    public struct ArrayImmutable<T> : IArray<T>, IEquatable<ArrayImmutable<T>>
+    public readonly struct ArrayImmutable<T> : IArray<T>, IEquatable<ArrayImmutable<T>>
     {
         public int Length => internalArray.Length;
         public T this[int index] => internalArray[index];
@@ -55,7 +54,7 @@ namespace GNet
             internalArray = new T[length];
 
             int i = 0;
-            foreach (var x in enumerable)
+            foreach (T x in enumerable)
             {
                 internalArray[i++] = x;
             }
@@ -80,7 +79,7 @@ namespace GNet
             return array;
         }
 
-        public bool Equals([AllowNull] ArrayImmutable<T> other)
+        public bool Equals(ArrayImmutable<T> other)
         {
             if (other == null)
             {
@@ -110,7 +109,7 @@ namespace GNet
 
         public override bool Equals(object? obj)
         {
-            return Equals(obj);
+            return (obj is ArrayImmutable<T> arr) && Equals(arr);
         }
 
         public static bool operator ==(ArrayImmutable<T> left, ArrayImmutable<T> right)
@@ -120,7 +119,7 @@ namespace GNet
 
         public static bool operator !=(ArrayImmutable<T> left, ArrayImmutable<T> right)
         {
-            return !(left == right);
+            return !left.Equals(right);
         }
 
         public override int GetHashCode()

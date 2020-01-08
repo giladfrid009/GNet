@@ -40,7 +40,6 @@ namespace GNet.Optimizers
             });
         }
 
-
         public IOptimizer Clone()
         {
             return new AdaDelta(LearningRate, Rho, Epsilon, Decay);

@@ -1,5 +1,5 @@
-﻿using GNet.Extensions.IShapedArray;
-using System;
+﻿using System;
+using GNet.Extensions.IShapedArray;
 
 namespace GNet.Activations
 {

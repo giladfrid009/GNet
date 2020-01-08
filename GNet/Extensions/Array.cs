@@ -31,7 +31,7 @@ namespace GNet.Extensions.Array
 
         public static void ForEach<TSource>(this TSource[] source, Action<TSource> action)
         {
-            source.ForEach((X, i) => action(X));
+            source.ForEach((X, _) => action(X));
         }
     }
 }

@@ -31,7 +31,6 @@ namespace GNet.Optimizers
                     S.BatchWeight += (1.0 + MomentumValue) * S.Cache1 - MomentumValue * oldDelta;
                 });
             });
-
         }
 
         public IOptimizer Clone()

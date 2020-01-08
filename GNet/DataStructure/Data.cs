@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace GNet
 {
-    public struct Data : IEquatable<Data>
+    public readonly struct Data : IEquatable<Data>
     {
         public ShapedArrayImmutable<double> Inputs { get; }
         public ShapedArrayImmutable<double> Outputs { get; }
@@ -14,7 +13,7 @@ namespace GNet
             Outputs = outputs;
         }
 
-        public bool Equals([AllowNull] Data other)
+        public bool Equals(Data other)
         {
             if (other == null)
             {
@@ -26,7 +25,7 @@ namespace GNet
 
         public override bool Equals(object? obj)
         {
-            return Equals(obj);
+            return (obj is Data data) && Equals(data);
         }
 
         public static bool operator ==(Data left, Data right)

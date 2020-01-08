@@ -1,6 +1,6 @@
-﻿using GNet.Extensions.IArray;
+﻿using System;
+using GNet.Extensions.IArray;
 using GNet.Extensions.IShapedArray;
-using System;
 
 namespace GNet
 {
@@ -53,7 +53,7 @@ namespace GNet
 
         public ShapedArrayImmutable<double> FeedForward(ShapedArrayImmutable<double> inputs)
         {
-            if (inputs.Shape.Equals(Layers[0].Shape) == false)
+            if (inputs.Shape != Layers[0].Shape)
             {
                 throw new ArgumentOutOfRangeException("inputs shape and input layer shape mismatch.");
             }
@@ -114,7 +114,7 @@ namespace GNet
 
         public Log Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError)
         {
-            if (dataset.InputShape.Equals(Layers[0].Shape) == false || dataset.OutputShape.Equals(Layers[Length - 1].Shape) == false)
+            if (dataset.InputShape != Layers[0].Shape || dataset.OutputShape != Layers[Length - 1].Shape)
             {
                 throw new Exception("dataset structure mismatch with network input structure.");
             }
@@ -160,12 +160,12 @@ namespace GNet
 
         public Log Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double valMinError, Dataset valDataset, ILoss valLoss)
         {
-            if (dataset.InputShape.Equals(Layers[0].Shape) == false || dataset.OutputShape.Equals(Layers[Length - 1].Shape) == false)
+            if (dataset.InputShape != Layers[0].Shape || dataset.OutputShape != Layers[Length - 1].Shape)
             {
                 throw new Exception("dataset structure mismatch with network input structure.");
             }
 
-            if (valDataset.InputShape.Equals(Layers[0].Shape) == false || valDataset.OutputShape.Equals(Layers[Length - 1].Shape) == false)
+            if (valDataset.InputShape != Layers[0].Shape || valDataset.OutputShape != Layers[Length - 1].Shape)
             {
                 throw new Exception("dataset structure mismatch with network input structure.");
             }
@@ -226,6 +226,5 @@ namespace GNet
 
             return newNet;
         }
-
     }
 }

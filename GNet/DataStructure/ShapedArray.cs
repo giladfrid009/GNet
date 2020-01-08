@@ -88,7 +88,7 @@ namespace GNet
             }
 
             int i = 0;
-            foreach (var x in enumerable)
+            foreach (T x in enumerable)
             {
                 internalArray[i++] = x;
             }

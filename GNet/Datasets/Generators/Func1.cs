@@ -1,5 +1,5 @@
-﻿using GNet.GlobalRandom;
-using System;
+﻿using System;
+using GNet.GlobalRandom;
 
 namespace GNet.Datasets.Generators
 {
