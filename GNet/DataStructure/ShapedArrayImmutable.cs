@@ -46,12 +46,17 @@ namespace GNet
 
         public bool Equals(ShapedArrayImmutable<T> other)
         {
-            if (other == null)
+            if (Shape != other.Shape)
             {
                 return false;
             }
 
-            return (Shape, internalArray) == (other.Shape, other.internalArray);
+            if(internalArray != other.internalArray)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public override bool Equals(object? obj)
@@ -71,7 +76,7 @@ namespace GNet
 
         public override int GetHashCode()
         {
-            return internalArray.GetHashCode() + Shape.GetHashCode();
+            return (internalArray, Shape).GetHashCode();
         }
     }
 }

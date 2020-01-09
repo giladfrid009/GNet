@@ -15,12 +15,17 @@ namespace GNet
 
         public bool Equals(Data other)
         {
-            if (other == null)
+            if(Inputs != other.Inputs)
             {
                 return false;
             }
 
-            return (Inputs, Outputs) == (other.Inputs, other.Outputs);
+            if(Outputs != other.Outputs)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public override bool Equals(object? obj)
@@ -40,7 +45,7 @@ namespace GNet
 
         public override int GetHashCode()
         {
-            return Inputs.GetHashCode() + Outputs.GetHashCode();
+            return (Inputs, Outputs).GetHashCode();
         }
     }
 }

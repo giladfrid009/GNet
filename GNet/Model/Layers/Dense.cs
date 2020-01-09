@@ -2,7 +2,7 @@
 using GNet.Extensions.IArray;
 using GNet.Extensions.IShapedArray;
 
-namespace GNet
+namespace GNet.Layers
 {
     [Serializable]
     public class Dense : ICloneable<Dense>

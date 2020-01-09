@@ -1,4 +1,6 @@
-﻿using GNet.Extensions.IArray;
+﻿using GNet.Layers;
+using GNet.Extensions.IArray;
+
 namespace GNet.Optimizers
 {
     public class NestrovMomentum : IOptimizer

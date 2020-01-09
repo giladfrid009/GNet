@@ -1,4 +1,4 @@
-﻿
+﻿using GNet.Layers;
 using GNet.Extensions.IArray;
 namespace GNet.Optimizers
 {

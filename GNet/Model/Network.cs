@@ -1,6 +1,7 @@
 ﻿using System;
 using GNet.Extensions.IArray;
 using GNet.Extensions.IShapedArray;
+using GNet.Layers;
 
 namespace GNet
 {

@@ -2,7 +2,7 @@
 using GNet.Extensions.IArray;
 using GNet.GlobalRandom;
 
-namespace GNet
+namespace GNet.Layers
 {
     [Serializable]
     public class Dropout : Dense

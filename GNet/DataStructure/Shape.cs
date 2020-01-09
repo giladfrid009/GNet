@@ -51,12 +51,7 @@ namespace GNet
         }
 
         public bool Equals(Shape other)
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
+        {            
             return Dimensions == other.Dimensions;
         }
 

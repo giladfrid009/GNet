@@ -81,11 +81,6 @@ namespace GNet
 
         public bool Equals(ArrayImmutable<T> other)
         {
-            if (other == null)
-            {
-                return false;
-            }
-
             if (other.Length != Length)
             {
                 return false;
@@ -93,7 +88,7 @@ namespace GNet
 
             for (int i = 0; i < Length; i++)
             {
-                if (internalArray[i] == null && other.internalArray[i] != null)
+                if (internalArray[i] == null != (other.internalArray[i] == null))
                 {
                     return false;
                 }
