@@ -2,77 +2,78 @@
 using GNet.Extensions.IArray;
 using GNet.Extensions.IShapedArray;
 
+// todo: rewrite
+// todo: make sese with inNeurons and outNeurons.
 namespace GNet.Layers
 {
     [Serializable]
-    public class Dense : ICloneable<Dense>
+    public class Dense : ILayer
     {
-        public ShapedArrayImmutable<Neuron> Neurons { get; }
+        public ShapedArrayImmutable<InNeuron> InNeurons { get; private set; }
+        public ShapedArrayImmutable<OutNeuron> OutNeurons { get; private set; }
+        public Shape InputShape { get; }
+        public Shape OutputShape { get; }
         public IActivation Activation { get; }
         public IInitializer WeightInit { get; }
         public IInitializer BiasInit { get; }
-        public Shape Shape { get; }
+
 
         public Dense(Shape shape, IActivation activation, IInitializer weightInit, IInitializer biasInit)
         {
-            Shape = shape;
+            InputShape = shape;
+            OutputShape = shape;
             Activation = activation.Clone();
             WeightInit = weightInit.Clone();
             BiasInit = biasInit.Clone();
-
-            Neurons = new ShapedArrayImmutable<Neuron>(Shape, () => new Neuron());
+            InNeurons = new ShapedArrayImmutable<InNeuron>(shape, () => new InNeuron());
+            OutNeurons = new ShapedArrayImmutable<OutNeuron>(shape, () => new OutNeuron());
         }
 
-        public virtual void Connect(Dense inLayer)
+        public void Connect(ILayer inLayer)
         {
-            inLayer.Neurons.ForEach(N => N.OutSynapses = new ShapedArray<Synapse>(Shape));
-            Neurons.ForEach(N => N.InSynapses = new ShapedArray<Synapse>(inLayer.Shape));
+            InNeurons.ForEach(outN => outN.InSynapses = inLayer.OutNeurons.Select(inN => new Synapse(inN, outN)));
 
-            Neurons.ForEach((outN, i) =>
-            {
-                inLayer.Neurons.ForEach((inN, j) =>
-                {
-                    var S = new Synapse(inN, outN);
-                    inN.OutSynapses[i] = S;
-                    outN.InSynapses[j] = S;
-                });
-            });
+            inLayer.OutNeurons.ForEach((inN, i) => inN.OutSynapses = InNeurons.Select(outN => outN.InSynapses[i]));
         }
 
         public void Initialize()
         {
-            int inLength = Neurons[0].InSynapses.Length;
-            int outLength = Shape.Volume;
+            int inLength = InNeurons[0].InSynapses.Length;
+            int outLength = OutputShape.Volume;
 
-            Neurons.ForEach(N =>
+            InNeurons.ForEach(N =>
             {
                 N.Bias = BiasInit.Initialize(inLength, outLength);
                 N.InSynapses.ForEach(W => W.Weight = WeightInit.Initialize(inLength, outLength));
             });
         }
 
-        public void SetInputs(ShapedArrayImmutable<double> values)
+        public virtual void Input(ShapedArrayImmutable<double> values)
         {
-            if (values.Shape != Shape)
+            if (values.Shape != InputShape)
             {
-                throw new ArgumentOutOfRangeException("values length mismatch.");
+                throw new ArgumentOutOfRangeException("values shape mismatch.");
             }
 
-            Neurons.ForEach((N, i) => N.ActivatedValue = values[i]);
+            InNeurons.ForEach((N, i) => N.Value = values[i]);
+            
+            ShapedArrayImmutable<double> activated = Activation.Activate(InNeurons.Select(N => N.Value));
+
+            OutNeurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }
 
-        public void FeedForward()
+        public virtual void Forward()
         {
-            Neurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Sum(W => W.Weight * W.InNeuron.ActivatedValue));
+            InNeurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Sum(W => W.Weight * W.InNeuron.ActivatedValue));
 
-            ShapedArrayImmutable<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
+            ShapedArrayImmutable<double> activated = Activation.Activate(InNeurons.Select(N => N.Value));
 
-            Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
+            OutNeurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }
 
         public void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
         {
-            if (targets.Shape != Shape)
+            if (targets.Shape != OutputShape)
             {
                 throw new ArgumentException("targets shape mismatch.");
             }
@@ -82,11 +83,11 @@ namespace GNet.Layers
                 throw new ArgumentException($"{nameof(loss)} loss doesn't support backpropogation.");
             }
 
-            ShapedArrayImmutable<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
-            ShapedArrayImmutable<double> lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
+            ShapedArrayImmutable<double> actvDers = Activation.Derivative(InNeurons.Select(N => N.Value));
+            ShapedArrayImmutable<double> lossDers = loss.Derivative(targets, OutNeurons.Select(N => N.ActivatedValue));
             ShapedArrayImmutable<double> grads = lossDers.Combine(actvDers, (LD, AD) => LD * AD);
 
-            Neurons.ForEach((N, i) =>
+            InNeurons.ForEach((N, i) =>
             {
                 N.Gradient = grads[i];
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
@@ -95,18 +96,18 @@ namespace GNet.Layers
 
         public void CalcGrads()
         {
-            ShapedArrayImmutable<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
+            ShapedArrayImmutable<double> actvDers = Activation.Derivative(InNeurons.Select(N => N.Value));
 
-            Neurons.ForEach((N, i) =>
+            InNeurons.ForEach((N, i) =>
             {
-                N.Gradient = N.OutSynapses.Sum(W => W.Weight * W.OutNeuron.Gradient) * actvDers[i];
+                N.Gradient = OutNeurons[i].OutSynapses.Sum(W => W.Weight * W.OutNeuron.Gradient) * actvDers[i];
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
             });
         }
 
         public virtual void Update()
         {
-            Neurons.ForEach(N =>
+            InNeurons.ForEach(N =>
             {
                 N.Bias += N.BatchBias;
                 N.BatchBias = 0.0;
@@ -117,11 +118,6 @@ namespace GNet.Layers
                     S.BatchWeight = 0.0;
                 });
             });
-        }
-
-        public virtual Dense Clone()
-        {
-            return new Dense(Shape, Activation, WeightInit, BiasInit);
         }
     }
 }

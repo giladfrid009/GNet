@@ -2,6 +2,7 @@
 
 namespace GNet
 {
+    // todo: fix cloning everywhere. make sure that clomning is precize, not just creating same object, butc loning inner objects also
     internal class Program
     {
         private static void Main()

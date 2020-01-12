@@ -1,4 +1,5 @@
 ﻿using System;
+using GNet.Extensions.IShapedArray;
 using GNet.Extensions.IArray;
 using GNet.GlobalRandom;
 
@@ -9,68 +10,47 @@ namespace GNet.Layers
     {
         public double DropChance { get; }
 
-        private Synapse?[,]? droppedCache;
-        private readonly Synapse blankSynapse;
+        private ShapedArrayImmutable<bool> dropArray;
 
         public Dropout(Shape shape, IActivation activation, IInitializer weightInit, IInitializer biasInit, double dropChance) : base(shape, activation, weightInit, biasInit)
         {
             if (dropChance < 0.0 || dropChance > 1.0)
             {
-                throw new ArgumentOutOfRangeException("DropProbability must be in range (0 - 1).");
+                throw new ArgumentOutOfRangeException("Drop Chance must be in range (0 - 1).");
             }
 
             DropChance = dropChance;
-            blankSynapse = new Synapse(new Neuron(), new Neuron());
+            dropArray = new ShapedArrayImmutable<bool>(OutputShape);
         }
 
-        public override void Connect(Dense inLayer)
+        public override void Input(ShapedArrayImmutable<double> values)
         {
-            base.Connect(inLayer);
+            if (values.Shape != InputShape)
+            {
+                throw new ArgumentOutOfRangeException("values shape mismatch.");
+            }
 
-            droppedCache = new Synapse[Shape.Volume, inLayer.Shape.Volume];
+            InNeurons.ForEach((N, i) => N.Value = dropArray[i] ? 0 : values[i]);
 
-            Drop();
+            ShapedArrayImmutable<double> activated = Activation.Activate(InNeurons.Select(N => N.Value));
+
+            OutNeurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
+        }
+
+        public override void Forward()
+        {
+            InNeurons.ForEach((N, i) => N.Value = dropArray[i] ? 0 : N.Bias + N.InSynapses.Sum(W => W.Weight * W.InNeuron.ActivatedValue));
+
+            ShapedArrayImmutable<double> activated = Activation.Activate(InNeurons.Select(N => N.Value));
+
+            OutNeurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }
 
         public override void Update()
         {
             base.Update();
 
-            Drop();
-        }
-
-        private void Drop()
-        {
-            if (droppedCache == null)
-            {
-                throw new InvalidOperationException("Layer hasn't been connected.");
-            }
-
-            Neurons.ForEach((N, i) =>
-            {
-                N.InSynapses.ForEach((S, j) =>
-                {
-                    if (GRandom.NextDouble() < DropChance)
-                    {
-                        if (droppedCache[i, j] == null)
-                        {
-                            droppedCache[i, j] = S;
-                        }
-
-                        N.InSynapses[j] = blankSynapse;
-                    }
-                    else if (droppedCache[i, j] != null)
-                    {
-                        N.InSynapses[j] = droppedCache[i, j] ?? throw new Exception();
-                        droppedCache[i, j] = null;
-                    }
-                });
-            });
-        }
-
-        public override Dense Clone()
-        {
-            return new Dropout(Shape, Activation, WeightInit, BiasInit, DropChance);
-        }
+            dropArray = dropArray.Select(X => GRandom.NextDouble() < DropChance ? true : false);
+        }        
     }
 }

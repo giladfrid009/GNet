@@ -1,5 +1,4 @@
-﻿using GNet.Layers;
-using GNet.Extensions.IArray;
+﻿using GNet.Extensions.IArray;
 namespace GNet.Optimizers
 {
     public class Default : IOptimizer
@@ -13,11 +12,11 @@ namespace GNet.Optimizers
             Decay = decay?.Clone() ?? new Decays.None();
         }
 
-        public void Optimize(Dense layer, int epoch)
+        public void Optimize(ILayer layer, int epoch)
         {
             double lr = Decay.Compute(LearningRate, epoch);
 
-            layer.Neurons.ForEach(N =>
+            layer.InNeurons.ForEach(N =>
             {
                 N.BatchBias += -lr * N.Gradient;
 

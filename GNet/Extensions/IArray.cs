@@ -1,9 +1,27 @@
 ﻿using System;
 
+
 namespace GNet.Extensions.IArray
 {
     public static class IArrayExtensions
     {
+        public static ArrayImmutable<TOut> Select<TSource, TOut>(this IArray<TSource> source, Func<TSource, int, TOut> selector)
+        {
+            var selected = new TOut[source.Length];
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                selected[i] = selector(source[i], i);
+            }
+
+            return new ArrayImmutable<TOut>(selected);
+        }
+
+        public static ArrayImmutable<TOut> Select<TSource, TOut>(this IArray<TSource> source, Func<TSource, TOut> selector)
+        {
+            return source.Select((X, i) => selector(X));
+        }
+
         public static TOut Accumulate<TSource, TOut>(this IArray<TSource> source, TOut seed, Func<TOut, TSource, TOut> accumulator)
         {
             TOut res = seed;

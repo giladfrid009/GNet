@@ -1,4 +1,5 @@
 ﻿using System;
+using GNet.Extensions.IArray;
 
 namespace GNet.Extensions.IShapedArray
 {
@@ -6,14 +7,7 @@ namespace GNet.Extensions.IShapedArray
     {
         public static ShapedArrayImmutable<TOut> Select<TSource, TOut>(this IShapedArray<TSource> source, Func<TSource, TOut> selector)
         {
-            var selected = new TOut[source.Length];
-
-            for (int i = 0; i < source.Length; i++)
-            {
-                selected[i] = selector(source[i]);
-            }
-
-            return new ShapedArrayImmutable<TOut>(source.Shape, selected);
+            return new ShapedArrayImmutable<TOut>(source.Shape, ((IArray<TSource>)source).Select(selector));
         }
 
         public static ShapedArrayImmutable<TSource> Combine<TSource>(this IShapedArray<TSource> source, IShapedArray<TSource> array, Func<TSource, TSource, TSource> selector)
