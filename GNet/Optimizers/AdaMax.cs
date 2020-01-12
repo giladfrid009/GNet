@@ -1,5 +1,4 @@
-﻿using GNet.Layers;
-using GNet.Extensions.IArray;
+﻿using GNet.Extensions.IArray;
 using static System.Math;
 
 namespace GNet.Optimizers
@@ -20,13 +19,13 @@ namespace GNet.Optimizers
             Decay = decay?.Clone() ?? new Decays.None();
         }
 
-        public void Optimize(Dense layer, int epoch)
+        public void Optimize(ILayer layer, int epoch)
         {
             double lr = Decay.Compute(LearningRate, epoch);
 
             double val1 = 1.0 - Pow(Beta1, epoch + 1.0);
 
-            layer.Neurons.ForEach(N =>
+            layer.InNeurons.ForEach(N =>
             {
                 N.Cache1 = Beta1 * N.Cache1 + (1.0 - Beta1) * N.Gradient;
                 N.Cache2 = Max(Beta2 * N.Cache2, Abs(N.Gradient));

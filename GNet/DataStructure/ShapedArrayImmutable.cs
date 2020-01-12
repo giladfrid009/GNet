@@ -44,6 +44,11 @@ namespace GNet
         {
         }
 
+        public ArrayImmutable<T> ToArrayImmutable()
+        {
+            return internalArray;
+        }
+
         public bool Equals(ShapedArrayImmutable<T> other)
         {
             if (Shape != other.Shape)
