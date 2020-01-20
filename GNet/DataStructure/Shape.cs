@@ -10,7 +10,7 @@ namespace GNet
         public int NumDimentions => Dimensions.Length;
         public int Volume { get; }
 
-        public Shape(params int[] dimensions)
+        public Shape(ArrayImmutable<int> dimensions)
         {
             for (int i = 0; i < dimensions.Length; i++)
             {
@@ -20,9 +20,14 @@ namespace GNet
                 }
             }
 
-            Dimensions = new ArrayImmutable<int>(dimensions);
+            Dimensions = dimensions;
 
-            Volume = Dimensions.Accumulate(1, (R, X) => R * X);
+            Volume = dimensions.Accumulate(1, (R, X) => R * X);
+        }
+
+        public Shape(params int[] dimensions) : this(new ArrayImmutable<int>(dimensions))
+        {
+           
         }
 
         public int FlattenIndices(params int[] indices)
