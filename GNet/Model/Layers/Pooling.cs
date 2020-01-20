@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using GNet.Extensions.Array;
 using GNet.Extensions.IArray;
 using GNet.Extensions.IShapedArray;
 
@@ -7,11 +9,12 @@ namespace GNet.Layers
     [Serializable]
     public class Pooling : ILayer
     {
-        public ShapedArrayImmutable<InNeuron> InNeurons { get; }
+        public ShapedArrayImmutable<InNeuron> InNeurons { get; } // padded
         public ShapedArrayImmutable<OutNeuron> OutNeurons { get; } // todo: assign value
         public ArrayImmutable<int> Strides { get; }
         public ArrayImmutable<int> Paddings { get; }
         public Shape InputShape { get; }
+        public Shape PaddedShape { get; }
         public Shape OutputShape { get; }
         public Shape Kernel { get; }
 
@@ -24,16 +27,16 @@ namespace GNet.Layers
             Strides = strides;
             Paddings = paddings;
 
-            InNeurons = new ShapedArrayImmutable<InNeuron>(input, () => new InNeuron());
-
-            // todo: maybe it could be moved to the initialize method?
+            PaddedShape = CalcPaddedShape(input, paddings);
 
             OutputShape = CalcOutputShape(input, kernel, strides, paddings);
+
+            InNeurons = new ShapedArrayImmutable<InNeuron>(input, () => new InNeuron());
 
             OutNeurons = new ShapedArrayImmutable<OutNeuron>(OutputShape, () => new OutNeuron());
         }
 
-        private void ValidateParams(Shape input, Shape kernel, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
+        private void ValidateParams(Shape input, Shape kernel, IArray<int> strides, IArray<int> paddings)
         {           
             if(input.NumDimentions != kernel.NumDimentions)
             {
@@ -69,11 +72,30 @@ namespace GNet.Layers
             }
         }
 
-        private Shape CalcOutputShape(Shape input, Shape kernel, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
+        private Shape CalcOutputShape(Shape input, Shape kernel, IArray<int> strides, IArray<int> paddings)
         {
             ArrayImmutable<int> outputDims = input.Dimensions.Select((dim, i) => 1 + (dim + 2 * paddings[i] - kernel.Dimensions[i]) / strides[i]);
 
             return new Shape(outputDims.ToMutable());
+        }
+
+        private Shape CalcPaddedShape(Shape input, IArray<int> paddings)
+        {
+            return new Shape(input.Dimensions.Select((D, i) => D + 2 * paddings[i]));
+        }
+
+        private ShapedArray<double> PadValues(IShapedArray<double> values)
+        {
+            var padded = new ShapedArray<double>(PaddedShape);
+
+            int idxFlat = 0;
+
+            foreach (int[] idx in GenerateIndexes(InputShape.Dimensions, Paddings, new ArrayImmutable<int>(InputShape.NumDimentions, () => 1)))
+            {
+                padded[idx] = values[idxFlat++];
+            }
+
+            return padded;
         }
 
         public void Initialize()
@@ -101,6 +123,8 @@ namespace GNet.Layers
             }
 
             InNeurons.ForEach((N, i) => N.Value = values[i]);
+
+
 
             throw new NotImplementedException();
         }
@@ -139,6 +163,54 @@ namespace GNet.Layers
         public virtual void Update()
         {
             throw new NotSupportedException();
+        }
+
+        static IEnumerable<int[]> GenerateIndexes(IArray<int> ranges)
+        {
+            return GenerateIndexes(ranges, new ArrayImmutable<int>(ranges.Length, () => 0), new ArrayImmutable<int>(ranges.Length, () => 1));
+        }
+
+        static IEnumerable<int[]> GenerateIndexes(IArray<int> ranges, IArray<int> start, IArray<int> strides)
+        {
+            if(strides.Length != ranges.Length)
+            {
+                throw new ArgumentOutOfRangeException("Ranges and strides length mismatch.");
+            }
+
+            if(start.Length != ranges.Length)
+            {
+                throw new ArgumentOutOfRangeException("Ranges and start length mismatch.");
+            }
+
+            return GenerateRecursive(new int[ranges.Length], 0);
+
+            IEnumerable<int[]> GenerateRecursive(int[] current, int dim)
+            {
+                int bound = start[dim] + ranges[dim];
+
+                if (dim == ranges.Length - 1)
+                {
+                    for (int i = start[dim]; i < bound; i += strides[dim])
+                    {
+                        current[dim] = i;
+                        yield return current;
+                    }
+                }
+                else
+                {
+                    for (int i = start[dim]; i < bound; i += strides[dim])
+                    {
+                        current[dim] = i;
+
+                        foreach (int[] idx in GenerateRecursive(current, dim+1))
+                        {
+                            yield return idx;
+                        }
+                    }
+                }
+
+                current[dim] = 0;
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GNet.Extensions.IArray;
+
 namespace GNet.Optimizers
 {
     public class Default : IOptimizer
