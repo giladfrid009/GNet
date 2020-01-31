@@ -15,12 +15,12 @@ namespace GNet.Normalizers
 
             if (NormalizeInputs)
             {
-                dataset.DataCollection.ForEach(D => max = Max(max, D.Inputs.Max()));
+                dataset.ForEach(D => max = Max(max, D.Inputs.Max()));
             }
 
             if (NormalizeOutputs)
             {
-                dataset.DataCollection.ForEach(D => max = Max(max, D.Outputs.Max()));
+                dataset.ForEach(D => max = Max(max, D.Outputs.Max()));
             }
 
             scale = (int)Log10(max) + 1;

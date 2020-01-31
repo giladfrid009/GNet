@@ -28,8 +28,7 @@ namespace GNet.Activations
                 }
 
                 return -1.0;
-            })
-                ;
+            });
         }
 
         public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> vals)

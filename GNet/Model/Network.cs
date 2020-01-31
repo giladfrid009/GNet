@@ -69,7 +69,7 @@ namespace GNet
 
         public double Validate(Dataset dataset, ILoss loss)
         {
-            return dataset.DataCollection.Sum(D => loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.Length;
+            return dataset.Sum(D => loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.Length;
         }
 
         private void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
@@ -135,7 +135,7 @@ namespace GNet
 
                 dataset.Shuffle();
 
-                dataset.DataCollection.ForEach((D, index) =>
+                dataset.ForEach((D, index) =>
                 {
                     FeedForward(D.Inputs);
                     CalcGrads(loss, D.Outputs);
@@ -187,7 +187,7 @@ namespace GNet
 
                 dataset.Shuffle();
 
-                dataset.DataCollection.ForEach((D, index) =>
+                dataset.ForEach((D, index) =>
                 {
                     FeedForward(D.Inputs);
                     CalcGrads(loss, D.Outputs);
