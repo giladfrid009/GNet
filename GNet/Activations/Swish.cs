@@ -1,5 +1,4 @@
 ﻿using System;
-using GNet.Extensions.IShapedArray;
 using static System.Math;
 
 namespace GNet.Activations
@@ -18,7 +17,8 @@ namespace GNet.Activations
             {
                 double exp = Exp(X);
                 return exp * (1.0 + exp + X) / Pow(1.0 + exp, 2.0);
-            });
+            })
+                ;
         }
 
         public IActivation Clone()

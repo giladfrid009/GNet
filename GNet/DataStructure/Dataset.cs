@@ -1,20 +1,16 @@
 ﻿using System;
-using GNet.Extensions.Array;
 using GNet.GlobalRandom;
 
 namespace GNet
 {
-    public class Dataset : IArray<Data>, ICloneable<Dataset>
+    public class Dataset : ICloneable<Dataset>
     {
         public int Length { get; }
         public Shape InputShape { get; }
         public Shape OutputShape { get; }
+        public ArrayImmutable<Data> DataCollection { get; private set; }
 
-        private Data[] dataCollection;
-
-        public Data this[int index] => dataCollection[index];
-
-        public Dataset(params Data[] dataCollection)
+        public Dataset(ArrayImmutable<Data> dataCollection)
         {
             InputShape = dataCollection[0].Inputs.Shape;
             OutputShape = dataCollection[0].Outputs.Shape;
@@ -28,24 +24,34 @@ namespace GNet
             });
 
             Length = dataCollection.Length;
-            this.dataCollection = dataCollection.Select(D => D);
+            DataCollection = dataCollection;
+        }
+
+        public Dataset(params Data[] dataCollection) : this(new ArrayImmutable<Data>(dataCollection))
+        {
+
         }
 
         public void Shuffle()
         {
-            dataCollection.ForEach((D, i) =>
+            Data[] shuffled = DataCollection.ToMutable();
+
+            for (int i = 0; i < shuffled.Length; i++)
             {
-                int iRnd = GRandom.Next(i, Length);
-                dataCollection[i] = dataCollection[iRnd];
-                dataCollection[iRnd] = D;
-            });
+                int iRnd = GRandom.Next(i++, Length);
+                Data temp = shuffled[i];
+                shuffled[i] = shuffled[iRnd];
+                shuffled[iRnd] = temp;
+            }
+
+            DataCollection = new ArrayImmutable<Data>(shuffled);
         }
 
         public void Normalize(INormalizer normalizer)
         {
             normalizer.ExtractParams(this);
 
-            dataCollection = dataCollection.Select(D => NormalizeData(D, normalizer));
+            DataCollection = DataCollection.Select(D => NormalizeData(D, normalizer));
         }
 
         private static Data NormalizeData(Data data, INormalizer normalizer)
@@ -58,7 +64,7 @@ namespace GNet
 
         public Dataset Clone()
         {
-            return new Dataset(dataCollection);
+            return new Dataset(DataCollection);
         }
     }
 }

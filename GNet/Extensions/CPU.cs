@@ -1,11 +1,11 @@
 ﻿using System;
 
-
-namespace GNet.Extensions.IArray
+namespace GNet.Extensions
 {
-    public static class IArrayExtensions
+    [Serializable]
+    public class CPU : IExtender
     {
-        public static ArrayImmutable<TOut> Select<TSource, TOut>(this IArray<TSource> source, Func<TSource, int, TOut> selector)
+        public ArrayImmutable<TOut> Select<TSource, TOut>(IArray<TSource> source, Func<TSource, int, TOut> selector)
         {
             var selected = new TOut[source.Length];
 
@@ -17,12 +17,24 @@ namespace GNet.Extensions.IArray
             return new ArrayImmutable<TOut>(selected);
         }
 
-        public static ArrayImmutable<TOut> Select<TSource, TOut>(this IArray<TSource> source, Func<TSource, TOut> selector)
+        public ArrayImmutable<TSource> Combine<TSource>(IArray<TSource> source, IArray<TSource> array, Func<TSource, TSource, TSource> selector)
         {
-            return source.Select((X, i) => selector(X));
+            if (source.Length != array.Length)
+            {
+                throw new ArgumentException("source and array length mismatch.");
+            }
+
+            var combined = new TSource[source.Length];
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                combined[i] = selector(source[i], array[i]);
+            }
+
+            return new ArrayImmutable<TSource>(combined);
         }
 
-        public static TOut Accumulate<TSource, TOut>(this IArray<TSource> source, TOut seed, Func<TOut, TSource, TOut> accumulator)
+        public TOut Accumulate<TSource, TOut>(IArray<TSource> source, TOut seed, Func<TOut, TSource, TOut> accumulator)
         {
             TOut res = seed;
 
@@ -34,7 +46,7 @@ namespace GNet.Extensions.IArray
             return res;
         }
 
-        public static double Sum<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
+        public double Sum<TSource>(IArray<TSource> source, Func<TSource, double> selector)
         {
             double sum = default;
 
@@ -46,7 +58,7 @@ namespace GNet.Extensions.IArray
             return sum;
         }
 
-        public static double Avarage(this IArray<double> source)
+        public double Avarage(IArray<double> source)
         {
             double sum = default;
 
@@ -58,7 +70,7 @@ namespace GNet.Extensions.IArray
             return sum / source.Length;
         }
 
-        public static double Min(this IArray<double> source)
+        public double Min(IArray<double> source)
         {
             double min = source[0];
 
@@ -73,7 +85,7 @@ namespace GNet.Extensions.IArray
             return min;
         }
 
-        public static double Max(this IArray<double> source)
+        public double Max(IArray<double> source)
         {
             double max = source[0];
 
@@ -88,7 +100,7 @@ namespace GNet.Extensions.IArray
             return max;
         }
 
-        public static void ForEach<TSource>(this IArray<TSource> source, Action<TSource, int> action)
+        public void ForEach<TSource>(IArray<TSource> source, Action<TSource, int> action)
         {
             for (int i = 0; i < source.Length; i++)
             {
@@ -96,9 +108,9 @@ namespace GNet.Extensions.IArray
             }
         }
 
-        public static void ForEach<TSource>(this IArray<TSource> source, Action<TSource> action)
+        public IExtender Clone()
         {
-            source.ForEach((X, _) => action(X));
+            return new CPU();
         }
     }
 }

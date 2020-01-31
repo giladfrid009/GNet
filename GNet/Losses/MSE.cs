@@ -1,7 +1,4 @@
-﻿using GNet.Extensions.IArray;
-using GNet.Extensions.IShapedArray;
-
-namespace GNet.Losses
+﻿namespace GNet.Losses
 {
     /// <summary>
     /// Mean Squared Error

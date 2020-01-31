@@ -1,6 +1,4 @@
-﻿using GNet.Extensions.IArray;
-using GNet.Extensions.IShapedArray;
-using static System.Math;
+﻿using static System.Math;
 
 namespace GNet.Losses
 {

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using GNet.Extensions.Array;
-using GNet.Extensions.IArray;
-using GNet.Extensions.IShapedArray;
 
 namespace GNet.Layers
 {
     [Serializable]
+
+    // todo: should inNeurons shape be padded, or padding should be applied on each feedForward pass?
     public class Pooling : ILayer
     {
         public ShapedArrayImmutable<InNeuron> InNeurons { get; } // padded
@@ -14,7 +13,6 @@ namespace GNet.Layers
         public ArrayImmutable<int> Strides { get; }
         public ArrayImmutable<int> Paddings { get; }
         public Shape InputShape { get; }
-        public Shape PaddedShape { get; }
         public Shape OutputShape { get; }
         public Shape Kernel { get; }
 
@@ -27,18 +25,16 @@ namespace GNet.Layers
             Strides = strides;
             Paddings = paddings;
 
-            PaddedShape = CalcPaddedShape(input, paddings);
-
             OutputShape = CalcOutputShape(input, kernel, strides, paddings);
 
-            InNeurons = new ShapedArrayImmutable<InNeuron>(input, () => new InNeuron());
+            InNeurons = new ShapedArrayImmutable<InNeuron>(CalcPaddedShape(input, paddings), () => new InNeuron());
 
             OutNeurons = new ShapedArrayImmutable<OutNeuron>(OutputShape, () => new OutNeuron());
         }
 
-        private void ValidateParams(Shape input, Shape kernel, IArray<int> strides, IArray<int> paddings)
-        {           
-            if(input.NumDimentions != kernel.NumDimentions)
+        private void ValidateParams(Shape input, Shape kernel, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
+        {
+            if (input.NumDimentions != kernel.NumDimentions)
             {
                 throw new ArgumentOutOfRangeException("Kernel and input number of dimensions mismatch.");
             }
@@ -55,7 +51,7 @@ namespace GNet.Layers
 
             for (int i = 0; i < input.NumDimentions; i++)
             {
-                if(kernel.Dimensions[i] > input.Dimensions[i] || kernel.Dimensions[i] < 1)
+                if (kernel.Dimensions[i] > input.Dimensions[i] || kernel.Dimensions[i] < 1)
                 {
                     throw new ArgumentOutOfRangeException($"Kernel dimension [{i}] is out of range.");
                 }
@@ -72,30 +68,16 @@ namespace GNet.Layers
             }
         }
 
-        private Shape CalcOutputShape(Shape input, Shape kernel, IArray<int> strides, IArray<int> paddings)
+        private Shape CalcOutputShape(Shape input, Shape kernel, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
         {
             ArrayImmutable<int> outputDims = input.Dimensions.Select((dim, i) => 1 + (dim + 2 * paddings[i] - kernel.Dimensions[i]) / strides[i]);
 
             return new Shape(outputDims.ToMutable());
         }
 
-        private Shape CalcPaddedShape(Shape input, IArray<int> paddings)
+        private Shape CalcPaddedShape(Shape input, ArrayImmutable<int> paddings)
         {
             return new Shape(input.Dimensions.Select((D, i) => D + 2 * paddings[i]));
-        }
-
-        private ShapedArray<double> PadValues(IShapedArray<double> values)
-        {
-            var padded = new ShapedArray<double>(PaddedShape);
-
-            int idxFlat = 0;
-
-            foreach (int[] idx in GenerateIndexes(InputShape.Dimensions, Paddings, new ArrayImmutable<int>(InputShape.NumDimentions, () => 1)))
-            {
-                padded[idx] = values[idxFlat++];
-            }
-
-            return padded;
         }
 
         public void Initialize()
@@ -105,14 +87,21 @@ namespace GNet.Layers
 
         public void Connect(ILayer inLayer)
         {
-            if(inLayer.OutputShape != InputShape)
+            if (inLayer.OutputShape != InputShape)
             {
                 throw new ArgumentException("InLayer shape volume mismatch.");
             }
 
-            InNeurons.ForEach((outN, i) => outN.InSynapses = new ShapedArrayImmutable<Synapse>(new Shape(1), new Synapse(inLayer.OutNeurons[i], outN)));
+            int i = 0;
 
-            inLayer.OutNeurons.ForEach((inN, i) => inN.OutSynapses = InNeurons[i].InSynapses);
+            foreach (int[] idx in IndexesByStart(InputShape, Paddings))
+            {
+                InNeurons[idx].InSynapses = new ShapedArrayImmutable<Synapse>(new Shape(1), new Synapse(inLayer.OutNeurons[i], InNeurons[idx]));
+
+                inLayer.OutNeurons[i].OutSynapses = InNeurons[idx].InSynapses;
+
+                i++;
+            }
         }
 
         public virtual void Input(ShapedArrayImmutable<double> values)
@@ -122,16 +111,29 @@ namespace GNet.Layers
                 throw new ArgumentOutOfRangeException("values shape mismatch.");
             }
 
-            InNeurons.ForEach((N, i) => N.Value = values[i]);
+            int i = 0;
 
+            foreach (int[] idx in IndexesByStart(InputShape, Paddings))
+            {
+                InNeurons[idx].Value = values[i++];
+            }
 
+            // todo: then forward
+
+            foreach (int[] idx in IndexesByStrides(InNeurons.Shape, Strides))
+            {
+
+            }
 
             throw new NotImplementedException();
         }
 
         public virtual void Forward()
         {
-            InNeurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Sum(W => W.Weight * W.InNeuron.ActivatedValue));
+            // todo: probably there is a better way
+            InNeurons.ForEach(N => N.Value = N.InSynapses.Length > 0 ? N.InSynapses[0].InNeuron.ActivatedValue : 0);
+
+            // tdoo: forward
 
             throw new NotImplementedException();
         }
@@ -165,30 +167,42 @@ namespace GNet.Layers
             throw new NotSupportedException();
         }
 
-        static IEnumerable<int[]> GenerateIndexes(IArray<int> ranges)
+        private static IEnumerable<int[]> GenerateIndexes(Shape shape)
         {
-            return GenerateIndexes(ranges, new ArrayImmutable<int>(ranges.Length, () => 0), new ArrayImmutable<int>(ranges.Length, () => 1));
+            return GenerateIndexes(shape, new ArrayImmutable<int>(shape.NumDimentions, () => 0), new ArrayImmutable<int>(shape.NumDimentions, () => 1));
         }
 
-        static IEnumerable<int[]> GenerateIndexes(IArray<int> ranges, IArray<int> start, IArray<int> strides)
+        private static IEnumerable<int[]> IndexesByStart(Shape shape, ArrayImmutable<int> start)
         {
-            if(strides.Length != ranges.Length)
+            return GenerateIndexes(shape, start, new ArrayImmutable<int>(shape.NumDimentions, () => 1));
+        }
+
+        private static IEnumerable<int[]> IndexesByStrides(Shape shape, ArrayImmutable<int> strides)
+        {
+            return GenerateIndexes(shape, new ArrayImmutable<int>(shape.NumDimentions, () => 0), strides);
+        }
+
+        private static IEnumerable<int[]> GenerateIndexes(Shape shape, ArrayImmutable<int> start, ArrayImmutable<int> strides)
+        {
+            if (strides.Length != shape.NumDimentions)
             {
-                throw new ArgumentOutOfRangeException("Ranges and strides length mismatch.");
+                throw new ArgumentOutOfRangeException("Shape and strides length mismatch.");
             }
 
-            if(start.Length != ranges.Length)
+            if (start.Length != shape.NumDimentions)
             {
-                throw new ArgumentOutOfRangeException("Ranges and start length mismatch.");
+                throw new ArgumentOutOfRangeException("Shape and start length mismatch.");
             }
 
-            return GenerateRecursive(new int[ranges.Length], 0);
+            int lastIndex = shape.NumDimentions - 1;
+
+            return GenerateRecursive(new int[shape.NumDimentions], 0);
 
             IEnumerable<int[]> GenerateRecursive(int[] current, int dim)
             {
-                int bound = start[dim] + ranges[dim];
+                int bound = start[dim] + shape.Dimensions[dim];
 
-                if (dim == ranges.Length - 1)
+                if (dim == lastIndex)
                 {
                     for (int i = start[dim]; i < bound; i += strides[dim])
                     {
@@ -202,7 +216,7 @@ namespace GNet.Layers
                     {
                         current[dim] = i;
 
-                        foreach (int[] idx in GenerateRecursive(current, dim+1))
+                        foreach (int[] idx in GenerateRecursive(current, dim + 1))
                         {
                             yield return idx;
                         }

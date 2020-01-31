@@ -1,6 +1,4 @@
 ﻿using System;
-using GNet.Extensions.IArray;
-using GNet.Extensions.IShapedArray;
 
 // todo: rewrite
 // todo: make sese with inNeurons and outNeurons.
@@ -56,7 +54,7 @@ namespace GNet.Layers
             }
 
             InNeurons.ForEach((N, i) => N.Value = values[i]);
-            
+
             ShapedArrayImmutable<double> activated = Activation.Activate(InNeurons.Select(N => N.Value));
 
             OutNeurons.ForEach((N, i) => N.ActivatedValue = activated[i]);

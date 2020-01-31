@@ -4,6 +4,7 @@ using System.IO;
 
 namespace GNet
 {
+    [Serializable]
     public class Log
     {
         private readonly List<string> logLines = new List<string>();

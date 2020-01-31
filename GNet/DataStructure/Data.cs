@@ -15,12 +15,12 @@ namespace GNet
 
         public bool Equals(Data other)
         {
-            if(Inputs != other.Inputs)
+            if (Inputs != other.Inputs)
             {
                 return false;
             }
 
-            if(Outputs != other.Outputs)
+            if (Outputs != other.Outputs)
             {
                 return false;
             }

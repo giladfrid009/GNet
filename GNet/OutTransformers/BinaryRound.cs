@@ -1,6 +1,4 @@
-﻿
-using GNet.Extensions.IShapedArray;
-namespace GNet.OutTransformers
+﻿namespace GNet.OutTransformers
 {
     public class BinaryRound : IOutTransformer
     {

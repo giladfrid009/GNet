@@ -1,7 +1,4 @@
-﻿
-using GNet.Extensions.IArray;
-using GNet.Extensions.IShapedArray;
-using static System.Math;
+﻿using static System.Math;
 
 namespace GNet.Normalizers
 {
@@ -18,12 +15,12 @@ namespace GNet.Normalizers
 
             if (NormalizeInputs)
             {
-                dataset.ForEach(D => max = Max(max, D.Inputs.Max()));
+                dataset.DataCollection.ForEach(D => max = Max(max, D.Inputs.Max()));
             }
 
             if (NormalizeOutputs)
             {
-                dataset.ForEach(D => max = Max(max, D.Outputs.Max()));
+                dataset.DataCollection.ForEach(D => max = Max(max, D.Outputs.Max()));
             }
 
             scale = (int)Log10(max) + 1;
