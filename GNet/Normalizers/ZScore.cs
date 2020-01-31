@@ -20,25 +20,25 @@ namespace GNet.Normalizers
 
             if (NormalizeInputs)
             {
-                meanInput = dataset.DataCollection.Sum(D => D.Inputs.Avarage()) / dataset.Length;
+                meanInput = dataset.Sum(D => D.Inputs.Avarage()) / dataset.Length;
             }
 
             if (NormalizeOutputs)
             {
-                meanOutput = dataset.DataCollection.Sum(D => D.Outputs.Avarage()) / dataset.Length;
+                meanOutput = dataset.Sum(D => D.Outputs.Avarage()) / dataset.Length;
             }
 
             mean = (meanInput + meanOutput) / 2;
 
             if (NormalizeInputs)
             {
-                varianceInput = dataset.DataCollection.Sum(D => D.Inputs.Sum(X => (X - mean) * (X - mean)));
+                varianceInput = dataset.Sum(D => D.Inputs.Sum(X => (X - mean) * (X - mean)));
                 numVals += dataset.InputShape.Volume;
             }
 
             if (NormalizeOutputs)
             {
-                varianceOutput = dataset.DataCollection.Sum(D => D.Outputs.Sum(X => (X - mean) * (X - mean)));
+                varianceOutput = dataset.Sum(D => D.Outputs.Sum(X => (X - mean) * (X - mean)));
                 numVals += dataset.OutputShape.Volume;
             }
 
