@@ -1,5 +1,4 @@
 ﻿using System;
-using GNet.Extensions.IArray;
 
 namespace GNet
 {
@@ -27,7 +26,7 @@ namespace GNet
 
         public Shape(params int[] dimensions) : this(new ArrayImmutable<int>(dimensions))
         {
-           
+
         }
 
         public int FlattenIndices(params int[] indices)
@@ -56,7 +55,7 @@ namespace GNet
         }
 
         public bool Equals(Shape other)
-        {            
+        {
             return Dimensions == other.Dimensions;
         }
 

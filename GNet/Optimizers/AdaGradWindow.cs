@@ -1,5 +1,4 @@
-﻿using GNet.Extensions.IArray;
-using static System.Math;
+﻿using static System.Math;
 
 namespace GNet.Optimizers
 {

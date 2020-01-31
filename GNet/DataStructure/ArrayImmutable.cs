@@ -79,6 +79,11 @@ namespace GNet
             return array;
         }
 
+        public ShapedArrayImmutable<T> ToShape(Shape shape)
+        {
+            return new ShapedArrayImmutable<T>(shape, this);
+        }
+
         public bool Equals(ArrayImmutable<T> other)
         {
             if (other.Length != Length)

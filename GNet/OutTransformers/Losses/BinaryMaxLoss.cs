@@ -1,6 +1,4 @@
 ﻿using System;
-using GNet.Extensions.IArray;
-using GNet.Extensions.IShapedArray;
 
 namespace GNet.OutTransformers.Losses
 {

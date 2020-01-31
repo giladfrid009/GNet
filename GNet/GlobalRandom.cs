@@ -2,6 +2,7 @@
 
 namespace GNet.GlobalRandom
 {
+    [Serializable]
     public static class GRandom
     {
         private static Random rnd = new Random();

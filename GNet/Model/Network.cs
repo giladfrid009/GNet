@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Threading;
-using GNet.Extensions.IArray;
-using GNet.Extensions.IShapedArray;
 using GNet.Layers;
 
 namespace GNet
@@ -72,7 +69,7 @@ namespace GNet
 
         public double Validate(Dataset dataset, ILoss loss)
         {
-            return dataset.Sum(D => loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.Length;
+            return dataset.DataCollection.Sum(D => loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.Length;
         }
 
         private void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
@@ -138,7 +135,7 @@ namespace GNet
 
                 dataset.Shuffle();
 
-                dataset.ForEach((D, index) =>
+                dataset.DataCollection.ForEach((D, index) =>
                 {
                     FeedForward(D.Inputs);
                     CalcGrads(loss, D.Outputs);
@@ -190,7 +187,7 @@ namespace GNet
 
                 dataset.Shuffle();
 
-                dataset.ForEach((D, index) =>
+                dataset.DataCollection.ForEach((D, index) =>
                 {
                     FeedForward(D.Inputs);
                     CalcGrads(loss, D.Outputs);

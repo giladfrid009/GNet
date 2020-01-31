@@ -1,6 +1,4 @@
 ﻿using System;
-using GNet.Extensions.IShapedArray;
-using GNet.Extensions.IArray;
 using GNet.GlobalRandom;
 
 namespace GNet.Layers
@@ -51,6 +49,6 @@ namespace GNet.Layers
             base.Update();
 
             dropArray = dropArray.Select(X => GRandom.NextDouble() < DropChance ? true : false);
-        }        
+        }
     }
 }

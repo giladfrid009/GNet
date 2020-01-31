@@ -1,8 +1,4 @@
-﻿
-using GNet.Extensions.IArray;
-using GNet.Extensions.IShapedArray;
-
-namespace GNet.OutTransformers
+﻿namespace GNet.OutTransformers
 {
     public class BinaryMax : IOutTransformer
     {

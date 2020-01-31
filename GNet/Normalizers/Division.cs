@@ -1,6 +1,4 @@
-﻿
-using GNet.Extensions.IShapedArray;
-namespace GNet.Normalizers
+﻿namespace GNet.Normalizers
 {
     public class Division : INormalizer
     {

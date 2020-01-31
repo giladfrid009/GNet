@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace GNet
 {
     [Serializable]
-    public readonly struct ShapedArrayImmutable<T> : IShapedArray<T>, IEquatable<ShapedArrayImmutable<T>>
+    public readonly struct ShapedArrayImmutable<T> : IArray<T>, IEquatable<ShapedArrayImmutable<T>>
     {
         public Shape Shape { get; }
         public int Length => internalArray.Length;
@@ -44,7 +44,7 @@ namespace GNet
         {
         }
 
-        public ArrayImmutable<T> ToArrayImmutable()
+        public ArrayImmutable<T> ToFlat()
         {
             return internalArray;
         }
@@ -56,7 +56,7 @@ namespace GNet
                 return false;
             }
 
-            if(internalArray != other.internalArray)
+            if (internalArray != other.internalArray)
             {
                 return false;
             }
