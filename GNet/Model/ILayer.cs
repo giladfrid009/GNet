@@ -1,4 +1,6 @@
-﻿namespace GNet
+﻿using GNet.Model;
+
+namespace GNet
 {
     public interface ILayer
     {

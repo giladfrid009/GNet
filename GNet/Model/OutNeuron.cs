@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GNet
+namespace GNet.Model
 {
     [Serializable]
     public class OutNeuron

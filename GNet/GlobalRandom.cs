@@ -3,7 +3,6 @@ using static System.Math;
 
 namespace GNet
 {
-    [Serializable]
     public static class GRandom
     {
         private static Random rnd = new Random();
