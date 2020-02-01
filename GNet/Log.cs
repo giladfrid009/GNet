@@ -7,23 +7,41 @@ namespace GNet
     [Serializable]
     public class Log
     {
+        public bool Output { get; set; }
+
         private readonly List<string> logLines = new List<string>();
 
-        public void Add(string message, bool print)
+        public Log(Network net, bool output = true)
         {
-            string logLine = DateTime.Now.ToString("HH:mm:ss") + " | " + message;
+            Output = output;
 
-            if (print)
-            {
-                Console.WriteLine(logLine);
-            }
-
-            logLines.Add(logLine);
+            net.OnStart += OnStart;
+            net.OnFinish += OnFinish;
         }
 
-        public void Merge(Log log)
+        private void OnStart(double error)
         {
-            log.logLines.ForEach(L => logLines.Add(L));
+            AddEntry("Training Started.");
+            AddEntry($"Initial Error : {error}");
+        }
+
+        private void OnFinish(int epoch, double error)
+        {
+            AddEntry("Training Finished.");
+            AddEntry($"Elapsed Epoches: {epoch}");
+            AddEntry($"Final Error : {error}");
+        }
+
+        public void AddEntry(string message)
+        {
+            string line = string.Format($"{DateTime.Now.ToString("HH:mm:ss")} | {message}");
+
+            if (Output)
+            {
+                Console.WriteLine(line);
+            }
+
+            logLines.Add(line);
         }
 
         public void Print()

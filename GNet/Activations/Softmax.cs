@@ -10,7 +10,7 @@ namespace GNet.Activations
         {
             ShapedArrayImmutable<double> exps = vals.Select(X => Exp(X));
 
-            double sum = exps.Sum(x => x);
+            double sum = exps.Sum();
 
             return exps.Select(E => E / sum);
         }
@@ -19,7 +19,7 @@ namespace GNet.Activations
         {
             ShapedArrayImmutable<double> exps = vals.Select(X => Exp(X));
 
-            double sum = exps.Sum(x => x);
+            double sum = exps.Sum();
 
             return exps.Select(E => E * (sum - E) / (sum * sum));
         }

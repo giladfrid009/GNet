@@ -2,17 +2,21 @@
 
 namespace GNet
 {
-    // todo: fix cloning everywhere. make sure that clomning is precize, not just creating same object, butc loning inner objects also
+    // todo: fix cloning everywhere. make sure that clomning is precise, not just creating same object, butc loning inner objects also
     internal class Program
     {
         private static void Main()
         {
+            ExtensionManager.Initialize(new Extensions.CPU());
+
             var net = new Network
             (
                 new Layers.Dense(new Shape(10), new Activations.Identity(), new Initializers.Zero(), new Initializers.Zero()),
                 new Layers.Dense(new Shape(5, 2), new Activations.Tanh(), new Initializers.LeCunNormal(), new Initializers.Zero()),
                 new Layers.Dense(new Shape(1), new Activations.Sigmoid(), new Initializers.Normal(), new Initializers.Zero())
             );
+
+            var log = new Log(net);
 
             net.Initialize();
 

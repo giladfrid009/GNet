@@ -27,7 +27,7 @@ namespace GNet
             return Extender.Combine(source, array, selector);
         }
 
-        public static TOut Accumulate<TSource, TOut>(this IArray<TSource> source, TOut seed, Func<TOut, TSource, TOut> accumulator)
+        public static double Accumulate<TSource>(this IArray<TSource> source, double seed, Func<double, TSource, double> accumulator)
         {
             return Extender.Accumulate(source, seed, accumulator);
         }
@@ -35,11 +35,6 @@ namespace GNet
         public static double Sum<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
         {
             return Extender.Sum(source, selector);
-        }
-
-        public static double Avarage(this IArray<double> source)
-        {
-            return Extender.Avarage(source);
         }
 
         public static double Min(this IArray<double> source)
@@ -70,6 +65,16 @@ namespace GNet
         public static ShapedArrayImmutable<TSource> Combine<TSource>(this ShapedArrayImmutable<TSource> source, IArray<TSource> array, Func<TSource, TSource, TSource> selector)
         {
             return Combine((IArray<TSource>)source, array, selector).ToShape(source.Shape);
+        }
+
+        public static double Sum(this IArray<double> source)
+        {
+            return Sum(source, X => X);
+        }
+
+        public static double Avarage(this IArray<double> source)
+        {
+            return Sum(source, X => X) / source.Length;
         }
 
         public static void ForEach<TSource>(this IArray<TSource> source, Action<TSource> action)

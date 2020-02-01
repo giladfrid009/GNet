@@ -21,7 +21,7 @@ namespace GNet
 
             Dimensions = dimensions;
 
-            Volume = dimensions.Accumulate(1, (R, X) => R * X);
+            Volume = (int)dimensions.Accumulate(1, (R, X) => R * X);
         }
 
         public Shape(params int[] dimensions) : this(new ArrayImmutable<int>(dimensions))
