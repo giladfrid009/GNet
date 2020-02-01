@@ -6,6 +6,14 @@ namespace GNet
     [Serializable]
     public class Network : ICloneable<Network>
     {
+        public delegate void OnEpochFunc(int epoch);
+        public delegate void OnStartFunc(double error);
+        public delegate void OnFinishFunc(int epoch, double error);
+
+        public event OnEpochFunc? OnEpoch;
+        public event OnStartFunc? OnStart;
+        public event OnFinishFunc? OnFinish;
+
         public ArrayImmutable<Dense> Layers { get; }
         public int Length => Layers.Length;
 
@@ -34,14 +42,6 @@ namespace GNet
             //Parallel.For(1, Length, (i) =>
             //{
             //    Layers[i].Connect(Layers[i - 1]);
-            //});
-
-            //Parallel.ForEach(Partitioner.Create(1, Length), (range) =>
-            //{
-            //    for (int i = range.Item1; i < range.Item2; i++)
-            //    {
-            //        Layers[i].Connect(Layers[i - 1]);
-            //    }
             //});
 
             for (int i = 1; i < Length; i++)
@@ -111,25 +111,22 @@ namespace GNet
             }
         }
 
-        public Log Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError)
+        public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError)
         {
             if (dataset.InputShape != Layers[0].InputShape || dataset.OutputShape != Layers[Length - 1].InputShape)
             {
                 throw new Exception("dataset structure mismatch with network input structure.");
             }
 
-            var trainingLog = new Log();
             double error = Validate(dataset, loss);
             int epoch;
 
-            trainingLog.Add("Training started.", true);
-            trainingLog.Add("Initial error: " + error, true);
+            OnStart?.Invoke(error);
 
-            for (epoch = 0; epoch < numEpoches; epoch++)
+           for (epoch = 0; epoch < numEpoches; epoch++)
             {
                 if (error < minError)
                 {
-                    trainingLog.Add("Error has reached the destination value.", true);
                     break;
                 }
 
@@ -148,16 +145,14 @@ namespace GNet
                 });
 
                 error = Validate(dataset, loss);
+
+                OnEpoch?.Invoke(epoch);
             }
 
-            trainingLog.Add("Epoches completed " + epoch, true);
-            trainingLog.Add("Final error: " + error, true);
-            trainingLog.Add("Training completed.", true);
-
-            return trainingLog;
+            OnFinish?.Invoke(epoch, error);
         }
 
-        public Log Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double valMinError, Dataset valDataset, ILoss valLoss)
+        public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double valMinError, Dataset valDataset, ILoss valLoss)
         {
             if (dataset.InputShape != Layers[0].InputShape || dataset.OutputShape != Layers[Length - 1].InputShape)
             {
@@ -169,19 +164,15 @@ namespace GNet
                 throw new Exception("dataset structure mismatch with network input structure.");
             }
 
-            var trainingLog = new Log();
             double valError = Validate(valDataset, valLoss);
             int epoch;
 
-            trainingLog.Add("Training started.", true);
-            trainingLog.Add("Initial error: " + Validate(dataset, loss), true);
-            trainingLog.Add("Initial validation error: " + valError, true);
+            OnStart?.Invoke(valError);
 
             for (epoch = 0; epoch < numEpoches; epoch++)
             {
                 if (valError < valMinError)
                 {
-                    trainingLog.Add("Validation error has reached the destination value.", true);
                     break;
                 }
 
@@ -200,14 +191,11 @@ namespace GNet
                 });
 
                 valError = Validate(valDataset, valLoss);
+
+                OnEpoch?.Invoke(epoch);
             }
 
-            trainingLog.Add("Epoches completed " + epoch, true);
-            trainingLog.Add("Final error: " + Validate(dataset, loss), true);
-            trainingLog.Add("Final validation error: " + valError, true);
-            trainingLog.Add("Training completed.", true);
-
-            return trainingLog;
+            OnFinish?.Invoke(epoch, valError);
         }
 
         public Network Clone()

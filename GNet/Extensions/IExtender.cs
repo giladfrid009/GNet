@@ -8,11 +8,9 @@ namespace GNet
 
         ArrayImmutable<TSource> Combine<TSource>(IArray<TSource> source, IArray<TSource> array, Func<TSource, TSource, TSource> selector);
 
-        TOut Accumulate<TSource, TOut>(IArray<TSource> source, TOut seed, Func<TOut, TSource, TOut> accumulator);
+        double Accumulate<TSource>(IArray<TSource> source, double seed, Func<double, TSource, double> accumulator);
 
         double Sum<TSource>(IArray<TSource> source, Func<TSource, double> selector);
-
-        double Avarage(IArray<double> source);
 
         double Min(IArray<double> source);
 
