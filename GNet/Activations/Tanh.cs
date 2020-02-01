@@ -8,7 +8,7 @@ namespace GNet.Activations
     {
         public ShapedArrayImmutable<double> Activate(ShapedArrayImmutable<double> vals)
         {
-            return vals.Select(X => Math.Tanh(X));
+            return vals.Select(X => Tanh(X));
         }
 
         public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> vals)

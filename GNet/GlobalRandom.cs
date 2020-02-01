@@ -1,6 +1,7 @@
 ﻿using System;
+using static System.Math;
 
-namespace GNet.GlobalRandom
+namespace GNet
 {
     [Serializable]
     public static class GRandom
@@ -44,7 +45,7 @@ namespace GNet.GlobalRandom
 
         public static double NextNormal()
         {
-            return Math.Sqrt(-2.0 * Math.Log(1.0 - rnd.NextDouble())) * Math.Sin(2.0 * Math.PI * (1.0 - rnd.NextDouble()));
+            return Sqrt(-2.0 * Log(1.0 - rnd.NextDouble())) * Sin(2.0 * Math.PI * (1.0 - rnd.NextDouble()));
         }
     }
 }

@@ -3,7 +3,6 @@ using GNet.Layers;
 
 namespace GNet
 {
-    [Serializable]
     public class Network : ICloneable<Network>
     {
         public delegate void OnEpochFunc(int epoch);
@@ -39,17 +38,12 @@ namespace GNet
 
         private void Connect()
         {
-            //Parallel.For(1, Length, (i) =>
-            //{
-            //    Layers[i].Connect(Layers[i - 1]);
-            //});
-
             for (int i = 1; i < Length; i++)
             {
                 Layers[i].Connect(Layers[i - 1]);
             }
         }
-
+        
         public ShapedArrayImmutable<double> FeedForward(ShapedArrayImmutable<double> inputs)
         {
             if (inputs.Shape != Layers[0].InputShape)
@@ -84,19 +78,6 @@ namespace GNet
 
         private void Optimize(IOptimizer optimizer, int epoch)
         {
-            //Parallel.For(1, Length, (i) =>
-            //{
-            //    optimizer.Optimize(Layers[i], epoch);
-            //});
-
-            //Parallel.ForEach(Partitioner.Create(1, Length), (range) =>
-            //{
-            //    for (int i = range.Item1; i < range.Item2; i++)
-            //    {
-            //        optimizer.Optimize(Layers[i], epoch);
-            //    }
-            //});
-
             for (int i = 1; i < Length; i++)
             {
                 optimizer.Optimize(Layers[i], epoch);
@@ -123,7 +104,7 @@ namespace GNet
 
             OnStart?.Invoke(error);
 
-           for (epoch = 0; epoch < numEpoches; epoch++)
+            for (epoch = 0; epoch < numEpoches; epoch++)
             {
                 if (error < minError)
                 {
@@ -200,8 +181,6 @@ namespace GNet
 
         public Network Clone()
         {
-            // todo: implement.
-
             throw new NotImplementedException();
         }
     }
