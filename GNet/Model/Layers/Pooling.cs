@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GNet.Model;
 
 namespace GNet.Layers
 {

@@ -5,13 +5,12 @@ namespace GNet
 {
     public class Network : ICloneable<Network>
     {
-        public delegate void OnEpochFunc(int epoch);
-        public delegate void OnStartFunc(double error);
-        public delegate void OnFinishFunc(int epoch, double error);
+        public delegate void ErrorFunc(double error);
+        public delegate void EpochErrorFunc(int epoch, double error);
 
-        public event OnEpochFunc? OnEpoch;
-        public event OnStartFunc? OnStart;
-        public event OnFinishFunc? OnFinish;
+        public event ErrorFunc? OnStart;
+        public event EpochErrorFunc? OnEpoch;
+        public event EpochErrorFunc? OnFinish;
 
         public ArrayImmutable<Dense> Layers { get; }
         public int Length => Layers.Length;
@@ -106,7 +105,7 @@ namespace GNet
 
             for (epoch = 0; epoch < numEpoches; epoch++)
             {
-                if (error < minError)
+                if (error <= minError)
                 {
                     break;
                 }
@@ -127,7 +126,7 @@ namespace GNet
 
                 error = Validate(dataset, loss);
 
-                OnEpoch?.Invoke(epoch);
+                OnEpoch?.Invoke(epoch, error);
             }
 
             OnFinish?.Invoke(epoch, error);
@@ -152,7 +151,7 @@ namespace GNet
 
             for (epoch = 0; epoch < numEpoches; epoch++)
             {
-                if (valError < valMinError)
+                if (valError <= valMinError)
                 {
                     break;
                 }
@@ -173,7 +172,7 @@ namespace GNet
 
                 valError = Validate(valDataset, valLoss);
 
-                OnEpoch?.Invoke(epoch);
+                OnEpoch?.Invoke(epoch, valError);
             }
 
             OnFinish?.Invoke(epoch, valError);
