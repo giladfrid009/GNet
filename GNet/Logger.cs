@@ -4,14 +4,13 @@ using System.IO;
 
 namespace GNet
 {
-    [Serializable]
-    public class Log
+    public class Logger
     {
         public bool Output { get; set; }
 
         private readonly List<string> logLines = new List<string>();
 
-        public Log(Network net, bool output = true)
+        public Logger(Network net, bool output = true)
         {
             Output = output;
 

@@ -94,7 +94,7 @@ namespace GNet.Layers
 
             int i = 0;
 
-            foreach (int[] idx in IndexesByStart(InputShape, Paddings))
+            foreach (int[] idx in GenIndexesStart(InputShape, Paddings))
             {
                 InNeurons[idx].InSynapses = new ShapedArrayImmutable<Synapse>(new Shape(1), new Synapse(inLayer.OutNeurons[i], InNeurons[idx]));
 
@@ -113,14 +113,14 @@ namespace GNet.Layers
 
             int i = 0;
 
-            foreach (int[] idx in IndexesByStart(InputShape, Paddings))
+            foreach (int[] idx in GenIndexesStart(InputShape, Paddings))
             {
                 InNeurons[idx].Value = values[i++];
             }
 
             // todo: then forward
 
-            foreach (int[] idx in IndexesByStrides(InNeurons.Shape, Strides))
+            foreach (int[] idx in GenIndexesStrides(InNeurons.Shape, Strides))
             {
 
             }
@@ -165,24 +165,9 @@ namespace GNet.Layers
         public virtual void Update()
         {
             throw new NotSupportedException();
-        }
+        }    
 
-        private static IEnumerable<int[]> GenerateIndexes(Shape shape)
-        {
-            return GenerateIndexes(shape, new ArrayImmutable<int>(shape.NumDimentions, () => 0), new ArrayImmutable<int>(shape.NumDimentions, () => 1));
-        }
-
-        private static IEnumerable<int[]> IndexesByStart(Shape shape, ArrayImmutable<int> start)
-        {
-            return GenerateIndexes(shape, start, new ArrayImmutable<int>(shape.NumDimentions, () => 1));
-        }
-
-        private static IEnumerable<int[]> IndexesByStrides(Shape shape, ArrayImmutable<int> strides)
-        {
-            return GenerateIndexes(shape, new ArrayImmutable<int>(shape.NumDimentions, () => 0), strides);
-        }
-
-        private static IEnumerable<int[]> GenerateIndexes(Shape shape, ArrayImmutable<int> start, ArrayImmutable<int> strides)
+        private static IEnumerable<int[]> GenIndexes(Shape shape, ArrayImmutable<int> start, ArrayImmutable<int> strides)
         {
             if (strides.Length != shape.NumDimentions)
             {
@@ -225,6 +210,21 @@ namespace GNet.Layers
 
                 current[dim] = 0;
             }
+        }
+
+        private static IEnumerable<int[]> GenIndexes(Shape shape)
+        {
+            return GenIndexes(shape, new ArrayImmutable<int>(shape.NumDimentions, () => 0), new ArrayImmutable<int>(shape.NumDimentions, () => 1));
+        }
+
+        private static IEnumerable<int[]> GenIndexesStart(Shape shape, ArrayImmutable<int> start)
+        {
+            return GenIndexes(shape, start, new ArrayImmutable<int>(shape.NumDimentions, () => 1));
+        }
+
+        private static IEnumerable<int[]> GenIndexesStrides(Shape shape, ArrayImmutable<int> strides)
+        {
+            return GenIndexes(shape, new ArrayImmutable<int>(shape.NumDimentions, () => 0), strides);
         }
     }
 }
