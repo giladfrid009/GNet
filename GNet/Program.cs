@@ -14,18 +14,16 @@ namespace GNet
                 new Layers.Dense(new Shape(1), new Activations.Sigmoid(), new Initializers.Normal(), new Initializers.Zero())
             );
 
-            var log = new Logger(net)
-            {
-                LogEpoches = true
-            };
-
-            net.Initialize();
-
             var datasetGenerator = new Datasets.Generators.EvenOdd(10);
             Dataset trainingDataset = datasetGenerator.Generate(2000);
             Dataset validationDataset = datasetGenerator.Generate(1000);
 
-            net.Train(trainingDataset, new Losses.MSE(), new Optimizers.NestrovMomentum(), 20, 1000, 0.001, validationDataset, new OutTransformers.Losses.BinaryRoundLoss());            
+            net.Initialize();
+
+            using (new Logger(net))
+            {
+                net.Train(trainingDataset, new Losses.MSE(), new Optimizers.NestrovMomentum(), 20, 100, 0.001, validationDataset, new OutTransformers.Losses.BinaryRoundLoss());
+            }
 
             Console.ReadKey();
         }
