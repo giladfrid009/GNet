@@ -180,6 +180,7 @@ namespace GNet
 
         public Network Clone()
         {
+            // todo: implement
             throw new NotImplementedException();
         }
     }

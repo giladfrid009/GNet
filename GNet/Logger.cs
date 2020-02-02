@@ -4,18 +4,24 @@ using System.IO;
 
 namespace GNet
 {
-    public class Logger
+    public class Logger : IDisposable
     {
         public bool Output { get; set; } = true;
         public bool LogEpoches { get; set; } = false;
 
-        private readonly List<string> logLines = new List<string>();
 
-        public Logger(Network net)
+        private readonly Network network; 
+        private readonly List<string> logLines;
+
+        public Logger(Network network)
         {
-            net.OnStart += LogStart;
-            net.OnFinish += LogFinish;
-            net.OnEpoch += LogEpoch;
+            logLines = new List<string>();
+
+            this.network = network;
+
+            network.OnStart += LogStart;
+            network.OnFinish += LogFinish;
+            network.OnEpoch += LogEpoch;
         }
 
         private void LogEpoch(int epoch, double error)
@@ -39,7 +45,7 @@ namespace GNet
             AddEntry($"Final Error : {error}");
         }
 
-        public void AddEntry(string message)
+        private void AddEntry(string message)
         {
             string line = string.Format($"{DateTime.Now.ToString("HH:mm:ss.ff")} | {message}");
 
@@ -61,6 +67,13 @@ namespace GNet
             using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
             using var writer = new StreamWriter(stream);
             logLines.ForEach(L => writer.WriteLine(L));
+        }
+
+        public void Dispose()
+        {
+            network.OnStart -= LogStart;
+            network.OnFinish -= LogFinish;
+            network.OnEpoch -= LogEpoch;
         }
     }
 }
