@@ -179,7 +179,15 @@ namespace GNet
 
         public Network Clone()
         {
-            return new Network(Layers.Select(L => L.Clone()));
+            var net = new Network(Layers.Select(L => L.Clone()));
+
+            net.Layers.ForEach((L, i) =>
+            {
+                L.InNeurons.ForEach((N, j) => N.InSynapses.ForEach((S, k) => S.CopyParams(Layers[i].InNeurons[j].InSynapses[k])));
+                L.OutNeurons.ForEach((N, j) => N.OutSynapses.ForEach((S, k) => S.CopyParams(Layers[i].OutNeurons[j].OutSynapses[k])));
+            });
+
+            return net;
         }
     }
 }
