@@ -49,5 +49,13 @@ namespace GNet.Layers
 
             dropArray = dropArray.Select(X => GRandom.NextDouble() < DropChance ? true : false);
         }
+
+        public override ILayer Clone()
+        {
+            return new Dropout(InputShape, Activation, WeightInit, BiasInit, DropChance)
+            {
+                dropArray = dropArray
+            };
+        }
     }
 }

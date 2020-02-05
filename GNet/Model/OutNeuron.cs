@@ -3,7 +3,7 @@
 namespace GNet.Model
 {
     [Serializable]
-    public class OutNeuron
+    public class OutNeuron : ICloneable<OutNeuron>
     {
         public ShapedArrayImmutable<Synapse> OutSynapses { get; set; }
 
@@ -13,6 +13,15 @@ namespace GNet.Model
         public OutNeuron()
         {
 
+        }
+
+        public OutNeuron Clone()
+        {
+            return new OutNeuron()
+            {
+                ActivatedValue = ActivatedValue,
+                Gradient = Gradient
+            };
         }
     }
 }

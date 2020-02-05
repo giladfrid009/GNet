@@ -5,7 +5,7 @@ namespace GNet.Model
     [Serializable]
     public class Synapse
     {
-        // todo: come with better naming.
+        // todo: come up with better naming.
         public OutNeuron InNeuron { get; }
         public InNeuron OutNeuron { get; }
         public double Weight { get; set; }
@@ -19,15 +19,6 @@ namespace GNet.Model
         {
             InNeuron = inNeuron;
             OutNeuron = outNeuron;
-        }
-
-        public void CloneVals(Synapse other)
-        {
-            Weight = other.Weight;
-            Gradient = other.Gradient;
-            Cache1 = other.Cache1;
-            Cache2 = other.Cache2;
-            BatchWeight = other.BatchWeight;
-        }
+        }       
     }
 }

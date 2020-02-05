@@ -2,8 +2,7 @@
 
 namespace GNet
 {
-    // todo: fix cloning everywhere. make sure that clomning is precise, not just creating same object, butc loning inner objects also
-    internal class Program
+    public class Program
     {
         private static void Main()
         {
@@ -20,12 +19,12 @@ namespace GNet
 
             net.Initialize();
 
-            using (new Logger(net))
+            using (new Logger(net) { LogEpoches = true })
             {
-                net.Train(trainingDataset, new Losses.MSE(), new Optimizers.NestrovMomentum(), 20, 100, 0.001, validationDataset, new OutTransformers.Losses.BinaryRoundLoss());
+                net.Train(trainingDataset, new Losses.MSE(), new Optimizers.NestrovMomentum(), 20, 1000, 0.001, validationDataset, new OutTransformers.Losses.BinaryRoundLoss());
             }
 
             Console.ReadKey();
-        }
+        }       
     }
 }
