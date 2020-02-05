@@ -19,6 +19,15 @@ namespace GNet.Model
         {
             InNeuron = inNeuron;
             OutNeuron = outNeuron;
-        }       
+        }
+
+        public void CopyParams(Synapse other)
+        {
+            Weight = other.Weight;
+            Gradient = other.Gradient;
+            Cache1 = other.Cache1;
+            Cache2 = other.Cache2;
+            BatchWeight = other.BatchWeight;
+        }
     }
 }
