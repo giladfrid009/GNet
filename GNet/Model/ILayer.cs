@@ -2,7 +2,7 @@
 
 namespace GNet
 {
-    public interface ILayer
+    public interface ILayer : ICloneable<ILayer>
     {
         ShapedArrayImmutable<InNeuron> InNeurons { get; }
         ShapedArrayImmutable<OutNeuron> OutNeurons { get; }

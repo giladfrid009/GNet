@@ -3,7 +3,7 @@
 namespace GNet.Model
 {
     [Serializable]
-    public class InNeuron
+    public class InNeuron : ICloneable<InNeuron>
     {
         public ShapedArrayImmutable<Synapse> InSynapses { get; set; }
         public double Bias { get; set; }
@@ -17,6 +17,19 @@ namespace GNet.Model
         public InNeuron()
         {
 
+        }
+
+        public InNeuron Clone()
+        {
+            return new InNeuron()
+            {
+                Bias = Bias,
+                Value = Value,
+                Gradient = Gradient,
+                Cache1 = Cache1,
+                Cache2 = Cache2,
+                BatchBias = BatchBias
+            };
         }
     }
 }

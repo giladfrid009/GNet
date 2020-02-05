@@ -4,20 +4,21 @@ using GNet.Model;
 
 namespace GNet.Layers
 {
-    [Serializable]
 
-    // todo: should inNeurons shape be padded, or padding should be applied on each feedForward pass?
+    [Serializable]
     public class Pooling : ILayer
     {
-        public ShapedArrayImmutable<InNeuron> InNeurons { get; } // padded
-        public ShapedArrayImmutable<OutNeuron> OutNeurons { get; } // todo: assign value
+        public ShapedArrayImmutable<InNeuron> InNeurons { get; private set; }
+        public ShapedArrayImmutable<OutNeuron> OutNeurons { get; private set; } // todo: assign value
         public ArrayImmutable<int> Strides { get; }
         public ArrayImmutable<int> Paddings { get; }
         public Shape InputShape { get; }
         public Shape OutputShape { get; }
         public Shape Kernel { get; }
+        public Shape PaddedShape { get; }
+        public IPooler Pooler { get; }
 
-        public Pooling(Shape input, Shape kernel, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
+        public Pooling(Shape input, Shape kernel, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IPooler pooler)
         {
             ValidateParams(input, kernel, strides, paddings);
 
@@ -25,10 +26,13 @@ namespace GNet.Layers
             Kernel = kernel;
             Strides = strides;
             Paddings = paddings;
+            Pooler = pooler.Clone();
+
+            PaddedShape = CalcPaddedShape(input, paddings);
 
             OutputShape = CalcOutputShape(input, kernel, strides, paddings);
 
-            InNeurons = new ShapedArrayImmutable<InNeuron>(CalcPaddedShape(input, paddings), () => new InNeuron());
+            InNeurons = new ShapedArrayImmutable<InNeuron>(input, () => new InNeuron());
 
             OutNeurons = new ShapedArrayImmutable<OutNeuron>(OutputShape, () => new OutNeuron());
         }
@@ -93,16 +97,12 @@ namespace GNet.Layers
                 throw new ArgumentException("InLayer shape volume mismatch.");
             }
 
-            int i = 0;
-
-            foreach (int[] idx in GenIndexesStart(InputShape, Paddings))
+            InNeurons.ForEach((N, i) =>
             {
-                InNeurons[idx].InSynapses = new ShapedArrayImmutable<Synapse>(new Shape(1), new Synapse(inLayer.OutNeurons[i], InNeurons[idx]));
+                N.InSynapses = new ShapedArrayImmutable<Synapse>(new Shape(1), new Synapse(inLayer.OutNeurons[i], N));
 
-                inLayer.OutNeurons[i].OutSynapses = InNeurons[idx].InSynapses;
-
-                i++;
-            }
+                inLayer.OutNeurons[i].OutSynapses = N.InSynapses;
+            });
         }
 
         public virtual void Input(ShapedArrayImmutable<double> values)
@@ -112,29 +112,22 @@ namespace GNet.Layers
                 throw new ArgumentOutOfRangeException("values shape mismatch.");
             }
 
-            int i = 0;
-
-            foreach (int[] idx in GenIndexesStart(InputShape, Paddings))
-            {
-                InNeurons[idx].Value = values[i++];
-            }
-
-            // todo: then forward
-
-            foreach (int[] idx in GenIndexesStrides(InNeurons.Shape, Strides))
-            {
-
-            }
+            InNeurons.ForEach((N, i) => N.Value = values[i]);
+            
+            // todo: pad.
+            
+            // todo: feed forward.
 
             throw new NotImplementedException();
         }
 
         public virtual void Forward()
         {
-            // todo: probably there is a better way
-            InNeurons.ForEach(N => N.Value = N.InSynapses.Length > 0 ? N.InSynapses[0].InNeuron.ActivatedValue : 0);
+            InNeurons.ForEach(N => N.Value = N.InSynapses[0].InNeuron.ActivatedValue);
 
-            // tdoo: forward
+            // todo: pad.
+
+            // todo: feed forward.
 
             throw new NotImplementedException();
         }
@@ -155,17 +148,21 @@ namespace GNet.Layers
 
             OutNeurons.ForEach((N, i) => N.Gradient = lossDers[i]);
 
+            // todo: what now
+
             throw new NotImplementedException();
         }
 
         public void CalcGrads()
         {
+            // todo
             throw new NotImplementedException();
         }
 
         public virtual void Update()
         {
-            throw new NotSupportedException();
+            // todo
+            throw new NotImplementedException();
         }    
 
         private static IEnumerable<int[]> GenIndexes(Shape shape, ArrayImmutable<int> start, ArrayImmutable<int> strides)
@@ -226,6 +223,15 @@ namespace GNet.Layers
         private static IEnumerable<int[]> GenIndexesStrides(Shape shape, ArrayImmutable<int> strides)
         {
             return GenIndexes(shape, new ArrayImmutable<int>(shape.NumDimentions, () => 0), strides);
+        }
+
+        public ILayer Clone()
+        {
+            return new Pooling(InputShape, Kernel, Strides, Paddings, Pooler)
+            {
+                InNeurons = InNeurons.Select(N => N.Clone()),
+                OutNeurons = OutNeurons.Select(N => N.Clone())
+            };
         }
     }
 }

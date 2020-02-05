@@ -1,5 +1,4 @@
 ﻿using System;
-using GNet.Layers;
 
 namespace GNet
 {
@@ -12,16 +11,16 @@ namespace GNet
         public event EpochErrorFunc? OnEpoch;
         public event EpochErrorFunc? OnFinish;
 
-        public ArrayImmutable<Dense> Layers { get; }
+        public ArrayImmutable<ILayer> Layers { get; }
         public int Length => Layers.Length;
 
-        public Network(params Dense[] layers)
+        public Network(params ILayer[] layers)
         {
-            Layers = new ArrayImmutable<Dense>(layers);
+            Layers = new ArrayImmutable<ILayer>(layers);
             Connect();
         }
 
-        public Network(ArrayImmutable<Dense> layers)
+        public Network(ArrayImmutable<ILayer> layers)
         {
             Layers = layers;
             Connect();
@@ -180,8 +179,7 @@ namespace GNet
 
         public Network Clone()
         {
-            // todo: implement
-            throw new NotImplementedException();
+            return new Network(Layers.Select(L => L.Clone()));
         }
     }
 }

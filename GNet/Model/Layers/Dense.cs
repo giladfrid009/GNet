@@ -118,5 +118,14 @@ namespace GNet.Layers
                 });
             });
         }
+
+        public virtual ILayer Clone()
+        {
+            return new Dense(InputShape, Activation, WeightInit, BiasInit)
+            {
+                InNeurons = InNeurons.Select(N => N.Clone()),
+                OutNeurons = OutNeurons.Select(N => N.Clone())
+            };
+        }
     }
 }
