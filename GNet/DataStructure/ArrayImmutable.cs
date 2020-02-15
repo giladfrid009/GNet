@@ -13,6 +13,8 @@ namespace GNet
 
         public ArrayImmutable(params T[] array)
         {
+            internalArray = array;
+
             internalArray = new T[array.Length];
 
             Array.Copy(array, 0, internalArray, 0, array.Length);

@@ -2,7 +2,6 @@
 using GNet.Model;
 
 // todo: rewrite
-// todo: make sese with inNeurons and outNeurons.
 namespace GNet.Layers
 {
     [Serializable]

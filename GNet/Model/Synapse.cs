@@ -5,7 +5,6 @@ namespace GNet.Model
     [Serializable]
     public class Synapse
     {
-        // todo: come up with better naming.
         public OutNeuron InNeuron { get; }
         public InNeuron OutNeuron { get; }
         public double Weight { get; set; }
