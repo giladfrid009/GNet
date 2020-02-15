@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GNet
 {
@@ -52,6 +53,86 @@ namespace GNet
             }
 
             return flatIndex;
+        }
+
+        public ArrayImmutable<int[]> GetIndices(ArrayImmutable<int> start, ArrayImmutable<int> strides)
+        {
+            if (strides.Length != NumDimentions || start.Length != NumDimentions)
+            {
+                throw new ArgumentOutOfRangeException("Strides or Start length mismatch.");
+            }
+
+            for (int i = 0; i < NumDimentions; i++)
+            {
+                if(start[i] < 0 || strides[i] < 1 || start[i] + strides[i] >= Dimensions[i])
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            int lastIndex = NumDimentions - 1;
+
+            var indices = new List<int[]>();
+
+            PopulateRecursive(this, new int[NumDimentions], 0);
+
+            return new ArrayImmutable<int[]>(indices);
+
+            void PopulateRecursive(Shape shape, int[] current, int dim)
+            {
+                int bound = start[dim] + shape.Dimensions[dim];
+
+                if (dim == lastIndex)
+                {
+                    for (int i = start[dim]; i < bound; i += strides[dim])
+                    {
+                        current[dim] = i;
+                        int[] clone = new int[current.Length];
+                        Array.Copy(current, 0, clone, 0, current.Length);
+                        indices.Add(clone);
+                    }
+                }
+                else
+                {
+                    for (int i = start[dim]; i < bound; i += strides[dim])
+                    {
+                        current[dim] = i;
+                        PopulateRecursive(shape, current, dim + 1);
+                    }
+                }
+
+                current[dim] = 0;
+            }
+        }
+
+        public ArrayImmutable<int[]> GetIndices()
+        {
+            return GetIndices(new ArrayImmutable<int>(NumDimentions, () => 0), new ArrayImmutable<int>(NumDimentions, () => 1));
+        }
+
+        public ArrayImmutable<int[]> GetIndicesFrom(ArrayImmutable<int> start)
+        {
+            return GetIndices(start, new ArrayImmutable<int>(NumDimentions, () => 1));
+        }     
+
+        public ArrayImmutable<int[]> GetIndicesByStrides(ArrayImmutable<int> strides)
+        {
+            return GetIndices(new ArrayImmutable<int>(NumDimentions, () => 0), strides);
+        }
+
+        public ArrayImmutable<int[]> GetIndices(int[] start, int[] strides)
+        {
+            return GetIndices(new ArrayImmutable<int>(start), new ArrayImmutable<int>(strides));
+        }
+
+        public ArrayImmutable<int[]> GetIndicesFrom(int[] start)
+        {
+            return GetIndicesFrom(new ArrayImmutable<int>(start));
+        }
+
+        public ArrayImmutable<int[]> GetIndicesByStrides(int[] strides)
+        {
+            return GetIndicesByStrides(new ArrayImmutable<int>(strides));
         }
 
         public bool Equals(Shape other)

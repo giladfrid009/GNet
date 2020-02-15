@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using GNet.Model;
 
 namespace GNet.Layers
@@ -17,6 +16,8 @@ namespace GNet.Layers
         public Shape Kernel { get; }
         public Shape PaddedShape { get; }
         public IPooler Pooler { get; }
+
+        // TODO: CACHE ALL GETINDICES!!
 
         public Pooling(Shape input, Shape kernel, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IPooler pooler)
         {
@@ -105,6 +106,15 @@ namespace GNet.Layers
             });
         }
 
+        private ShapedArrayImmutable<double> PadValues(ShapedArrayImmutable<double> values)
+        {
+            var padded = Array.CreateInstance(typeof(double), PaddedShape.Dimensions.ToMutable());
+
+            InputShape.GetIndicesFrom(Paddings).ForEach((idx, i) => padded.SetValue(values[i], idx));
+
+            return new ShapedArrayImmutable<double>(PaddedShape, padded);
+        }
+
         public virtual void Input(ShapedArrayImmutable<double> values)
         {
             if (values.Shape != InputShape)
@@ -113,23 +123,27 @@ namespace GNet.Layers
             }
 
             InNeurons.ForEach((N, i) => N.Value = values[i]);
-            
-            // todo: pad.
-            
-            // todo: feed forward.
 
-            throw new NotImplementedException();
+            ShapedArrayImmutable<double> padded = PadValues(values);
+
+            PaddedShape.GetIndicesByStrides(Strides).ForEach((idxKernel, i) =>
+            {
+                ShapedArrayImmutable<double> kernel = Kernel.GetIndicesFrom(idxKernel).Select(idx => padded[idx]).ToShape(Kernel);
+                OutNeurons[i].ActivatedValue = Pooler.Pool(kernel);
+            });
         }
 
         public virtual void Forward()
         {
             InNeurons.ForEach(N => N.Value = N.InSynapses[0].InNeuron.ActivatedValue);
 
-            // todo: pad.
+            ShapedArrayImmutable<double> padded = PadValues(InNeurons.Select(N => N.Value));
 
-            // todo: feed forward.
-
-            throw new NotImplementedException();
+            PaddedShape.GetIndicesByStrides(Strides).ForEach((idxKernel, i) =>
+            {
+                ShapedArrayImmutable<double> kernel =  Kernel.GetIndicesFrom(idxKernel).Select(idx => padded[idx]).ToShape(Kernel);
+                OutNeurons[i].ActivatedValue = Pooler.Pool(kernel);
+            });
         }
 
         public void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
@@ -159,71 +173,10 @@ namespace GNet.Layers
             throw new NotImplementedException();
         }
 
-        public virtual void Update()
+        public void Update()
         {
-            // todo
-            throw new NotImplementedException();
-        }    
 
-        private static IEnumerable<int[]> GenIndexes(Shape shape, ArrayImmutable<int> start, ArrayImmutable<int> strides)
-        {
-            if (strides.Length != shape.NumDimentions)
-            {
-                throw new ArgumentOutOfRangeException("Shape and strides length mismatch.");
-            }
-
-            if (start.Length != shape.NumDimentions)
-            {
-                throw new ArgumentOutOfRangeException("Shape and start length mismatch.");
-            }
-
-            int lastIndex = shape.NumDimentions - 1;
-
-            return GenerateRecursive(new int[shape.NumDimentions], 0);
-
-            IEnumerable<int[]> GenerateRecursive(int[] current, int dim)
-            {
-                int bound = start[dim] + shape.Dimensions[dim];
-
-                if (dim == lastIndex)
-                {
-                    for (int i = start[dim]; i < bound; i += strides[dim])
-                    {
-                        current[dim] = i;
-                        yield return current;
-                    }
-                }
-                else
-                {
-                    for (int i = start[dim]; i < bound; i += strides[dim])
-                    {
-                        current[dim] = i;
-
-                        foreach (int[] idx in GenerateRecursive(current, dim + 1))
-                        {
-                            yield return idx;
-                        }
-                    }
-                }
-
-                current[dim] = 0;
-            }
-        }
-
-        private static IEnumerable<int[]> GenIndexes(Shape shape)
-        {
-            return GenIndexes(shape, new ArrayImmutable<int>(shape.NumDimentions, () => 0), new ArrayImmutable<int>(shape.NumDimentions, () => 1));
-        }
-
-        private static IEnumerable<int[]> GenIndexesStart(Shape shape, ArrayImmutable<int> start)
-        {
-            return GenIndexes(shape, start, new ArrayImmutable<int>(shape.NumDimentions, () => 1));
-        }
-
-        private static IEnumerable<int[]> GenIndexesStrides(Shape shape, ArrayImmutable<int> strides)
-        {
-            return GenIndexes(shape, new ArrayImmutable<int>(shape.NumDimentions, () => 0), strides);
-        }
+        }            
 
         public ILayer Clone()
         {
