@@ -4,10 +4,8 @@ namespace GNet
 {
     public interface ILayer : ICloneable<ILayer>
     {
-        ShapedArrayImmutable<InNeuron> InNeurons { get; }
-        ShapedArrayImmutable<OutNeuron> OutNeurons { get; }
-        Shape InputShape { get; }
-        Shape OutputShape { get; }
+        ShapedArrayImmutable<Neuron> Neurons { get; }
+        Shape Shape { get; }
 
         void Connect(ILayer inLayer);
 
@@ -22,6 +20,5 @@ namespace GNet
         void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets);
 
         void Update();
-
     }
 }

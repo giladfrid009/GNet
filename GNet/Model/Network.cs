@@ -44,7 +44,7 @@ namespace GNet
         
         public ShapedArrayImmutable<double> FeedForward(ShapedArrayImmutable<double> inputs)
         {
-            if (inputs.Shape != Layers[0].InputShape)
+            if (inputs.Shape != Layers[0].Shape)
             {
                 throw new ArgumentOutOfRangeException("inputs shape and input layer shape mismatch.");
             }
@@ -56,7 +56,7 @@ namespace GNet
                 Layers[i].Forward();
             }
 
-            return Layers[Length - 1].OutNeurons.Select(N => N.ActivatedValue);
+            return Layers[Length - 1].Neurons.Select(N => N.ActivatedValue);
         }
 
         public double Validate(Dataset dataset, ILoss loss)
@@ -92,7 +92,7 @@ namespace GNet
 
         public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError)
         {
-            if (dataset.InputShape != Layers[0].InputShape || dataset.OutputShape != Layers[Length - 1].InputShape)
+            if (dataset.InputShape != Layers[0].Shape || dataset.OutputShape != Layers[Length - 1].Shape)
             {
                 throw new Exception("dataset structure mismatch with network input structure.");
             }
@@ -133,12 +133,12 @@ namespace GNet
 
         public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double valMinError, Dataset valDataset, ILoss valLoss)
         {
-            if (dataset.InputShape != Layers[0].InputShape || dataset.OutputShape != Layers[Length - 1].InputShape)
+            if (dataset.InputShape != Layers[0].Shape || dataset.OutputShape != Layers[Length - 1].Shape)
             {
                 throw new Exception("dataset structure mismatch with network input structure.");
             }
 
-            if (valDataset.InputShape != Layers[0].InputShape || valDataset.OutputShape != Layers[Length - 1].InputShape)
+            if (valDataset.InputShape != Layers[0].Shape || valDataset.OutputShape != Layers[Length - 1].Shape)
             {
                 throw new Exception("dataset structure mismatch with network input structure.");
             }
@@ -183,8 +183,11 @@ namespace GNet
 
             net.Layers.ForEach((L, i) =>
             {
-                L.InNeurons.ForEach((N, j) => N.InSynapses.ForEach((S, k) => S.CopyParams(Layers[i].InNeurons[j].InSynapses[k])));
-                L.OutNeurons.ForEach((N, j) => N.OutSynapses.ForEach((S, k) => S.CopyParams(Layers[i].OutNeurons[j].OutSynapses[k])));
+                L.Neurons.ForEach((N, j) =>
+                {
+                    N.InSynapses.ForEach((S, k) => S.CopyParams(Layers[i].Neurons[j].InSynapses[k]));
+                    N.OutSynapses.ForEach((S, k) => S.CopyParams(Layers[i].Neurons[j].OutSynapses[k]));
+                });
             });
 
             return net;

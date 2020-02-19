@@ -17,7 +17,7 @@
         {
             double lr = Decay.Compute(LearningRate, epoch);
 
-            layer.InNeurons.ForEach(N =>
+            layer.Neurons.ForEach(N =>
             {
                 N.Cache1 = -lr * N.Gradient + MomentumValue * N.Cache1;
                 N.BatchBias += N.Cache1;

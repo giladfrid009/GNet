@@ -24,7 +24,7 @@ namespace GNet.Optimizers
 
             double val1 = 1.0 - Pow(Beta1, epoch + 1.0);
 
-            layer.InNeurons.ForEach(N =>
+            layer.Neurons.ForEach(N =>
             {
                 N.Cache1 = Beta1 * N.Cache1 + (1.0 - Beta1) * N.Gradient;
                 N.Cache2 = Max(Beta2 * N.Cache2, Abs(N.Gradient));

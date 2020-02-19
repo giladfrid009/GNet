@@ -17,30 +17,30 @@ namespace GNet.Layers
             }
 
             DropChance = dropChance;
-            dropArray = new ShapedArrayImmutable<bool>(OutputShape);
+            dropArray = new ShapedArrayImmutable<bool>(shape);
         }
 
         public override void Input(ShapedArrayImmutable<double> values)
         {
-            if (values.Shape != InputShape)
+            if (values.Shape != Shape)
             {
                 throw new ArgumentOutOfRangeException("values shape mismatch.");
             }
 
-            InNeurons.ForEach((N, i) => N.Value = dropArray[i] ? 0 : values[i]);
+            Neurons.ForEach((N, i) => N.Value = dropArray[i] ? 0 : values[i]);
 
-            ShapedArrayImmutable<double> activated = Activation.Activate(InNeurons.Select(N => N.Value));
+            ShapedArrayImmutable<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
 
-            OutNeurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
+            Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }
 
         public override void Forward()
         {
-            InNeurons.ForEach((N, i) => N.Value = dropArray[i] ? 0 : N.Bias + N.InSynapses.Sum(W => W.Weight * W.InNeuron.ActivatedValue));
+            Neurons.ForEach((N, i) => N.Value = dropArray[i] ? 0 : N.Bias + N.InSynapses.Sum(W => W.Weight * W.InNeuron.ActivatedValue));
 
-            ShapedArrayImmutable<double> activated = Activation.Activate(InNeurons.Select(N => N.Value));
+            ShapedArrayImmutable<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
 
-            OutNeurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
+            Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }
 
         public override void Update()
@@ -52,7 +52,7 @@ namespace GNet.Layers
 
         public override ILayer Clone()
         {
-            return new Dropout(InputShape, Activation, WeightInit, BiasInit, DropChance)
+            return new Dropout(Shape, Activation, WeightInit, BiasInit, DropChance)
             {
                 dropArray = dropArray
             };

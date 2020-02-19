@@ -3,19 +3,29 @@ using GNet.Model;
 
 namespace GNet.Layers
 {
+    //TODO: IMPORTANT!! IMPLEMENT BELOW 
+    // todo: pooling can be expressed also as 2 layers. first layer is the input layer, the kernels are synapse connections to each output neuron.
+    // todo: the only thing is that ipooler should be setting the weights of the kernels. if its max pooling then only the biggest neuron will have weight 1.
+    // todo: if its avarage pooling, all weights are 1 / n
+    // todo: after we implement it, we can remove the inNeuron and outNeuron class!!!
 
     [Serializable]
-    public class Pooling : ILayer
+    public class Pooling
     {
-        public ShapedArrayImmutable<InNeuron> InNeurons { get; private set; }
-        public ShapedArrayImmutable<OutNeuron> OutNeurons { get; private set; } // todo: assign value
         public ArrayImmutable<int> Strides { get; }
         public ArrayImmutable<int> Paddings { get; }
-        public Shape InputShape { get; }
-        public Shape OutputShape { get; }
         public Shape Kernel { get; }
         public Shape PaddedShape { get; }
         public IPooler Pooler { get; }
+
+
+        public Dense inputLayer;
+        public Dense outputLayer;
+
+        public ShapedArrayImmutable<Neuron> InNeurons { get => inputLayer.Neurons; }
+        public ShapedArrayImmutable<Neuron> OutNeurons { get => outputLayer.Neurons; }
+        public Shape InputShape { get => inputLayer.Shape; }
+        public Shape OutputShape { get => outputLayer.Shape; }
 
         // TODO: CACHE ALL GETINDICES!!
 
@@ -23,7 +33,7 @@ namespace GNet.Layers
         {
             ValidateParams(input, kernel, strides, paddings);
 
-            InputShape = input;
+            Shape = input;
             Kernel = kernel;
             Strides = strides;
             Paddings = paddings;
@@ -33,7 +43,7 @@ namespace GNet.Layers
 
             OutputShape = CalcOutputShape(input, kernel, strides, paddings);
 
-            InNeurons = new ShapedArrayImmutable<InNeuron>(input, () => new InNeuron());
+            InNeurons = new ShapedArrayImmutable<Neuron>(input, () => new Neuron());
 
             OutNeurons = new ShapedArrayImmutable<OutNeuron>(OutputShape, () => new OutNeuron());
         }
@@ -93,7 +103,7 @@ namespace GNet.Layers
 
         public void Connect(ILayer inLayer)
         {
-            if (inLayer.OutputShape != InputShape)
+            if (inLayer.OutputShape != Shape)
             {
                 throw new ArgumentException("InLayer shape volume mismatch.");
             }
@@ -110,14 +120,14 @@ namespace GNet.Layers
         {
             var padded = Array.CreateInstance(typeof(double), PaddedShape.Dimensions.ToMutable());
 
-            InputShape.GetIndicesFrom(Paddings).ForEach((idx, i) => padded.SetValue(values[i], idx));
+            Shape.GetIndicesFrom(Paddings).ForEach((idx, i) => padded.SetValue(values[i], idx));
 
             return new ShapedArrayImmutable<double>(PaddedShape, padded);
         }
 
         public virtual void Input(ShapedArrayImmutable<double> values)
         {
-            if (values.Shape != InputShape)
+            if (values.Shape != Shape)
             {
                 throw new ArgumentOutOfRangeException("values shape mismatch.");
             }
@@ -162,6 +172,11 @@ namespace GNet.Layers
 
             OutNeurons.ForEach((N, i) => N.Gradient = lossDers[i]);
 
+            InNeurons.ForEach((N, i) =>
+            {
+                N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
+            });
+
             // todo: what now
 
             throw new NotImplementedException();
@@ -169,6 +184,14 @@ namespace GNet.Layers
 
         public void CalcGrads()
         {
+            ShapedArrayImmutable<double> poolerDers = Pooler.Derivative(InNeurons.Select(X => X.Value));
+
+            InNeurons.ForEach((N, i) =>
+            {
+                N.Gradient = OutNeurons[i].OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient) * actvDers[i];
+                N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
+            });
+
             // todo
             throw new NotImplementedException();
         }
@@ -180,7 +203,7 @@ namespace GNet.Layers
 
         public ILayer Clone()
         {
-            return new Pooling(InputShape, Kernel, Strides, Paddings, Pooler)
+            return new Pooling(Shape, Kernel, Strides, Paddings, Pooler)
             {
                 InNeurons = InNeurons.Select(N => N.Clone()),
                 OutNeurons = OutNeurons.Select(N => N.Clone())
