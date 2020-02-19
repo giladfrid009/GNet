@@ -21,7 +21,7 @@ namespace GNet.Optimizers
         {
             double lr = Decay.Compute(LearningRate, epoch);
 
-            layer.InNeurons.ForEach(N =>
+            layer.Neurons.ForEach(N =>
             {
                 N.Cache1 = Rho * N.Cache1 + (1.0 - Rho) * N.Gradient * N.Gradient;
                 N.BatchBias += -lr * N.Gradient / (Sqrt(N.Cache1) + Epsilon);

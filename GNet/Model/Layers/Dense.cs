@@ -7,71 +7,66 @@ namespace GNet.Layers
     [Serializable]
     public class Dense : ILayer
     {
-        public ShapedArrayImmutable<InNeuron> InNeurons { get; private set; }
-        public ShapedArrayImmutable<OutNeuron> OutNeurons { get; private set; }
-        public Shape InputShape { get; }
-        public Shape OutputShape { get; }
+        public ShapedArrayImmutable<Neuron> Neurons { get; protected set; }
+        public Shape Shape { get; }
         public IActivation Activation { get; }
         public IInitializer WeightInit { get; }
         public IInitializer BiasInit { get; }
 
-
         public Dense(Shape shape, IActivation activation, IInitializer weightInit, IInitializer biasInit)
         {
-            InputShape = shape;
-            OutputShape = shape;
+            Shape = shape;
             Activation = activation.Clone();
             WeightInit = weightInit.Clone();
             BiasInit = biasInit.Clone();
-            InNeurons = new ShapedArrayImmutable<InNeuron>(shape, () => new InNeuron());
-            OutNeurons = new ShapedArrayImmutable<OutNeuron>(shape, () => new OutNeuron());
+            Neurons = new ShapedArrayImmutable<Neuron>(shape, () => new Neuron());
         }
 
-        public void Connect(ILayer inLayer)
+        public virtual void Connect(ILayer inLayer)
         {
-            InNeurons.ForEach(outN => outN.InSynapses = inLayer.OutNeurons.Select(inN => new Synapse(inN, outN)));
+            Neurons.ForEach(N => N.InSynapses = inLayer.Neurons.Select(inN => new Synapse(inN, N)));
 
-            inLayer.OutNeurons.ForEach((inN, i) => inN.OutSynapses = InNeurons.Select(outN => outN.InSynapses[i]));
+            inLayer.Neurons.ForEach((inN, i) => inN.OutSynapses = Neurons.Select(outN => outN.InSynapses[i]));
         }
 
         public void Initialize()
         {
-            int inLength = InNeurons[0].InSynapses.Length;
-            int outLength = OutputShape.Volume;
+            int inLength = Neurons[0].InSynapses.Length;
+            int outLength = Shape.Volume;
 
-            InNeurons.ForEach(N =>
+            Neurons.ForEach(N =>
             {
                 N.Bias = BiasInit.Initialize(inLength, outLength);
-                N.InSynapses.ForEach(W => W.Weight = WeightInit.Initialize(inLength, outLength));
+                N.InSynapses.ForEach(S => S.Weight = WeightInit.Initialize(inLength, outLength));
             });
         }
 
         public virtual void Input(ShapedArrayImmutable<double> values)
         {
-            if (values.Shape != InputShape)
+            if (values.Shape != Shape)
             {
                 throw new ArgumentOutOfRangeException("values shape mismatch.");
             }
 
-            InNeurons.ForEach((N, i) => N.Value = values[i]);
+            Neurons.ForEach((N, i) => N.Value = values[i]);
 
-            ShapedArrayImmutable<double> activated = Activation.Activate(InNeurons.Select(N => N.Value));
+            ShapedArrayImmutable<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
 
-            OutNeurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
+            Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }
 
         public virtual void Forward()
         {
-            InNeurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Sum(W => W.Weight * W.InNeuron.ActivatedValue));
+            Neurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Sum(S => S.Weight * S.InNeuron.ActivatedValue));
 
-            ShapedArrayImmutable<double> activated = Activation.Activate(InNeurons.Select(N => N.Value));
+            ShapedArrayImmutable<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
 
-            OutNeurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
+            Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }
 
         public void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
         {
-            if (targets.Shape != OutputShape)
+            if (targets.Shape != Shape)
             {
                 throw new ArgumentException("targets shape mismatch.");
             }
@@ -81,11 +76,11 @@ namespace GNet.Layers
                 throw new ArgumentException($"{nameof(loss)} loss doesn't support backpropogation.");
             }
 
-            ShapedArrayImmutable<double> actvDers = Activation.Derivative(InNeurons.Select(N => N.Value));
-            ShapedArrayImmutable<double> lossDers = loss.Derivative(targets, OutNeurons.Select(N => N.ActivatedValue));
+            ShapedArrayImmutable<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
+            ShapedArrayImmutable<double> lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
             ShapedArrayImmutable<double> grads = lossDers.Combine(actvDers, (LD, AD) => LD * AD);
 
-            InNeurons.ForEach((N, i) =>
+            Neurons.ForEach((N, i) =>
             {
                 N.Gradient = grads[i];
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
@@ -94,18 +89,18 @@ namespace GNet.Layers
 
         public void CalcGrads()
         {
-            ShapedArrayImmutable<double> actvDers = Activation.Derivative(InNeurons.Select(N => N.Value));
+            ShapedArrayImmutable<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
 
-            InNeurons.ForEach((N, i) =>
+            Neurons.ForEach((N, i) =>
             {
-                N.Gradient = OutNeurons[i].OutSynapses.Sum(W => W.Weight * W.OutNeuron.Gradient) * actvDers[i];
+                N.Gradient = N.OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient) * actvDers[i];
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
             });
         }
 
         public virtual void Update()
         {
-            InNeurons.ForEach(N =>
+            Neurons.ForEach(N =>
             {
                 N.Bias += N.BatchBias;
                 N.BatchBias = 0.0;
@@ -120,10 +115,9 @@ namespace GNet.Layers
 
         public virtual ILayer Clone()
         {
-            return new Dense(InputShape, Activation, WeightInit, BiasInit)
+            return new Dense(Shape, Activation, WeightInit, BiasInit)
             {
-                InNeurons = InNeurons.Select(N => N.Clone()),
-                OutNeurons = OutNeurons.Select(N => N.Clone())
+                Neurons = Neurons.Select(N => N.Clone())
             };
         }
     }

@@ -5,8 +5,8 @@ namespace GNet.Model
     [Serializable]
     public class Synapse
     {
-        public OutNeuron InNeuron { get; }
-        public InNeuron OutNeuron { get; }
+        public Neuron InNeuron { get; }
+        public Neuron OutNeuron { get; }
         public double Weight { get; set; }
 
         public double Gradient;
@@ -14,7 +14,7 @@ namespace GNet.Model
         public double Cache2;
         public double BatchWeight;
 
-        public Synapse(OutNeuron inNeuron, InNeuron outNeuron)
+        public Synapse(Neuron inNeuron, Neuron outNeuron)
         {
             InNeuron = inNeuron;
             OutNeuron = outNeuron;
