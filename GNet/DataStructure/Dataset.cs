@@ -4,9 +4,9 @@ namespace GNet
 {
     public class Dataset : IArray<Data>, ICloneable<Dataset>
     {
-        public int Length { get; }
         public Shape InputShape { get; }
         public Shape OutputShape { get; }
+        public int Length { get; }
 
         private ArrayImmutable<Data> dataCollection;
 

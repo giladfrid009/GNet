@@ -78,7 +78,10 @@ namespace GNet
         {
             for (int i = 1; i < Length; i++)
             {
-                optimizer.Optimize(Layers[i], epoch);
+                if (Layers[i].IsTrainable)
+                {
+                    optimizer.Optimize(Layers[i], epoch);
+                }
             }
         }
 
@@ -86,7 +89,10 @@ namespace GNet
         {
             for (int i = 1; i < Length; i++)
             {
-                Layers[i].Update();
+                if (Layers[i].IsTrainable)
+                {
+                    Layers[i].Update();
+                }
             }
         }
 

@@ -6,10 +6,10 @@ namespace GNet
     [Serializable]
     public readonly struct ArrayImmutable<T> : IArray<T>, IEquatable<ArrayImmutable<T>>
     {
+        private readonly T[] internalArray;
+
         public int Length => internalArray.Length;
         public T this[int index] => internalArray[index];
-
-        private readonly T[] internalArray;
 
         public ArrayImmutable(params T[] array)
         {

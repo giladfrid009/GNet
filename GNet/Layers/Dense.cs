@@ -7,11 +7,12 @@ namespace GNet.Layers
     [Serializable]
     public class Dense : ILayer
     {
-        public ShapedArrayImmutable<Neuron> Neurons { get; protected set; }
-        public Shape Shape { get; }
         public IActivation Activation { get; }
         public IInitializer WeightInit { get; }
         public IInitializer BiasInit { get; }
+        public ShapedArrayImmutable<Neuron> Neurons { get; protected set; }
+        public Shape Shape { get; }    
+        public bool IsTrainable { get; set; } = true;
 
         public Dense(Shape shape, IActivation activation, IInitializer weightInit, IInitializer biasInit)
         {

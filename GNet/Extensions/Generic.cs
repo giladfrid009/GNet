@@ -26,6 +26,11 @@ namespace GNet
             return Select((IArray<TSource>)source, selector).ToShape(source.Shape);
         }
 
+        public static ShapedArrayImmutable<TOut> Select<TSource, TOut>(this ShapedArrayImmutable<TSource> source, Func<TSource, int, TOut> selector)
+        {
+            return Select((IArray<TSource>)source, selector).ToShape(source.Shape);
+        }
+
         public static ArrayImmutable<TSource> Combine<TSource>(this IArray<TSource> source, IArray<TSource> array, Func<TSource, TSource, TSource> selector)
         {
             if (source.Length != array.Length)

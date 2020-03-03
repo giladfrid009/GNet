@@ -7,14 +7,15 @@ namespace GNet
     public readonly struct Shape : IEquatable<Shape>
     {
         public ArrayImmutable<int> Dimensions { get; }
-        public int NumDimentions => Dimensions.Length;
         public int Volume { get; }
+
+        public int NumDimentions => Dimensions.Length;
 
         public Shape(ArrayImmutable<int> dimensions)
         {
             for (int i = 0; i < dimensions.Length; i++)
             {
-                if (dimensions[i] < 0)
+                if (dimensions[i] < 1)
                 {
                     throw new ArgumentOutOfRangeException($"Dimensions {i} is out of range.");
                 }
