@@ -6,6 +6,7 @@ namespace GNet
     {
         ShapedArrayImmutable<Neuron> Neurons { get; }
         Shape Shape { get; }
+        bool IsTrainable { get; }
 
         void Connect(ILayer inLayer);
 

@@ -7,11 +7,12 @@ namespace GNet
     public readonly struct ShapedArrayImmutable<T> : IArray<T>, IEquatable<ShapedArrayImmutable<T>>
     {
         public Shape Shape { get; }
+       
+        private readonly ArrayImmutable<T> internalArray;
+
         public int Length => internalArray.Length;
         public T this[int index] => internalArray[index];
         public T this[params int[] indices] => internalArray[Shape.FlattenIndices(indices)];
-
-        private readonly ArrayImmutable<T> internalArray;
 
         public ShapedArrayImmutable(Shape shape, ArrayImmutable<T> array)
         {
