@@ -6,7 +6,6 @@ namespace GNet.Normalizers
     {
         public bool NormalizeInputs { get; set; }
         public bool NormalizeOutputs { get; set; }
-
         private double mean;
         private double sd;
 

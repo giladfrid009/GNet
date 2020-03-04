@@ -5,9 +5,9 @@ namespace GNet.Optimizers
     public class AdaGradWindow : IOptimizer
     {
         public IDecay Decay { get; }
+        public double Epsilon { get; }
         public double LearningRate { get; }
         public double Rho { get; }
-        public double Epsilon { get; }
 
         public AdaGradWindow(double learningRate = 0.01, double rho = 0.95, double epsilon = 1e-8, IDecay? decay = null)
         {

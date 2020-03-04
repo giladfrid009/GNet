@@ -6,15 +6,16 @@ namespace GNet.Layers.Kernels
     [Serializable]
     public class Filter : IKernel
     {
-        public IInitializer Initializer { get; }
+        public IInitializer WeightInit { get; }
         public ShapedArrayImmutable<double> Weights { get; private set; }
         public Shape Shape { get; }
+        public bool IsTrainable { get; set; } = true;
 
-        public Filter(Shape shape, IInitializer initializer)
+        public Filter(Shape shape, IInitializer weightInit)
         {
             Shape = shape;
-            Initializer = initializer.Clone();
-            Weights = new ShapedArrayImmutable<double>(Shape, () => initializer.Initialize(Shape.Volume, 1));
+            WeightInit = weightInit.Clone();
+            Weights = new ShapedArrayImmutable<double>(Shape, () => weightInit.Initialize(Shape.Volume, 1));
         }
 
         public void Update(ShapedArrayImmutable<Synapse> inSynapses)
@@ -25,13 +26,14 @@ namespace GNet.Layers.Kernels
             }
 
             Weights = Weights.Select((W, i) => W + inSynapses[i].BatchWeight);
-        }     
+        }
 
         public IKernel Clone()
         {
-            return new Filter(Shape, Initializer)
+            return new Filter(Shape, WeightInit)
             {
-                Weights = Weights
+                Weights = Weights,
+                IsTrainable = IsTrainable
             };
         }
     }

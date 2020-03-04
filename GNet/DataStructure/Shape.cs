@@ -8,7 +8,6 @@ namespace GNet
     {
         public ArrayImmutable<int> Dimensions { get; }
         public int Volume { get; }
-
         public int NumDimentions => Dimensions.Length;
 
         public Shape(ArrayImmutable<int> dimensions)
@@ -28,7 +27,26 @@ namespace GNet
 
         public Shape(params int[] dimensions) : this(new ArrayImmutable<int>(dimensions))
         {
+        }
 
+        public static bool operator !=(Shape left, Shape right)
+        {
+            return !left.Equals(right);
+        }
+
+        public static bool operator ==(Shape left, Shape right)
+        {
+            return left.Equals(right);
+        }
+
+        public bool Equals(Shape other)
+        {
+            return Dimensions == other.Dimensions;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return (obj is Shape shape) && Equals(shape);
         }
 
         public int FlattenIndices(params int[] indices)
@@ -56,6 +74,11 @@ namespace GNet
             return flatIndex;
         }
 
+        public override int GetHashCode()
+        {
+            return Dimensions.GetHashCode() + Volume * 17;
+        }
+
         public ArrayImmutable<int[]> GetIndices(ArrayImmutable<int> start, ArrayImmutable<int> strides)
         {
             if (strides.Length != NumDimentions || start.Length != NumDimentions)
@@ -65,7 +88,7 @@ namespace GNet
 
             for (int i = 0; i < NumDimentions; i++)
             {
-                if(start[i] < 0 || strides[i] < 1 || start[i] + strides[i] >= Dimensions[i])
+                if (start[i] < 0 || strides[i] < 1 || start[i] + strides[i] >= Dimensions[i])
                 {
                     throw new ArgumentOutOfRangeException();
                 }
@@ -111,24 +134,14 @@ namespace GNet
             return GetIndices(new ArrayImmutable<int>(NumDimentions, () => 0), new ArrayImmutable<int>(NumDimentions, () => 1));
         }
 
-        public ArrayImmutable<int[]> GetIndicesFrom(ArrayImmutable<int> start)
-        {
-            return GetIndices(start, new ArrayImmutable<int>(NumDimentions, () => 1));
-        }     
-
-        public ArrayImmutable<int[]> GetIndicesByStrides(ArrayImmutable<int> strides)
-        {
-            return GetIndices(new ArrayImmutable<int>(NumDimentions, () => 0), strides);
-        }
-
         public ArrayImmutable<int[]> GetIndices(int[] start, int[] strides)
         {
             return GetIndices(new ArrayImmutable<int>(start), new ArrayImmutable<int>(strides));
         }
 
-        public ArrayImmutable<int[]> GetIndicesFrom(int[] start)
+        public ArrayImmutable<int[]> GetIndicesByStrides(ArrayImmutable<int> strides)
         {
-            return GetIndicesFrom(new ArrayImmutable<int>(start));
+            return GetIndices(new ArrayImmutable<int>(NumDimentions, () => 0), strides);
         }
 
         public ArrayImmutable<int[]> GetIndicesByStrides(int[] strides)
@@ -136,29 +149,14 @@ namespace GNet
             return GetIndicesByStrides(new ArrayImmutable<int>(strides));
         }
 
-        public bool Equals(Shape other)
+        public ArrayImmutable<int[]> GetIndicesFrom(ArrayImmutable<int> start)
         {
-            return Dimensions == other.Dimensions;
+            return GetIndices(start, new ArrayImmutable<int>(NumDimentions, () => 1));
         }
 
-        public override bool Equals(object? obj)
+        public ArrayImmutable<int[]> GetIndicesFrom(int[] start)
         {
-            return (obj is Shape shape) && Equals(shape);
-        }
-
-        public static bool operator ==(Shape left, Shape right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(Shape left, Shape right)
-        {
-            return !left.Equals(right);
-        }
-
-        public override int GetHashCode()
-        {
-            return Dimensions.GetHashCode() + Volume * 17;
+            return GetIndicesFrom(new ArrayImmutable<int>(start));
         }
     }
 }

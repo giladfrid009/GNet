@@ -1,5 +1,4 @@
-﻿
-namespace GNet
+﻿namespace GNet
 {
     public interface ICloneable<T>
     {

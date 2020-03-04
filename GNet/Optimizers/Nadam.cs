@@ -5,10 +5,11 @@ namespace GNet.Optimizers
     public class Nadam : IOptimizer
     {
         public IDecay Decay { get; }
-        public double LearningRate { get; }
+
         public double Beta1 { get; }
         public double Beta2 { get; }
         public double Epsilon { get; }
+        public double LearningRate { get; }
 
         public Nadam(double learningRate = 0.002, double beta1 = 0.9, double beta2 = 0.999, double epsilon = 1e-8, IDecay? decay = null)
         {

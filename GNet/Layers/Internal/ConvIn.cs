@@ -12,7 +12,7 @@ namespace GNet.Layers.Internal
 
         public ConvIn(Shape shape)
         {
-            Shape = shape;           
+            Shape = shape;
             Neurons = new ShapedArrayImmutable<Neuron>(shape, () => new Neuron());
         }
 
@@ -54,7 +54,7 @@ namespace GNet.Layers.Internal
             {
                 N.Value = N.InSynapses[0].InNeuron.ActivatedValue;
                 N.ActivatedValue = N.InSynapses[0].InNeuron.ActivatedValue;
-            });            
+            });
         }
 
         public void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)

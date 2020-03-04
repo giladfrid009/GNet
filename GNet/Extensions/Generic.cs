@@ -53,8 +53,6 @@ namespace GNet
             return Combine((IArray<TSource>)source, array, selector).ToShape(source.Shape);
         }
 
-
-
         public static void ForEach<TSource>(this IArray<TSource> source, Action<TSource, int> action)
         {
             for (int i = 0; i < source.Length; i++)

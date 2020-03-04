@@ -16,9 +16,9 @@ namespace GNet
 
         void Forward();
 
-        void CalcGrads();
-
         void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets);
+
+        void CalcGrads();
 
         void Update();
     }

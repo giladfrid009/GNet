@@ -8,6 +8,7 @@ namespace GNet.Layers.Kernels
     {
         public ShapedArrayImmutable<double> Weights { get; private set; }
         public Shape Shape { get; }
+        public bool IsTrainable { get; } = false;
 
         public MaxPool(Shape shape)
         {
@@ -17,7 +18,7 @@ namespace GNet.Layers.Kernels
 
         public void Update(ShapedArrayImmutable<Synapse> inSynapses)
         {
-            if(inSynapses.Shape != Shape)
+            if (inSynapses.Shape != Shape)
             {
                 throw new ArgumentException("InSynapses shape mismatch.");
             }

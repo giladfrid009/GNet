@@ -11,7 +11,7 @@ namespace GNet.Layers
         public IInitializer WeightInit { get; }
         public IInitializer BiasInit { get; }
         public ShapedArrayImmutable<Neuron> Neurons { get; protected set; }
-        public Shape Shape { get; }    
+        public Shape Shape { get; }
         public bool IsTrainable { get; set; } = true;
 
         public Dense(Shape shape, IActivation activation, IInitializer weightInit, IInitializer biasInit)
@@ -118,7 +118,8 @@ namespace GNet.Layers
         {
             return new Dense(Shape, Activation, WeightInit, BiasInit)
             {
-                Neurons = Neurons.Select(N => N.Clone())
+                Neurons = Neurons.Select(N => N.Clone()),
+                IsTrainable = IsTrainable
             };
         }
     }

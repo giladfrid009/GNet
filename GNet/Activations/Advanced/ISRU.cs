@@ -1,31 +1,34 @@
 ﻿using System;
 using static System.Math;
 
-namespace GNet.Activations
+namespace GNet.Activations.Advanced
 {
     [Serializable]
-    public class SoftClipping : IActivation
+    /// <summary>
+    /// Inverse Square Root Unit
+    /// </summary>
+    public class ISRU : IActivation
     {
         public double Alpha { get; }
 
-        public SoftClipping(double alpha)
+        public ISRU(double alpha)
         {
             Alpha = alpha;
         }
 
         public ShapedArrayImmutable<double> Activate(ShapedArrayImmutable<double> vals)
         {
-            return vals.Select(X => 1.0 / Alpha * Log((1.0 + Exp(Alpha * X)) / (1.0 + Exp(Alpha * X - Alpha))));
+            return vals.Select(X => X / Sqrt(1.0 + Alpha * X * X));
         }
 
         public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> vals)
         {
-            return vals.Select(X => 0.5 * Sinh(0.5 * Alpha) * (1.0 / Cosh(0.5 * Alpha * X)) * (1.0 / Cosh(0.5 * Alpha * (1.0 - X))));
+            return vals.Select(X => Pow(X / Sqrt(1.0 + Alpha * X * X), 3.0));
         }
 
         public IActivation Clone()
         {
-            return new SoftClipping(Alpha);
+            return new ISRU(Alpha);
         }
     }
 }

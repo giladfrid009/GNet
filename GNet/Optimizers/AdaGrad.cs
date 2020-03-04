@@ -5,8 +5,8 @@ namespace GNet.Optimizers
     public class AdaGrad : IOptimizer
     {
         public IDecay Decay { get; }
-        public double LearningRate { get; }
         public double Epsilon { get; }
+        public double LearningRate { get; }
 
         public AdaGrad(double learningRate = 0.01, double epsilon = 1e-8, IDecay? decay = null)
         {

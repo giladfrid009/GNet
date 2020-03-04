@@ -14,7 +14,7 @@
             return output.Select(X => X < Bound ? 0.0 : 1);
         }
 
-        public IOutTransformer Clone()
+        public virtual IOutTransformer Clone()
         {
             return new BinaryRound(Bound);
         }

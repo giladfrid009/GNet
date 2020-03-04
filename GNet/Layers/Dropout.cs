@@ -6,7 +6,6 @@ namespace GNet.Layers
     public class Dropout : Dense
     {
         public double DropChance { get; }
-
         private ShapedArrayImmutable<bool> dropArray;
 
         public Dropout(Shape shape, IActivation activation, IInitializer weightInit, IInitializer biasInit, double dropChance) : base(shape, activation, weightInit, biasInit)
@@ -54,7 +53,9 @@ namespace GNet.Layers
         {
             return new Dropout(Shape, Activation, WeightInit, BiasInit, DropChance)
             {
-                dropArray = dropArray
+                dropArray = dropArray,
+                Neurons = Neurons.Select(N => N.Clone()),
+                IsTrainable = IsTrainable
             };
         }
     }

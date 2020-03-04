@@ -6,12 +6,11 @@ namespace GNet
 {
     public class Logger : IDisposable
     {
-        public bool Output { get; set; } = true;
         public bool LogEpoches { get; set; } = false;
+        public bool Output { get; set; } = true;
 
-
-        private readonly Network network; 
         private readonly List<string> logLines;
+        private readonly Network network;
 
         public Logger(Network network)
         {
@@ -24,12 +23,16 @@ namespace GNet
             network.OnEpoch += LogEpoch;
         }
 
-        private void LogEpoch(int epoch, double error)
+        private void AddEntry(string message)
         {
-            if(LogEpoches)
+            string line = string.Format($"{DateTime.Now.ToString("HH:mm:ss.ff")} | {message}");
+
+            if (Output)
             {
-                AddEntry($"Epoch : {epoch} | Error : {error}");
+                Console.WriteLine(line);
             }
+
+            logLines.Add(line);
         }
 
         private void LogStart(double error)
@@ -45,16 +48,12 @@ namespace GNet
             AddEntry($"Final Error : {error}");
         }
 
-        private void AddEntry(string message)
+        private void LogEpoch(int epoch, double error)
         {
-            string line = string.Format($"{DateTime.Now.ToString("HH:mm:ss.ff")} | {message}");
-
-            if (Output)
+            if (LogEpoches)
             {
-                Console.WriteLine(line);
+                AddEntry($"Epoch : {epoch} | Error : {error}");
             }
-
-            logLines.Add(line);
         }
 
         public void Print()
