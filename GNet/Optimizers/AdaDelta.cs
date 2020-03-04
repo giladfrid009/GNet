@@ -5,9 +5,9 @@ namespace GNet.Optimizers
     public class AdaDelta : IOptimizer
     {
         public IDecay Decay { get; }
+        public double Epsilon { get; }
         public double LearningRate { get; }
         public double Rho { get; }
-        public double Epsilon { get; }
 
         public AdaDelta(double learningRate = 1.0, double rho = 0.95, double epsilon = 1e-8, IDecay? decay = null)
         {

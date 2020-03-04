@@ -2,16 +2,18 @@
 {
     public class Division : INormalizer
     {
+        public double Divisor { get; }
         public bool NormalizeInputs { get; set; }
         public bool NormalizeOutputs { get; set; }
-        public double Divisor { get; }
 
         public Division(double divisor)
         {
             Divisor = divisor;
         }
 
-        public void ExtractParams(Dataset dataset) { }
+        public void ExtractParams(Dataset dataset)
+        {
+        }
 
         public ShapedArrayImmutable<double> Normalize(ShapedArrayImmutable<double> vals)
         {

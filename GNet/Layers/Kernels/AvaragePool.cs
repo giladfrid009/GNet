@@ -8,6 +8,7 @@ namespace GNet.Layers.Kernels
     {
         public ShapedArrayImmutable<double> Weights { get; }
         public Shape Shape { get; }
+        public bool IsTrainable { get; } = false;
 
         public AvaragePool(Shape shape)
         {
@@ -17,7 +18,6 @@ namespace GNet.Layers.Kernels
 
         public void Update(ShapedArrayImmutable<Synapse> inSynapses)
         {
-            
         }
 
         public IKernel Clone()

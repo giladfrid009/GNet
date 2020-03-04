@@ -1,24 +1,24 @@
 ﻿using System;
 using static System.Math;
 
-namespace GNet.Activations
+namespace GNet.Activations.Advanced
 {
     [Serializable]
-    public class Sinusoid : IActivation
+    public class Gaussian : IActivation
     {
         public ShapedArrayImmutable<double> Activate(ShapedArrayImmutable<double> vals)
         {
-            return vals.Select(X => Sin(X));
+            return vals.Select(X => Exp(-X * X));
         }
 
         public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> vals)
         {
-            return vals.Select(X => Cos(X));
+            return vals.Select(X => -2.0 * X * Exp(-X * X));
         }
 
         public IActivation Clone()
         {
-            return new Sinusoid();
+            return new Gaussian();
         }
     }
 }

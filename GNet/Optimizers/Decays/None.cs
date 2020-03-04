@@ -1,5 +1,4 @@
-﻿
-namespace GNet.Optimizers.Decays
+﻿namespace GNet.Optimizers.Decays
 {
     public class None : IDecay
     {

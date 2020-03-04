@@ -6,6 +6,7 @@ namespace GNet.Layers
     {
         ShapedArrayImmutable<double> Weights { get; }
         Shape Shape { get; }
+        bool IsTrainable { get; }
 
         void Update(ShapedArrayImmutable<Synapse> inSynapses);
     }

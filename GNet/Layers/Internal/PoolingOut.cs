@@ -11,25 +11,26 @@ namespace GNet.Layers.Internal
         public ShapedArrayImmutable<Neuron> Neurons { get; protected set; }
         public ArrayImmutable<int> Strides { get; }
         public ArrayImmutable<int> Paddings { get; }
-        public Shape ShapeInput { get; }
-        public Shape ShapeKernel { get; }
-        public Shape ShapePadded { get; }
         public Shape Shape { get; }
-        public virtual bool IsTrainable { get; } = false;
+        public Shape InputShape { get; }
+        public Shape KernelShape { get; }
+        public Shape PaddedShape { get; }
+        public bool IsTrainable => Kernel.IsTrainable;
 
-        public PoolingOut(Shape shapeInput, Shape shapeKernel, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IKernel kernel)
+
+        public PoolingOut(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IKernel kernel)
         {
-            ValidateParams(shapeInput, shapeKernel, strides, paddings);
+            ValidateParams(inputShape, kernelShape, strides, paddings);
 
-            ShapeInput = shapeInput;
-            ShapeKernel = shapeKernel;
+            InputShape = inputShape;
+            KernelShape = kernelShape;
             Strides = strides;
             Paddings = paddings;
             Kernel = kernel.Clone();
 
-            ShapePadded = CalcPaddedShape(shapeInput, paddings);
+            PaddedShape = CalcPaddedShape(inputShape, paddings);
 
-            Shape = CalcOutputShape(shapeInput, shapeKernel, strides, paddings);
+            Shape = CalcOutputShape(inputShape, kernelShape, strides, paddings);
         }
 
         private void ValidateParams(Shape shapeInput, Shape shapeKernel, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
@@ -82,23 +83,28 @@ namespace GNet.Layers.Internal
 
         public void Connect(ILayer inLayer)
         {
-            var arr = Array.CreateInstance(typeof(Neuron), ShapePadded.Dimensions.ToMutable());
+            if (inLayer.Shape != InputShape)
+            {
+                throw new ArgumentException("InLayer shape mismatch.");
+            }
 
-            ShapeInput.GetIndicesFrom(Paddings).ForEach((idx, i) => arr.SetValue(inLayer.Neurons[i], idx));
+            var arr = Array.CreateInstance(typeof(Neuron), PaddedShape.Dimensions.ToMutable());
 
-            ShapedArrayImmutable<Neuron> padded = new ShapedArrayImmutable<Neuron>(ShapeInput, arr).Select(N => N ?? new Neuron());
+            InputShape.GetIndicesFrom(Paddings).ForEach((idx, i) => arr.SetValue(inLayer.Neurons[i], idx));
+
+            ShapedArrayImmutable<Neuron> padded = new ShapedArrayImmutable<Neuron>(InputShape, arr).Select(N => N ?? new Neuron());
 
             var inConnections = new ShapedArrayImmutable<List<Synapse>>(padded.Shape, () => new List<Synapse>());
 
-            ShapeInput.GetIndicesByStrides(Strides).ForEach((idxKernel, i) =>
+            InputShape.GetIndicesByStrides(Strides).ForEach((idxKernel, i) =>
             {
-                Neurons[i].InSynapses = ShapeKernel.GetIndicesFrom(idxKernel).Select(idx =>
+                Neurons[i].InSynapses = KernelShape.GetIndicesFrom(idxKernel).Select(idx =>
                 {
                     var S = new Synapse(padded[idx], Neurons[i]);
                     inConnections[idx].Add(S);
                     return S;
                 })
-                .ToShape(ShapeKernel);
+                .ToShape(KernelShape);
             });
 
             padded.ForEach((N, i) => N.OutSynapses = new ShapedArrayImmutable<Synapse>(new Shape(inConnections[i].Count), inConnections[i]));
@@ -168,7 +174,7 @@ namespace GNet.Layers.Internal
 
         public virtual ILayer Clone()
         {
-            return new PoolingOut(ShapeInput, ShapeKernel, Strides, Paddings, Kernel)
+            return new PoolingOut(InputShape, KernelShape, Strides, Paddings, Kernel)
             {
                 Kernel = Kernel.Clone(),
                 Neurons = Neurons.Select(N => N.Clone())

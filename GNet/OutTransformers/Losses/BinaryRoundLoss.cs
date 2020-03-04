@@ -19,7 +19,12 @@ namespace GNet.OutTransformers.Losses
             throw new NotSupportedException("This loss can't be used in backpropogation.");
         }
 
-        public new ILoss Clone()
+        ILoss ICloneable<ILoss>.Clone()
+        {
+            return new BinaryRoundLoss(Bound);
+        }
+
+        public override IOutTransformer Clone()
         {
             return new BinaryRoundLoss(Bound);
         }

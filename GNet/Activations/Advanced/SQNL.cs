@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace GNet.Activations
+namespace GNet.Activations.Advanced
 {
     [Serializable]
     /// <summary>
-    /// Square Nonlinearity 
+    /// Square Nonlinearity
     /// </summary>
     public class SQNL : IActivation
     {

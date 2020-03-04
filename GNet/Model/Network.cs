@@ -5,10 +5,13 @@ namespace GNet
     public class Network : ICloneable<Network>
     {
         public delegate void ErrorFunc(double error);
+
         public delegate void EpochErrorFunc(int epoch, double error);
 
         public event ErrorFunc? OnStart;
+
         public event EpochErrorFunc? OnEpoch;
+
         public event EpochErrorFunc? OnFinish;
 
         public ArrayImmutable<ILayer> Layers { get; }
@@ -26,42 +29,12 @@ namespace GNet
             Connect();
         }
 
-        public void Initialize()
-        {
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Initialize();
-            }
-        }
-
         private void Connect()
         {
             for (int i = 1; i < Length; i++)
             {
                 Layers[i].Connect(Layers[i - 1]);
             }
-        }
-        
-        public ShapedArrayImmutable<double> FeedForward(ShapedArrayImmutable<double> inputs)
-        {
-            if (inputs.Shape != Layers[0].Shape)
-            {
-                throw new ArgumentOutOfRangeException("inputs shape and input layer shape mismatch.");
-            }
-
-            Layers[0].Input(inputs);
-
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Forward();
-            }
-
-            return Layers[Length - 1].Neurons.Select(N => N.ActivatedValue);
-        }
-
-        public double Validate(Dataset dataset, ILoss loss)
-        {
-            return dataset.Sum(D => loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.Length;
         }
 
         private void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
@@ -94,6 +67,36 @@ namespace GNet
                     Layers[i].Update();
                 }
             }
+        }
+
+        public void Initialize()
+        {
+            for (int i = 1; i < Length; i++)
+            {
+                Layers[i].Initialize();
+            }
+        }
+
+        public ShapedArrayImmutable<double> FeedForward(ShapedArrayImmutable<double> inputs)
+        {
+            if (inputs.Shape != Layers[0].Shape)
+            {
+                throw new ArgumentOutOfRangeException("inputs shape and input layer shape mismatch.");
+            }
+
+            Layers[0].Input(inputs);
+
+            for (int i = 1; i < Length; i++)
+            {
+                Layers[i].Forward();
+            }
+
+            return Layers[Length - 1].Neurons.Select(N => N.ActivatedValue);
+        }
+
+        public double Validate(Dataset dataset, ILoss loss)
+        {
+            return dataset.Sum(D => loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.Length;
         }
 
         public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError)

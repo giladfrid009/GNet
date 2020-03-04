@@ -13,6 +13,16 @@ namespace GNet
             Outputs = outputs;
         }
 
+        public static bool operator !=(Data left, Data right)
+        {
+            return !(left == right);
+        }
+
+        public static bool operator ==(Data left, Data right)
+        {
+            return left.Equals(right);
+        }
+
         public bool Equals(Data other)
         {
             if (Inputs != other.Inputs)
@@ -31,16 +41,6 @@ namespace GNet
         public override bool Equals(object? obj)
         {
             return (obj is Data data) && Equals(data);
-        }
-
-        public static bool operator ==(Data left, Data right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(Data left, Data right)
-        {
-            return !(left == right);
         }
 
         public override int GetHashCode()

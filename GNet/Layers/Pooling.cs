@@ -1,73 +1,64 @@
 ﻿using System;
-using GNet.Model;
 using GNet.Layers.Internal;
+using GNet.Model;
 
 namespace GNet.Layers
-{    
+{
     [Serializable]
     public class Pooling : ILayer
     {
-        public ConvIn InternInLayer { get; protected set; }
-        public PoolingOut InternOutLayer { get; protected set; }
-        public IKernel Kernel { get; protected set; }
-        public ArrayImmutable<int> Strides { get; }
-        public ArrayImmutable<int> Paddings { get; }
-        public Shape ShapeInput { get; }
-        public Shape ShapeKernel { get; }
-        public Shape ShapePadded { get; }
-        public virtual bool IsTrainable { get; } = false;
+        public ConvIn InternalInLayer { get; protected set; }
+        public PoolingOut InternalOutLayer { get; protected set; }
+        public IKernel Kernel => InternalOutLayer.Kernel;
+        public ShapedArrayImmutable<Neuron> Neurons => InternalOutLayer.Neurons;
+        public ArrayImmutable<int> Paddings => InternalOutLayer.Paddings;
+        public ArrayImmutable<int> Strides => InternalOutLayer.Strides;
+        public Shape Shape => InternalOutLayer.Shape;
+        public Shape InputShape => InternalOutLayer.InputShape;
+        public Shape KernelShape => InternalOutLayer.KernelShape;
+        public Shape PaddedShape => InternalOutLayer.PaddedShape;
+        public bool IsTrainable => InternalOutLayer.IsTrainable;
 
-        public ShapedArrayImmutable<Neuron> Neurons => InternOutLayer.Neurons;
-        public Shape Shape => InternOutLayer.Shape;
-
-        public Pooling(Shape shapeInput, Shape shapeKernel, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IKernel kernel)
+        public Pooling(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IKernel kernel)
         {
-            ShapeInput = shapeInput;
-            ShapeKernel = shapeKernel;
-            Strides = strides;
-            Paddings = paddings;
-            Kernel = kernel.Clone();
-
-            InternInLayer = new ConvIn(ShapeInput);
-            InternOutLayer = new PoolingOut(ShapeInput, ShapeKernel, Strides, Paddings, Kernel);
-
-            ShapePadded = InternOutLayer.ShapePadded;
-        }
-
-        public void Initialize()
-        {
-            InternInLayer.Initialize();
-            InternOutLayer.Initialize();
+            InternalInLayer = new ConvIn(inputShape);
+            InternalOutLayer = new PoolingOut(inputShape, kernelShape, strides, paddings, kernel);
         }
 
         public void Connect(ILayer inLayer)
         {
-            InternInLayer.Connect(inLayer);
-            InternOutLayer.Connect(InternInLayer);
+            InternalInLayer.Connect(inLayer);
+            InternalOutLayer.Connect(InternalInLayer);
+        }
+
+        public void Initialize()
+        {
+            InternalInLayer.Initialize();
+            InternalOutLayer.Initialize();
         }
 
         public void Input(ShapedArrayImmutable<double> values)
         {
-            InternInLayer.Input(values);
-            InternOutLayer.Forward();
+            InternalInLayer.Input(values);
+            InternalOutLayer.Forward();
         }
 
         public void Forward()
         {
-            InternInLayer.Forward();
-            InternOutLayer.Forward();
+            InternalInLayer.Forward();
+            InternalOutLayer.Forward();
         }
 
         public void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
         {
-            InternOutLayer.CalcGrads(loss, targets);
-            InternInLayer.CalcGrads();
+            InternalOutLayer.CalcGrads(loss, targets);
+            InternalInLayer.CalcGrads();
         }
 
         public void CalcGrads()
         {
-            InternOutLayer.CalcGrads();
-            InternInLayer.CalcGrads();
+            InternalOutLayer.CalcGrads();
+            InternalInLayer.CalcGrads();
         }
 
         public virtual void Update()
@@ -77,11 +68,10 @@ namespace GNet.Layers
 
         public virtual ILayer Clone()
         {
-            return new Pooling(ShapeInput, ShapeKernel, Strides, Paddings, Kernel)
+            return new Pooling(InputShape, KernelShape, Strides, Paddings, Kernel)
             {
-                InternInLayer = (ConvIn)InternInLayer.Clone(),
-                InternOutLayer = (PoolingOut)InternOutLayer.Clone(),
-                Kernel = Kernel.Clone()
+                InternalInLayer = (ConvIn)InternalInLayer.Clone(),
+                InternalOutLayer = (PoolingOut)InternalOutLayer.Clone()
             };
         }
     }

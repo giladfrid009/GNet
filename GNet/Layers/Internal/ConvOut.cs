@@ -4,11 +4,8 @@ namespace GNet.Layers.Internal
 {
     public class ConvOut : PoolingOut
     {
-        public override bool IsTrainable { get; } = true;
-
-        public ConvOut(Shape shapeInput, Shape shapeKernel, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, Filter kernel) : base(shapeInput, shapeKernel, strides, paddings, kernel)
+        public ConvOut(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, Filter kernel) : base(inputShape, kernelShape, strides, paddings, kernel)
         {
-
         }
 
         public override void Initialize()
@@ -43,7 +40,7 @@ namespace GNet.Layers.Internal
 
         public override ILayer Clone()
         {
-            return new ConvOut(ShapeInput, ShapeKernel, Strides, Paddings, (Filter)Kernel)
+            return new ConvOut(InputShape, KernelShape, Strides, Paddings, (Filter)Kernel)
             {
                 Kernel = Kernel.Clone(),
                 Neurons = Neurons.Select(N => N.Clone())

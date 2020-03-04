@@ -6,10 +6,9 @@ namespace GNet
     [Serializable]
     public readonly struct ArrayImmutable<T> : IArray<T>, IEquatable<ArrayImmutable<T>>
     {
-        private readonly T[] internalArray;
-
         public int Length => internalArray.Length;
         public T this[int index] => internalArray[index];
+        private readonly T[] internalArray;
 
         public ArrayImmutable(params T[] array)
         {
@@ -67,6 +66,16 @@ namespace GNet
             }
         }
 
+        public static bool operator !=(ArrayImmutable<T> left, ArrayImmutable<T> right)
+        {
+            return !left.Equals(right);
+        }
+
+        public static bool operator ==(ArrayImmutable<T> left, ArrayImmutable<T> right)
+        {
+            return left.Equals(right);
+        }
+
         public T[] ToMutable()
         {
             var array = new T[Length];
@@ -107,16 +116,6 @@ namespace GNet
         public override bool Equals(object? obj)
         {
             return (obj is ArrayImmutable<T> arr) && Equals(arr);
-        }
-
-        public static bool operator ==(ArrayImmutable<T> left, ArrayImmutable<T> right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(ArrayImmutable<T> left, ArrayImmutable<T> right)
-        {
-            return !left.Equals(right);
         }
 
         public override int GetHashCode()

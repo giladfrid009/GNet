@@ -7,10 +7,8 @@ namespace GNet
         public Shape InputShape { get; }
         public Shape OutputShape { get; }
         public int Length { get; }
-
-        private ArrayImmutable<Data> dataCollection;
-
         public Data this[int index] => dataCollection[index];
+        private ArrayImmutable<Data> dataCollection;
 
         public Dataset(ArrayImmutable<Data> dataCollection)
         {
@@ -31,7 +29,21 @@ namespace GNet
 
         public Dataset(params Data[] dataCollection) : this(new ArrayImmutable<Data>(dataCollection))
         {
+        }
 
+        private Data NormalizeData(Data data, INormalizer normalizer)
+        {
+            ShapedArrayImmutable<double> inputs = normalizer.NormalizeInputs ? normalizer.Normalize(data.Inputs) : data.Inputs;
+            ShapedArrayImmutable<double> outptus = normalizer.NormalizeInputs ? normalizer.Normalize(data.Outputs) : data.Outputs;
+
+            return new Data(inputs, outptus);
+        }
+
+        public void Normalize(INormalizer normalizer)
+        {
+            normalizer.ExtractParams(this);
+
+            dataCollection = dataCollection.Select(D => NormalizeData(D, normalizer));
         }
 
         public void Shuffle()
@@ -47,21 +59,6 @@ namespace GNet
             }
 
             dataCollection = new ArrayImmutable<Data>(shuffled);
-        }
-
-        public void Normalize(INormalizer normalizer)
-        {
-            normalizer.ExtractParams(this);
-
-            dataCollection = dataCollection.Select(D => NormalizeData(D, normalizer));
-        }
-
-        private static Data NormalizeData(Data data, INormalizer normalizer)
-        {
-            ShapedArrayImmutable<double> inputs = normalizer.NormalizeInputs ? normalizer.Normalize(data.Inputs) : data.Inputs;
-            ShapedArrayImmutable<double> outptus = normalizer.NormalizeInputs ? normalizer.Normalize(data.Outputs) : data.Outputs;
-
-            return new Data(inputs, outptus);
         }
 
         public Dataset Clone()

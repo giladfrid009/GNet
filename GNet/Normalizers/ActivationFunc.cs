@@ -1,5 +1,4 @@
-﻿
-namespace GNet.Normalizers
+﻿namespace GNet.Normalizers
 {
     public class ActivationFunc : INormalizer
     {
@@ -12,7 +11,9 @@ namespace GNet.Normalizers
             Activation = activation.Clone();
         }
 
-        public void ExtractParams(Dataset dataset) { }
+        public void ExtractParams(Dataset dataset)
+        {
+        }
 
         public ShapedArrayImmutable<double> Normalize(ShapedArrayImmutable<double> vals)
         {

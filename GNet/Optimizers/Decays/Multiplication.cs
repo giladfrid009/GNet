@@ -5,8 +5,8 @@ namespace GNet.Optimizers.Decays
     public class Multiplication : IDecay
     {
         public double Decay { get; }
-        public double Multiplier { get; }
         public int Interval { get; }
+        public double Multiplier { get; }
 
         public Multiplication(double decay, int interval)
         {

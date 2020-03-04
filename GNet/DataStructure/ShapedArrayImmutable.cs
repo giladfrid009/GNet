@@ -7,12 +7,10 @@ namespace GNet
     public readonly struct ShapedArrayImmutable<T> : IArray<T>, IEquatable<ShapedArrayImmutable<T>>
     {
         public Shape Shape { get; }
-       
-        private readonly ArrayImmutable<T> internalArray;
-
         public int Length => internalArray.Length;
         public T this[int index] => internalArray[index];
         public T this[params int[] indices] => internalArray[Shape.FlattenIndices(indices)];
+        private readonly ArrayImmutable<T> internalArray;
 
         public ShapedArrayImmutable(Shape shape, ArrayImmutable<T> array)
         {
@@ -45,9 +43,14 @@ namespace GNet
         {
         }
 
-        public ArrayImmutable<T> ToFlat()
+        public static bool operator !=(ShapedArrayImmutable<T> left, ShapedArrayImmutable<T> right)
         {
-            return internalArray;
+            return !left.Equals(right);
+        }
+
+        public static bool operator ==(ShapedArrayImmutable<T> left, ShapedArrayImmutable<T> right)
+        {
+            return left.Equals(right);
         }
 
         public bool Equals(ShapedArrayImmutable<T> other)
@@ -70,19 +73,14 @@ namespace GNet
             return (obj is ShapedArrayImmutable<T> shapedArr) && Equals(shapedArr);
         }
 
-        public static bool operator ==(ShapedArrayImmutable<T> left, ShapedArrayImmutable<T> right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(ShapedArrayImmutable<T> left, ShapedArrayImmutable<T> right)
-        {
-            return !left.Equals(right);
-        }
-
         public override int GetHashCode()
         {
             return (internalArray, Shape).GetHashCode();
+        }
+
+        public ArrayImmutable<T> ToFlat()
+        {
+            return internalArray;
         }
     }
 }

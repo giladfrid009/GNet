@@ -1,24 +1,28 @@
 ﻿using System;
 using static System.Math;
 
-namespace GNet.Activations
+namespace GNet.Activations.Advanced
 {
     [Serializable]
-    public class BentIdentity : IActivation
+    public class Swish : IActivation
     {
         public ShapedArrayImmutable<double> Activate(ShapedArrayImmutable<double> vals)
         {
-            return vals.Select(X => (Sqrt(X * X + 1.0) - 1.0) / 2.0 + X);
+            return vals.Select(X => X / (Exp(-X) + 1.0));
         }
 
         public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> vals)
         {
-            return vals.Select(X => X / (2.0 * Sqrt(X * X + 1.0)) + 1.0);
+            return vals.Select(X =>
+            {
+                double exp = Exp(X);
+                return exp * (1.0 + exp + X) / Pow(1.0 + exp, 2.0);
+            });
         }
 
         public IActivation Clone()
         {
-            return new BentIdentity();
+            return new Swish();
         }
     }
 }

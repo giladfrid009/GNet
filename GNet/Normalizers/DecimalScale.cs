@@ -6,7 +6,6 @@ namespace GNet.Normalizers
     {
         public bool NormalizeInputs { get; set; }
         public bool NormalizeOutputs { get; set; }
-
         private double scale = 1;
 
         public void ExtractParams(Dataset dataset)

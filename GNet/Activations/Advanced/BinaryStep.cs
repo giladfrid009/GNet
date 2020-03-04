@@ -1,24 +1,23 @@
 ﻿using System;
-using static System.Math;
 
-namespace GNet.Activations
+namespace GNet.Activations.Advanced
 {
     [Serializable]
-    public class Sinc : IActivation
+    public class BinaryStep : IActivation
     {
         public ShapedArrayImmutable<double> Activate(ShapedArrayImmutable<double> vals)
         {
-            return vals.Select(X => X != 0.0 ? Sin(X) / X : 1.0);
+            return vals.Select(X => X > 0.0 ? 1.0 : 0.0);
         }
 
         public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> vals)
         {
-            return vals.Select(X => X != 0.0 ? Cos(X) / X - Sin(X) / (X * X) : 0.0);
+            return vals.Select(X => 0.0);
         }
 
         public IActivation Clone()
         {
-            return new Sinc();
+            return new BinaryStep();
         }
     }
 }
