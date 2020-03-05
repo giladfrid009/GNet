@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace GNet
@@ -13,18 +14,6 @@ namespace GNet
         public ArrayImmutable(params T[] array)
         {
             internalArray = array;
-
-            internalArray = new T[array.Length];
-
-            Array.Copy(array, 0, internalArray, 0, array.Length);
-        }
-
-        public ArrayImmutable(Array array)
-        {
-            if (array.GetType().GetElementType() != typeof(T))
-            {
-                throw new ArgumentException();
-            }
 
             internalArray = new T[array.Length];
 
@@ -54,6 +43,10 @@ namespace GNet
             {
                 internalArray[i++] = x;
             }
+        }
+
+        public ArrayImmutable(IEnumerable enumerable) : this(System.Linq.Enumerable.Cast<T>(enumerable))
+        {           
         }
 
         public ArrayImmutable(int length, Func<T> element)

@@ -1,34 +1,34 @@
 ﻿using System;
 using GNet.Layers.Internal;
-using GNet.Layers.Kernels;
 
 namespace GNet.Layers
 {
     [Serializable]
     public class Convolutional : Pooling
     {
-        public IInitializer Initializer { get; }
+        public IInitializer WeightInit => ((Kernels.Filter)InternalOutLayer.Kernel).WeightInit;
 
-        public Convolutional(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IInitializer initializer) :
-            base(inputShape, kernelShape, strides, paddings, new Filter(kernelShape, initializer))
+        protected Convolutional(ConvIn internalInLayer, ConvOut internalOutLayer) : base(internalInLayer, internalOutLayer)
         {
-            InternalOutLayer = new ConvOut(inputShape, kernelShape, strides, paddings, (Filter)Kernel);
-
-            Initializer = initializer.Clone();
         }
 
+        public Convolutional(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IInitializer weightInit) :
+            this(new ConvIn(inputShape), new ConvOut(inputShape, kernelShape, strides, paddings, new Kernels.Filter(kernelShape, weightInit)))
+        {
+        }
+        
         public override void Update()
         {
             InternalOutLayer.Update();
-        }
+        }       
 
         public override ILayer Clone()
         {
-            return new Convolutional(InputShape, KernelShape, Strides, Paddings, Initializer)
-            {
-                InternalInLayer = (ConvIn)InternalInLayer.Clone(),
-                InternalOutLayer = (PoolingOut)InternalOutLayer.Clone()
-            };
+            var layer =  new Convolutional((ConvIn)InternalInLayer.Clone(), (ConvOut)InternalOutLayer.Clone());
+
+            layer.CopySynapses(this);
+
+            return layer;
         }
     }
 }

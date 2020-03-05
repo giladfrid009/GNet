@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace GNet
@@ -25,17 +26,17 @@ namespace GNet
 
         public ShapedArrayImmutable(Shape shape, params T[] array) : this(shape, new ArrayImmutable<T>(array))
         {
-        }
-
-        public ShapedArrayImmutable(Shape shape, Array array) : this(shape, new ArrayImmutable<T>(array))
-        {
-        }
+        }       
 
         public ShapedArrayImmutable(Shape shape, IList<T> list) : this(shape, new ArrayImmutable<T>(list))
         {
-        }
+        }   
 
         public ShapedArrayImmutable(Shape shape, IEnumerable<T> enumerable) : this(shape, new ArrayImmutable<T>(enumerable))
+        {
+        }
+
+        public ShapedArrayImmutable(Shape shape, IEnumerable enumerable) : this(shape, new ArrayImmutable<T>(enumerable))
         {
         }
 

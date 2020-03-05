@@ -79,11 +79,6 @@ namespace GNet
 
         public ShapedArrayImmutable<double> FeedForward(ShapedArrayImmutable<double> inputs)
         {
-            if (inputs.Shape != Layers[0].Shape)
-            {
-                throw new ArgumentOutOfRangeException("inputs shape and input layer shape mismatch.");
-            }
-
             Layers[0].Input(inputs);
 
             for (int i = 1; i < Length; i++)
@@ -190,14 +185,7 @@ namespace GNet
         {
             var net = new Network(Layers.Select(L => L.Clone()));
 
-            net.Layers.ForEach((L, i) =>
-            {
-                L.Neurons.ForEach((N, j) =>
-                {
-                    N.InSynapses.ForEach((S, k) => S.CopyParams(Layers[i].Neurons[j].InSynapses[k]));
-                    N.OutSynapses.ForEach((S, k) => S.CopyParams(Layers[i].Neurons[j].OutSynapses[k]));
-                });
-            });
+            net.Layers.ForEach((L, i) => L.CopySynapses(Layers[i]));
 
             return net;
         }

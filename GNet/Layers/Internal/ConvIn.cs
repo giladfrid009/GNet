@@ -38,7 +38,7 @@ namespace GNet.Layers.Internal
         {
             if (values.Shape != Shape)
             {
-                throw new ArgumentOutOfRangeException("values shape mismatch.");
+                throw new ArgumentOutOfRangeException("Values shape mismatch.");
             }
 
             Neurons.ForEach((N, i) =>
@@ -74,6 +74,15 @@ namespace GNet.Layers.Internal
         public virtual void Update()
         {
             throw new NotSupportedException("This is a constant layer.");
+        }
+
+        public void CopySynapses(ILayer layer)
+        {
+            Neurons.ForEach((N, j) =>
+            {
+                N.InSynapses.ForEach((S, k) => S.CopyParams(Neurons[j].InSynapses[k]));
+                N.OutSynapses.ForEach((S, k) => S.CopyParams(Neurons[j].OutSynapses[k]));
+            });
         }
 
         public virtual ILayer Clone()

@@ -17,7 +17,6 @@ namespace GNet.Layers.Internal
         public Shape PaddedShape { get; }
         public bool IsTrainable => Kernel.IsTrainable;
 
-
         public PoolingOut(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IKernel kernel)
         {
             ValidateParams(inputShape, kernelShape, strides, paddings);
@@ -31,6 +30,8 @@ namespace GNet.Layers.Internal
             PaddedShape = CalcPaddedShape(inputShape, paddings);
 
             Shape = CalcOutputShape(inputShape, kernelShape, strides, paddings);
+
+            Neurons = new ShapedArrayImmutable<Neuron>(Shape, () => new Neuron());
         }
 
         private void ValidateParams(Shape shapeInput, Shape shapeKernel, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
@@ -170,6 +171,15 @@ namespace GNet.Layers.Internal
         public virtual void Update()
         {
             throw new NotSupportedException("This layer can't be trained.");
+        }
+
+        public void CopySynapses(ILayer layer)
+        {
+            Neurons.ForEach((N, j) =>
+            {
+                N.InSynapses.ForEach((S, k) => S.CopyParams(Neurons[j].InSynapses[k]));
+                N.OutSynapses.ForEach((S, k) => S.CopyParams(Neurons[j].OutSynapses[k]));
+            });
         }
 
         public virtual ILayer Clone()
