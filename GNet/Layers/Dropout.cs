@@ -5,6 +5,8 @@ namespace GNet.Layers
     [Serializable]
     public class Dropout : Dense
     {
+        // todo: idk if dropout works as intended. setting the value to 0 isn't enough, we need to set the weights leading to it to 0 also maybe?
+
         public double DropChance { get; }
         private ShapedArrayImmutable<bool> dropArray;
 
@@ -23,7 +25,7 @@ namespace GNet.Layers
         {
             if (values.Shape != Shape)
             {
-                throw new ArgumentOutOfRangeException("values shape mismatch.");
+                throw new ArgumentOutOfRangeException("Values shape mismatch.");
             }
 
             Neurons.ForEach((N, i) => N.Value = dropArray[i] ? 0 : values[i]);

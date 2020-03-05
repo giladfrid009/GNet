@@ -46,7 +46,7 @@ namespace GNet.Layers
         {
             if (values.Shape != Shape)
             {
-                throw new ArgumentOutOfRangeException("values shape mismatch.");
+                throw new ArgumentOutOfRangeException("Values shape mismatch.");
             }
 
             Neurons.ForEach((N, i) => N.Value = values[i]);
@@ -111,6 +111,15 @@ namespace GNet.Layers
                     S.Weight += S.BatchWeight;
                     S.BatchWeight = 0.0;
                 });
+            });
+        }
+
+        public void CopySynapses(ILayer layer)
+        {
+            Neurons.ForEach((N, j) =>
+            {
+                N.InSynapses.ForEach((S, k) => S.CopyParams(Neurons[j].InSynapses[k]));
+                N.OutSynapses.ForEach((S, k) => S.CopyParams(Neurons[j].OutSynapses[k]));
             });
         }
 

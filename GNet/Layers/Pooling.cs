@@ -7,8 +7,8 @@ namespace GNet.Layers
     [Serializable]
     public class Pooling : ILayer
     {
-        public ConvIn InternalInLayer { get; protected set; }
-        public PoolingOut InternalOutLayer { get; protected set; }
+        public ConvIn InternalInLayer { get; }
+        public PoolingOut InternalOutLayer { get; }
         public IKernel Kernel => InternalOutLayer.Kernel;
         public ShapedArrayImmutable<Neuron> Neurons => InternalOutLayer.Neurons;
         public ArrayImmutable<int> Paddings => InternalOutLayer.Paddings;
@@ -18,21 +18,29 @@ namespace GNet.Layers
         public Shape KernelShape => InternalOutLayer.KernelShape;
         public Shape PaddedShape => InternalOutLayer.PaddedShape;
         public bool IsTrainable => InternalOutLayer.IsTrainable;
+        
 
-        public Pooling(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IKernel kernel)
+        protected Pooling(ConvIn internalInLayer, PoolingOut internalOutLayer)
         {
-            InternalInLayer = new ConvIn(inputShape);
-            InternalOutLayer = new PoolingOut(inputShape, kernelShape, strides, paddings, kernel);
+            InternalInLayer = internalInLayer;
+            InternalOutLayer = internalOutLayer;
+
+            internalOutLayer.Connect(internalInLayer);
+        }
+
+        public Pooling(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IKernel kernel) :
+            this(new ConvIn(inputShape), new PoolingOut(inputShape, kernelShape, strides, paddings, kernel))
+        {
         }
 
         public void Connect(ILayer inLayer)
         {
             InternalInLayer.Connect(inLayer);
-            InternalOutLayer.Connect(InternalInLayer);
         }
 
         public void Initialize()
         {
+            InternalOutLayer.Connect(InternalInLayer);
             InternalInLayer.Initialize();
             InternalOutLayer.Initialize();
         }
@@ -66,13 +74,20 @@ namespace GNet.Layers
             throw new NotSupportedException("This layer can't be trained.");
         }
 
+        public void CopySynapses(ILayer layer)
+        {
+            InternalInLayer.CopySynapses(((Convolutional)layer).InternalInLayer);
+            InternalOutLayer.CopySynapses(((Convolutional)layer).InternalOutLayer);
+        }
+
         public virtual ILayer Clone()
         {
-            return new Pooling(InputShape, KernelShape, Strides, Paddings, Kernel)
-            {
-                InternalInLayer = (ConvIn)InternalInLayer.Clone(),
-                InternalOutLayer = (PoolingOut)InternalOutLayer.Clone()
-            };
+            var layer =  new Pooling((ConvIn)InternalInLayer.Clone(), (PoolingOut)InternalOutLayer.Clone());
+
+            layer.InternalInLayer.Neurons.ForEach((N, i) => N.OutSynapses.ForEach((S, j) => S.CopyParams(InternalInLayer.Neurons[i].OutSynapses[j])));
+            layer.InternalOutLayer.Neurons.ForEach((N, i) => N.InSynapses.ForEach((S, j) => S.CopyParams(InternalInLayer.Neurons[i].InSynapses[j])));
+
+            return layer;
         }
     }
 }
