@@ -8,13 +8,19 @@ namespace GNet
         {
             var net2 = new Network
             (
-                new Layers.Dense(new Shape(2, 2, 4), new Activations.Identity() ,new Initializers.One(), new Initializers.Zero()),
+                new Layers.Dense(new Shape(2, 2, 4), new Activations.Identity(), new Initializers.One(), new Initializers.Zero()),
                 new Layers.Convolutional(new Shape(2, 2, 4), new Shape(1, 1, 2), new ArrayImmutable<int>(1, 1, 2), new ArrayImmutable<int>(0, 0, 0), new Initializers.Normal())
             );
 
             net2.Initialize();
 
-            ShapedArrayImmutable<double> x = net2.FeedForward(new ShapedArrayImmutable<double>(new Shape(2, 2, 4), 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15));
+            var trainingData = new Dataset(new Data(new ShapedArrayImmutable<double>(new Shape(2, 2, 4), 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15),
+                new ShapedArrayImmutable<double>(new Shape(2, 2, 2), 0, 0, 0, 0, 0, 0, 0, 0)));
+
+            using (new Logger(net2) { LogEpoches = true })
+            {
+                net2.Train(trainingData, new Losses.MSE(), new Optimizers.Default(), 1, 1000, 0.001);
+            }
 
             var net = new Network
             (
@@ -23,7 +29,7 @@ namespace GNet
                 new Layers.Dense(new Shape(1), new Activations.Sigmoid(), new Initializers.Normal(), new Initializers.Zero())
             );
 
-            var datasetGenerator = new Datasets.Generators.EvenOdd(10);
+            var datasetGenerator = new Datasets.Generators.EvenOdd(new Shape(10));
             Dataset trainingDataset = datasetGenerator.Generate(2000);
             Dataset validationDataset = datasetGenerator.Generate(1000);
 

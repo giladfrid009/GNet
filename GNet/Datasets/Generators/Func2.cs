@@ -6,6 +6,8 @@ namespace GNet.Datasets.Generators
     public class Func2 : IDatasetGenerator
     {
         public Func<double, double, double> IOFunc { get; }
+        public Shape InputShape { get; } = new Shape(2);
+        public Shape OutputShape { get; } = new Shape(1);
         public double Range { get; }
 
         public Func2(Func<double, double, double> ioFunc, double range)

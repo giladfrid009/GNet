@@ -27,8 +27,6 @@ namespace GNet.Layers
             Paddings = paddings;
             Kernel = kernel.Clone();
 
-            Kernel.Initialize(KernelShape);
-
             PaddedShape = CalcPaddedShape(inputShape, paddings);
 
             Shape = CalcOutputShape(inputShape, kernelShape, strides, paddings);
@@ -113,14 +111,13 @@ namespace GNet.Layers
             padded.ForEach((N, i) => N.OutSynapses = new ShapedArrayImmutable<Synapse>(new Shape(inConnections[i].Count), inConnections[i]));
         }
 
-        public virtual void Initialize()
+        public void Initialize()
         {
             Neurons.ForEach(N =>
             {
-                Kernel.Update(N.InSynapses);
+                ShapedArrayImmutable<double> weights = Kernel.InitWeights(N.InSynapses.Select(S => S.InNeuron.ActivatedValue));
 
-                N.Bias = 0;
-                N.InSynapses.ForEach((S, i) => S.Weight = Kernel.Weights[i]);
+                N.InSynapses.ForEach((S, i) => S.Weight = weights[i]);
             });
         }
 
@@ -129,14 +126,10 @@ namespace GNet.Layers
             throw new NotSupportedException("This layer can't be used as input layer.");
         }
 
-        public virtual void Forward()
+        public void Forward()
         {
             Neurons.ForEach(N =>
             {
-                Kernel.Update(N.InSynapses);
-
-                N.InSynapses.ForEach((S, i) => S.Weight = Kernel.Weights[i]);
-
                 N.Value = N.InSynapses.Sum(S => S.Weight * S.InNeuron.ActivatedValue);
                 N.ActivatedValue = N.Value;
             });

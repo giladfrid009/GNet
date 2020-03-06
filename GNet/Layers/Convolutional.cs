@@ -10,33 +10,18 @@
             WeightInit = weightInit.Clone();
         }
 
-        public override void Initialize()
-        {
-            Neurons.ForEach(N =>
-            {
-                N.Bias = 0;
-                N.InSynapses.ForEach((S, i) => S.Weight = Kernel.Weights[i]);
-            });
-        }
-
-        public override void Forward()
-        {
-            Neurons.ForEach(N =>
-            {
-                N.Value = N.InSynapses.Sum(S => S.Weight * S.InNeuron.ActivatedValue);
-                N.ActivatedValue = N.Value;
-            });
-        }
-
         public override void Update()
         {
             Neurons.ForEach(N =>
             {
+                N.Bias += N.BatchBias;
                 N.BatchBias = 0.0;
 
-                Kernel.Update(N.InSynapses);
-
-                N.InSynapses.ForEach(S => S.BatchWeight = 0.0);
+                N.InSynapses.ForEach(S =>
+                {
+                    S.Weight += S.BatchWeight;
+                    S.BatchWeight = 0.0;
+                });
             });
         }
 

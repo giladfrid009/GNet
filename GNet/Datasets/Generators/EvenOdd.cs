@@ -5,11 +5,12 @@ namespace GNet.Datasets.Generators
     [Serializable]
     public class EvenOdd : IDatasetGenerator
     {
-        public int InputLength { get; }
+        public Shape InputShape { get; }
+        public Shape OutputShape { get; } = new Shape(1);
 
-        public EvenOdd(int inputLength)
+        public EvenOdd(Shape inputShape)
         {
-            InputLength = inputLength;
+            InputShape = inputShape;
         }
 
         public Dataset Generate(int length)
@@ -18,20 +19,21 @@ namespace GNet.Datasets.Generators
 
             for (int i = 0; i < length; i++)
             {
-                int zeroCount = 0;
-                double[] inputs = new double[InputLength];
+                var input = new ShapedArrayImmutable<double>(InputShape, () => GRandom.NextDouble() < 0.5 ? 0.0 : 1.0);
 
-                for (int j = 0; j < InputLength; j++)
+                int zeroCount = 0;
+
+                input.ForEach(X => 
                 {
-                    inputs[j] = GRandom.NextDouble() < 0.5 ? 0.0 : 1.0;
-                    zeroCount += inputs[j] == 0.0 ? 0 : 1;
-                }
+                    if (X == 0)
+                    {
+                        zeroCount++;
+                    }
+                });
 
                 double output = zeroCount % 2 == 0 ? 0.0 : 1.0;
 
-                dataCollection[i] = new Data(
-                    new ShapedArrayImmutable<double>(new Shape(inputs.Length), inputs),
-                    new ShapedArrayImmutable<double>(new Shape(1), output));
+                dataCollection[i] = new Data(input, new ShapedArrayImmutable<double>(new Shape(1), output));
             }
 
             return new Dataset(dataCollection);
@@ -39,7 +41,7 @@ namespace GNet.Datasets.Generators
 
         public IDatasetGenerator Clone()
         {
-            return new EvenOdd(InputLength);
+            return new EvenOdd(InputShape);
         }
     }
 }
