@@ -13,7 +13,7 @@ namespace GNet.Layers
         }
 
         public Convolutional(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IInitializer weightInit) :
-            this(new ConvIn(inputShape), new ConvOut(inputShape, kernelShape, strides, paddings, new Kernels.Filter(kernelShape, weightInit)))
+            this(new ConvIn(inputShape), new ConvOut(inputShape, kernelShape, strides, paddings, new Kernels.Filter(weightInit)))
         {
         }
         

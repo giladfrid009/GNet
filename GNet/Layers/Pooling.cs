@@ -26,6 +26,7 @@ namespace GNet.Layers
             InternalOutLayer = internalOutLayer;
 
             internalOutLayer.Connect(internalInLayer);
+            internalOutLayer.Initialize();
         }
 
         public Pooling(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IKernel kernel) :
@@ -40,9 +41,7 @@ namespace GNet.Layers
 
         public void Initialize()
         {
-            InternalOutLayer.Connect(InternalInLayer);
             InternalInLayer.Initialize();
-            InternalOutLayer.Initialize();
         }
 
         public void Input(ShapedArrayImmutable<double> values)
@@ -84,8 +83,7 @@ namespace GNet.Layers
         {
             var layer =  new Pooling((ConvIn)InternalInLayer.Clone(), (PoolingOut)InternalOutLayer.Clone());
 
-            layer.InternalInLayer.Neurons.ForEach((N, i) => N.OutSynapses.ForEach((S, j) => S.CopyParams(InternalInLayer.Neurons[i].OutSynapses[j])));
-            layer.InternalOutLayer.Neurons.ForEach((N, i) => N.InSynapses.ForEach((S, j) => S.CopyParams(InternalInLayer.Neurons[i].InSynapses[j])));
+            layer.CopySynapses(this);
 
             return layer;
         }

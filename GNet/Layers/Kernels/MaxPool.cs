@@ -7,10 +7,10 @@ namespace GNet.Layers.Kernels
     public class MaxPool : IKernel
     {
         public ShapedArrayImmutable<double> Weights { get; private set; }
-        public Shape Shape { get; }
+        public Shape Shape { get; private set; }
         public bool IsTrainable { get; } = false;
 
-        public MaxPool(Shape shape)
+        public void Initialize(Shape shape)
         {
             Shape = shape;
             Weights = new ShapedArrayImmutable<double>(shape, () => 0.0);
@@ -30,8 +30,9 @@ namespace GNet.Layers.Kernels
 
         public IKernel Clone()
         {
-            return new MaxPool(Shape)
+            return new MaxPool()
             {
+                Shape = Shape,
                 Weights = Weights
             };
         }
