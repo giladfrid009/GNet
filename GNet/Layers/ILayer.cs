@@ -21,7 +21,5 @@ namespace GNet
         void CalcGrads();
 
         void Update();
-
-        void CopySynapses(ILayer layer);
     }
 }

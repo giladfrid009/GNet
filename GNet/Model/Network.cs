@@ -185,7 +185,11 @@ namespace GNet
         {
             var net = new Network(Layers.Select(L => L.Clone()));
 
-            net.Layers.ForEach((L, i) => L.CopySynapses(Layers[i]));
+            Layers.ForEach((L, i) => L.Neurons.ForEach((N, j) =>
+            {
+                N.InSynapses.ForEach((S, k) => S.CopyParams(Layers[i].Neurons[j].InSynapses[k]));
+                N.OutSynapses.ForEach((S, k) => S.CopyParams(Layers[i].Neurons[j].OutSynapses[k]));
+            }));
 
             return net;
         }

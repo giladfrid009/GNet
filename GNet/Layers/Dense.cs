@@ -1,7 +1,6 @@
 ﻿using System;
 using GNet.Model;
 
-// todo: rewrite
 namespace GNet.Layers
 {
     [Serializable]
@@ -69,7 +68,7 @@ namespace GNet.Layers
         {
             if (targets.Shape != Shape)
             {
-                throw new ArgumentException("targets shape mismatch.");
+                throw new ArgumentException("Targets shape mismatch.");
             }
 
             if (loss is IOutTransformer)
@@ -111,15 +110,6 @@ namespace GNet.Layers
                     S.Weight += S.BatchWeight;
                     S.BatchWeight = 0.0;
                 });
-            });
-        }
-
-        public void CopySynapses(ILayer layer)
-        {
-            Neurons.ForEach((N, j) =>
-            {
-                N.InSynapses.ForEach((S, k) => S.CopyParams(Neurons[j].InSynapses[k]));
-                N.OutSynapses.ForEach((S, k) => S.CopyParams(Neurons[j].OutSynapses[k]));
             });
         }
 

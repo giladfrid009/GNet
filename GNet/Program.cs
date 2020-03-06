@@ -8,7 +8,8 @@ namespace GNet
         {
             var net2 = new Network
             (
-                new Layers.Pooling(new Shape(2, 2, 4), new Shape(1, 1, 2), new ArrayImmutable<int>(1, 1, 2), new ArrayImmutable<int>(0, 0, 0), new Layers.Kernels.MaxPool())
+                new Layers.Dense(new Shape(2, 2, 4), new Activations.Identity() ,new Initializers.One(), new Initializers.Zero()),
+                new Layers.Convolutional(new Shape(2, 2, 4), new Shape(1, 1, 2), new ArrayImmutable<int>(1, 1, 2), new ArrayImmutable<int>(0, 0, 0), new Initializers.Normal())
             );
 
             net2.Initialize();

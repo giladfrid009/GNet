@@ -1,35 +1,52 @@
-﻿using System;
-using GNet.Layers.Internal;
-
-namespace GNet.Layers
+﻿namespace GNet.Layers
 {
-    // todo: should conv and pooling layer implement activation func to limit the output range between (-1, 1)?
-    [Serializable]
     public class Convolutional : Pooling
     {
-        public IInitializer WeightInit => ((Kernels.Filter)InternalOutLayer.Kernel).WeightInit;
+        public IInitializer WeightInit { get; }
 
-        protected Convolutional(ConvIn internalInLayer, ConvOut internalOutLayer) : base(internalInLayer, internalOutLayer)
+        public Convolutional(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IInitializer weightInit) : 
+            base(inputShape, kernelShape, strides, paddings, new Kernels.Filter(weightInit))
         {
+            WeightInit = weightInit.Clone();
         }
 
-        public Convolutional(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IInitializer weightInit) :
-            this(new ConvIn(inputShape), new ConvOut(inputShape, kernelShape, strides, paddings, new Kernels.Filter(weightInit)))
+        public override void Initialize()
         {
+            Neurons.ForEach(N =>
+            {
+                N.Bias = 0;
+                N.InSynapses.ForEach((S, i) => S.Weight = Kernel.Weights[i]);
+            });
         }
-        
+
+        public override void Forward()
+        {
+            Neurons.ForEach(N =>
+            {
+                N.Value = N.InSynapses.Sum(S => S.Weight * S.InNeuron.ActivatedValue);
+                N.ActivatedValue = N.Value;
+            });
+        }
+
         public override void Update()
         {
-            InternalOutLayer.Update();
-        }       
+            Neurons.ForEach(N =>
+            {
+                N.BatchBias = 0.0;
+
+                Kernel.Update(N.InSynapses);
+
+                N.InSynapses.ForEach(S => S.BatchWeight = 0.0);
+            });
+        }
 
         public override ILayer Clone()
         {
-            var layer =  new Convolutional((ConvIn)InternalInLayer.Clone(), (ConvOut)InternalOutLayer.Clone());
-
-            layer.CopySynapses(this);
-
-            return layer;
+            return new Convolutional(InputShape, KernelShape, Strides, Paddings, WeightInit)
+            {
+                Kernel = Kernel.Clone(),
+                Neurons = Neurons.Select(N => N.Clone())
+            };
         }
     }
 }

@@ -6,6 +6,7 @@ namespace GNet.Layers
     public class Dropout : Dense
     {
         // todo: idk if dropout works as intended. setting the value to 0 isn't enough, we need to set the weights leading to it to 0 also maybe?
+        // todo: each layer should be able to implement dropout. maybe?
 
         public double DropChance { get; }
         private ShapedArrayImmutable<bool> dropArray;
