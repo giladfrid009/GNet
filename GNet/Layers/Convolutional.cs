@@ -3,6 +3,7 @@ using GNet.Layers.Internal;
 
 namespace GNet.Layers
 {
+    // todo: should conv and pooling layer implement activation func to limit the output range between (-1, 1)?
     [Serializable]
     public class Convolutional : Pooling
     {
