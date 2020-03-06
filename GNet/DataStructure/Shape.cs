@@ -88,7 +88,7 @@ namespace GNet
 
             for (int i = 0; i < NumDimentions; i++)
             {
-                if (start[i] < 0 || strides[i] < 1 || start[i] + strides[i] >= Dimensions[i])
+                if (start[i] < 0 || strides[i] < 1)
                 {
                     throw new ArgumentOutOfRangeException();
                 }

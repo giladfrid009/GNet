@@ -8,6 +8,8 @@ namespace GNet.Layers
         Shape Shape { get; }
         bool IsTrainable { get; }
 
+        void Initialize(Shape shape);
+
         void Update(ShapedArrayImmutable<Synapse> inSynapses);
     }
 }

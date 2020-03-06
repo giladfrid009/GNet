@@ -6,11 +6,11 @@ namespace GNet.Layers.Kernels
     [Serializable]
     public class AvaragePool : IKernel
     {
-        public ShapedArrayImmutable<double> Weights { get; }
-        public Shape Shape { get; }
+        public ShapedArrayImmutable<double> Weights { get; private set; }
+        public Shape Shape { get; private set; }
         public bool IsTrainable { get; } = false;
 
-        public AvaragePool(Shape shape)
+        public void Initialize(Shape shape)
         {
             Shape = shape;
             Weights = new ShapedArrayImmutable<double>(shape, () => 1.0 / shape.Volume);
@@ -22,7 +22,11 @@ namespace GNet.Layers.Kernels
 
         public IKernel Clone()
         {
-            return new AvaragePool(Shape);
+            return new AvaragePool()
+            {
+                Shape = Shape,
+                Weights = Weights
+            };
         }
     }
 }

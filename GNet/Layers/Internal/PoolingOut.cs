@@ -27,6 +27,8 @@ namespace GNet.Layers.Internal
             Paddings = paddings;
             Kernel = kernel.Clone();
 
+            Kernel.Initialize(KernelShape);
+
             PaddedShape = CalcPaddedShape(inputShape, paddings);
 
             Shape = CalcOutputShape(inputShape, kernelShape, strides, paddings);
@@ -129,10 +131,12 @@ namespace GNet.Layers.Internal
 
         public virtual void Forward()
         {
-            Initialize();
-
             Neurons.ForEach(N =>
             {
+                Kernel.Update(N.InSynapses);
+
+                N.InSynapses.ForEach((S, i) => S.Weight = Kernel.Weights[i]);
+
                 N.Value = N.InSynapses.Sum(S => S.Weight * S.InNeuron.ActivatedValue);
                 N.ActivatedValue = N.Value;
             });

@@ -8,14 +8,18 @@ namespace GNet.Layers.Kernels
     {
         public IInitializer WeightInit { get; }
         public ShapedArrayImmutable<double> Weights { get; private set; }
-        public Shape Shape { get; }
+        public Shape Shape { get; private set; }
         public bool IsTrainable { get; set; } = true;
 
-        public Filter(Shape shape, IInitializer weightInit)
+        public Filter(IInitializer weightInit)
+        {
+            WeightInit = weightInit.Clone();
+        }
+
+        public void Initialize(Shape shape)
         {
             Shape = shape;
-            WeightInit = weightInit.Clone();
-            Weights = new ShapedArrayImmutable<double>(Shape, () => weightInit.Initialize(Shape.Volume, 1));
+            Weights = new ShapedArrayImmutable<double>(shape, () => WeightInit.Initialize(Shape.Volume, 1));
         }
 
         public void Update(ShapedArrayImmutable<Synapse> inSynapses)
@@ -30,8 +34,9 @@ namespace GNet.Layers.Kernels
 
         public IKernel Clone()
         {
-            return new Filter(Shape, WeightInit)
+            return new Filter(WeightInit)
             {
+                Shape = Shape,
                 Weights = Weights,
                 IsTrainable = IsTrainable
             };
