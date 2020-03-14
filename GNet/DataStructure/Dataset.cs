@@ -31,7 +31,7 @@ namespace GNet
         {
         }
 
-        private Data NormalizeData(Data data, INormalizer normalizer)
+        private static Data NormalizeData(Data data, INormalizer normalizer)
         {
             ShapedArrayImmutable<double> inputs = normalizer.NormalizeInputs ? normalizer.Normalize(data.Inputs) : data.Inputs;
             ShapedArrayImmutable<double> outptus = normalizer.NormalizeInputs ? normalizer.Normalize(data.Outputs) : data.Outputs;

@@ -96,9 +96,14 @@ namespace GNet
 
         public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError)
         {
-            if (dataset.InputShape != Layers[0].Shape || dataset.OutputShape != Layers[Length - 1].Shape)
+            if (dataset.InputShape != Layers[0].Shape)
             {
-                throw new Exception("dataset structure mismatch with network input structure.");
+                throw new Exception("Dataset input shape mismatch.");
+            }
+
+            if (dataset.OutputShape != Layers[Length - 1].Shape)
+            {
+                throw new Exception("Dataset output shape mismatch.");
             }
 
             double error = Validate(dataset, loss);
@@ -137,14 +142,14 @@ namespace GNet
 
         public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double valMinError, Dataset valDataset, ILoss valLoss)
         {
-            if (dataset.InputShape != Layers[0].Shape || dataset.OutputShape != Layers[Length - 1].Shape)
+            if (dataset.InputShape != Layers[0].Shape)
             {
-                throw new Exception("dataset structure mismatch with network input structure.");
+                throw new Exception("Dataset input shape mismatch.");
             }
 
-            if (valDataset.InputShape != Layers[0].Shape || valDataset.OutputShape != Layers[Length - 1].Shape)
+            if (dataset.OutputShape != Layers[Length - 1].Shape)
             {
-                throw new Exception("dataset structure mismatch with network input structure.");
+                throw new Exception("Dataset output shape mismatch.");
             }
 
             double valError = Validate(valDataset, valLoss);

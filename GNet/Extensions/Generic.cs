@@ -31,9 +31,9 @@ namespace GNet
             return Select((IArray<TSource>)source, selector).ToShape(source.Shape);
         }
 
-        public static ArrayImmutable<TSource> Combine<TSource>(this IArray<TSource> source, IArray<TSource> array, Func<TSource, TSource, TSource> selector)
+        public static ArrayImmutable<TSource> Combine<TSource>(this IArray<TSource> source, IArray<TSource> other, Func<TSource, TSource, TSource> selector)
         {
-            if (source.Length != array.Length)
+            if (source.Length != other.Length)
             {
                 throw new ArgumentException("source and array length mismatch.");
             }
@@ -42,15 +42,53 @@ namespace GNet
 
             for (int i = 0; i < source.Length; i++)
             {
-                combined[i] = selector(source[i], array[i]);
+                combined[i] = selector(source[i], other[i]);
             }
 
             return new ArrayImmutable<TSource>(combined);
         }
 
-        public static ShapedArrayImmutable<TSource> Combine<TSource>(this ShapedArrayImmutable<TSource> source, IArray<TSource> array, Func<TSource, TSource, TSource> selector)
+        public static ShapedArrayImmutable<TSource> Combine<TSource>(this ShapedArrayImmutable<TSource> source, IArray<TSource> other, Func<TSource, TSource, TSource> selector)
         {
-            return Combine((IArray<TSource>)source, array, selector).ToShape(source.Shape);
+            return Combine((IArray<TSource>)source, other, selector).ToShape(source.Shape);
+        }
+
+        public static ArrayImmutable<TSource> Extract<TSource, TArr>(this IArray<TArr> source) where TArr : IArray<TSource>
+        {
+            var extracted = new TSource[(int)source.Sum(X => X.Length)];
+
+            int idx = 0;
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                for (int j = 0; j < source[i].Length; j++)
+                {
+                    extracted[idx++] = source[i][j];
+                }
+            }
+
+            return new ArrayImmutable<TSource>(extracted);
+        }
+
+        public static ArrayImmutable<TSource> Concat<TSource>(this IArray<TSource> source, params IArray<TSource>[] others)
+        {
+            int length = source.Length;
+
+            for (int i = 0; i < others.Length; i++)
+            {
+                length += others[i].Length;
+            }
+
+            var concated = new TSource[length];
+
+            int idx = 0;
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                concated[idx++] = source[i];
+            }
+
+            return new ArrayImmutable<TSource>(concated);
         }
 
         public static void ForEach<TSource>(this IArray<TSource> source, Action<TSource, int> action)
