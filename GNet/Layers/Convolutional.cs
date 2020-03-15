@@ -222,6 +222,7 @@ namespace GNet.Layers
             {
                 Neurons = Neurons.Select(N => N.Clone()),
                 Kernels = Kernels.Select(K => K.Clone()),
+                ChannelShape = ChannelShape,
                 Shape = Shape,
                 InputShape = InputShape,
                 PaddedShape = PaddedShape
