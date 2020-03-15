@@ -112,7 +112,7 @@ namespace GNet.Layers
 
             PaddedShape = CalcPaddedShape(inLayer.Shape);
 
-            Shape = CalcOutputShape(inLayer.Shape); // 1 more dimension than input shape, based on number of kernels
+            Shape = CalcOutputShape(inLayer.Shape);
 
             Neurons = new ShapedArrayImmutable<Neuron>(Shape, () => new Neuron());
 
@@ -124,11 +124,9 @@ namespace GNet.Layers
 
             var inConnections = new ShapedArrayImmutable<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 
-            // till this point everything is the same
-
             ArrayImmutable<ArrayImmutable<Synapse>> synapses = Kernels.Select((K, i) =>
             {
-                int offset = i * KernelShape.Volume;
+                int offset = i * Shape.Volume / KernelsNum;
 
                 return IndexGen.ByStrides(PaddedShape, Strides, KernelShape).Select((idxKernel, j) =>
                 {
@@ -149,13 +147,16 @@ namespace GNet.Layers
 
         public void Initialize()
         {
-            
-
             int inLength = KernelShape.Volume;
 
             Neurons.ForEach(N => N.Bias = BiasInit.Initialize(inLength, 1));
 
-            // todo: implement
+            Neurons.ForEach((N, i) =>
+            {
+                ShapedArrayImmutable<double> weights = Kernels[i / (Shape.Volume / KernelsNum)].Weights;
+
+                N.InSynapses.ForEach((S, i) => S.Weight = weights[i]);
+            });           
         }        
 
         public void Input(ShapedArrayImmutable<double> values)
@@ -165,30 +166,18 @@ namespace GNet.Layers
 
         public void Forward()
         {
-            // todo: implement
+            Neurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Sum(S => S.Weight * S.InNeuron.ActivatedValue));
 
-            Neurons.ForEach(N =>
-            {
-                N.Value = N.InSynapses.Sum(S => S.Weight * S.InNeuron.ActivatedValue) / KernelShape.Volume;
-                N.ActivatedValue = N.Value;
-            });
+            ShapedArrayImmutable<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
+
+            Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }
 
         public void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
         {
-            // todo: implement the activation
-
-            if (targets.Shape != Shape)
-            {
-                throw new ArgumentException("Targets shape mismatch.");
-            }
-
-            if (loss is IOutTransformer)
-            {
-                throw new ArgumentException($"{nameof(loss)} loss doesn't support backpropogation.");
-            }
-
-            ShapedArrayImmutable<double> grads = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
+            ShapedArrayImmutable<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
+            ShapedArrayImmutable<double> lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
+            ShapedArrayImmutable<double> grads = lossDers.Combine(actvDers, (LD, AD) => LD * AD);
 
             Neurons.ForEach((N, i) =>
             {
@@ -199,22 +188,38 @@ namespace GNet.Layers
 
         public void CalcGrads()
         {
-            // todo: implement the activation
+            ShapedArrayImmutable<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
 
             Neurons.ForEach((N, i) =>
             {
-                N.Gradient = N.OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient);
+                N.Gradient = N.OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient) * actvDers[i];
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
             });
         }
 
         public virtual void Update()
         {
-            //todo: implement
+            Neurons.ForEach((N, i) =>
+            {
+                N.Bias += N.BatchBias;
+                N.BatchBias = 0.0;
+
+                Kernels[i / (Shape.Volume / KernelsNum)].Update(N.InSynapses);
+
+                N.InSynapses.ForEach(S => S.BatchWeight = 0.0);
+            });
+
+            Neurons.ForEach((N, i) =>
+            {
+                ShapedArrayImmutable<double> weights = Kernels[i / (Shape.Volume / KernelsNum)].Weights;
+
+                N.InSynapses.ForEach((S, i) => S.Weight = weights[i]);
+            });
         }
 
         public virtual ILayer Clone()
         {
+            // todo: implement fully
             return new Convolutional(KernelsNum, KernelShape, Strides, Paddings, Activation, WeightInit, BiasInit)
             {
                 Neurons = Neurons.Select(N => N.Clone()),
