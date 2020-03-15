@@ -10,7 +10,7 @@ namespace GNet
             (
                 new Layers.Dense(new Shape(4, 4), new Activations.Identity(), new Initializers.One(), new Initializers.Zero()),
                 //new Layers.Pooling(new Shape(4, 4), new ArrayImmutable<int>(1, 1), new ArrayImmutable<int>(1, 1), new Layers.Poolers.Max()),
-                new Layers.Convolutional(30, new Shape(2,2), new ArrayImmutable<int>(2,2), new ArrayImmutable<int>(0,0), new Activations.Sigmoid(), new Initializers.Normal(), new Initializers.Normal())
+                new Layers.Convolutional(30, new Shape(2, 2), new ArrayImmutable<int>(2, 2), new ArrayImmutable<int>(0, 0), new Activations.Sigmoid(), new Initializers.Normal(), new Initializers.Normal())
             );
 
             net2.Initialize();

@@ -5,9 +5,6 @@ using GNet.Model;
 namespace GNet.Layers
 {
     // todo: create abstract convolutional class with all the shared methods between this class and pooling.
-    //todo: implement proper convolution
-    //todo: implement activation fnc
-    //tood: implement bias
     [Serializable]
     public class Convolutional : ILayer
     {
@@ -20,16 +17,17 @@ namespace GNet.Layers
         public ArrayImmutable<int> Paddings { get; }
         public Shape Shape { get; private set; }
         public Shape InputShape { get; private set; }
-        public Shape KernelShape { get; }
         public Shape PaddedShape { get; private set; }
-        public int KernelsNum { get; }
+        public Shape KernelShape { get; }
+        public Shape ChannelShape { get; private set; }
+        public int ChannelNum { get; }
         public bool IsTrainable { get; set; } = true;
 
-        public Convolutional(int kernelsNum, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IActivation activation, IInitializer weightInit, IInitializer biasInit)
+        public Convolutional(int channelNum, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IActivation activation, IInitializer weightInit, IInitializer biasInit)
         {
-            ValidateConstructor(kernelsNum, kernelShape, strides, paddings);
+            ValidateConstructor(channelNum, kernelShape, strides, paddings);
 
-            KernelsNum = kernelsNum;
+            ChannelNum = channelNum;
             KernelShape = kernelShape;
             Strides = strides;
             Paddings = paddings;
@@ -37,7 +35,7 @@ namespace GNet.Layers
             WeightInit = weightInit.Clone();
             BiasInit = biasInit.Clone();
 
-            Kernels = new ArrayImmutable<Kernel>(kernelsNum, () => new Kernel(kernelShape, weightInit));
+            Kernels = new ArrayImmutable<Kernel>(channelNum, () => new Kernel(kernelShape, weightInit));
         }
 
         private static void ValidateConstructor(int kernelsNum, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
@@ -97,11 +95,9 @@ namespace GNet.Layers
             return new Shape(shapeInput.Dimensions.Select((D, i) => D + 2 * Paddings[i]));
         }
 
-        private Shape CalcOutputShape(Shape inputShape)
+        private Shape CalcChannelShape(Shape inputShape)
         {
-            ArrayImmutable<int> outDims = inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * Paddings[i] - KernelShape.Dimensions[i]) / Strides[i]);
-
-            return new Shape(new ArrayImmutable<int>(KernelsNum).Concat(outDims));
+            return new Shape(inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * Paddings[i] - KernelShape.Dimensions[i]) / Strides[i]));
         }
 
         public void Connect(ILayer inLayer)
@@ -112,7 +108,9 @@ namespace GNet.Layers
 
             PaddedShape = CalcPaddedShape(inLayer.Shape);
 
-            Shape = CalcOutputShape(inLayer.Shape);
+            ChannelShape = CalcChannelShape(inLayer.Shape);
+
+            Shape = new Shape(new ArrayImmutable<int>(ChannelNum).Concat(ChannelShape.Dimensions));
 
             Neurons = new ShapedArrayImmutable<Neuron>(Shape, () => new Neuron());
 
@@ -126,7 +124,7 @@ namespace GNet.Layers
 
             ArrayImmutable<ArrayImmutable<Synapse>> synapses = Kernels.Select((K, i) =>
             {
-                int offset = i * Shape.Volume / KernelsNum;
+                int offset = i * ChannelShape.Volume;
 
                 return IndexGen.ByStrides(PaddedShape, Strides, KernelShape).Select((idxKernel, j) =>
                 {
@@ -153,7 +151,7 @@ namespace GNet.Layers
 
             Neurons.ForEach((N, i) =>
             {
-                ShapedArrayImmutable<double> weights = Kernels[i / (Shape.Volume / KernelsNum)].Weights;
+                ShapedArrayImmutable<double> weights = Kernels[i / (Shape.Volume / ChannelNum)].Weights;
 
                 N.InSynapses.ForEach((S, i) => S.Weight = weights[i]);
             });           
@@ -204,14 +202,14 @@ namespace GNet.Layers
                 N.Bias += N.BatchBias;
                 N.BatchBias = 0.0;
 
-                Kernels[i / (Shape.Volume / KernelsNum)].Update(N.InSynapses);
+                Kernels[i / ChannelShape.Volume].Update(N.InSynapses);
 
                 N.InSynapses.ForEach(S => S.BatchWeight = 0.0);
             });
 
             Neurons.ForEach((N, i) =>
             {
-                ShapedArrayImmutable<double> weights = Kernels[i / (Shape.Volume / KernelsNum)].Weights;
+                ShapedArrayImmutable<double> weights = Kernels[i / (Shape.Volume / ChannelNum)].Weights;
 
                 N.InSynapses.ForEach((S, i) => S.Weight = weights[i]);
             });
@@ -220,7 +218,7 @@ namespace GNet.Layers
         public virtual ILayer Clone()
         {
             // todo: implement fully
-            return new Convolutional(KernelsNum, KernelShape, Strides, Paddings, Activation, WeightInit, BiasInit)
+            return new Convolutional(ChannelNum, KernelShape, Strides, Paddings, Activation, WeightInit, BiasInit)
             {
                 Neurons = Neurons.Select(N => N.Clone()),
                 Kernels = Kernels.Select(K => K.Clone()),
