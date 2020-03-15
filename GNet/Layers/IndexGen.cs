@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace GNet.Layers
 {
-    public static class ConvHelpers
+    public static class IndexGen
     {
-        public static ArrayImmutable<int[]> GenerateIndices(Shape shape, ArrayImmutable<int> start, ArrayImmutable<int> strides, Shape kernel)
+        public static ArrayImmutable<int[]> Generate(Shape shape, ArrayImmutable<int> start, ArrayImmutable<int> strides, Shape kernel)
         {
             if (strides.Length != shape.NumDimentions)
             {
@@ -65,14 +65,14 @@ namespace GNet.Layers
             }
         }
 
-        public static ArrayImmutable<int[]> IndicesByStrides(Shape shape, ArrayImmutable<int> strides, Shape kernel)
+        public static ArrayImmutable<int[]> ByStrides(Shape shape, ArrayImmutable<int> strides, Shape kernel)
         {
-            return GenerateIndices(shape, new ArrayImmutable<int>(shape.NumDimentions, () => 0), strides, kernel);
+            return Generate(shape, new ArrayImmutable<int>(shape.NumDimentions, () => 0), strides, kernel);
         }
 
-        public static ArrayImmutable<int[]> IndicesByStart(Shape shape, ArrayImmutable<int> start)
+        public static ArrayImmutable<int[]> ByStart(Shape shape, ArrayImmutable<int> start)
         {
-            return GenerateIndices(shape, start, new ArrayImmutable<int>(shape.NumDimentions, () => 1), new Shape(new ArrayImmutable<int>(shape.NumDimentions, () => 1)));
+            return Generate(shape, start, new ArrayImmutable<int>(shape.NumDimentions, () => 1), new Shape(new ArrayImmutable<int>(shape.NumDimentions, () => 1)));
         }
     }
 }

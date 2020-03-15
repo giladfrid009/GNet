@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GNet
 {
@@ -53,39 +54,29 @@ namespace GNet
             return Combine((IArray<TSource>)source, other, selector).ToShape(source.Shape);
         }
 
-        public static ArrayImmutable<TSource> Extract<TSource, TArr>(this IArray<TArr> source) where TArr : IArray<TSource>
+        public static ArrayImmutable<TOut> Extract<TOut, TSource>(this IArray<TSource> source, Func<TSource, IArray<TOut>> extractor) where TSource : IArray<TOut>
         {
-            var extracted = new TSource[(int)source.Sum(X => X.Length)];
-
-            int idx = 0;
+            var extracted = new List<TOut>();
 
             for (int i = 0; i < source.Length; i++)
             {
-                for (int j = 0; j < source[i].Length; j++)
-                {
-                    extracted[idx++] = source[i][j];
-                }
+                var innerArr = extractor(source[i]);
+
+                innerArr.ForEach(X => extracted.Add(X));
             }
 
-            return new ArrayImmutable<TSource>(extracted);
+            return new ArrayImmutable<TOut>(extracted);
         }
 
         public static ArrayImmutable<TSource> Concat<TSource>(this IArray<TSource> source, params IArray<TSource>[] others)
         {
-            int length = source.Length;
+            var concated = new List<TSource>();
+
+            source.ForEach(X => concated.Add(X));
 
             for (int i = 0; i < others.Length; i++)
             {
-                length += others[i].Length;
-            }
-
-            var concated = new TSource[length];
-
-            int idx = 0;
-
-            for (int i = 0; i < source.Length; i++)
-            {
-                concated[idx++] = source[i];
+                others[i].ForEach(X => concated.Add(X));
             }
 
             return new ArrayImmutable<TSource>(concated);

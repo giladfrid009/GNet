@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace GNet
 {
@@ -51,12 +50,12 @@ namespace GNet
 
         public int FlattenIndices(params int[] indices)
         {
-            if (indices.Length > NumDimentions)
+            if (indices.Length > NumDimentions)               
             {
-                throw new ArgumentOutOfRangeException("Indices length is out of range.");
+                throw new ArgumentException("Indices length is out of range.");
             }
 
-            for (int i = 0; i < NumDimentions; i++)
+            for (int i = 0; i < indices.Length; i++)
             {
                 if (indices[i] < 0 || indices[i] > Dimensions[i] - 1)
                 {

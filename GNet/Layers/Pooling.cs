@@ -4,6 +4,8 @@ using GNet.Model;
 
 namespace GNet.Layers
 {
+    //todo: pooling is conv layer with 1 filter(which doesnt change the output dimensions)
+    //todo: i dont like that it's not appearent what's the input / output shape is when we creating conv layers. maybe force to input the input shape when creating it?
     [Serializable]
     public class Pooling : ILayer
     {
@@ -17,10 +19,9 @@ namespace GNet.Layers
         public Shape PaddedShape { get; private set; }
         public bool IsTrainable { get; } = false;
 
-        // todo: i dont like that it's not appearent what's the input / output shape is when we creating conv layers. maybe force to input the input shape when creating it?
         public Pooling(Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IPooler pooler)
         {
-            ValidateParams(kernelShape, strides, paddings);
+            ValidateConstructor(kernelShape, strides, paddings);
 
             KernelShape = kernelShape;
             Strides = strides;
@@ -28,7 +29,7 @@ namespace GNet.Layers
             Pooler = pooler.Clone();
         }
 
-        private static void ValidateParams(Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
+        private static void ValidateConstructor(Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
         {
             if (kernelShape.NumDimentions != strides.Length)
             {
@@ -68,7 +69,7 @@ namespace GNet.Layers
                     throw new ArgumentOutOfRangeException($"KernelShape dimension [{i}] is out of range.");
                 }
 
-                if((inputShape.Dimensions[i] + 2 * Paddings[i] - KernelShape.Dimensions[i]) % Strides[i] != 0)
+                if ((inputShape.Dimensions[i] + 2 * Paddings[i] - KernelShape.Dimensions[i]) % Strides[i] != 0)
                 {
                     throw new ArgumentOutOfRangeException($"Dimension [{i}] params are invalid.");
                 }
@@ -87,7 +88,7 @@ namespace GNet.Layers
             return new Shape(outDims);
         }
 
-        private void InitInput(ILayer inLayer)
+        public void Connect(ILayer inLayer)
         {
             ValidateInLayer(inLayer.Shape);
 
@@ -98,23 +99,18 @@ namespace GNet.Layers
             Shape = CalcOutputShape(inLayer.Shape);
 
             Neurons = new ShapedArrayImmutable<Neuron>(Shape, () => new Neuron());
-        }
-
-        public void Connect(ILayer inLayer)
-        {
-            InitInput(inLayer);
 
             var arr = Array.CreateInstance(typeof(Neuron), PaddedShape.Dimensions.ToMutable());
 
-            ConvHelpers.IndicesByStart(InputShape, Paddings).ForEach((idx, i) => arr.SetValue(inLayer.Neurons[i], idx));
+            IndexGen.ByStart(InputShape, Paddings).ForEach((idx, i) => arr.SetValue(inLayer.Neurons[i], idx));
 
             ShapedArrayImmutable<Neuron> padded = new ShapedArrayImmutable<Neuron>(PaddedShape, arr).Select(N => N ?? new Neuron());
 
             var inConnections = new ShapedArrayImmutable<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 
-            ConvHelpers.IndicesByStrides(PaddedShape, Strides, KernelShape).ForEach((idxKernel, i) =>
+            IndexGen.ByStrides(PaddedShape, Strides, KernelShape).ForEach((idxKernel, i) =>
             {
-                Neurons[i].InSynapses = ConvHelpers.IndicesByStart(KernelShape, new ArrayImmutable<int>(idxKernel)).Select(idx =>
+                Neurons[i].InSynapses = IndexGen.ByStart(KernelShape, new ArrayImmutable<int>(idxKernel)).Select(idx =>
                 {
                     var S = new Synapse(padded[idx], Neurons[i]);
                     inConnections[idx].Add(S);

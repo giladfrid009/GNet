@@ -14,7 +14,7 @@ namespace GNet.Model
             Shape = shape;
             WeightInit = weightInit.Clone();
 
-            Weights = new ShapedArrayImmutable<double>(shape, weightInit.Initialize(shape.Volume, 1));
+            Weights = new ShapedArrayImmutable<double>(shape, () => weightInit.Initialize(shape.Volume, 1));
         }
 
         public void Update(ShapedArrayImmutable<Synapse> inSynapses)

@@ -27,7 +27,7 @@ namespace GNet.Layers
 
         public Convolutional(int kernelsNum, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IActivation activation, IInitializer weightInit, IInitializer biasInit)
         {
-            ValidateParams(kernelsNum, kernelShape, strides, paddings);
+            ValidateConstructor(kernelsNum, kernelShape, strides, paddings);
 
             KernelsNum = kernelsNum;
             KernelShape = kernelShape;
@@ -40,9 +40,9 @@ namespace GNet.Layers
             Kernels = new ArrayImmutable<Kernel>(kernelsNum, () => new Kernel(kernelShape, weightInit));
         }
 
-        private static void ValidateParams(int kernelsNum, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
+        private static void ValidateConstructor(int kernelsNum, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
         {
-            if(kernelsNum <= 0)
+            if (kernelsNum <= 0)
             {
                 throw new ArgumentOutOfRangeException("KernelsNum must be positive.");
             }
@@ -104,7 +104,7 @@ namespace GNet.Layers
             return new Shape(new ArrayImmutable<int>(KernelsNum).Concat(outDims));
         }
 
-        private void InitInput(ILayer inLayer)
+        public void Connect(ILayer inLayer)
         {
             ValidateInLayer(inLayer.Shape);
 
@@ -112,33 +112,37 @@ namespace GNet.Layers
 
             PaddedShape = CalcPaddedShape(inLayer.Shape);
 
-            Shape = CalcOutputShape(inLayer.Shape);
+            Shape = CalcOutputShape(inLayer.Shape); // 1 more dimension than input shape, based on number of kernels
 
             Neurons = new ShapedArrayImmutable<Neuron>(Shape, () => new Neuron());
-        }
-
-        public void Connect(ILayer inLayer)
-        {
-            InitInput(inLayer);
 
             var arr = Array.CreateInstance(typeof(Neuron), PaddedShape.Dimensions.ToMutable());
 
-            ConvHelpers.IndicesByStart(InputShape, Paddings).ForEach((idx, i) => arr.SetValue(inLayer.Neurons[i], idx));
+            IndexGen.ByStart(InputShape, Paddings).ForEach((idx, i) => arr.SetValue(inLayer.Neurons[i], idx));
 
             ShapedArrayImmutable<Neuron> padded = new ShapedArrayImmutable<Neuron>(PaddedShape, arr).Select(N => N ?? new Neuron());
 
             var inConnections = new ShapedArrayImmutable<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 
-            ConvHelpers.IndicesByStrides(PaddedShape, Strides, KernelShape).ForEach((idxKernel, i) =>
+            // till this point everything is the same
+
+            ArrayImmutable<ArrayImmutable<Synapse>> synapses = Kernels.Select((K, i) =>
             {
-                Neurons[i].InSynapses = ConvHelpers.IndicesByStart(KernelShape, new ArrayImmutable<int>(idxKernel)).Select(idx =>
+                int offset = i * KernelShape.Volume;
+
+                return IndexGen.ByStrides(PaddedShape, Strides, KernelShape).Select((idxKernel, j) =>
                 {
-                    var S = new Synapse(padded[idx], Neurons[i]);
-                    inConnections[idx].Add(S);
-                    return S;
-                })
-                .ToShape(KernelShape);
-            });
+                    return IndexGen.ByStart(KernelShape, new ArrayImmutable<int>(idxKernel)).Select(idx =>
+                    {
+                        var S = new Synapse(padded[idx], Neurons[offset + j]);
+                        inConnections[idx].Add(S);
+                        return S;
+                    });
+                });
+            })
+            .Extract(X => X);
+
+            Neurons.ForEach((N, i) => N.InSynapses = synapses[i].ToShape(KernelShape));
 
             padded.ForEach((N, i) => N.OutSynapses = new ShapedArrayImmutable<Synapse>(new Shape(inConnections[i].Count), inConnections[i]));
         }
