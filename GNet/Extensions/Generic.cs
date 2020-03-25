@@ -54,20 +54,6 @@ namespace GNet
             return Combine((IArray<TSource>)source, other, selector).ToShape(source.Shape);
         }
 
-        public static ArrayImmutable<TOut> Extract<TOut, TSource>(this IArray<TSource> source, Func<TSource, IArray<TOut>> extractor) where TSource : IArray<TOut>
-        {
-            var extracted = new List<TOut>();
-
-            for (int i = 0; i < source.Length; i++)
-            {
-                var innerArr = extractor(source[i]);
-
-                innerArr.ForEach(X => extracted.Add(X));
-            }
-
-            return new ArrayImmutable<TOut>(extracted);
-        }
-
         public static ArrayImmutable<TSource> Concat<TSource>(this IArray<TSource> source, params IArray<TSource>[] others)
         {
             var concated = new List<TSource>();

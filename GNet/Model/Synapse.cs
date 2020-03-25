@@ -7,7 +7,8 @@ namespace GNet.Model
     {
         public Neuron InNeuron { get; }
         public Neuron OutNeuron { get; }
-        public double Weight { get; set; }
+        public virtual double Weight { get; set; }
+
         public double BatchWeight;
         public double Gradient;
         public double Cache1;
