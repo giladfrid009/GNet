@@ -45,7 +45,7 @@ namespace GNet
 
         public override int GetHashCode()
         {
-            return (Inputs, Outputs).GetHashCode();
+            return HashCode.Combine(Inputs, Outputs);
         }
     }
 }

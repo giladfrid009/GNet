@@ -4,125 +4,50 @@ using GNet.Model;
 
 namespace GNet.Layers
 {
-    //todo: pooling is conv layer with 1 filter(which doesnt change the output dimensions)
-    //todo: i dont like that it's not appearent what's the input / output shape is when we creating conv layers. maybe force to input the input shape when creating it?
     [Serializable]
-    public class Pooling : ILayer
+    public class Pooling : ConvBase
     {
-        public IPooler Pooler { get; private set; }
-        public ShapedArrayImmutable<Neuron> Neurons { get; private set; }
-        public ArrayImmutable<int> Strides { get; }
-        public ArrayImmutable<int> Paddings { get; }
-        public Shape Shape { get; private set; }
-        public Shape InputShape { get; private set; }
-        public Shape KernelShape { get; }
-        public Shape PaddedShape { get; private set; }
-        public bool IsTrainable { get; } = false;
+        public IPooler Pooler { get; }
+        public override bool IsTrainable { get => false; set => throw new NotSupportedException(); }
 
-        public Pooling(Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IPooler pooler)
+        public Pooling(Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IPooler pooler) : base(kernelShape, strides, paddings, 1)
         {
-            ValidateConstructor(kernelShape, strides, paddings);
-
-            KernelShape = kernelShape;
-            Strides = strides;
-            Paddings = paddings;
             Pooler = pooler.Clone();
         }
 
-        private static void ValidateConstructor(Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
+        protected override Shape CalcOutputShape(Shape inputShape)
         {
-            if (kernelShape.NumDimentions != strides.Length)
-            {
-                throw new ArgumentException("Strides dimensions count mismatch.");
-            }
-
-            if (kernelShape.NumDimentions != paddings.Length)
-            {
-                throw new ArgumentException("Paddings dimensions count mismatch.");
-            }
-
-            for (int i = 0; i < strides.Length; i++)
-            {
-                if (strides[i] < 1)
-                {
-                    throw new ArgumentOutOfRangeException($"Strides [{i}] is out of range.");
-                }
-
-                if (paddings[i] < 0)
-                {
-                    throw new ArgumentOutOfRangeException($"Paddings [{i}] is out of range.");
-                }
-            }
+            return new Shape(inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * Paddings[i] - KernelShape.Dimensions[i]) / Strides[i]));
         }
 
-        private void ValidateInLayer(Shape inputShape)
+        public override void Connect(ILayer inLayer)
         {
-            if (inputShape.NumDimentions != KernelShape.NumDimentions)
-            {
-                throw new ArgumentException("InputShape dimensions count mismatch.");
-            }
+            InitProperties(inLayer);
 
-            for (int i = 0; i < Strides.Length; i++)
-            {
-                if (inputShape.Dimensions[i] < KernelShape.Dimensions[i])
-                {
-                    throw new ArgumentOutOfRangeException($"KernelShape dimension [{i}] is out of range.");
-                }
-
-                if ((inputShape.Dimensions[i] + 2 * Paddings[i] - KernelShape.Dimensions[i]) % Strides[i] != 0)
-                {
-                    throw new ArgumentOutOfRangeException($"Dimension [{i}] params are invalid.");
-                }
-            }
-        }
-
-        private Shape CalcPaddedShape(Shape inputShape)
-        {
-            return new Shape(inputShape.Dimensions.Select((D, i) => D + 2 * Paddings[i]));
-        }
-
-        private Shape CalcOutputShape(Shape inputShape)
-        {
-            ArrayImmutable<int> outDims = inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * Paddings[i] - KernelShape.Dimensions[i]) / Strides[i]);
-
-            return new Shape(outDims);
-        }
-
-        public void Connect(ILayer inLayer)
-        {
-            ValidateInLayer(inLayer.Shape);
-
-            InputShape = inLayer.Shape;
-
-            PaddedShape = CalcPaddedShape(inLayer.Shape);
-
-            Shape = CalcOutputShape(inLayer.Shape);
-
-            Neurons = new ShapedArrayImmutable<Neuron>(Shape, () => new Neuron());
-
-            var arr = Array.CreateInstance(typeof(Neuron), PaddedShape.Dimensions.ToMutable());
-
-            IndexGen.ByStart(InputShape, Paddings).ForEach((idx, i) => arr.SetValue(inLayer.Neurons[i], idx));
-
-            ShapedArrayImmutable<Neuron> padded = new ShapedArrayImmutable<Neuron>(PaddedShape, arr).Select(N => N ?? new Neuron());
+            ShapedArrayImmutable<Neuron> padded = PadInNeurons(inLayer, PaddedShape);
 
             var inConnections = new ShapedArrayImmutable<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 
             IndexGen.ByStrides(PaddedShape, Strides, KernelShape).ForEach((idxKernel, i) =>
             {
-                Neurons[i].InSynapses = IndexGen.ByStart(KernelShape, new ArrayImmutable<int>(idxKernel)).Select(idx =>
+                var N = Neurons[i];
+
+                N.InSynapses = IndexGen.ByStart(KernelShape, new ArrayImmutable<int>(idxKernel)).Select((idx, j) =>
                 {
-                    var S = new Synapse(padded[idx], Neurons[i]);
+                    var S = new Synapse(padded[idx], N);
+
                     inConnections[idx].Add(S);
+
                     return S;
                 })
                 .ToShape(KernelShape);
             });
+            
 
             padded.ForEach((N, i) => N.OutSynapses = new ShapedArrayImmutable<Synapse>(new Shape(inConnections[i].Count), inConnections[i]));
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
             Neurons.ForEach(N =>
             {
@@ -132,12 +57,7 @@ namespace GNet.Layers
             });
         }
 
-        public void Input(ShapedArrayImmutable<double> values)
-        {
-            throw new NotSupportedException("This layer can't be used as input layer.");
-        }
-
-        public void Forward()
+        public override void Forward()
         {
             Initialize();
 
@@ -148,7 +68,7 @@ namespace GNet.Layers
             });
         }
 
-        public void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
+        public override void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
         {
             if (targets.Shape != Shape)
             {
@@ -169,7 +89,7 @@ namespace GNet.Layers
             });
         }
 
-        public void CalcGrads()
+        public override void CalcGrads()
         {
             Neurons.ForEach((N, i) =>
             {
@@ -178,17 +98,16 @@ namespace GNet.Layers
             });
         }
 
-        public virtual void Update()
-        {
+        public override void Update()
+        {            
         }
 
-        public virtual ILayer Clone()
+        public override ILayer Clone()
         {
             return new Pooling(KernelShape, Strides, Paddings, Pooler)
             {
-                Pooler = Pooler.Clone(),
                 Neurons = Neurons.Select(N => N.Clone()),
-                Shape = Shape,
+                Kernels = Kernels.Select(K => K.Clone()),
                 InputShape = InputShape,
                 PaddedShape = PaddedShape
             };

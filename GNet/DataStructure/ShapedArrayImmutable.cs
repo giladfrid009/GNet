@@ -76,7 +76,7 @@ namespace GNet
 
         public override int GetHashCode()
         {
-            return (internalArray, Shape).GetHashCode();
+            return HashCode.Combine(internalArray, Shape);
         }
 
         public ArrayImmutable<T> ToFlat()

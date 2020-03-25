@@ -7,18 +7,36 @@ namespace GNet.Layers
     [Serializable]
     public abstract class ConvBase : ILayer
     {
-        public ArrayImmutable<Kernel> Kernels { get; private set; }
-        public ShapedArrayImmutable<Neuron> Neurons { get; private set; }
+        public ArrayImmutable<Kernel> Kernels { get; protected set; }
+        public ShapedArrayImmutable<Neuron> Neurons { get; protected set; }
         public ArrayImmutable<int> Strides { get; }
         public ArrayImmutable<int> Paddings { get; }
-        public Shape InputShape { get; private set; }
-        public Shape PaddedShape { get; private set; }
+        public Shape InputShape { get; protected set; }
+        public Shape PaddedShape { get; protected set; }
         public Shape KernelShape { get; }
-        public Shape Shape { get; private set; }
+        public Shape Shape => Neurons.Shape;
+        public int KernelsNum => Kernels.Length;
+
         public abstract bool IsTrainable { get; set; }
 
-        protected static void ValidateConstructor(Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
+        public ConvBase(Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int nKernels)
         {
+            ValidateConstructor(kernelShape, strides, paddings, nKernels);
+
+            KernelShape = kernelShape;
+            Strides = strides;
+            Paddings = paddings;
+
+            Kernels = new ArrayImmutable<Kernel>(nKernels, () => new Kernel(kernelShape));
+        }
+
+        protected static void ValidateConstructor(Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int nKernels)
+        {
+            if (nKernels < 1)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
             if (kernelShape.NumDimentions != strides.Length)
             {
                 throw new ArgumentException("Strides dimensions count mismatch.");
@@ -69,7 +87,6 @@ namespace GNet.Layers
             return new Shape(shapeInput.Dimensions.Select((D, i) => D + 2 * Paddings[i]));
         }
 
-        protected abstract Shape CalcOutputShape(Shape inputShape);
 
         protected void InitProperties(ILayer inLayer)
         {
@@ -79,9 +96,7 @@ namespace GNet.Layers
 
             PaddedShape = CalcPaddedShape(inLayer.Shape);
 
-            Shape = CalcOutputShape(inLayer.Shape);
-
-            Neurons = new ShapedArrayImmutable<Neuron>(Shape, () => new CNeuron());
+            Neurons = new ShapedArrayImmutable<Neuron>(CalcOutputShape(inLayer.Shape), () => new CNeuron());
         }
 
         protected ShapedArrayImmutable<Neuron> PadInNeurons(ILayer inLayer, Shape paddedShape)
@@ -112,6 +127,8 @@ namespace GNet.Layers
                 });
             });
         }
+
+        protected abstract Shape CalcOutputShape(Shape inputShape);
 
         public abstract void Connect(ILayer inLayer);
 

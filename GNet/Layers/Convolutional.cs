@@ -5,126 +5,30 @@ using GNet.Model.Conv;
 
 namespace GNet.Layers
 {
-    // todo: create abstract convolutional class with all the shared methods between this class and pooling.
     [Serializable]
-    public class Convolutional : ILayer
+    public class Convolutional : ConvBase
     {
         public IActivation Activation { get; }
         public IInitializer WeightInit { get; }
-        public IInitializer BiasInit { get; }
-        public ArrayImmutable<Kernel> Kernels { get; private set; }
-        public ShapedArrayImmutable<Neuron> Neurons { get; private set; }
-        public ArrayImmutable<int> Strides { get; }
-        public ArrayImmutable<int> Paddings { get; }
-        public Shape InputShape { get; private set; }
-        public Shape PaddedShape { get; private set; }
-        public Shape KernelShape { get; }
-        public Shape Shape { get; private set; }
-        public int ChannelNum { get; }
-        public bool IsTrainable { get; set; } = true;
+        public IInitializer BiasInit { get; }        
+        public override bool IsTrainable { get; set; } = true;
 
-        public Convolutional(int channelNum, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IActivation activation, IInitializer weightInit, IInitializer biasInit)
+        public Convolutional(Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int kernelsNum, IActivation activation, IInitializer weightInit, IInitializer biasInit)
+            : base(kernelShape, strides, paddings, kernelsNum)
         {
-            ValidateConstructor(channelNum, kernelShape, strides, paddings);
-
-            ChannelNum = channelNum;
-            KernelShape = kernelShape;
-            Strides = strides;
-            Paddings = paddings;
             Activation = activation.Clone();
             WeightInit = weightInit.Clone();
             BiasInit = biasInit.Clone();
-
-            Kernels = new ArrayImmutable<Kernel>(channelNum, () => new Kernel(kernelShape));
         }
 
-        private static void ValidateConstructor(int kernelsNum, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
+        protected override Shape CalcOutputShape(Shape inputShape)
         {
-            if (kernelsNum <= 0)
-            {
-                throw new ArgumentOutOfRangeException("KernelsNum must be positive.");
-            }
+            ArrayImmutable<int> channelDims = inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * Paddings[i] - KernelShape.Dimensions[i]) / Strides[i]);
 
-            if (kernelShape.NumDimentions != strides.Length)
-            {
-                throw new ArgumentException("Strides dimensions count mismatch.");
-            }
-
-            if (kernelShape.NumDimentions != paddings.Length)
-            {
-                throw new ArgumentException("Paddings dimensions count mismatch.");
-            }
-
-            for (int i = 0; i < strides.Length; i++)
-            {
-                if (strides[i] < 1)
-                {
-                    throw new ArgumentOutOfRangeException($"Strides [{i}] is out of range.");
-                }
-
-                if (paddings[i] < 0)
-                {
-                    throw new ArgumentOutOfRangeException($"Paddings [{i}] is out of range.");
-                }
-            }
+            return new Shape(new ArrayImmutable<int>(KernelsNum).Concat(channelDims));
         }
 
-        private void ValidateInLayer(Shape inputShape)
-        {
-            if (inputShape.NumDimentions != KernelShape.NumDimentions)
-            {
-                throw new ArgumentException("InputShape dimensions count mismatch.");
-            }
-
-            for (int i = 0; i < Strides.Length; i++)
-            {
-                if (inputShape.Dimensions[i] < KernelShape.Dimensions[i])
-                {
-                    throw new ArgumentOutOfRangeException($"KernelShape dimension [{i}] is out of range.");
-                }
-
-                if ((inputShape.Dimensions[i] + 2 * Paddings[i] - KernelShape.Dimensions[i]) % Strides[i] != 0)
-                {
-                    throw new ArgumentOutOfRangeException($"Dimension [{i}] params are invalid.");
-                }
-            }
-        }
-
-        private Shape CalcPaddedShape(Shape shapeInput)
-        {
-            return new Shape(shapeInput.Dimensions.Select((D, i) => D + 2 * Paddings[i]));
-        }
-
-        private Shape CalcOutputShape(Shape inputShape)
-        {
-            var channelDims = inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * Paddings[i] - KernelShape.Dimensions[i]) / Strides[i]);
-
-            return new Shape(new ArrayImmutable<int>(ChannelNum).Concat(channelDims));
-        }
-
-        private void InitProperties(ILayer inLayer)
-        {
-            ValidateInLayer(inLayer.Shape);
-
-            InputShape = inLayer.Shape;
-
-            PaddedShape = CalcPaddedShape(inLayer.Shape);
-
-            Shape = CalcOutputShape(inLayer.Shape);
-
-            Neurons = new ShapedArrayImmutable<Neuron>(Shape, () => new CNeuron());
-        }
-
-        private ShapedArrayImmutable<Neuron> PadInNeurons(ILayer inLayer, Shape paddedShape)
-        {
-            var arr = Array.CreateInstance(typeof(Neuron), paddedShape.Dimensions.ToMutable());
-
-            IndexGen.ByStart(inLayer.Shape, Paddings).ForEach((idx, i) => arr.SetValue(inLayer.Neurons[i], idx));
-
-            return new ShapedArrayImmutable<Neuron>(paddedShape, arr).Select(N => N ?? new Neuron());
-        }
-
-        public void Connect(ILayer inLayer)
+        public override void Connect(ILayer inLayer)
         {
             InitProperties(inLayer);
 
@@ -134,7 +38,7 @@ namespace GNet.Layers
 
             Kernels.ForEach((kernel, i) =>
             {
-                int offset = i * Shape.Volume / ChannelNum;
+                int offset = i * Shape.Volume / KernelsNum;
 
                 IndexGen.ByStrides(PaddedShape, Strides, KernelShape).ForEach((idxKernel, j) =>
                 {
@@ -160,7 +64,7 @@ namespace GNet.Layers
             padded.ForEach((N, i) => N.OutSynapses = new ShapedArrayImmutable<Synapse>(new Shape(inConnections[i].Count), inConnections[i]));
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
             int inLength = KernelShape.Volume;
 
@@ -169,14 +73,9 @@ namespace GNet.Layers
                 K.Bias.Value = BiasInit.Initialize(inLength, 1);
                 K.Weights.ForEach(W => W.Value = WeightInit.Initialize(inLength, 1));
             });      
-        }        
-
-        public void Input(ShapedArrayImmutable<double> values)
-        {
-            throw new NotSupportedException("This layer can't be used as input layer.");
         }
 
-        public void Forward()
+        public override void Forward()
         {
             Neurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Sum(S => S.Weight * S.InNeuron.ActivatedValue));
 
@@ -185,8 +84,18 @@ namespace GNet.Layers
             Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }
 
-        public void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
+        public override void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
         {
+            if (targets.Shape != Shape)
+            {
+                throw new ArgumentException("Targets shape mismatch.");
+            }
+
+            if (loss is IOutTransformer)
+            {
+                throw new ArgumentException($"{nameof(loss)} loss doesn't support backpropogation.");
+            }
+
             ShapedArrayImmutable<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
             ShapedArrayImmutable<double> lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
             ShapedArrayImmutable<double> grads = lossDers.Combine(actvDers, (LD, AD) => LD * AD);
@@ -198,7 +107,7 @@ namespace GNet.Layers
             });
         }
 
-        public void CalcGrads()
+        public override void CalcGrads()
         {
             ShapedArrayImmutable<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
 
@@ -209,7 +118,7 @@ namespace GNet.Layers
             });
         }
 
-        public virtual void Update()
+        public override void Update()
         {
             Neurons.ForEach(N =>
             {
@@ -224,13 +133,12 @@ namespace GNet.Layers
             });
         }
 
-        public virtual ILayer Clone()
+        public override ILayer Clone()
         {
-            return new Convolutional(ChannelNum, KernelShape, Strides, Paddings, Activation, WeightInit, BiasInit)
+            return new Convolutional(KernelShape, Strides, Paddings, KernelsNum, Activation, WeightInit, BiasInit)
             {
                 Neurons = Neurons.Select(N => N.Clone()),
                 Kernels = Kernels.Select(K => K.Clone()),
-                Shape = Shape,
                 InputShape = InputShape,
                 PaddedShape = PaddedShape
             };
