@@ -1,6 +1,6 @@
 ﻿using System;
 using GNet.Model;
-using GNet.Model.Conv;
+using GNet.Model.Convolutional;
 
 namespace GNet.Layers
 {

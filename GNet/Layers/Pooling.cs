@@ -30,7 +30,7 @@ namespace GNet.Layers
 
             IndexGen.ByStrides(PaddedShape, Strides, KernelShape).ForEach((idxKernel, i) =>
             {
-                var N = Neurons[i];
+                Neuron N = Neurons[i];
 
                 N.InSynapses = IndexGen.ByStart(KernelShape, new ArrayImmutable<int>(idxKernel)).Select((idx, j) =>
                 {

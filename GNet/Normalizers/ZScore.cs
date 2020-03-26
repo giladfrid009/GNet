@@ -3,47 +3,19 @@
 namespace GNet.Normalizers
 {
     public class ZScore : INormalizer
-    {
-        public bool NormalizeInputs { get; set; }
-        public bool NormalizeOutputs { get; set; }
+    {        
         private double mean;
         private double sd;
 
-        public void ExtractParams(Dataset dataset)
+        public void ExtractParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector)
         {
-            double meanInput = 0;
-            double meanOutput = 0;
-            double varianceInput = 0;
-            double varianceOutput = 0;
-            double numVals = 0;
+            mean = dataVector.Sum(D => D.Avarage()) / dataVector.Length;           
+            
+            double variance = dataVector.Sum(D => D.Sum(X => (X - mean) * (X - mean)));            
 
-            if (NormalizeInputs)
-            {
-                meanInput = dataset.Sum(D => D.Inputs.Avarage()) / dataset.Length;
-            }
+            int nVals = dataVector[0].Shape.Volume * dataVector.Length;
 
-            if (NormalizeOutputs)
-            {
-                meanOutput = dataset.Sum(D => D.Outputs.Avarage()) / dataset.Length;
-            }
-
-            mean = (meanInput + meanOutput) / 2;
-
-            if (NormalizeInputs)
-            {
-                varianceInput = dataset.Sum(D => D.Inputs.Sum(X => (X - mean) * (X - mean)));
-                numVals += dataset.InputShape.Volume;
-            }
-
-            if (NormalizeOutputs)
-            {
-                varianceOutput = dataset.Sum(D => D.Outputs.Sum(X => (X - mean) * (X - mean)));
-                numVals += dataset.OutputShape.Volume;
-            }
-
-            numVals *= dataset.Length;
-
-            sd = Sqrt((varianceInput + varianceOutput) / numVals);
+            sd = Sqrt(variance / nVals);
         }
 
         public ShapedArrayImmutable<double> Normalize(ShapedArrayImmutable<double> vals)
@@ -55,8 +27,6 @@ namespace GNet.Normalizers
         {
             return new ZScore()
             {
-                NormalizeInputs = NormalizeInputs,
-                NormalizeOutputs = NormalizeOutputs,
                 mean = mean,
                 sd = sd
             };

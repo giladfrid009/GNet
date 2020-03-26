@@ -2,10 +2,7 @@
 {
     public interface INormalizer : ICloneable<INormalizer>
     {
-        bool NormalizeInputs { get; set; }
-        bool NormalizeOutputs { get; set; }
-
-        void ExtractParams(Dataset dataset);
+        void ExtractParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector);
 
         ShapedArrayImmutable<double> Normalize(ShapedArrayImmutable<double> vals);
     }

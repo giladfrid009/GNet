@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GNet.Model.Conv
+namespace GNet.Model.Convolutional
 {
     [Serializable]
     public class SharedVal<T> : ICloneable<SharedVal<T>> where T : struct

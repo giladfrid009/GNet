@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GNet.Model;
-using GNet.Model.Conv;
+using GNet.Model.Convolutional;
 
 namespace GNet.Layers
 {

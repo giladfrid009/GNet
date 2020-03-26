@@ -31,19 +31,15 @@ namespace GNet
         {
         }
 
-        private static Data NormalizeData(Data data, INormalizer normalizer)
+        public void Normalize(INormalizer? inputNormalizer, INormalizer? outputNormalizer)
         {
-            ShapedArrayImmutable<double> inputs = normalizer.NormalizeInputs ? normalizer.Normalize(data.Inputs) : data.Inputs;
-            ShapedArrayImmutable<double> outptus = normalizer.NormalizeInputs ? normalizer.Normalize(data.Outputs) : data.Outputs;
+            inputNormalizer ??= new Normalizers.None();
+            outputNormalizer ??= new Normalizers.None();
 
-            return new Data(inputs, outptus);
-        }
+            inputNormalizer.ExtractParams(dataCollection.Select(D => D.Inputs));
+            outputNormalizer.ExtractParams(dataCollection.Select(D => D.Outputs));
 
-        public void Normalize(INormalizer normalizer)
-        {
-            normalizer.ExtractParams(this);
-
-            dataCollection = dataCollection.Select(D => NormalizeData(D, normalizer));
+            dataCollection = dataCollection.Select(D => new Data(inputNormalizer.Normalize(D.Inputs), outputNormalizer.Normalize(D.Outputs)));
         }
 
         public void Shuffle()

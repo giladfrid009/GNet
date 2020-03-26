@@ -3,15 +3,13 @@
     public class ActivationFunc : INormalizer
     {
         public IActivation Activation { get; }
-        public bool NormalizeInputs { get; set; }
-        public bool NormalizeOutputs { get; set; }
 
         public ActivationFunc(IActivation activation)
         {
             Activation = activation.Clone();
         }
 
-        public void ExtractParams(Dataset dataset)
+        public void ExtractParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector)
         {
         }
 
@@ -22,11 +20,7 @@
 
         public INormalizer Clone()
         {
-            return new ActivationFunc(Activation)
-            {
-                NormalizeInputs = NormalizeInputs,
-                NormalizeOutputs = NormalizeOutputs
-            };
+            return new ActivationFunc(Activation);
         }
     }
 }
