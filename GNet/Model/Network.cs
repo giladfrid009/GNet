@@ -94,7 +94,9 @@ namespace GNet
             return dataset.Sum(D => loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.Length;
         }
 
-        public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError)
+        
+
+        public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double valMinError, Dataset valDataset, ILoss valLoss, bool shuffle = true)
         {
             if (dataset.InputShape != Layers[0].Shape)
             {
@@ -106,50 +108,14 @@ namespace GNet
                 throw new Exception("Dataset output shape mismatch.");
             }
 
-            double error = Validate(dataset, loss);
-            int epoch;
-
-            OnStart?.Invoke(error);
-
-            for (epoch = 0; epoch < numEpoches; epoch++)
+            if (valDataset.InputShape != Layers[0].Shape)
             {
-                if (error <= minError)
-                {
-                    break;
-                }
-
-                dataset.Shuffle();
-
-                dataset.ForEach((D, index) =>
-                {
-                    FeedForward(D.Inputs);
-                    CalcGrads(loss, D.Outputs);
-                    Optimize(optimizer, epoch);
-
-                    if (index % batchSize == 0)
-                    {
-                        Update();
-                    }
-                });
-
-                error = Validate(dataset, loss);
-
-                OnEpoch?.Invoke(epoch, error);
+                throw new Exception("ValDataset input shape mismatch.");
             }
 
-            OnFinish?.Invoke(epoch, error);
-        }
-
-        public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double valMinError, Dataset valDataset, ILoss valLoss)
-        {
-            if (dataset.InputShape != Layers[0].Shape)
+            if (valDataset.OutputShape != Layers[Length - 1].Shape)
             {
-                throw new Exception("Dataset input shape mismatch.");
-            }
-
-            if (dataset.OutputShape != Layers[Length - 1].Shape)
-            {
-                throw new Exception("Dataset output shape mismatch.");
+                throw new Exception("ValDataset output shape mismatch.");
             }
 
             double valError = Validate(valDataset, valLoss);
@@ -164,7 +130,10 @@ namespace GNet
                     break;
                 }
 
-                dataset.Shuffle();
+                if (shuffle)
+                {
+                    dataset.Shuffle();
+                }
 
                 dataset.ForEach((D, index) =>
                 {
@@ -184,6 +153,11 @@ namespace GNet
             }
 
             OnFinish?.Invoke(epoch, valError);
+        }
+
+        public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError, bool shuffle = true)
+        {
+            Train(dataset, loss, optimizer, batchSize, numEpoches, minError, dataset, loss, shuffle);
         }
 
         public Network Clone()

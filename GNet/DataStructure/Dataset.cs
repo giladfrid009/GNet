@@ -8,6 +8,7 @@ namespace GNet
         public Shape OutputShape { get; }
         public int Length { get; }
         public Data this[int index] => dataCollection[index];
+
         private ArrayImmutable<Data> dataCollection;
 
         public Dataset(ArrayImmutable<Data> dataCollection)
