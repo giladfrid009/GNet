@@ -20,10 +20,5 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => T * O < Margin ? -2.0 * T * (Margin - T * O) : 0.0);
         }
-
-        public ILoss Clone()
-        {
-            return new HingeSquared(Margin);
-        }
     }
 }

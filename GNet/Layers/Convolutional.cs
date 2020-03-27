@@ -13,12 +13,12 @@ namespace GNet.Layers
         public IInitializer BiasInit { get; }        
         public override bool IsTrainable { get; set; } = true;
 
-        public Convolutional(Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int kernelsNum, IActivation activation, IInitializer weightInit, IInitializer biasInit)
-            : base(kernelShape, strides, paddings, kernelsNum)
+        public Convolutional(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int nKernels, IActivation activation, IInitializer weightInit, IInitializer biasInit) :
+            base(inputShape, kernelShape, strides, paddings, nKernels)
         {
-            Activation = activation.Clone();
-            WeightInit = weightInit.Clone();
-            BiasInit = biasInit.Clone();
+            Activation = activation;
+            WeightInit = weightInit;
+            BiasInit = biasInit;
         }
 
         protected override Shape CalcOutputShape(Shape inputShape)
@@ -30,7 +30,10 @@ namespace GNet.Layers
 
         public override void Connect(ILayer inLayer)
         {
-            InitProperties(inLayer);
+            if(inLayer.Shape != InputShape)
+            {
+                throw new ArgumentException("InLayer shape mismatch.");
+            }
 
             ShapedArrayImmutable<Neuron> padded = PadInNeurons(inLayer, PaddedShape);
 
@@ -135,12 +138,10 @@ namespace GNet.Layers
 
         public override ILayer Clone()
         {
-            return new Convolutional(KernelShape, Strides, Paddings, KernelsNum, Activation, WeightInit, BiasInit)
+            return new Convolutional(InputShape, KernelShape, Strides, Paddings, KernelsNum, Activation, WeightInit, BiasInit)
             {
                 Neurons = Neurons.Select(N => N.Clone()),
-                Kernels = Kernels.Select(K => K.Clone()),
-                InputShape = InputShape,
-                PaddedShape = PaddedShape
+                Kernels = Kernels.Select(K => K.Clone())
             };
         }
     }

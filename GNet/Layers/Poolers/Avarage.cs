@@ -10,10 +10,5 @@ namespace GNet.Layers.Poolers
             int nIn = inValues.Shape.Volume;
             return inValues.Select(X => 1.0 / nIn);
         }
-
-        public IPooler Clone()
-        {
-            return new Avarage();
-        }
     }
 }

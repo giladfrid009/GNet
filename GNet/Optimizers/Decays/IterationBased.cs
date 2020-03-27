@@ -13,10 +13,5 @@
         {
             return value / (1.0 + Decay * iteration);
         }
-
-        public IDecay Clone()
-        {
-            return new IterationBased(Decay);
-        }
     }
 }

@@ -5,43 +5,53 @@ using System.Collections.Generic;
 namespace GNet
 {
     [Serializable]
-    public readonly struct ShapedArrayImmutable<T> : IArray<T>, IEquatable<ShapedArrayImmutable<T>>
+    public class ShapedArrayImmutable<T> : ArrayImmutable<T>, IEquatable<ShapedArrayImmutable<T>>
     {
         public Shape Shape { get; }
-        public int Length => internalArray.Length;
-        public T this[int index] => internalArray[index];
-        public T this[params int[] indices] => internalArray[Shape.FlattenIndices(indices)];
-        private readonly ArrayImmutable<T> internalArray;
+        public new T this[int index] => base[index];
+        public T this[params int[] indices] => this[Shape.FlattenIndices(indices)];
 
-        public ShapedArrayImmutable(Shape shape, ArrayImmutable<T> array)
+        public ShapedArrayImmutable(Shape shape, ArrayImmutable<T> array) : base(array)
         {
-            if (shape.Volume != array.Length)
-            {
-                throw new ArgumentException("Shape volume and array length mismatch.");
-            }
-
-            internalArray = array;
+            ValidateShape(shape);
             Shape = shape;
         }
 
-        public ShapedArrayImmutable(Shape shape, params T[] array) : this(shape, new ArrayImmutable<T>(array))
+        public ShapedArrayImmutable(Shape shape, params T[] array) : base(array)
         {
+            ValidateShape(shape);
+            Shape = shape;
         }       
 
-        public ShapedArrayImmutable(Shape shape, IList<T> list) : this(shape, new ArrayImmutable<T>(list))
+        public ShapedArrayImmutable(Shape shape, IList<T> list) : base(list)
         {
+            ValidateShape(shape);
+            Shape = shape;
         }   
 
-        public ShapedArrayImmutable(Shape shape, IEnumerable<T> enumerable) : this(shape, new ArrayImmutable<T>(enumerable))
+        public ShapedArrayImmutable(Shape shape, IEnumerable<T> enumerable) : base(enumerable)
         {
+            ValidateShape(shape);
+            Shape = shape;
         }
 
-        public ShapedArrayImmutable(Shape shape, IEnumerable enumerable) : this(shape, new ArrayImmutable<T>(enumerable))
+        public ShapedArrayImmutable(Shape shape, IEnumerable enumerable) : base(enumerable)
         {
+            ValidateShape(shape);
+            Shape = shape;
         }
 
-        public ShapedArrayImmutable(Shape shape, Func<T> element) : this(shape, new ArrayImmutable<T>(shape.Volume, element))
+        public ShapedArrayImmutable(Shape shape, Func<T> element) : base(shape.Volume, element)
         {
+            Shape = shape;
+        }
+
+        private void ValidateShape(Shape shape)
+        {
+            if (shape.Volume != Length)
+            {
+                throw new ArgumentException("Shape volume and length mismatch.");
+            }
         }
 
         public static bool operator !=(ShapedArrayImmutable<T> left, ShapedArrayImmutable<T> right)
@@ -61,12 +71,7 @@ namespace GNet
                 return false;
             }
 
-            if (internalArray != other.internalArray)
-            {
-                return false;
-            }
-
-            return true;
+            return base.Equals(other);
         }
 
         public override bool Equals(object? obj)
@@ -76,12 +81,12 @@ namespace GNet
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(internalArray, Shape);
+            return base.GetHashCode() + Shape.GetHashCode();
         }
 
         public ArrayImmutable<T> ToFlat()
         {
-            return internalArray;
+            return new ArrayImmutable<T>(this);
         }
     }
 }

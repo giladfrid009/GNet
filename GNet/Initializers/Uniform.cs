@@ -9,10 +9,5 @@ namespace GNet.Initializers
         {
             return GRandom.NextDouble(-1.0, 1.0);
         }
-
-        public IInitializer Clone()
-        {
-            return new Uniform();
-        }
     }
 }

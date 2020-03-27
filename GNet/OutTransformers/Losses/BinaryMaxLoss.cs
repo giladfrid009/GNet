@@ -13,15 +13,5 @@ namespace GNet.OutTransformers.Losses
         {
             throw new NotSupportedException("This loss can't be used in backpropogation.");
         }
-
-        ILoss ICloneable<ILoss>.Clone()
-        {
-            return new BinaryMaxLoss();
-        }
-
-        public override IOutTransformer Clone()
-        {
-            return new BinaryMaxLoss();
-        }
     }
 }

@@ -13,10 +13,5 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => -T / O);
         }
-
-        public ILoss Clone()
-        {
-            return new CategoricalCrossEntropy();
-        }
     }
 }

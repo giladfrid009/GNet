@@ -14,10 +14,5 @@ namespace GNet.Activations
         {
             return vals.Select(X => X < -2.5 || X > 2.5 ? 0.0 : 0.2);
         }
-
-        public IActivation Clone()
-        {
-            return new HardSigmoid();
-        }
     }
 }

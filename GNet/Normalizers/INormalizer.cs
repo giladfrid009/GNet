@@ -1,6 +1,6 @@
 ﻿namespace GNet
 {
-    public interface INormalizer : ICloneable<INormalizer>
+    public interface INormalizer
     {
         void ExtractParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector);
 

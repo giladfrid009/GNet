@@ -14,7 +14,7 @@ namespace GNet.Optimizers
             LearningRate = learningRate;
             Rho = rho;
             Epsilon = epsilon;
-            Decay = decay?.Clone() ?? new Decays.None();
+            Decay = decay ?? new Decays.None();
         }
 
         public void Optimize(ILayer layer, int epoch)
@@ -32,11 +32,6 @@ namespace GNet.Optimizers
                     S.BatchWeight += -lr * S.Gradient / (Sqrt(S.Cache1) + Epsilon);
                 });
             });
-        }
-
-        public IOptimizer Clone()
-        {
-            return new RMSProp(LearningRate, Rho, Epsilon, Decay);
         }
     }
 }

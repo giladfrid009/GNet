@@ -6,7 +6,8 @@ namespace GNet
 {
     public class Logger : IDisposable
     {
-        public bool LogEpoches { get; set; } = false;
+        public bool LogEpoches { get; set; } = true;
+        public bool LogBatches { get; set; } = true;
         public bool Output { get; set; } = true;
 
         private readonly List<string> logLines;
@@ -21,6 +22,7 @@ namespace GNet
             network.OnStart += LogStart;
             network.OnFinish += LogFinish;
             network.OnEpoch += LogEpoch;
+            network.OnBatch += LogBatch;
         }
 
         private void AddEntry(string message)
@@ -56,6 +58,14 @@ namespace GNet
             }
         }
 
+        private void LogBatch(int batch)
+        {
+            if (LogBatches)
+            {
+                AddEntry($"Finished Batch {batch}");
+            }
+        }
+
         public void Print()
         {
             logLines.ForEach(L => Console.WriteLine(L));
@@ -73,6 +83,7 @@ namespace GNet
             network.OnStart -= LogStart;
             network.OnFinish -= LogFinish;
             network.OnEpoch -= LogEpoch;
+            network.OnBatch -= LogBatch;
         }
     }
 }

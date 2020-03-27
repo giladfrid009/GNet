@@ -15,10 +15,5 @@
         {
             return value - Decay * (iteration / Interval);
         }
-
-        public IDecay Clone()
-        {
-            return new Subtraction(Decay, Interval);
-        }
     }
 }

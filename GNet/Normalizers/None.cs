@@ -14,12 +14,5 @@
         {
             return vals;
         }
-
-        public INormalizer Clone()
-        {
-            return new None();
-        }
-
-        
     }
 }

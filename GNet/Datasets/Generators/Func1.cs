@@ -38,10 +38,5 @@ namespace GNet.Datasets.Generators
 
             return new Dataset(dataCollection);
         }
-
-        public IDatasetGenerator Clone()
-        {
-            return new Func1(IOFunc, Range);
-        }
     }
 }

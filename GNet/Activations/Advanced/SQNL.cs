@@ -35,10 +35,5 @@ namespace GNet.Activations.Advanced
         {
             return vals.Select(X => X > 0.0 ? 1.0 - X / 2.0 : 1.0 + X / 2.0);
         }
-
-        public IActivation Clone()
-        {
-            return new SQNL();
-        }
     }
 }

@@ -23,10 +23,5 @@ namespace GNet.Activations
 
             return exps.Select(E => E * (sum - E) / (sum * sum));
         }
-
-        public IActivation Clone()
-        {
-            return new Softmax();
-        }
     }
 }

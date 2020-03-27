@@ -24,10 +24,5 @@ namespace GNet.Activations
         {
             return vals.Select(X => X < 0.0 ? Slope : 1.0);
         }
-
-        public IActivation Clone()
-        {
-            return new ReLu(Slope);
-        }
     }
 }

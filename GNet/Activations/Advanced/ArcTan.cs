@@ -15,10 +15,5 @@ namespace GNet.Activations.Advanced
         {
             return vals.Select(X => 1.0 / (1.0 + X * X));
         }
-
-        public IActivation Clone()
-        {
-            return new ArcTan();
-        }
     }
 }

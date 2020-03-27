@@ -10,7 +10,7 @@
         {
             LearningRate = learningRate;
             MomentumValue = momentum;
-            Decay = decay?.Clone() ?? new Decays.None();
+            Decay = decay ?? new Decays.None();
         }
 
         public void Optimize(ILayer layer, int epoch)
@@ -28,11 +28,6 @@
                     S.BatchWeight += S.Cache1;
                 });
             });
-        }
-
-        public IOptimizer Clone()
-        {
-            return new Momentum(LearningRate, MomentumValue, Decay);
         }
     }
 }

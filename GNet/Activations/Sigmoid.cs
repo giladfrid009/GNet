@@ -15,10 +15,5 @@ namespace GNet.Activations
         {
             return vals.Select(X => Exp(X) / Pow(Exp(X) + 1.0, 2.0));
         }
-
-        public IActivation Clone()
-        {
-            return new Sigmoid();
-        }
     }
 }

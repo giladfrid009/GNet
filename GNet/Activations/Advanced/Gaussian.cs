@@ -15,10 +15,5 @@ namespace GNet.Activations.Advanced
         {
             return vals.Select(X => -2.0 * X * Exp(-X * X));
         }
-
-        public IActivation Clone()
-        {
-            return new Gaussian();
-        }
     }
 }

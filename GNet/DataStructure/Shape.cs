@@ -3,7 +3,7 @@
 namespace GNet
 {
     [Serializable]
-    public readonly struct Shape : IEquatable<Shape>
+    public class Shape : IEquatable<Shape>
     {
         public ArrayImmutable<int> Dimensions { get; }
         public int Volume { get; }
@@ -76,6 +76,6 @@ namespace GNet
         public override int GetHashCode()
         {
             return Dimensions.GetHashCode() + Volume * 17;
-        }        
+        }
     }
 }

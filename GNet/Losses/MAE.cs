@@ -16,10 +16,5 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => T > O ? 1.0 : -1.0);
         }
-
-        public ILoss Clone()
-        {
-            return new MAE();
-        }
     }
 }

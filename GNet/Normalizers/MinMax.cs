@@ -20,14 +20,5 @@ namespace GNet.Normalizers
         {
             return vals.Select(X => (X - min) / (max - min));
         }
-
-        public INormalizer Clone()
-        {
-            return new MinMax()
-            {
-                max = max,
-                min = min
-            };
-        }
     }
 }

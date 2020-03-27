@@ -9,10 +9,5 @@ namespace GNet.Initializers
         {
             return GRandom.NextNormal();
         }
-
-        public IInitializer Clone()
-        {
-            return new Normal();
-        }
     }
 }

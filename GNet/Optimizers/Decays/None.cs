@@ -8,10 +8,5 @@
         {
             return value;
         }
-
-        public IDecay Clone()
-        {
-            return new None();
-        }
     }
 }

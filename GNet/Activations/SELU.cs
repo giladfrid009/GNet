@@ -21,10 +21,5 @@ namespace GNet.Activations
         {
             return vals.Select(X => X < 0.0 ? A * B * Exp(X) : A);
         }
-
-        public IActivation Clone()
-        {
-            return new SELU();
-        }
     }
 }

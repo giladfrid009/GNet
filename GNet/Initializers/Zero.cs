@@ -9,10 +9,5 @@ namespace GNet.Initializers
         {
             return 0.0;
         }
-
-        public IInitializer Clone()
-        {
-            return new Zero();
-        }
     }
 }

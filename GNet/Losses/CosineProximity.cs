@@ -23,10 +23,5 @@ namespace GNet.Losses
 
             return outputs.Select(O => -tProd * (oProd / O) * Pow(oSumSqr - O * O, 2.0) / (Abs(tSumSqr) * Pow(oSumSqr, 1.5)));
         }
-
-        public ILoss Clone()
-        {
-            return new CosineProximity();
-        }
     }
 }

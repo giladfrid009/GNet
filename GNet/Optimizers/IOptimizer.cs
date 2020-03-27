@@ -1,6 +1,6 @@
 ﻿namespace GNet
 {
-    public interface IOptimizer : ICloneable<IOptimizer>
+    public interface IOptimizer
     {
         void Optimize(ILayer layer, int epoch);
     }

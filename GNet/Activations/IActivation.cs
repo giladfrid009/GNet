@@ -1,6 +1,6 @@
 ﻿namespace GNet
 {
-    public interface IActivation : ICloneable<IActivation>
+    public interface IActivation
     {
         ShapedArrayImmutable<double> Activate(ShapedArrayImmutable<double> vals);
 

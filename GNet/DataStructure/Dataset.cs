@@ -2,11 +2,12 @@
 
 namespace GNet
 {
-    public class Dataset : IArray<Data>, ICloneable<Dataset>
+    public class Dataset : IArray<Data>
     {
         public Shape InputShape { get; }
         public Shape OutputShape { get; }
         public int Length { get; }
+
         public Data this[int index] => dataCollection[index];
 
         private ArrayImmutable<Data> dataCollection;
@@ -56,11 +57,6 @@ namespace GNet
             }
 
             dataCollection = new ArrayImmutable<Data>(shuffled);
-        }
-
-        public Dataset Clone()
-        {
-            return new Dataset(dataCollection);
         }
     }
 }

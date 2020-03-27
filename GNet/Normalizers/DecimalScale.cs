@@ -11,19 +11,13 @@ namespace GNet.Normalizers
             double max = 0;
 
             dataVector.ForEach(D => max = Max(max, D.Max()));
+
+            scale = (int)Log10(max) + 1;
         }
 
         public ShapedArrayImmutable<double> Normalize(ShapedArrayImmutable<double> vals)
         {
             return vals.Select(X => X / scale);
-        }
-
-        public INormalizer Clone()
-        {
-            return new DecimalScale()
-            {
-                scale = scale
-            };
         }
     }
 }

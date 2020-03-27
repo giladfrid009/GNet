@@ -14,10 +14,5 @@
         {
             return targets.Combine(outputs, (T, O) => 2.0 * (O - T));
         }
-
-        public ILoss Clone()
-        {
-            return new MSE();
-        }
     }
 }

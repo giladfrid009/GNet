@@ -14,10 +14,5 @@ namespace GNet.Activations
         {
             return vals.Select(X => 1.0);
         }
-
-        public IActivation Clone()
-        {
-            return new Identity();
-        }
     }
 }

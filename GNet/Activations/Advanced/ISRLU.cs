@@ -25,10 +25,5 @@ namespace GNet.Activations.Advanced
         {
             return vals.Select(X => X >= 0.0 ? 1.0 : Pow(X / Sqrt(1.0 + Alpha * X * X), 3.0));
         }
-
-        public IActivation Clone()
-        {
-            return new ISRLU(Alpha);
-        }
     }
 }

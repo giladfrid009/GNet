@@ -10,9 +10,10 @@ namespace GNet.Layers
         public IPooler Pooler { get; }
         public override bool IsTrainable { get => false; set => throw new NotSupportedException(); }
 
-        public Pooling(Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IPooler pooler) : base(kernelShape, strides, paddings, 1)
+        public Pooling(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IPooler pooler) :
+            base(inputShape, kernelShape, strides, paddings, 1)
         {
-            Pooler = pooler.Clone();
+            Pooler = pooler;
         }
 
         protected override Shape CalcOutputShape(Shape inputShape)
@@ -22,7 +23,10 @@ namespace GNet.Layers
 
         public override void Connect(ILayer inLayer)
         {
-            InitProperties(inLayer);
+            if (inLayer.Shape != InputShape)
+            {
+                throw new ArgumentException("InLayer shape mismatch.");
+            }
 
             ShapedArrayImmutable<Neuron> padded = PadInNeurons(inLayer, PaddedShape);
 
@@ -49,6 +53,8 @@ namespace GNet.Layers
 
         public override void Initialize()
         {
+            // TODO: TAKES A LOT OF TIME.
+
             Neurons.ForEach(N =>
             {
                 ShapedArrayImmutable<double> weights = Pooler.GetWeights(N.InSynapses.Select(S => S.InNeuron.ActivatedValue));
@@ -104,12 +110,10 @@ namespace GNet.Layers
 
         public override ILayer Clone()
         {
-            return new Pooling(KernelShape, Strides, Paddings, Pooler)
+            return new Pooling(InputShape, KernelShape, Strides, Paddings, Pooler)
             {
                 Neurons = Neurons.Select(N => N.Clone()),
-                Kernels = Kernels.Select(K => K.Clone()),
-                InputShape = InputShape,
-                PaddedShape = PaddedShape
+                Kernels = Kernels.Select(K => K.Clone())
             };
         }
     }

@@ -33,10 +33,5 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => Abs(T - O) <= Margin ? O - T : -Margin);
         }
-
-        public ILoss Clone()
-        {
-            return new Huber(Margin);
-        }
     }
 }

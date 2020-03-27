@@ -8,7 +8,7 @@
         public Default(double learningRate = 0.01, IDecay? decay = null)
         {
             LearningRate = learningRate;
-            Decay = decay?.Clone() ?? new Decays.None();
+            Decay = decay ?? new Decays.None();
         }
 
         public void Optimize(ILayer layer, int epoch)
@@ -21,11 +21,6 @@
 
                 N.InSynapses.ForEach(S => S.BatchWeight += -lr * S.Gradient);
             });
-        }
-
-        public IOptimizer Clone()
-        {
-            return new Default(LearningRate, Decay);
         }
     }
 }

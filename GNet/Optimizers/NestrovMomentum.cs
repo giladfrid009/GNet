@@ -10,7 +10,7 @@
         {
             LearningRate = learningRate;
             MomentumValue = momentum;
-            Decay = decay?.Clone() ?? new Decays.None();
+            Decay = decay ?? new Decays.None();
         }
 
         public void Optimize(ILayer layer, int epoch)
@@ -30,11 +30,6 @@
                     S.BatchWeight += (1.0 + MomentumValue) * S.Cache1 - MomentumValue * oldDelta;
                 });
             });
-        }
-
-        public IOptimizer Clone()
-        {
-            return new NestrovMomentum(LearningRate, MomentumValue, Decay);
         }
     }
 }

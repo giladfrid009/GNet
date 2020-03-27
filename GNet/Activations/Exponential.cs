@@ -13,10 +13,5 @@ namespace GNet.Activations
         {
             return vals.Select(X => Exp(X));
         }
-
-        public IActivation Clone()
-        {
-            return new Exponential();
-        }
     }
 }

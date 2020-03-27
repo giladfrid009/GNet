@@ -16,7 +16,7 @@ namespace GNet.Optimizers
             LearningRate = learningRate;
             Beta1 = beta1;
             Beta2 = beta2;
-            Decay = decay?.Clone() ?? new Decays.None();
+            Decay = decay ?? new Decays.None();
         }
 
         public void Optimize(ILayer layer, int epoch)
@@ -40,11 +40,6 @@ namespace GNet.Optimizers
                     S.BatchWeight += -lr * corr1 / S.Cache2;
                 });
             });
-        }
-
-        public IOptimizer Clone()
-        {
-            return new AdaMax(LearningRate, Beta1, Beta2, Decay);
         }
     }
 }

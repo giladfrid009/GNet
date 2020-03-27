@@ -1,18 +1,18 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace GNet
 {
     public class Network : ICloneable<Network>
     {
-        public delegate void ErrorFunc(double error);
+        public delegate void BatchLogger(int batch);
+        public delegate void ErrorLogger(double error);
+        public delegate void EpochErrorLogger(int epoch, double error);
 
-        public delegate void EpochErrorFunc(int epoch, double error);
-
-        public event ErrorFunc? OnStart;
-
-        public event EpochErrorFunc? OnEpoch;
-
-        public event EpochErrorFunc? OnFinish;
+        public event BatchLogger? OnBatch;
+        public event ErrorLogger? OnStart;
+        public event EpochErrorLogger? OnEpoch;
+        public event EpochErrorLogger? OnFinish;
 
         public ArrayImmutable<ILayer> Layers { get; }
         public int Length => Layers.Length;
@@ -49,6 +49,14 @@ namespace GNet
 
         private void Optimize(IOptimizer optimizer, int epoch)
         {
+            //Parallel.For(1, Length, i =>
+            //{
+            //    if (Layers[i].IsTrainable)
+            //    {
+            //        optimizer.Optimize(Layers[i], epoch);
+            //    }
+            //});
+
             for (int i = 1; i < Length; i++)
             {
                 if (Layers[i].IsTrainable)
@@ -60,6 +68,14 @@ namespace GNet
 
         private void Update()
         {
+            //Parallel.For(1, Length, i =>
+            //{
+            //    if (Layers[i].IsTrainable)
+            //    {
+            //        Layers[i].Update();
+            //    }
+            //});
+
             for (int i = 1; i < Length; i++)
             {
                 if (Layers[i].IsTrainable)
@@ -94,9 +110,7 @@ namespace GNet
             return dataset.Sum(D => loss.Compute(D.Outputs, FeedForward(D.Inputs))) / dataset.Length;
         }
 
-        
-
-        public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double valMinError, Dataset valDataset, ILoss valLoss, bool shuffle = true)
+        public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int nEpoches, double minError, Dataset valDataset, ILoss valLoss, bool shuffle = true)
         {
             if (dataset.InputShape != Layers[0].Shape)
             {
@@ -123,9 +137,9 @@ namespace GNet
 
             OnStart?.Invoke(valError);
 
-            for (epoch = 0; epoch < numEpoches; epoch++)
+            for (epoch = 0; epoch < nEpoches; epoch++)
             {
-                if (valError <= valMinError)
+                if (valError <= minError)
                 {
                     break;
                 }
@@ -144,6 +158,8 @@ namespace GNet
                     if (index % batchSize == 0)
                     {
                         Update();
+
+                        OnBatch?.Invoke(index / batchSize);
                     }
                 });
 
@@ -155,9 +171,9 @@ namespace GNet
             OnFinish?.Invoke(epoch, valError);
         }
 
-        public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int numEpoches, double minError, bool shuffle = true)
+        public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int nEpoches, double minError, bool shuffle = true)
         {
-            Train(dataset, loss, optimizer, batchSize, numEpoches, minError, dataset, loss, shuffle);
+            Train(dataset, loss, optimizer, batchSize, nEpoches, minError, dataset, loss, shuffle);
         }
 
         public Network Clone()

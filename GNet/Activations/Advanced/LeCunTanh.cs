@@ -18,10 +18,5 @@ namespace GNet.Activations.Advanced
         {
             return vals.Select(X => A * B / Pow(Cosh(B * X), 2.0));
         }
-
-        public IActivation Clone()
-        {
-            return new LeCunTanh();
-        }
     }
 }

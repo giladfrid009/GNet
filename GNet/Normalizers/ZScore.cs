@@ -22,14 +22,5 @@ namespace GNet.Normalizers
         {
             return vals.Select(X => (X - mean) / sd);
         }
-
-        public INormalizer Clone()
-        {
-            return new ZScore()
-            {
-                mean = mean,
-                sd = sd
-            };
-        }
     }
 }

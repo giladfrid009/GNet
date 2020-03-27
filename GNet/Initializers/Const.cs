@@ -16,10 +16,5 @@ namespace GNet.Initializers
         {
             return Value;
         }
-
-        public IInitializer Clone()
-        {
-            return new Const(Value);
-        }
     }
 }

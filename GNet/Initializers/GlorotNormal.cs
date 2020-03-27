@@ -10,10 +10,5 @@ namespace GNet.Initializers
         {
             return GRandom.NextNormal() * Sqrt(2.0 / (nIn + nOut));
         }
-
-        public IInitializer Clone()
-        {
-            return new GlorotNormal();
-        }
     }
 }

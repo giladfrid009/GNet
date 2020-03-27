@@ -22,10 +22,5 @@ namespace GNet.Activations.Advanced
         {
             return vals.Select(X => 0.5 * Sinh(0.5 * Alpha) * (1.0 / Cosh(0.5 * Alpha * X)) * (1.0 / Cosh(0.5 * Alpha * (1.0 - X))));
         }
-
-        public IActivation Clone()
-        {
-            return new SoftClipping(Alpha);
-        }
     }
 }

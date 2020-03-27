@@ -17,10 +17,5 @@
         {
             return vals.Select(X => X / Divisor);
         }
-
-        public INormalizer Clone()
-        {
-            return new Division(Divisor);
-        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace GNet.Layers
 {
-    public interface IPooler : ICloneable<IPooler>
+    public interface IPooler
     {
         ShapedArrayImmutable<double> GetWeights(ShapedArrayImmutable<double> inValues);
     }

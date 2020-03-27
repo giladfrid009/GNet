@@ -16,10 +16,5 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => O * (T - O) / (Pow(T, 3.0) * Abs(1.0 - O / T)));
         }
-
-        public ILoss Clone()
-        {
-            return new MAPE();
-        }
     }
 }

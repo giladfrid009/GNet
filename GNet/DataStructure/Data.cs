@@ -2,7 +2,7 @@
 
 namespace GNet
 {
-    public readonly struct Data : IEquatable<Data>
+    public class Data : IEquatable<Data>
     {
         public ShapedArrayImmutable<double> Inputs { get; }
         public ShapedArrayImmutable<double> Outputs { get; }

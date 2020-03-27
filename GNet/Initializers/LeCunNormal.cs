@@ -10,10 +10,5 @@ namespace GNet.Initializers
         {
             return GRandom.NextNormal() * Sqrt(1.0 / nIn);
         }
-
-        public IInitializer Clone()
-        {
-            return new LeCunNormal();
-        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace GNet
 {
-    public interface ILoss : ICloneable<ILoss>
+    public interface ILoss
     {
         double Compute(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs);
 

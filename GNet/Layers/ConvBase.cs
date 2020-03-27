@@ -11,38 +11,47 @@ namespace GNet.Layers
         public ShapedArrayImmutable<Neuron> Neurons { get; protected set; }
         public ArrayImmutable<int> Strides { get; }
         public ArrayImmutable<int> Paddings { get; }
-        public Shape InputShape { get; protected set; }
-        public Shape PaddedShape { get; protected set; }
+        public Shape InputShape { get; }
+        public Shape PaddedShape { get; }
         public Shape KernelShape { get; }
         public Shape Shape => Neurons.Shape;
         public int KernelsNum => Kernels.Length;
-
         public abstract bool IsTrainable { get; set; }
 
-        public ConvBase(Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int nKernels)
+        public ConvBase(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int nKernels)
         {
-            ValidateConstructor(kernelShape, strides, paddings, nKernels);
+            ValidateConstructor(inputShape, kernelShape, nKernels, strides, paddings);
 
+            InputShape = inputShape;
             KernelShape = kernelShape;
             Strides = strides;
             Paddings = paddings;
 
+            PaddedShape = CalcPaddedShape(inputShape);
+
             Kernels = new ArrayImmutable<Kernel>(nKernels, () => new Kernel(kernelShape));
+
+            Neurons = new ShapedArrayImmutable<Neuron>(CalcOutputShape(inputShape), () => new CNeuron());
         }
 
-        protected static void ValidateConstructor(Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int nKernels)
+        protected static void ValidateConstructor(Shape inputShape, Shape kernelShape, int nKernels, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
         {
             if (nKernels < 1)
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException("nKernels nust be positive.");
             }
 
-            if (kernelShape.NumDimentions != strides.Length)
+            if (inputShape.NumDimentions != kernelShape.NumDimentions)
+            {
+                throw new ArgumentException("KernelShape dimensions count mismatch.");
+            }
+
+            if (inputShape.NumDimentions != strides.Length)
             {
                 throw new ArgumentException("Strides dimensions count mismatch.");
             }
 
-            if (kernelShape.NumDimentions != paddings.Length)
+            if (inputShape.NumDimentions != paddings.Length)
             {
                 throw new ArgumentException("Paddings dimensions count mismatch.");
             }
@@ -58,45 +67,22 @@ namespace GNet.Layers
                 {
                     throw new ArgumentOutOfRangeException($"Paddings [{i}] is out of range.");
                 }
-            }
-        }
 
-        protected void ValidateInLayer(Shape inputShape)
-        {
-            if (inputShape.NumDimentions != KernelShape.NumDimentions)
-            {
-                throw new ArgumentException("InputShape dimensions count mismatch.");
-            }
-
-            for (int i = 0; i < Strides.Length; i++)
-            {
-                if (inputShape.Dimensions[i] < KernelShape.Dimensions[i])
+                if (inputShape.Dimensions[i] < kernelShape.Dimensions[i])
                 {
                     throw new ArgumentOutOfRangeException($"KernelShape dimension [{i}] is out of range.");
                 }
 
-                if ((inputShape.Dimensions[i] + 2 * Paddings[i] - KernelShape.Dimensions[i]) % Strides[i] != 0)
+                if ((inputShape.Dimensions[i] + 2 * paddings[i] - kernelShape.Dimensions[i]) % strides[i] != 0)
                 {
                     throw new ArgumentOutOfRangeException($"Dimension [{i}] params are invalid.");
-                }
+                }                     
             }
         }
 
         protected Shape CalcPaddedShape(Shape shapeInput)
         {
             return new Shape(shapeInput.Dimensions.Select((D, i) => D + 2 * Paddings[i]));
-        }
-
-
-        protected void InitProperties(ILayer inLayer)
-        {
-            ValidateInLayer(inLayer.Shape);
-
-            InputShape = inLayer.Shape;
-
-            PaddedShape = CalcPaddedShape(inLayer.Shape);
-
-            Neurons = new ShapedArrayImmutable<Neuron>(CalcOutputShape(inLayer.Shape), () => new CNeuron());
         }
 
         protected ShapedArrayImmutable<Neuron> PadInNeurons(ILayer inLayer, Shape paddedShape)

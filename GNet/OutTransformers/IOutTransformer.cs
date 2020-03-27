@@ -1,6 +1,6 @@
 ﻿namespace GNet
 {
-    public interface IOutTransformer : ICloneable<IOutTransformer>
+    public interface IOutTransformer
     {
         ShapedArrayImmutable<double> Transform(ShapedArrayImmutable<double> output);
     }

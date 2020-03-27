@@ -19,10 +19,5 @@ namespace GNet.Optimizers.Decays
         {
             return value * Pow(Multiplier, iteration / Interval);
         }
-
-        public IDecay Clone()
-        {
-            return new Multiplication(Decay, Interval);
-        }
     }
 }

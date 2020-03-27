@@ -19,10 +19,5 @@ namespace GNet.Activations.Advanced
                 return exp * (1.0 + exp + X) / Pow(1.0 + exp, 2.0);
             });
         }
-
-        public IActivation Clone()
-        {
-            return new Swish();
-        }
     }
 }

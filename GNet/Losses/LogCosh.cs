@@ -13,10 +13,5 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => Tanh(O - T));
         }
-
-        public ILoss Clone()
-        {
-            return new LogCosh();
-        }
     }
 }

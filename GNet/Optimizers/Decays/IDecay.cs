@@ -1,6 +1,6 @@
 ﻿namespace GNet.Optimizers
 {
-    public interface IDecay : ICloneable<IDecay>
+    public interface IDecay
     {
         double Decay { get; }
 

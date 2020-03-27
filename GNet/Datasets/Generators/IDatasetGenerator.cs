@@ -1,6 +1,6 @@
 ﻿namespace GNet.Datasets
 {
-    public interface IDatasetGenerator : ICloneable<IDatasetGenerator>
+    public interface IDatasetGenerator
     {
         Shape InputShape { get; }
         Shape OutputShape { get; }

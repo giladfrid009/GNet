@@ -17,7 +17,7 @@ namespace GNet.Optimizers
             Beta1 = beta1;
             Beta2 = beta2;
             Epsilon = epsilon;
-            Decay = decay?.Clone() ?? new Decays.None();
+            Decay = decay ?? new Decays.None();
         }
 
         public void Optimize(ILayer layer, int epoch)
@@ -44,11 +44,6 @@ namespace GNet.Optimizers
                     S.BatchWeight += -lr * corr1 / (Sqrt(corr2) + Epsilon);
                 });
             });
-        }
-
-        public IOptimizer Clone()
-        {
-            return new Nadam(LearningRate, Beta1, Beta2, Epsilon, Decay);
         }
     }
 }

@@ -15,10 +15,5 @@ namespace GNet.Activations
         {
             return vals.Select(X => 1.0 / Pow(1.0 + Abs(X), 2));
         }
-
-        public IActivation Clone()
-        {
-            return new SoftSign();
-        }
     }
 }

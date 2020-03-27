@@ -9,6 +9,7 @@ namespace GNet.Layers
         // todo: each layer should be able to implement dropout. maybe?
 
         public double DropChance { get; }
+
         private ShapedArrayImmutable<bool> dropArray;
 
         public Dropout(Shape shape, IActivation activation, IInitializer weightInit, IInitializer biasInit, double dropChance) : base(shape, activation, weightInit, biasInit)

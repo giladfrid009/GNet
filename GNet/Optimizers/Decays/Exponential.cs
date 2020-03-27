@@ -15,10 +15,5 @@ namespace GNet.Optimizers.Decays
         {
             return value * Exp(-Decay * iteration);
         }
-
-        public IDecay Clone()
-        {
-            return new Exponential(Decay);
-        }
     }
 }

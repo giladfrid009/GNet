@@ -15,10 +15,5 @@ namespace GNet.Activations
         {
             return vals.Select(X => 1.0 / (1.0 + Exp(-X)));
         }
-
-        public IActivation Clone()
-        {
-            return new SoftPlus();
-        }
     }
 }

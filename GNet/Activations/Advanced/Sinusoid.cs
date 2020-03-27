@@ -15,10 +15,5 @@ namespace GNet.Activations.Advanced
         {
             return vals.Select(X => Cos(X));
         }
-
-        public IActivation Clone()
-        {
-            return new Sinusoid();
-        }
     }
 }

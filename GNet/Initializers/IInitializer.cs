@@ -1,6 +1,6 @@
 ﻿namespace GNet
 {
-    public interface IInitializer : ICloneable<IInitializer>
+    public interface IInitializer
     {
         double Initialize(int nIn, int nOut);
     }

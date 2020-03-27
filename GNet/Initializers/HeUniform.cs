@@ -10,10 +10,5 @@ namespace GNet.Initializers
         {
             return GRandom.NextDouble(Sqrt(6.0 / nIn));
         }
-
-        public IInitializer Clone()
-        {
-            return new HeUniform();
-        }
     }
 }

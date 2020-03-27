@@ -13,10 +13,5 @@ namespace GNet.Losses
         {
             return targets.Combine(outputs, (T, O) => 1.0 - T / O);
         }
-
-        public ILoss Clone()
-        {
-            return new Poisson();
-        }
     }
 }
