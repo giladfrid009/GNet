@@ -13,7 +13,7 @@ namespace GNet
         {
             for (int i = 0; i < dimensions.Length; i++)
             {
-                if (dimensions[i] < 1)
+                if (dimensions[i] < 0)
                 {
                     throw new ArgumentOutOfRangeException($"Dimensions [{i}] is out of range.");
                 }

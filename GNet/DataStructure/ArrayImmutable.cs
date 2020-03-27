@@ -12,6 +12,11 @@ namespace GNet
 
         private readonly T[] internalArray;
 
+        public ArrayImmutable()
+        {
+            internalArray = Array.Empty<T>();
+        }
+
         public ArrayImmutable(ArrayImmutable<T> array)
         {
             internalArray = array.internalArray;

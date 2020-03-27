@@ -18,6 +18,8 @@ namespace GNet.Model
 
         public Neuron()
         {
+            InSynapses = new ShapedArrayImmutable<Synapse>();
+            OutSynapses = new ShapedArrayImmutable<Synapse>();
         }
 
         public virtual Neuron Clone()
