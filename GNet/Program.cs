@@ -11,20 +11,20 @@ namespace GNet
                 new Layers.Dense(new Shape(30, 30), new Activations.Identity(), new Initializers.Zero(), new Initializers.Zero()),
                 new Layers.Convolutional
                 (
-                    new Shape(30, 30), 
-                    new Shape(4, 4), 
+                    new Shape(30, 30),
+                    new Shape(4, 4),
                     new ArrayImmutable<int>(2, 2),
-                    new ArrayImmutable<int>(0, 0), 
-                    20, 
-                    new Activations.Tanh(), 
-                    new Initializers.Normal(), 
+                    new ArrayImmutable<int>(0, 0),
+                    20,
+                    new Activations.Tanh(),
+                    new Initializers.Normal(),
                     new Initializers.Zero()
                 ),
                 new Layers.Pooling
                 (
                     new Shape(20, 14, 14),
-                    new Shape(1, 4, 4), 
-                    new ArrayImmutable<int>(1, 2, 2), 
+                    new Shape(1, 4, 4),
+                    new ArrayImmutable<int>(1, 2, 2),
                     new ArrayImmutable<int>(0, 0, 0),
                     new Layers.Poolers.Max()
                 ),

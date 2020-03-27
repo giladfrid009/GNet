@@ -8,6 +8,7 @@ namespace GNet
     public class ArrayImmutable<T> : IArray<T>, IEquatable<ArrayImmutable<T>>
     {
         public int Length => internalArray.Length;
+
         public T this[int index] => internalArray[index];
 
         private readonly T[] internalArray;
@@ -55,7 +56,7 @@ namespace GNet
         }
 
         public ArrayImmutable(IEnumerable enumerable) : this(System.Linq.Enumerable.Cast<T>(enumerable))
-        {           
+        {
         }
 
         public ArrayImmutable(int length, Func<T> element)

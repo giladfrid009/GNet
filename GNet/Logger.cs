@@ -11,6 +11,7 @@ namespace GNet
         public bool Output { get; set; } = true;
 
         private readonly List<string> logLines;
+
         private readonly Network network;
 
         public Logger(Network network)

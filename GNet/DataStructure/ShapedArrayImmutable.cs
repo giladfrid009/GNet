@@ -9,6 +9,7 @@ namespace GNet
     {
         public Shape Shape { get; }
         public new T this[int index] => base[index];
+
         public T this[params int[] indices] => this[Shape.FlattenIndices(indices)];
 
         public ShapedArrayImmutable() : base()
@@ -26,13 +27,13 @@ namespace GNet
         {
             ValidateShape(shape);
             Shape = shape;
-        }       
+        }
 
         public ShapedArrayImmutable(Shape shape, IList<T> list) : base(list)
         {
             ValidateShape(shape);
             Shape = shape;
-        }   
+        }
 
         public ShapedArrayImmutable(Shape shape, IEnumerable<T> enumerable) : base(enumerable)
         {

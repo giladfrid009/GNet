@@ -46,7 +46,6 @@ namespace GNet.Layers
                 })
                 .ToShape(KernelShape);
             });
-            
 
             padded.ForEach((N, i) => N.OutSynapses = new ShapedArrayImmutable<Synapse>(new Shape(inConnections[i].Count), inConnections[i]));
         }
@@ -105,7 +104,7 @@ namespace GNet.Layers
         }
 
         public override void Update()
-        {            
+        {
         }
 
         public override ILayer Clone()

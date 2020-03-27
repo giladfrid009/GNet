@@ -23,7 +23,7 @@ namespace GNet.Datasets.Generators
 
                 int zeroCount = 0;
 
-                input.ForEach(X => 
+                input.ForEach(X =>
                 {
                     if (X == 0)
                     {

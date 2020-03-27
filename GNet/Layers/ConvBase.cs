@@ -76,7 +76,7 @@ namespace GNet.Layers
                 if ((inputShape.Dimensions[i] + 2 * paddings[i] - kernelShape.Dimensions[i]) % strides[i] != 0)
                 {
                     throw new ArgumentOutOfRangeException($"Dimension [{i}] params are invalid.");
-                }                     
+                }
             }
         }
 
@@ -92,7 +92,9 @@ namespace GNet.Layers
             IndexGen.ByStart(inLayer.Shape, Paddings).ForEach((idx, i) => arr.SetValue(inLayer.Neurons[i], idx));
 
             return new ShapedArrayImmutable<Neuron>(paddedShape, arr).Select(N => N ?? new Neuron());
-        }     
+        }
+
+        protected abstract Shape CalcOutputShape(Shape inputShape);
 
         public void Input(ShapedArrayImmutable<double> values)
         {
@@ -114,8 +116,6 @@ namespace GNet.Layers
             });
         }
 
-        protected abstract Shape CalcOutputShape(Shape inputShape);
-
         public abstract void Connect(ILayer inLayer);
 
         public abstract void Initialize();
@@ -124,7 +124,7 @@ namespace GNet.Layers
 
         public abstract void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets);
 
-        public abstract void CalcGrads();  
+        public abstract void CalcGrads();
 
         public abstract ILayer Clone();
     }

@@ -10,6 +10,6 @@ namespace GNet.Layers.Poolers
             double max = inValues.Max();
 
             return inValues.Select(X => X == max ? 1.0 : 0.0);
-        }    
+        }
     }
 }

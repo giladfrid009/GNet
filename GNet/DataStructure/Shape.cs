@@ -50,7 +50,7 @@ namespace GNet
 
         public int FlattenIndices(params int[] indices)
         {
-            if (indices.Length > NumDimentions)               
+            if (indices.Length > NumDimentions)
             {
                 throw new ArgumentException("Indices length is out of range.");
             }

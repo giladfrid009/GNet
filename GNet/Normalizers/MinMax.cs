@@ -3,8 +3,9 @@
 namespace GNet.Normalizers
 {
     public class MinMax : INormalizer
-    {        
+    {
         private double max = 0;
+
         private double min = 0;
 
         public void ExtractParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector)

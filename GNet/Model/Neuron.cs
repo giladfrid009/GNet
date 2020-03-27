@@ -10,10 +10,15 @@ namespace GNet.Model
         public virtual double Bias { get; set; }
 
         public double Value;
+
         public double ActivatedValue;
+
         public double BatchBias;
+
         public double Gradient;
+
         public double Cache1;
+
         public double Cache2;
 
         public Neuron()

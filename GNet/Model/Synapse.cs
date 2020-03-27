@@ -10,8 +10,11 @@ namespace GNet.Model
         public virtual double Weight { get; set; }
 
         public double BatchWeight;
+
         public double Gradient;
+
         public double Cache1;
+
         public double Cache2;
 
         public Synapse(Neuron inNeuron, Neuron outNeuron)

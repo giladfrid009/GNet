@@ -10,7 +10,7 @@ namespace GNet.Layers
     {
         public IActivation Activation { get; }
         public IInitializer WeightInit { get; }
-        public IInitializer BiasInit { get; }        
+        public IInitializer BiasInit { get; }
         public override bool IsTrainable { get; set; } = true;
 
         public Convolutional(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int nKernels, IActivation activation, IInitializer weightInit, IInitializer biasInit) :
@@ -30,7 +30,7 @@ namespace GNet.Layers
 
         public override void Connect(ILayer inLayer)
         {
-            if(inLayer.Shape != InputShape)
+            if (inLayer.Shape != InputShape)
             {
                 throw new ArgumentException("InLayer shape mismatch.");
             }
@@ -75,7 +75,7 @@ namespace GNet.Layers
             {
                 K.Bias.Value = BiasInit.Initialize(inLength, 1);
                 K.Weights.ForEach(W => W.Value = WeightInit.Initialize(inLength, 1));
-            });      
+            });
         }
 
         public override void Forward()
