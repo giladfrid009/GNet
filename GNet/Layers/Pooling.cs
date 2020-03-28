@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GNet.Model;
+using GNet.Utils;
 
 namespace GNet.Layers
 {
@@ -52,24 +53,18 @@ namespace GNet.Layers
 
         public override void Initialize()
         {
-            // TODO: TAKES A LOT OF TIME.
-
-            Neurons.ForEach(N =>
-            {
-                ShapedArrayImmutable<double> weights = Pooler.GetWeights(N.InSynapses.Select(S => S.InNeuron.ActivatedValue));
-
-                N.InSynapses.ForEach((S, i) => S.Weight = weights[i]);
-            });
+            Kernels[0].Bias.Value = 0;
         }
 
         public override void Forward()
         {
-            Initialize();
-
             Neurons.ForEach(N =>
             {
-                N.Value = N.InSynapses.Sum(S => S.Weight * S.InNeuron.ActivatedValue);
+                N.Value = Pooler.Pool(N.InSynapses.Select(S => S.InNeuron.ActivatedValue), out ShapedArrayImmutable<double> inWeights);
+
                 N.ActivatedValue = N.Value;
+
+                N.InSynapses.ForEach((S, i) => S.Weight = inWeights[i]);
             });
         }
 
@@ -87,20 +82,12 @@ namespace GNet.Layers
 
             ShapedArrayImmutable<double> grads = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
 
-            Neurons.ForEach((N, i) =>
-            {
-                N.Gradient = grads[i];
-                N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
-            });
+            Neurons.ForEach((N, i) => N.Gradient = grads[i]);
         }
 
         public override void CalcGrads()
         {
-            Neurons.ForEach((N, i) =>
-            {
-                N.Gradient = N.OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient);
-                N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
-            });
+            Neurons.ForEach((N, i) => N.Gradient = N.OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient));
         }
 
         public override void Update()

@@ -2,9 +2,9 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace GNet.Serializers
+namespace GNet.Utils
 {
-    public static class Binary
+    public static class BinarySerializer
     {
         public static MemoryStream Serialize(object obj)
         {

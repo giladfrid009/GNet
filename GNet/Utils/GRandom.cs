@@ -1,7 +1,7 @@
 ﻿using System;
 using static System.Math;
 
-namespace GNet
+namespace GNet.Utils
 {
     public static class GRandom
     {

@@ -50,7 +50,7 @@ namespace GNet
 
             for (int i = 0; i < shuffled.Length; i++)
             {
-                int iRnd = GRandom.Next(i, Length);
+                int iRnd = Utils.GRandom.Next(i, Length);
                 Data temp = shuffled[i];
                 shuffled[i] = shuffled[iRnd];
                 shuffled[iRnd] = temp;

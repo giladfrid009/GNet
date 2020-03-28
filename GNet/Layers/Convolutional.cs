@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GNet.Model;
 using GNet.Model.Convolutional;
+using GNet.Utils;
 
 namespace GNet.Layers
 {

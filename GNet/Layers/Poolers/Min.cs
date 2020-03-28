@@ -3,15 +3,15 @@
 namespace GNet.Layers.Poolers
 {
     [Serializable]
-    public class Max : IPooler
+    public class Min : IPooler
     {
         public double Pool(ShapedArrayImmutable<double> vals, out ShapedArrayImmutable<double> inWeights)
         {
-            double max = vals.Max();
+            double min = vals.Min();
 
-            inWeights = vals.Select(X => X == max ? 1.0 : 0.0);
+            inWeights = vals.Select(X => X == min ? 1.0 : 0.0);
 
-            return max;
+            return min;
         }
     }
 }

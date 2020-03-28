@@ -1,4 +1,5 @@
 ﻿using System;
+using static GNet.Utils.GRandom;
 
 namespace GNet.Initializers
 {
@@ -7,7 +8,7 @@ namespace GNet.Initializers
     {
         public double Initialize(int nIn, int nOut)
         {
-            return GRandom.NextDouble(-1.0, 1.0);
+            return NextDouble(-1.0, 1.0);
         }
     }
 }

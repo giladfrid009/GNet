@@ -9,7 +9,6 @@ namespace GNet
     {
         public Shape Shape { get; }
         public new T this[int index] => base[index];
-
         public T this[params int[] indices] => this[Shape.FlattenIndices(indices)];
 
         public ShapedArrayImmutable() : base()

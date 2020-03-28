@@ -7,7 +7,7 @@ namespace GNet
     public class Logger : IDisposable
     {
         public bool LogEpoches { get; set; } = true;
-        public bool LogBatches { get; set; } = true;
+        public bool LogBatches { get; set; } = false;
         public bool Output { get; set; } = true;
 
         private readonly List<string> logLines;

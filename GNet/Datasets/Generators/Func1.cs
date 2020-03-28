@@ -27,7 +27,7 @@ namespace GNet.Datasets.Generators
 
                 while (res == 0)
                 {
-                    num = Range * GRandom.NextDouble();
+                    num = Range * Utils.GRandom.NextDouble();
                     res = IOFunc(num);
                 }
 

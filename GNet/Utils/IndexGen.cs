@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GNet.Layers
+namespace GNet.Utils
 {
     public static class IndexGen
     {

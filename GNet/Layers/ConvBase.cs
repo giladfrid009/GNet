@@ -1,6 +1,7 @@
 ﻿using System;
 using GNet.Model;
 using GNet.Model.Convolutional;
+using GNet.Utils;
 
 namespace GNet.Layers
 {
@@ -18,7 +19,7 @@ namespace GNet.Layers
         public int KernelsNum => Kernels.Length;
         public abstract bool IsTrainable { get; set; }
 
-        public ConvBase(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int nKernels)
+        protected ConvBase(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int nKernels)
         {
             ValidateConstructor(inputShape, kernelShape, nKernels, strides, paddings);
 

@@ -39,7 +39,7 @@ namespace GNet
 
             net.Initialize();
 
-            using (new Logger(net) { LogBatches = true })
+            using (new Logger(net))
             {
                 net.Train(trainingDataset, new Losses.MSE(), new Optimizers.NestrovMomentum(), 20, 1000, 0.001, validationDataset, new OutTransformers.Losses.BinaryRoundLoss(), false);
             }

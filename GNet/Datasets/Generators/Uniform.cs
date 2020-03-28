@@ -20,7 +20,7 @@ namespace GNet.Datasets.Generators
 
             for (int i = 0; i < length; i++)
             {
-                var io = new ShapedArrayImmutable<double>(InputShape, () => GRandom.NextDouble() < 0.5 ? 0.0 : 1.0);
+                var io = new ShapedArrayImmutable<double>(InputShape, () => Utils.GRandom.NextDouble() < 0.5 ? 0.0 : 1.0);
 
                 dataCollection[i] = new Data(io, io);
             }

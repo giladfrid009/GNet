@@ -8,7 +8,6 @@ namespace GNet
     public class ArrayImmutable<T> : IArray<T>, IEquatable<ArrayImmutable<T>>
     {
         public int Length => internalArray.Length;
-
         public T this[int index] => internalArray[index];
 
         private readonly T[] internalArray;

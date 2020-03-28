@@ -28,8 +28,8 @@ namespace GNet.Datasets.Generators
 
                 while (res == 0.0)
                 {
-                    n1 = Range * GRandom.NextDouble();
-                    n2 = Range * GRandom.NextDouble();
+                    n1 = Range * Utils.GRandom.NextDouble();
+                    n2 = Range * Utils.GRandom.NextDouble();
                     res = IOFunc(n1, n2);
                 }
 

@@ -2,6 +2,6 @@
 {
     public interface IPooler
     {
-        ShapedArrayImmutable<double> GetWeights(ShapedArrayImmutable<double> inValues);
+        double Pool(ShapedArrayImmutable<double> vals, out ShapedArrayImmutable<double> inWeights);
     }
 }

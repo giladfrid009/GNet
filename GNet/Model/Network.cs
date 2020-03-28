@@ -5,17 +5,12 @@ namespace GNet
     public class Network : ICloneable<Network>
     {
         public delegate void BatchLogger(int batch);
-
         public delegate void ErrorLogger(double error);
-
         public delegate void EpochErrorLogger(int epoch, double error);
 
         public event BatchLogger? OnBatch;
-
         public event ErrorLogger? OnStart;
-
         public event EpochErrorLogger? OnEpoch;
-
         public event EpochErrorLogger? OnFinish;
 
         public ArrayImmutable<ILayer> Layers { get; }

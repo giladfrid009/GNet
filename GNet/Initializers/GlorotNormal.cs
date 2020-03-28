@@ -1,5 +1,6 @@
 ﻿using System;
 using static System.Math;
+using static GNet.Utils.GRandom;
 
 namespace GNet.Initializers
 {
@@ -8,7 +9,7 @@ namespace GNet.Initializers
     {
         public double Initialize(int nIn, int nOut)
         {
-            return GRandom.NextNormal() * Sqrt(2.0 / (nIn + nOut));
+            return NextNormal() * Sqrt(2.0 / (nIn + nOut));
         }
     }
 }
