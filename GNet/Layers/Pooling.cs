@@ -93,14 +93,5 @@ namespace GNet.Layers
         public override void Update()
         {
         }
-
-        public override ILayer Clone()
-        {
-            return new Pooling(InputShape, KernelShape, Strides, Paddings, Pooler)
-            {
-                Neurons = Neurons.Select(N => N.Clone()),
-                Kernels = Kernels.Select(K => K.Clone())
-            };
-        }
     }
 }

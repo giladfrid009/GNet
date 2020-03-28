@@ -126,7 +126,5 @@ namespace GNet.Layers
         public abstract void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets);
 
         public abstract void CalcGrads();
-
-        public abstract ILayer Clone();
     }
 }

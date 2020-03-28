@@ -136,14 +136,5 @@ namespace GNet.Layers
                 });
             });
         }
-
-        public override ILayer Clone()
-        {
-            return new Convolutional(InputShape, KernelShape, Strides, Paddings, KernelsNum, Activation, WeightInit, BiasInit)
-            {
-                Neurons = Neurons.Select(N => N.Clone()),
-                Kernels = Kernels.Select(K => K.Clone())
-            };
-        }
     }
 }

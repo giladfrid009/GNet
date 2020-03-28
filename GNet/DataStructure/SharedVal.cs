@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace GNet.Model.Convolutional
+namespace GNet
 {
     [Serializable]
-    public class SharedVal<T> : ICloneable<SharedVal<T>> where T : struct
+    public class SharedVal<T> where T : struct
     {
         public T Value { get; set; }
 
@@ -14,11 +14,6 @@ namespace GNet.Model.Convolutional
 
         public SharedVal() : this(default)
         {
-        }
-
-        public SharedVal<T> Clone()
-        {
-            return new SharedVal<T>(Value);
         }
     }
 }

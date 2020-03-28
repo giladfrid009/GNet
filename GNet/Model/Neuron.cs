@@ -3,7 +3,7 @@
 namespace GNet.Model
 {
     [Serializable]
-    public class Neuron : ICloneable<Neuron>
+    public class Neuron
     {
         public ShapedArrayImmutable<Synapse> InSynapses { get; set; }
         public ShapedArrayImmutable<Synapse> OutSynapses { get; set; }
@@ -20,19 +20,6 @@ namespace GNet.Model
         {
             InSynapses = new ShapedArrayImmutable<Synapse>();
             OutSynapses = new ShapedArrayImmutable<Synapse>();
-        }
-
-        public virtual Neuron Clone()
-        {
-            return new Neuron()
-            {
-                Bias = Bias,
-                Value = Value,
-                Gradient = Gradient,
-                Cache1 = Cache1,
-                Cache2 = Cache2,
-                BatchBias = BatchBias
-            };
         }
     }
 }

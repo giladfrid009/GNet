@@ -112,14 +112,5 @@ namespace GNet.Layers
                 });
             });
         }
-
-        public virtual ILayer Clone()
-        {
-            return new Dense(Shape, Activation, WeightInit, BiasInit)
-            {
-                Neurons = Neurons.Select(N => N.Clone()),
-                IsTrainable = IsTrainable
-            };
-        }
     }
 }

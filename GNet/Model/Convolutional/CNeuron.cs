@@ -12,18 +12,5 @@ namespace GNet.Model.Convolutional
         {
             KernelBias = new SharedVal<double>();
         }
-
-        public override Neuron Clone()
-        {
-            return new CNeuron()
-            {
-                Bias = Bias,
-                Value = Value,
-                Gradient = Gradient,
-                Cache1 = Cache1,
-                Cache2 = Cache2,
-                BatchBias = BatchBias,
-            };
-        }
     }
 }

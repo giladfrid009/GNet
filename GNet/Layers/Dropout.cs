@@ -53,15 +53,5 @@ namespace GNet.Layers
 
             dropArray = dropArray.Select(X => GRandom.NextDouble() < DropChance ? true : false);
         }
-
-        public override ILayer Clone()
-        {
-            return new Dropout(Shape, Activation, WeightInit, BiasInit, DropChance)
-            {
-                dropArray = dropArray,
-                Neurons = Neurons.Select(N => N.Clone()),
-                IsTrainable = IsTrainable
-            };
-        }
     }
 }
