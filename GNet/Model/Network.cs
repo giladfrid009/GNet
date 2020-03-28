@@ -2,6 +2,7 @@
 
 namespace GNet
 {
+    [Serializable]
     public class Network
     {
         public delegate void BatchLogger(int batch);
@@ -172,6 +173,16 @@ namespace GNet
                     Layers[i].Update();
                 }
             }
+        }
+
+        public void Save(string filePath)
+        {
+            Utils.BinarySerializer.Save(this, filePath);
+        }
+
+        public static Network Load(string filePath)
+        {
+            return Utils.BinarySerializer.Load<Network>(filePath);
         }
     }
 }
