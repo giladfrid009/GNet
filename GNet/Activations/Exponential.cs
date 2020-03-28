@@ -1,7 +1,9 @@
-﻿using static System.Math;
+﻿using System;
+using static System.Math;
 
 namespace GNet.Activations
 {
+    [Serializable]
     public class Exponential : IActivation
     {
         public ShapedArrayImmutable<double> Activate(ShapedArrayImmutable<double> vals)

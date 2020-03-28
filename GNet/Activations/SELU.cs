@@ -4,9 +4,6 @@ using static System.Math;
 namespace GNet.Activations
 {
     [Serializable]
-    /// <summary>
-    /// Scaled Exponential Linear Unit
-    /// </summary>
     public class SELU : IActivation
     {
         public double A { get; } = 1.0507009873554805;

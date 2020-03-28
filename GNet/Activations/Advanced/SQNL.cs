@@ -3,9 +3,6 @@
 namespace GNet.Activations.Advanced
 {
     [Serializable]
-    /// <summary>
-    /// Square Nonlinearity
-    /// </summary>
     public class SQNL : IActivation
     {
         public ShapedArrayImmutable<double> Activate(ShapedArrayImmutable<double> vals)

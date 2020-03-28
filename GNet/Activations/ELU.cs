@@ -4,9 +4,6 @@ using static System.Math;
 namespace GNet.Activations
 {
     [Serializable]
-    /// <summary>
-    /// Exponential Linear Unit
-    /// </summary>
     public class ELU : IActivation
     {
         public ShapedArrayImmutable<double> Activate(ShapedArrayImmutable<double> vals)

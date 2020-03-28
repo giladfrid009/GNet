@@ -4,9 +4,6 @@ using static System.Math;
 namespace GNet.Activations.Advanced
 {
     [Serializable]
-    /// <summary>
-    /// Inverse Square Root Unit
-    /// </summary>
     public class ISRU : IActivation
     {
         public double Alpha { get; }

@@ -2,6 +2,7 @@
 
 namespace GNet
 {
+    [Serializable]
     public class Data : IEquatable<Data>
     {
         public ShapedArrayImmutable<double> Inputs { get; }

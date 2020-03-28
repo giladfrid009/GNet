@@ -3,9 +3,6 @@
 namespace GNet.Activations
 {
     [Serializable]
-    /// <summary>
-    /// Rectified Linear Unit
-    /// </summary>
     public class ReLu : IActivation
     {
         public double Slope { get; }

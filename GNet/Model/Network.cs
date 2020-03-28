@@ -167,11 +167,8 @@ namespace GNet
             //});
 
             for (int i = 1; i < Length; i++)
-            {
-                if (Layers[i].IsTrainable)
-                {
-                    Layers[i].Update();
-                }
+            {         
+                Layers[i].Update();             
             }
         }
 

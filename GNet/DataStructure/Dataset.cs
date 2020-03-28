@@ -2,6 +2,7 @@
 
 namespace GNet
 {
+    [Serializable]
     public class Dataset : IArray<Data>
     {
         public Shape InputShape { get; }
