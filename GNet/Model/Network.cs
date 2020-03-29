@@ -21,7 +21,6 @@ namespace GNet
         {
             Layers = layers;
             Connect();
-            Initialize();
         }
 
         public Network(params ILayer[] layers) : this(new ArrayImmutable<ILayer>(layers))
@@ -36,13 +35,13 @@ namespace GNet
             }
         }
 
-        private void Initialize()
+        public void Initialize()
         {
             for (int i = 1; i < Length; i++)
             {
                 Layers[i].Initialize();
             }
-        }    
+        }
 
         public ShapedArrayImmutable<double> Forward(ShapedArrayImmutable<double> inputs)
         {
@@ -170,16 +169,6 @@ namespace GNet
             {         
                 Layers[i].Update();             
             }
-        }
-
-        public void Save(string filePath)
-        {
-            Utils.BinarySerializer.Save(this, filePath);
-        }
-
-        public static Network Load(string filePath)
-        {
-            return Utils.BinarySerializer.Load<Network>(filePath);
         }
     }
 }

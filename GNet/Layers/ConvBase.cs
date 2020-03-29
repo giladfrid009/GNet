@@ -8,8 +8,8 @@ namespace GNet.Layers
     [Serializable]
     public abstract class ConvBase : ILayer
     {
-        public ArrayImmutable<Kernel> Kernels { get; protected set; }
-        public ShapedArrayImmutable<Neuron> Neurons { get; protected set; }
+        public ArrayImmutable<Kernel> Kernels { get; }
+        public ShapedArrayImmutable<Neuron> Neurons { get; }
         public ArrayImmutable<int> Strides { get; }
         public ArrayImmutable<int> Paddings { get; }
         public Shape InputShape { get; }
@@ -21,7 +21,7 @@ namespace GNet.Layers
 
         protected ConvBase(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int nKernels)
         {
-            ValidateConstructor(inputShape, kernelShape, nKernels, strides, paddings);
+            ValidateParams(inputShape, kernelShape, nKernels, strides, paddings);
 
             InputShape = inputShape;
             KernelShape = kernelShape;
@@ -35,7 +35,7 @@ namespace GNet.Layers
             Neurons = new ShapedArrayImmutable<Neuron>(CalcOutputShape(inputShape), () => new CNeuron());
         }
 
-        protected static void ValidateConstructor(Shape inputShape, Shape kernelShape, int nKernels, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
+        protected static void ValidateParams(Shape inputShape, Shape kernelShape, int nKernels, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
         {
             if (nKernels < 1)
             {
@@ -102,21 +102,6 @@ namespace GNet.Layers
             throw new NotSupportedException("This layer can't be used as input layer.");
         }
 
-        public virtual void Update()
-        {
-            Neurons.ForEach(N =>
-            {
-                N.Bias += N.BatchBias;
-                N.BatchBias = 0.0;
-
-                N.InSynapses.ForEach(S =>
-                {
-                    S.Weight += S.BatchWeight;
-                    S.BatchWeight = 0.0;
-                });
-            });
-        }
-
         public abstract void Connect(ILayer inLayer);
 
         public abstract void Initialize();
@@ -126,5 +111,7 @@ namespace GNet.Layers
         public abstract void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets);
 
         public abstract void CalcGrads();
+
+        public abstract void Update();
     }
 }

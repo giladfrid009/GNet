@@ -7,7 +7,7 @@ namespace GNet.Layers
     [Serializable]
     public class Dropout : ILayer
     {
-        public ShapedArrayImmutable<Neuron> Neurons { get; protected set; }
+        public ShapedArrayImmutable<Neuron> Neurons { get; }
         public Shape Shape { get; }
         public bool IsTrainable { get; } = false;
 

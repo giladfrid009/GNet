@@ -13,7 +13,7 @@
 
         public double Compute(double value, int iteration)
         {
-            return value - Decay * (iteration / Interval);
+            return value - Decay * iteration / Interval;
         }
     }
 }

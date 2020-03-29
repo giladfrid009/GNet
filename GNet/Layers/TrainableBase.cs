@@ -3,59 +3,22 @@ using GNet.Model;
 
 namespace GNet.Layers
 {
-    [Serializable]
-    public class Dense : ILayer
+    public abstract class TrainableBase : ILayer
     {
-        public ShapedArrayImmutable<Neuron> Neurons { get; }
+        public ShapedArrayImmutable<Neuron> Neurons { get; protected set; }
         public Shape Shape { get; }
         public IActivation Activation { get; }
-        public IInitializer WeightInit { get; }
-        public IInitializer BiasInit { get; }
         public bool IsTrainable { get; set; } = true;
 
-        public Dense(Shape shape, IActivation activation, IInitializer weightInit, IInitializer biasInit)
+        protected TrainableBase(Shape shape, IActivation activation)
         {
-            Shape = shape;
             Activation = activation;
-            WeightInit = weightInit;
-            BiasInit = biasInit;
-            Neurons = new ShapedArrayImmutable<Neuron>(shape, () => new Neuron());
+            Shape = shape;
+
+            Neurons = new ShapedArrayImmutable<Neuron>();
         }
 
-        public virtual void Connect(ILayer inLayer)
-        {
-            Neurons.ForEach(N => N.InSynapses = inLayer.Neurons.Select(inN => new Synapse(inN, N)));
-
-            inLayer.Neurons.ForEach((inN, i) => inN.OutSynapses = Neurons.Select(outN => outN.InSynapses[i]));
-        }
-
-        public void Initialize()
-        {
-            int inLength = Neurons[0].InSynapses.Length;
-            int outLength = Shape.Volume;
-
-            Neurons.ForEach(N =>
-            {
-                N.Bias = BiasInit.Initialize(inLength, outLength);
-                N.InSynapses.ForEach(S => S.Weight = WeightInit.Initialize(inLength, outLength));
-            });
-        }
-
-        public virtual void Input(ShapedArrayImmutable<double> values)
-        {
-            if (values.Shape != Shape)
-            {
-                throw new ArgumentOutOfRangeException("Values shape mismatch.");
-            }
-
-            Neurons.ForEach((N, i) => N.Value = values[i]);
-
-            ShapedArrayImmutable<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
-
-            Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
-        }
-
-        public virtual void Forward()
+        public void Forward()
         {
             Neurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Sum(S => S.Weight * S.InNeuron.ActivatedValue));
 
@@ -98,8 +61,13 @@ namespace GNet.Layers
             });
         }
 
-        public virtual void Update()
+        public void Update()
         {
+            if(IsTrainable == false)
+            {
+                return;
+            }
+
             Neurons.ForEach(N =>
             {
                 N.Bias += N.BatchBias;
@@ -112,5 +80,11 @@ namespace GNet.Layers
                 });
             });
         }
+
+        public abstract void Connect(ILayer inLayer);
+
+        public abstract void Initialize();
+
+        public abstract void Input(ShapedArrayImmutable<double> values);
     }
 }

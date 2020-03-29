@@ -17,7 +17,7 @@ namespace GNet.Optimizers.Decays
 
         public double Compute(double value, int iteration)
         {
-            return value * Pow(Multiplier, iteration / Interval);
+            return value * Pow(Multiplier, (double)iteration / Interval);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using GNet.Utils;
 
 namespace GNet
 {
@@ -34,13 +35,19 @@ namespace GNet
             );
 
             var datasetGenerator = new Datasets.Generators.EvenOdd(new Shape(30, 30));
-            Dataset trainingDataset = datasetGenerator.Generate(600);
-            Dataset validationDataset = datasetGenerator.Generate(100);
+            Dataset tDataset = datasetGenerator.Generate(600);
+            Dataset vDataset = datasetGenerator.Generate(100);
 
-            using (new Logger(net))
+            TimeSpan time = Benchmark.BatchTime(net, (N) =>
             {
-                net.Train(trainingDataset, new Losses.MSE(), new Optimizers.NestrovMomentum(), 20, 1000, 0.001, validationDataset, new OutTransformers.Losses.BinaryRoundLoss(), false);
-            }
+                using (new Logger(net) { LogBatches = true })
+                {
+                    N.Train(tDataset, new Losses.MSE(), new Optimizers.NestrovMomentum(), 20, 5, 0.001, vDataset, new OutTransformers.Losses.BinaryRoundLoss(), false);
+                }
+
+            }, 10);
+
+            Console.WriteLine(time);
 
             Console.ReadKey();
         }
