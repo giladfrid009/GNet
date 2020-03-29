@@ -16,7 +16,7 @@ namespace GNet.Normalizers
 
             int nVals = dataVector[0].Shape.Volume * dataVector.Length;
 
-            sd = Sqrt(variance / nVals);
+            sd = Sqrt((variance + double.Epsilon) / nVals);
         }
 
         public ShapedArrayImmutable<double> Normalize(ShapedArrayImmutable<double> vals)

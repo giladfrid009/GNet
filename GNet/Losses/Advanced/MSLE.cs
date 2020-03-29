@@ -1,10 +1,7 @@
 ﻿using static System.Math;
 
-namespace GNet.Losses
+namespace GNet.Losses.Advanced
 {
-    /// <summary>
-    /// Mean Squared Logarithmic Error
-    /// </summary>
     public class MSLE : ILoss
     {
         public double Compute(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)

@@ -6,12 +6,12 @@ namespace GNet.Losses
     {
         public double Compute(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)
         {
-            return targets.Combine(outputs, (T, O) => T * Log(T / O)).Avarage();
+            return targets.Combine(outputs, (T, O) => T * Log(T / (O + double.Epsilon))).Avarage();
         }
 
         public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)
         {
-            return targets.Combine(outputs, (T, O) => -T / O);
+            return targets.Combine(outputs, (T, O) => -T / (O + double.Epsilon));
         }
     }
 }

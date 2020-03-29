@@ -8,7 +8,6 @@ namespace GNet.Optimizers
 
         public double Beta1 { get; }
         public double Beta2 { get; }
-        public double Epsilon { get; }
         public double LearningRate { get; }
 
         public AdaMax(double learningRate = 0.002, double beta1 = 0.9, double beta2 = 0.999, IDecay? decay = null)
@@ -30,7 +29,7 @@ namespace GNet.Optimizers
                 N.Cache1 = Beta1 * N.Cache1 + (1.0 - Beta1) * N.Gradient;
                 N.Cache2 = Max(Beta2 * N.Cache2, Abs(N.Gradient));
                 double corr1 = N.Cache1 / val1;
-                N.BatchBias += -lr * corr1 / (N.Cache2 + Epsilon);
+                N.BatchBias += -lr * corr1 / (N.Cache2 + double.Epsilon);
 
                 N.InSynapses.ForEach(S =>
                 {

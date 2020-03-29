@@ -13,15 +13,12 @@ namespace GNet.Layers
 
         public double DropChance
         {
-            get
-            {
-                return dropChance;
-            }
+            get => dropChance;
             set
             {
                 if (dropChance < 0 || dropChance > 1)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(dropChance));
+                    throw new ArgumentOutOfRangeException("DropChance must be in range (0 - 1).");
                 }
 
                 dropChance = value;
@@ -33,11 +30,6 @@ namespace GNet.Layers
 
         public Dropout(Shape shape, double dropChance)
         {
-            if(dropChance < 0 || dropChance > 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(dropChance));
-            }
-
             Shape = shape;
             DropChance = dropChance;
             Neurons = new ShapedArrayImmutable<Neuron>(shape, () => new Neuron());

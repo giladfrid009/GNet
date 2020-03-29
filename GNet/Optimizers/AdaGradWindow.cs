@@ -5,15 +5,13 @@ namespace GNet.Optimizers
     public class AdaGradWindow : IOptimizer
     {
         public IDecay Decay { get; }
-        public double Epsilon { get; }
         public double LearningRate { get; }
         public double Rho { get; }
 
-        public AdaGradWindow(double learningRate = 0.01, double rho = 0.95, double epsilon = 1e-8, IDecay? decay = null)
+        public AdaGradWindow(double learningRate = 0.01, double rho = 0.95, IDecay? decay = null)
         {
             LearningRate = learningRate;
             Rho = rho;
-            Epsilon = epsilon;
             Decay = decay ?? new Decays.None();
         }
 
@@ -24,12 +22,12 @@ namespace GNet.Optimizers
             layer.Neurons.ForEach(N =>
             {
                 N.Cache1 = Rho * N.Cache1 + (1.0 - Rho) * N.Gradient * N.Gradient;
-                N.BatchBias += -lr * N.Gradient / Sqrt(N.Cache1 + Epsilon);
+                N.BatchBias += -lr * N.Gradient / Sqrt(N.Cache1 + double.Epsilon);
 
                 N.InSynapses.ForEach(S =>
                 {
                     S.Cache1 = Rho * S.Cache1 + (1.0 - Rho) * S.Gradient * S.Gradient;
-                    S.BatchWeight += -lr * S.Gradient / Sqrt(S.Cache1 + Epsilon);
+                    S.BatchWeight += -lr * S.Gradient / Sqrt(S.Cache1 + double.Epsilon);
                 });
             });
         }

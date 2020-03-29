@@ -1,6 +1,6 @@
 ﻿using static System.Math;
 
-namespace GNet.Losses
+namespace GNet.Losses.Advanced
 {
     public class HingeSquared : ILoss
     {

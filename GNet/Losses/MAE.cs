@@ -2,9 +2,6 @@
 
 namespace GNet.Losses
 {
-    /// <summary>
-    /// Mean Absolute Error
-    /// </summary>
     public class MAE : ILoss
     {
         public double Compute(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)

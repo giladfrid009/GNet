@@ -8,9 +8,9 @@ namespace GNet.Normalizers
 
         public void ExtractParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector)
         {
-            double max = 0;
+            double max = double.Epsilon;
 
-            dataVector.ForEach(D => max = Max(max, D.Max()));
+            dataVector.ForEach(D => max = Max(max, D.Select(X => Abs(X)).Max()));
 
             scale = (int)Log10(max) + 1;
         }

@@ -1,8 +1,5 @@
 ﻿namespace GNet.Losses
 {
-    /// <summary>
-    /// Mean Squared Error
-    /// </summary>
     public class MSE : ILoss
     {
         public double Compute(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)

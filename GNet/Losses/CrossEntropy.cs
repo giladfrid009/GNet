@@ -2,16 +2,16 @@
 
 namespace GNet.Losses
 {
-    public class CategoricalCrossEntropy : ILoss
+    public class CrossEntropy : ILoss
     {
         public double Compute(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)
         {
-            return targets.Combine(outputs, (T, O) => -T * Log(O)).Avarage();
+            return targets.Combine(outputs, (T, O) => -T * Log(O + double.Epsilon)).Avarage();
         }
 
         public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)
         {
-            return targets.Combine(outputs, (T, O) => -T / O);
+            return targets.Combine(outputs, (T, O) => -T / (O + double.Epsilon));
         }
     }
 }
