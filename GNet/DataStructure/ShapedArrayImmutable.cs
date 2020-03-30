@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace GNet
 {
     [Serializable]
-    public class ShapedArrayImmutable<T> : ArrayImmutable<T>, IEquatable<ShapedArrayImmutable<T>>
+    public class ShapedArrayImmutable<T> : ArrayImmutable<T>
     {
         public Shape Shape { get; }
         public new T this[int index] => base[index];
@@ -59,37 +59,7 @@ namespace GNet
             }
         }
 
-        public static bool operator !=(ShapedArrayImmutable<T> left, ShapedArrayImmutable<T> right)
-        {
-            return !left.Equals(right);
-        }
-
-        public static bool operator ==(ShapedArrayImmutable<T> left, ShapedArrayImmutable<T> right)
-        {
-            return left.Equals(right);
-        }
-
-        public bool Equals(ShapedArrayImmutable<T> other)
-        {
-            if (Shape != other.Shape)
-            {
-                return false;
-            }
-
-            return base.Equals(other);
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return (obj is ShapedArrayImmutable<T> shapedArr) && Equals(shapedArr);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode() + Shape.GetHashCode();
-        }
-
-        public ArrayImmutable<T> ToFlat()
+        public ArrayImmutable<T> Flatten()
         {
             return new ArrayImmutable<T>(this);
         }

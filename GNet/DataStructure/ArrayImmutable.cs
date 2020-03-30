@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace GNet
 {
     [Serializable]
-    public class ArrayImmutable<T> : IArray<T>, IEquatable<ArrayImmutable<T>>
+    public class ArrayImmutable<T> : IArray<T>
     {
         public int Length => internalArray.Length;
         public T this[int index] => internalArray[index];
@@ -68,16 +68,6 @@ namespace GNet
             }
         }
 
-        public static bool operator !=(ArrayImmutable<T> left, ArrayImmutable<T> right)
-        {
-            return !left.Equals(right);
-        }
-
-        public static bool operator ==(ArrayImmutable<T> left, ArrayImmutable<T> right)
-        {
-            return left.Equals(right);
-        }
-
         public T[] ToMutable()
         {
             var array = new T[Length];
@@ -90,39 +80,6 @@ namespace GNet
         public ShapedArrayImmutable<T> ToShape(Shape shape)
         {
             return new ShapedArrayImmutable<T>(shape, this);
-        }
-
-        public bool Equals(ArrayImmutable<T> other)
-        {
-            if (other.Length != Length)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < Length; i++)
-            {
-                if (internalArray[i] == null != (other.internalArray[i] == null))
-                {
-                    return false;
-                }
-
-                if (internalArray[i]?.Equals(other.internalArray[i]) == false)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return (obj is ArrayImmutable<T> arr) && Equals(arr);
-        }
-
-        public override int GetHashCode()
-        {
-            return internalArray.GetHashCode() + Length * 13;
         }
     }
 }

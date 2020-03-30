@@ -5,7 +5,7 @@ namespace GNet.Layers
 {
     public abstract class TrainableBase : ILayer
     {
-        public ShapedArrayImmutable<Neuron> Neurons { get; protected set; }
+        public ShapedArrayImmutable<Neuron> Neurons { get; }
         public Shape Shape { get; }
         public IActivation Activation { get; }
         public bool IsTrainable { get; set; } = true;

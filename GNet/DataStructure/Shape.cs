@@ -28,26 +28,6 @@ namespace GNet
         {
         }
 
-        public static bool operator !=(Shape left, Shape right)
-        {
-            return !left.Equals(right);
-        }
-
-        public static bool operator ==(Shape left, Shape right)
-        {
-            return left.Equals(right);
-        }
-
-        public bool Equals(Shape other)
-        {
-            return Dimensions == other.Dimensions;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return (obj is Shape shape) && Equals(shape);
-        }
-
         public int FlattenIndices(params int[] indices)
         {
             if (indices.Length > NumDimentions)
@@ -71,6 +51,39 @@ namespace GNet
             }
 
             return flatIndex;
+        }
+
+        public static bool operator !=(Shape left, Shape right)
+        {
+            return !left.Equals(right);
+        }
+
+        public static bool operator ==(Shape left, Shape right)
+        {
+            return left.Equals(right);
+        }
+
+        public bool Equals(Shape other)
+        {
+            if(NumDimentions != other.NumDimentions)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < NumDimentions; i++)
+            {
+                if(Dimensions[i] != other.Dimensions[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return (obj is Shape shape) && Equals(shape);
         }
 
         public override int GetHashCode()
