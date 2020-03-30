@@ -5,17 +5,29 @@ namespace GNet.Utils
 {
     public static class Benchmark
     {
-        public static TimeSpan BatchTime(Network network, Action<Network> trainMethod, int count = 1)
+        public static TimeSpan Time(Action action, int iterations = 1)
         {
             var sw = new Stopwatch();
-            var batchTime = new TimeSpan();
+            sw.Start();
+
+            for (int i = 0; i < iterations; i++)
+            {
+                action();
+            }
+
+            return sw.Elapsed / iterations;
+        }
+
+        public static TimeSpan BatchTime(Network network, Action<Network> trainMethod, int iterations = 1)
+        {
+            var sw = new Stopwatch();
             int nBatches = 0;
 
             network.OnStart += OnStart;
             network.OnFinish += OnFinish;
             network.OnBatch += OnBatch;
 
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < iterations; i++)
             {
                 network.Initialize();
                 trainMethod(network);
@@ -23,8 +35,7 @@ namespace GNet.Utils
 
             void OnStart(double error)
             {
-                sw.Restart();
-                nBatches = 0;
+                sw.Start();
             }
 
             void OnBatch(int batch)
@@ -35,14 +46,13 @@ namespace GNet.Utils
             void OnFinish(int epoch, double error)
             {
                 sw.Stop();
-                batchTime += sw.Elapsed / nBatches;
             }
 
             network.OnStart -= OnStart;
             network.OnFinish -= OnFinish;
             network.OnBatch -= OnBatch;
 
-            return batchTime;
+            return sw.Elapsed / nBatches;
         }
     }
 }
