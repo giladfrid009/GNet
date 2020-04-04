@@ -8,21 +8,21 @@ namespace GNet
     public class ShapedArrayImmutable<T> : ArrayImmutable<T>
     {
         public Shape Shape { get; }
-        public new T this[int index] => base[index];
-        public T this[params int[] indices] => this[Shape.FlattenIndices(indices)];
+        public new T this[int i] => internalArray[i];
+        public T this[params int[] idxs] => internalArray[Shape.FlattenIndices(idxs)];
 
         public ShapedArrayImmutable() : base()
         {
-            Shape = new Shape(0);
+            Shape = new Shape();
         }
 
-        public ShapedArrayImmutable(Shape shape, ArrayImmutable<T> array) : base(array)
+        public ShapedArrayImmutable(Shape shape, params T[] array) : base(array)
         {
             ValidateShape(shape);
             Shape = shape;
         }
 
-        public ShapedArrayImmutable(Shape shape, params T[] array) : base(array)
+        public ShapedArrayImmutable(Shape shape, in T[] array) : base(in array)
         {
             ValidateShape(shape);
             Shape = shape;
@@ -61,7 +61,7 @@ namespace GNet
 
         public ArrayImmutable<T> Flatten()
         {
-            return new ArrayImmutable<T>(this);
+            return this;
         }
     }
 }

@@ -8,25 +8,20 @@ namespace GNet
     public class ArrayImmutable<T> : IArray<T>
     {
         public int Length => internalArray.Length;
-        public T this[int index] => internalArray[index];
+        public T this[int i] => internalArray[i];
 
-        private readonly T[] internalArray;
-
-        public ArrayImmutable()
-        {
-            internalArray = Array.Empty<T>();
-        }
-
-        public ArrayImmutable(ArrayImmutable<T> array)
-        {
-            internalArray = array.internalArray;
-        }
+        protected readonly T[] internalArray;
 
         public ArrayImmutable(params T[] array)
         {
             internalArray = new T[array.Length];
 
             Array.Copy(array, 0, internalArray, 0, array.Length);
+        }
+
+        public ArrayImmutable(in T[] array)
+        {
+            internalArray = array;
         }
 
         public ArrayImmutable(IList<T> list)
@@ -79,7 +74,7 @@ namespace GNet
 
         public ShapedArrayImmutable<T> ToShape(Shape shape)
         {
-            return new ShapedArrayImmutable<T>(shape, this);
+            return new ShapedArrayImmutable<T>(shape, in internalArray);
         }
     }
 }

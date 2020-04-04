@@ -14,7 +14,7 @@ namespace GNet
                 selected[i] = selector(source[i], i);
             }
 
-            return new ArrayImmutable<TOut>(selected);
+            return new ArrayImmutable<TOut>(in selected);
         }
 
         public static ArrayImmutable<TOut> Select<TSource, TOut>(this IArray<TSource> source, Func<TSource, TOut> selector)
@@ -46,7 +46,7 @@ namespace GNet
                 combined[i] = selector(source[i], other[i]);
             }
 
-            return new ArrayImmutable<TSource>(combined);
+            return new ArrayImmutable<TSource>(in combined);
         }
 
         public static ShapedArrayImmutable<TSource> Combine<TSource>(this ShapedArrayImmutable<TSource> source, IArray<TSource> other, Func<TSource, TSource, TSource> selector)
@@ -54,18 +54,21 @@ namespace GNet
             return Combine((IArray<TSource>)source, other, selector).ToShape(source.Shape);
         }
 
-        public static ArrayImmutable<TSource> Concat<TSource>(this IArray<TSource> source, params IArray<TSource>[] others)
+        public static ArrayImmutable<TSource> Concat<TSource>(this IArray<TSource> source, IArray<TSource> other)
         {
-            var concated = new List<TSource>();
+            TSource[] concated = new TSource[source.Length + other.Length];
 
-            source.ForEach(X => concated.Add(X));
-
-            for (int i = 0; i < others.Length; i++)
+            for (int i = 0; i < source.Length; i++)
             {
-                others[i].ForEach(X => concated.Add(X));
+                concated[i] = source[i];
             }
 
-            return new ArrayImmutable<TSource>(concated);
+            for (int i = 0; i < other.Length; i++)
+            {
+                concated[i + source.Length] = other[i];
+            }
+
+            return new ArrayImmutable<TSource>(in concated);
         }
 
         public static void ForEach<TSource>(this IArray<TSource> source, Action<TSource, int> action)
