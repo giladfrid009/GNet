@@ -9,14 +9,19 @@ namespace GNet
 
         public new T this[int i]
         {
-            get => internalList[i];
-            set => internalList[i] = value;
+            get => base[i];
+            set => base[i] = value;
         }
 
         public T this[params int[] idxs]
         {
-            get => internalList[Shape.FlattenIndices(idxs)];
-            set => internalList[Shape.FlattenIndices(idxs)] = value;
+            get => base[Shape.FlattenIndices(idxs)];
+            set => base[Shape.FlattenIndices(idxs)] = value;
+        }
+
+        public ShapedArrayBuilder() : base()
+        {
+            Shape = new Shape(0);
         }
 
         public ShapedArrayBuilder(Shape shape) : base(shape.Volume)
@@ -24,22 +29,28 @@ namespace GNet
             Shape = shape;
         }
 
-        public ShapedArrayBuilder(params T[] array) : base(array)
+        public ShapedArrayBuilder(Shape shape, params T[] elements) : base(elements)
         {
-            ValidateShape(Shape);
-            Shape = Shape;
+            ValidateShape(shape);
+            Shape = shape;
         }
 
-        public ShapedArrayBuilder(IList<T> list) : base(list)
+        public ShapedArrayBuilder(Shape shape, in List<T> list) : base(in list)
         {
-            ValidateShape(Shape);
-            Shape = Shape;
+            ValidateShape(shape);
+            Shape = shape;
         }
 
-        public ShapedArrayBuilder(IEnumerable<T> enumerable) : base(enumerable)
+        public ShapedArrayBuilder(Shape shape, IList<T> list) : base(list)
         {
-            ValidateShape(Shape);
-            Shape = Shape;
+            ValidateShape(shape);
+            Shape = shape;
+        }
+
+        public ShapedArrayBuilder(Shape shape, IEnumerable<T> enumerable) : base(enumerable)
+        {
+            ValidateShape(shape);
+            Shape = shape;
         }
 
         public ShapedArrayBuilder(Shape shape, Func<T> element) : base(shape.Volume, element)
@@ -53,6 +64,11 @@ namespace GNet
             {
                 throw new ArgumentException("Shape volume and length mismatch.");
             }
+        }
+
+        public ArrayBuilder<T> Flatten()
+        {
+            return this;
         }
     }
 }

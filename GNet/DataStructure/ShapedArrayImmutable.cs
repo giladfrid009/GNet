@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace GNet
@@ -8,15 +7,15 @@ namespace GNet
     public class ShapedArrayImmutable<T> : ArrayImmutable<T>
     {
         public Shape Shape { get; }
-        public new T this[int i] => internalArray[i];
-        public T this[params int[] idxs] => internalArray[Shape.FlattenIndices(idxs)];
+        public new T this[int i] => base[i];
+        public T this[params int[] idxs] => base[Shape.FlattenIndices(idxs)];
 
         public ShapedArrayImmutable() : base()
         {
             Shape = new Shape();
         }
 
-        public ShapedArrayImmutable(Shape shape, params T[] array) : base(array)
+        public ShapedArrayImmutable(Shape shape, params T[] elements) : base(elements)
         {
             ValidateShape(shape);
             Shape = shape;

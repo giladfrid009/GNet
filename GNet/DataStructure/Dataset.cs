@@ -7,7 +7,7 @@ namespace GNet
     {
         public Shape InputShape { get; }
         public Shape OutputShape { get; }
-        public int Length { get; }
+        public int Length => dataCollection.Length;
 
         public Data this[int index] => dataCollection[index];
 
@@ -26,7 +26,6 @@ namespace GNet
                 }
             });
 
-            Length = dataCollection.Length;
             this.dataCollection = dataCollection;
         }
 
@@ -57,7 +56,7 @@ namespace GNet
                 shuffled[iRnd] = temp;
             }
 
-            dataCollection = new ArrayImmutable<Data>(shuffled);
+            dataCollection = new ArrayImmutable<Data>(in shuffled);
         }
     }
 }

@@ -94,7 +94,7 @@ namespace GNet.Layers
 
             builder.ForEach((N, i) => builder[i] = N ?? new Neuron());
 
-            return builder.ToShapedImmutable(PaddedShape);
+            return builder.ToImmutable(PaddedShape);
         }
 
         protected abstract Shape CalcOutputShape(Shape inputShape);

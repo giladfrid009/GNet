@@ -13,7 +13,7 @@ namespace GNet
             set => internalList[i] = value;
         }
 
-        protected readonly List<T> internalList;
+        private readonly List<T> internalList;
 
         public ArrayBuilder()
         {
@@ -25,12 +25,17 @@ namespace GNet
             internalList = new List<T>(length);
         }
 
-        public ArrayBuilder(params T[] array) : this(array.Length)
+        public ArrayBuilder(params T[] elements) : this(elements.Length)
         {
-            for (int i = 0; i < array.Length; i++)
+            for (int i = 0; i < elements.Length; i++)
             {
-                internalList[i] = array[i];
+                internalList[i] = elements[i];
             }
+        }
+
+        public ArrayBuilder(in List<T> list)
+        {
+            internalList = list;
         }
 
         public ArrayBuilder(IList<T> list) : this(list.Count)
@@ -61,6 +66,11 @@ namespace GNet
             internalList.Add(item);
         }
 
+        public ShapedArrayBuilder<T> ToShape(Shape shape)
+        {
+            return new ShapedArrayBuilder<T>(shape, in internalList);
+        }
+
         public ArrayImmutable<T> ToImmutable()
         {
             T[] array = internalList.ToArray();
@@ -70,13 +80,9 @@ namespace GNet
             return new ArrayImmutable<T>(in array);
         }
 
-        public ShapedArrayImmutable<T> ToShapedImmutable(Shape shape)
+        public ShapedArrayImmutable<T> ToImmutable(Shape shape)
         {
-            T[] array = internalList.ToArray();
-
-            internalList.Clear();
-
-            return new ShapedArrayImmutable<T>(shape, in array);
+            return ToImmutable().ToShape(shape);
         }
     }
 }

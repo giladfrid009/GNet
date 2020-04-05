@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace GNet
@@ -10,13 +9,13 @@ namespace GNet
         public int Length => internalArray.Length;
         public T this[int i] => internalArray[i];
 
-        protected readonly T[] internalArray;
+        private readonly T[] internalArray;
 
-        public ArrayImmutable(params T[] array)
+        public ArrayImmutable(params T[] elements)
         {
-            internalArray = new T[array.Length];
+            internalArray = new T[elements.Length];
 
-            Array.Copy(array, 0, internalArray, 0, array.Length);
+            Array.Copy(elements, 0, internalArray, 0, elements.Length);
         }
 
         public ArrayImmutable(in T[] array)
