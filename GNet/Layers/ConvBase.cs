@@ -86,13 +86,15 @@ namespace GNet.Layers
             return new Shape(shapeInput.Dimensions.Select((D, i) => D + 2 * Paddings[i]));
         }
 
-        protected ShapedArrayImmutable<Neuron> PadInNeurons(ILayer inLayer, Shape paddedShape)
+        protected ShapedArrayImmutable<Neuron> PadInNeurons(ILayer inLayer)
         {
-            var arr = Array.CreateInstance(typeof(Neuron), paddedShape.Dimensions.ToMutable());
+            var builder = new ShapedArrayBuilder<Neuron>(PaddedShape);
 
-            IndexGen.ByStart(inLayer.Shape, Paddings).ForEach((idx, i) => arr.SetValue(inLayer.Neurons[i], idx));
+            IndexGen.ByStart(inLayer.Shape, Paddings).ForEach((idx, i) => builder[idx] = inLayer.Neurons[i]);
 
-            return new ShapedArrayImmutable<Neuron>(paddedShape, arr).Select(N => N ?? new Neuron());
+            builder.ForEach((N, i) => builder[i] = N ?? new Neuron());
+
+            return builder.ToShapedImmutable(PaddedShape);
         }
 
         protected abstract Shape CalcOutputShape(Shape inputShape);

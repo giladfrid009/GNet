@@ -36,9 +36,9 @@ namespace GNet.Layers
                 throw new ArgumentException("InLayer shape mismatch.");
             }
 
-            ShapedArrayImmutable<Neuron> padded = PadInNeurons(inLayer, PaddedShape);
+            ShapedArrayImmutable<Neuron> padded = PadInNeurons(inLayer);
 
-            var inConnections = new ShapedArrayImmutable<List<Synapse>>(PaddedShape, () => new List<Synapse>());
+            var inConnections = new ShapedArrayImmutable<ArrayBuilder<Synapse>>(PaddedShape, () => new ArrayBuilder<Synapse>());
 
             Kernels.ForEach((kernel, i) =>
             {
@@ -58,14 +58,12 @@ namespace GNet.Layers
                         };
 
                         inConnections[idx].Add(S);
-
                         return (Synapse)S;
-                    })
-                    .ToShape(KernelShape);
+                    });
                 });
             });
 
-            padded.ForEach((N, i) => N.OutSynapses = new ShapedArrayImmutable<Synapse>(new Shape(inConnections[i].Count), inConnections[i]));
+            padded.ForEach((N, i) => N.OutSynapses = inConnections[i].ToImmutable());
         }
 
         public override void Initialize()

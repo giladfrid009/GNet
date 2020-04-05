@@ -5,8 +5,8 @@ namespace GNet.Model
     [Serializable]
     public class Neuron
     {
-        public ShapedArrayImmutable<Synapse> InSynapses { get; set; }
-        public ShapedArrayImmutable<Synapse> OutSynapses { get; set; }
+        public ArrayImmutable<Synapse> InSynapses { get; set; }
+        public ArrayImmutable<Synapse> OutSynapses { get; set; }
         public virtual double Bias { get; set; }
 
         public double Value;

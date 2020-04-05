@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using GNet.Model;
 using GNet.Utils;
 
@@ -29,9 +30,9 @@ namespace GNet.Layers
                 throw new ArgumentException("InLayer shape mismatch.");
             }
 
-            ShapedArrayImmutable<Neuron> padded = PadInNeurons(inLayer, PaddedShape);
+            ShapedArrayImmutable<Neuron> padded = PadInNeurons(inLayer);
 
-            var inConnections = new ShapedArrayImmutable<List<Synapse>>(PaddedShape, () => new List<Synapse>());
+            var inConnections = new ShapedArrayImmutable<ArrayBuilder<Synapse>>(PaddedShape, () => new ArrayBuilder<Synapse>());
 
             IndexGen.ByStrides(PaddedShape, Strides, KernelShape).ForEach((idxKernel, i) =>
             {
@@ -40,15 +41,12 @@ namespace GNet.Layers
                 N.InSynapses = IndexGen.ByStart(KernelShape, new ArrayImmutable<int>(idxKernel)).Select((idx, j) =>
                 {
                     var S = new Synapse(padded[idx], N);
-
                     inConnections[idx].Add(S);
-
                     return S;
-                })
-                .ToShape(KernelShape);
+                });
             });
 
-            padded.ForEach((N, i) => N.OutSynapses = new ShapedArrayImmutable<Synapse>(new Shape(inConnections[i].Count), inConnections[i]));
+            padded.ForEach((N, i) => N.OutSynapses = inConnections[i].ToImmutable());
         }
 
         public override void Initialize()
@@ -60,7 +58,7 @@ namespace GNet.Layers
         {
             Neurons.ForEach(N =>
             {
-                N.Value = Pooler.Pool(N.InSynapses.Select(S => S.InNeuron.ActivatedValue), out ShapedArrayImmutable<double> inWeights);
+                N.Value = Pooler.Pool(N.InSynapses.Select(S => S.InNeuron.ActivatedValue), out ArrayImmutable<double> inWeights);
 
                 N.ActivatedValue = N.Value;
 

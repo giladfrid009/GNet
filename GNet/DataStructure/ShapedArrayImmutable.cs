@@ -40,12 +40,6 @@ namespace GNet
             Shape = shape;
         }
 
-        public ShapedArrayImmutable(Shape shape, IEnumerable enumerable) : base(enumerable)
-        {
-            ValidateShape(shape);
-            Shape = shape;
-        }
-
         public ShapedArrayImmutable(Shape shape, Func<T> element) : base(shape.Volume, element)
         {
             Shape = shape;

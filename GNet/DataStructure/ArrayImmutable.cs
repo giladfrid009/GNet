@@ -49,10 +49,6 @@ namespace GNet
             }
         }
 
-        public ArrayImmutable(IEnumerable enumerable) : this(System.Linq.Enumerable.Cast<T>(enumerable))
-        {
-        }
-
         public ArrayImmutable(int length, Func<T> element)
         {
             internalArray = new T[length];

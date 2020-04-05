@@ -5,7 +5,7 @@ namespace GNet.Layers.Poolers
     [Serializable]
     public class Min : IPooler
     {
-        public double Pool(ShapedArrayImmutable<double> vals, out ShapedArrayImmutable<double> inWeights)
+        public double Pool(ArrayImmutable<double> vals, out ArrayImmutable<double> inWeights)
         {
             double min = vals.Min();
 
