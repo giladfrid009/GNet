@@ -18,7 +18,7 @@ namespace GNet.Utils
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                throw new Exception(e.Message, e);
+                throw;
             }
         }
 
@@ -33,7 +33,7 @@ namespace GNet.Utils
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                throw new Exception(e.Message, e);
+                throw;
             }
         }
 
@@ -48,7 +48,7 @@ namespace GNet.Utils
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                throw new Exception(e.Message, e);
+                throw;
             }
         }
 
@@ -63,7 +63,7 @@ namespace GNet.Utils
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                throw new Exception(e.Message, e);
+                throw;
             }
         }
     }

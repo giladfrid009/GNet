@@ -18,19 +18,26 @@ namespace GNet.Utils
             return sw.Elapsed / iterations;
         }
 
-        public static TimeSpan BatchTime(Network network, Action<Network> trainMethod, int iterations = 1)
+        public static TimeSpan BatchTime(Func<Network> netCreator, Action<Network> netTrainer, int iterations = 1)
         {
             var sw = new Stopwatch();
             int nBatches = 0;
 
-            network.OnStart += OnStart;
-            network.OnFinish += OnFinish;
-            network.OnBatch += OnBatch;
+            
 
             for (int i = 0; i < iterations; i++)
             {
-                network.Initialize();
-                trainMethod(network);
+                Network N = netCreator();
+
+                N.OnStart += OnStart;
+                N.OnFinish += OnFinish;
+                N.OnBatch += OnBatch;
+
+                netTrainer(N);
+
+                N.OnStart -= OnStart;
+                N.OnFinish -= OnFinish;
+                N.OnBatch -= OnBatch;
             }
 
             void OnStart(double error)
@@ -47,10 +54,6 @@ namespace GNet.Utils
             {
                 sw.Stop();
             }
-
-            network.OnStart -= OnStart;
-            network.OnFinish -= OnFinish;
-            network.OnBatch -= OnBatch;
 
             return sw.Elapsed / nBatches;
         }

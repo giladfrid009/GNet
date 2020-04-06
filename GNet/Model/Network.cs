@@ -21,6 +21,7 @@ namespace GNet
         {
             Layers = layers;
             Connect();
+            Initialize();
         }
 
         public Network(params ILayer[] layers) : this(new ArrayImmutable<ILayer>(layers))
@@ -35,7 +36,7 @@ namespace GNet
             }
         }
 
-        public void Initialize()
+        private void Initialize()
         {
             for (int i = 1; i < Length; i++)
             {
