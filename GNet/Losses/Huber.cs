@@ -19,11 +19,11 @@ namespace GNet.Losses
 
                 if (diff <= Margin)
                 {
-                    return O = 0.5 * diff * diff;
+                    return 0.5 * diff * diff;
                 }
                 else
                 {
-                    return O = Margin * (diff - 0.5 * Margin);
+                    return Margin * (diff - 0.5 * Margin);
                 }
             })
             .Avarage();

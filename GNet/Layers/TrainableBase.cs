@@ -70,13 +70,13 @@ namespace GNet.Layers
 
             Neurons.ForEach(N =>
             {
-                N.Bias += N.BatchBias;
-                N.BatchBias = 0.0;
+                N.Bias += N.BatchDelta;
+                N.BatchDelta = 0.0;
 
                 N.InSynapses.ForEach(S =>
                 {
-                    S.Weight += S.BatchWeight;
-                    S.BatchWeight = 0.0;
+                    S.Weight += S.BatchDelta;
+                    S.BatchDelta = 0.0;
                 });
             });
         }

@@ -6,6 +6,8 @@ namespace GNet.Optimizers
     {
         public IDecay Decay { get; }
         public double LearningRate { get; }
+        
+        private double epochLr;
 
         public AdaGrad(double learningRate = 0.01, IDecay? decay = null)
         {
@@ -13,21 +15,15 @@ namespace GNet.Optimizers
             Decay = decay ?? new Decays.None();
         }
 
-        public void Optimize(ILayer layer, int epoch)
+        public void UpdateParams(int epoch)
         {
-            double lr = Decay.Compute(LearningRate, epoch);
+            epochLr = Decay.Compute(LearningRate, epoch);
+        }
 
-            layer.Neurons.ForEach(N =>
-            {
-                N.Cache1 += N.Gradient * N.Gradient;
-                N.BatchBias += -lr * N.Gradient / (Sqrt(N.Cache1) + double.Epsilon);
-
-                N.InSynapses.ForEach(S =>
-                {
-                    S.Cache1 += S.Gradient * S.Gradient;
-                    S.BatchWeight += -lr * S.Gradient / (Sqrt(S.Cache1) + double.Epsilon);
-                });
-            });
+        public double Optimize(IOptimizable O)
+        {
+            O.Cache1 += O.Gradient * O.Gradient;
+            return -epochLr * O.Gradient / (Sqrt(O.Cache1) + double.Epsilon);
         }
     }
 }

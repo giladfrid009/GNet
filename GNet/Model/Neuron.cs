@@ -3,18 +3,17 @@
 namespace GNet.Model
 {
     [Serializable]
-    public class Neuron
+    public class Neuron : IOptimizable
     {
         public ArrayImmutable<Synapse> InSynapses { get; set; }
         public ArrayImmutable<Synapse> OutSynapses { get; set; }
         public virtual double Bias { get; set; }
-
-        public double Value;
-        public double ActivatedValue;
-        public double BatchBias;
-        public double Gradient;
-        public double Cache1;
-        public double Cache2;
+        public double Value { get; set; }
+        public double ActivatedValue { get; set; }
+        public double Gradient { get; set; }
+        public double Cache1 { get; set; }
+        public double Cache2 { get; set; }
+        public double BatchDelta { get; set; }   
 
         public Neuron()
         {

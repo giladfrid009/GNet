@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace GNet
 {
@@ -19,14 +20,10 @@ namespace GNet
                 new Layers.Dense(new Shape(1), new Activations.Tanh(), new Initializers.Normal(), new Initializers.Zero())
             );
 
-            using(Logger log = new Logger(net))
+            using (Logger log = new Logger(net))
             {
                 net.Train(tDataset, new Losses.MSE(), new Optimizers.Default(), 1, 1000, 0.01, vDataset, new Losses.MAE());
             }
-
-            Console.WriteLine(net.Forward(new ShapedArrayImmutable<double>(new Shape(2), 0.3, 0.7))[0]);
-
-            Console.WriteLine(net.Forward(new ShapedArrayImmutable<double>(new Shape(2), 0.4, -0.5))[0]);
 
             Console.ReadKey();
         }

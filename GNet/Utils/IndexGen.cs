@@ -7,22 +7,22 @@ namespace GNet.Utils
     {
         public static ArrayImmutable<int[]> Generate(Shape shape, ArrayImmutable<int> start, ArrayImmutable<int> strides, Shape kernel)
         {
-            if (strides.Length != shape.NumDimentions)
+            if (strides.Length != shape.Rank)
             {
                 throw new ArgumentOutOfRangeException("Strides dimensions length mismatch.");
             }
 
-            if (start.Length != shape.NumDimentions)
+            if (start.Length != shape.Rank)
             {
                 throw new ArgumentOutOfRangeException("Start dimensions length mismatch.");
             }
 
-            if (kernel.NumDimentions != shape.NumDimentions)
+            if (kernel.Rank != shape.Rank)
             {
                 throw new ArgumentOutOfRangeException("Kernel dimensions length mismatch.");
             }
 
-            for (int i = 0; i < shape.NumDimentions; i++)
+            for (int i = 0; i < shape.Rank; i++)
             {
                 if (start[i] < 0 || strides[i] < 1 || kernel.Dimensions[i] > shape.Dimensions[i])
                 {
@@ -30,11 +30,11 @@ namespace GNet.Utils
                 }
             }
 
-            int lastIndex = shape.NumDimentions - 1;
+            int lastIndex = shape.Rank - 1;
 
             var indices = new List<int[]>();
 
-            PopulateRecursive(new int[shape.NumDimentions], 0);
+            PopulateRecursive(new int[shape.Rank], 0);
 
             return new ArrayImmutable<int[]>(indices);
 
@@ -67,12 +67,12 @@ namespace GNet.Utils
 
         public static ArrayImmutable<int[]> ByStrides(Shape shape, ArrayImmutable<int> strides, Shape kernel)
         {
-            return Generate(shape, new ArrayImmutable<int>(shape.NumDimentions, () => 0), strides, kernel);
+            return Generate(shape, new ArrayImmutable<int>(shape.Rank, () => 0), strides, kernel);
         }
 
         public static ArrayImmutable<int[]> ByStart(Shape shape, ArrayImmutable<int> start)
         {
-            return Generate(shape, start, new ArrayImmutable<int>(shape.NumDimentions, () => 1), new Shape(new ArrayImmutable<int>(shape.NumDimentions, () => 1)));
+            return Generate(shape, start, new ArrayImmutable<int>(shape.Rank, () => 1), new Shape(new ArrayImmutable<int>(shape.Rank, () => 1)));
         }
     }
 }

@@ -4,6 +4,8 @@
     {
         public IDecay Decay { get; }
         public double LearningRate { get; }
+        
+        private double epochLr;
 
         public Default(double learningRate = 0.01, IDecay? decay = null)
         {
@@ -11,16 +13,14 @@
             Decay = decay ?? new Decays.None();
         }
 
-        public void Optimize(ILayer layer, int epoch)
+        public void UpdateParams(int epoch)
         {
-            double lr = Decay.Compute(LearningRate, epoch);
+            epochLr = Decay.Compute(LearningRate, epoch);
+        }
 
-            layer.Neurons.ForEach(N =>
-            {
-                N.BatchBias += -lr * N.Gradient;
-
-                N.InSynapses.ForEach(S => S.BatchWeight += -lr * S.Gradient);
-            });
+        public double Optimize(IOptimizable O)
+        {
+            return -epochLr * O.Gradient;
         }
     }
 }

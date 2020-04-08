@@ -1,4 +1,5 @@
-﻿using static System.Math;
+﻿using GNet.Model;
+using static System.Math;
 
 namespace GNet.Optimizers
 {
@@ -8,6 +9,8 @@ namespace GNet.Optimizers
         public double LearningRate { get; }
         public double Rho { get; }
 
+        private double epochLr;
+
         public AdaDelta(double learningRate = 1.0, double rho = 0.95, IDecay? decay = null)
         {
             LearningRate = learningRate;
@@ -15,25 +18,17 @@ namespace GNet.Optimizers
             Decay = decay ?? new Decays.None();
         }
 
-        public void Optimize(ILayer layer, int epoch)
+        public void UpdateParams(int epoch)
         {
-            double lr = Decay.Compute(LearningRate, epoch);
+            epochLr = Decay.Compute(LearningRate, epoch);
+        }
 
-            layer.Neurons.ForEach(N =>
-            {
-                N.Cache1 = Rho * N.Cache1 + (1.0 - Rho) * N.Gradient * N.Gradient;
-                double delta = -Sqrt(N.Cache2 + double.Epsilon) * N.Gradient / Sqrt(N.Cache1 + double.Epsilon);
-                N.Cache2 = Rho * N.Cache2 + (1.0 - Rho) * delta * delta;
-                N.BatchBias += delta;
-
-                N.InSynapses.ForEach(S =>
-                {
-                    S.Cache1 = Rho * S.Cache1 + (1.0 - Rho) * S.Gradient * S.Gradient;
-                    delta = -Sqrt(S.Cache2 + double.Epsilon) * S.Gradient / Sqrt(S.Cache1 + double.Epsilon);
-                    S.Cache2 = Rho * S.Cache2 + (1.0 - Rho) * delta * delta;
-                    S.BatchWeight += lr * delta;
-                });
-            });
+        public double Optimize(IOptimizable O)
+        {
+            O.Cache1 = Rho * O.Cache1 + (1.0 - Rho) * O.Gradient * O.Gradient;
+            double delta = Sqrt(O.Cache2 + double.Epsilon) * O.Gradient / Sqrt(O.Cache1 + double.Epsilon);
+            O.Cache2 = Rho * O.Cache2 + (1.0 - Rho) * delta * delta;
+            return -epochLr * delta;
         }
     }
 }

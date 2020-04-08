@@ -6,6 +6,8 @@
         public double LearningRate { get; }
         public double MomentumValue { get; }
 
+        private double EpochLr;
+
         public Momentum(double learningRate = 0.01, double momentum = 0.9, IDecay? decay = null)
         {
             LearningRate = learningRate;
@@ -13,21 +15,15 @@
             Decay = decay ?? new Decays.None();
         }
 
-        public void Optimize(ILayer layer, int epoch)
+        public void UpdateParams(int epoch)
         {
-            double lr = Decay.Compute(LearningRate, epoch);
+            EpochLr = Decay.Compute(LearningRate, epoch);
+        }
 
-            layer.Neurons.ForEach(N =>
-            {
-                N.Cache1 = -lr * N.Gradient + MomentumValue * N.Cache1;
-                N.BatchBias += N.Cache1;
-
-                N.InSynapses.ForEach(S =>
-                {
-                    S.Cache1 = -lr * S.Gradient + MomentumValue * S.Cache1;
-                    S.BatchWeight += S.Cache1;
-                });
-            });
+        public double Optimize(IOptimizable O)
+        {
+            O.Cache1 = -EpochLr * O.Gradient + MomentumValue * O.Cache1;
+            return O.Cache1;
         }
     }
 }

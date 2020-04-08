@@ -6,6 +6,8 @@
         public double LearningRate { get; }
         public double MomentumValue { get; }
 
+        private double epochLr;
+
         public NestrovMomentum(double learningRate = 0.01, double momentum = 0.9, IDecay? decay = null)
         {
             LearningRate = learningRate;
@@ -13,23 +15,16 @@
             Decay = decay ?? new Decays.None();
         }
 
-        public void Optimize(ILayer layer, int epoch)
+        public void UpdateParams(int epoch)
         {
-            double lr = Decay.Compute(LearningRate, epoch);
+            epochLr = Decay.Compute(LearningRate, epoch);
+        }
 
-            layer.Neurons.ForEach(N =>
-            {
-                double oldDelta = N.Cache1;
-                N.Cache1 = -lr * N.Gradient + MomentumValue * N.Cache1;
-                N.BatchBias += (1.0 + MomentumValue) * N.Cache1 - MomentumValue * oldDelta;
-
-                N.InSynapses.ForEach(S =>
-                {
-                    oldDelta = S.Cache1;
-                    S.Cache1 = -lr * S.Gradient + MomentumValue * S.Cache1;
-                    S.BatchWeight += (1.0 + MomentumValue) * S.Cache1 - MomentumValue * oldDelta;
-                });
-            });
+        public double Optimize(IOptimizable O)
+        {
+            double oldDelta = O.Cache1;
+            O.Cache1 = -epochLr * O.Gradient + MomentumValue * O.Cache1;
+            return (1.0 + MomentumValue) * O.Cache1 - MomentumValue * oldDelta;
         }
     }
 }

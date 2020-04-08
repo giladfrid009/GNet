@@ -7,7 +7,7 @@ namespace GNet
     {
         public ArrayImmutable<int> Dimensions { get; }
         public int Volume { get; }
-        public int NumDimentions => Dimensions.Length;
+        public int Rank => Dimensions.Length;
 
         public Shape(ArrayImmutable<int> dimensions)
         {
@@ -30,9 +30,9 @@ namespace GNet
 
         public int FlattenIndices(params int[] indices)
         {
-            if (indices.Length > NumDimentions)
+            if (indices.Length != Rank)
             {
-                throw new ArgumentException("Indices length is out of range.");
+                throw new ArgumentException("Indices length and rank mismatch.");
             }
 
             for (int i = 0; i < indices.Length; i++)
@@ -43,14 +43,14 @@ namespace GNet
                 }
             }
 
-            int flatIndex = 0;
+            int flat = 0;
 
-            for (int i = 0; i < NumDimentions; i++)
+            for (int i = 0; i < Rank; i++)
             {
-                flatIndex = flatIndex * Dimensions[i] + indices[i];
+                flat = flat * Dimensions[i] + indices[i];
             }
 
-            return flatIndex;
+            return flat;
         }
 
         public static bool operator !=(Shape left, Shape right)
@@ -65,12 +65,12 @@ namespace GNet
 
         public bool Equals(Shape other)
         {
-            if(NumDimentions != other.NumDimentions)
+            if(Rank != other.Rank)
             {
                 return false;
             }
 
-            for (int i = 0; i < NumDimentions; i++)
+            for (int i = 0; i < Rank; i++)
             {
                 if(Dimensions[i] != other.Dimensions[i])
                 {

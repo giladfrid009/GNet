@@ -42,17 +42,17 @@ namespace GNet.Layers
                 throw new ArgumentOutOfRangeException("nKernels nust be positive.");
             }
 
-            if (inputShape.NumDimentions != kernelShape.NumDimentions)
+            if (inputShape.Rank != kernelShape.Rank)
             {
                 throw new ArgumentException("KernelShape dimensions count mismatch.");
             }
 
-            if (inputShape.NumDimentions != strides.Length)
+            if (inputShape.Rank != strides.Length)
             {
                 throw new ArgumentException("Strides dimensions count mismatch.");
             }
 
-            if (inputShape.NumDimentions != paddings.Length)
+            if (inputShape.Rank != paddings.Length)
             {
                 throw new ArgumentException("Paddings dimensions count mismatch.");
             }

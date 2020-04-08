@@ -147,11 +147,17 @@ namespace GNet
             //    }
             //});
 
+            optimizer.UpdateParams(epoch);
+
             for (int i = 1; i < Length; i++)
             {
                 if (Layers[i].IsTrainable)
                 {
-                    optimizer.Optimize(Layers[i], epoch);
+                    Layers[i].Neurons.ForEach(N =>
+                    {
+                        N.BatchDelta += optimizer.Optimize(N);
+                        N.InSynapses.ForEach(S => S.BatchDelta += optimizer.Optimize(S));
+                    });
                 }
             }
         }

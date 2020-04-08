@@ -3,30 +3,20 @@
 namespace GNet.Model
 {
     [Serializable]
-    public class Synapse
+    public class Synapse : IOptimizable
     {
         public Neuron InNeuron { get; }
         public Neuron OutNeuron { get; }
         public virtual double Weight { get; set; }
-
-        public double BatchWeight;
-        public double Gradient;
-        public double Cache1;
-        public double Cache2;
+        public double Gradient { get; set; }
+        public double Cache1 { get; set; }
+        public double Cache2 { get; set; }
+        public double BatchDelta { get; set; }
 
         public Synapse(Neuron inNeuron, Neuron outNeuron)
         {
             InNeuron = inNeuron;
             OutNeuron = outNeuron;
-        }
-
-        public void CopyParams(Synapse other)
-        {
-            Weight = other.Weight;
-            Gradient = other.Gradient;
-            Cache1 = other.Cache1;
-            Cache2 = other.Cache2;
-            BatchWeight = other.BatchWeight;
         }
     }
 }

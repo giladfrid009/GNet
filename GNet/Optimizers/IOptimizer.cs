@@ -1,7 +1,14 @@
-﻿namespace GNet
+﻿using GNet.Optimizers;
+
+namespace GNet
 {
     public interface IOptimizer
     {
-        void Optimize(ILayer layer, int epoch);
+        IDecay Decay { get; }
+        double LearningRate { get; }
+
+        public void UpdateParams(int epoch);
+
+        double Optimize(IOptimizable obj);
     }
 }
