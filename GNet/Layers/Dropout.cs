@@ -108,7 +108,11 @@ namespace GNet.Layers
             Neurons.ForEach((N, i) => N.Gradient = dropArray[i] ? 0 : N.OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient));
         }
 
-        public virtual void Update()
+        public void Optimize(IOptimizer optimizer)
+        {
+        }
+
+        public void Update()
         {
             dropArray = new ShapedArrayImmutable<bool>(Shape, () => GRandom.NextDouble(0, 1) <= DropChance);
         }

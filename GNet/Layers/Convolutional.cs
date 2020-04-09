@@ -1,32 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using GNet.Utils.Convolutional;
 using GNet.Model;
 using GNet.Model.Convolutional;
-using GNet.Utils;
 
 namespace GNet.Layers
 {
     [Serializable]
-    public class Convolutional : ConvBase
+    public class Convolutional : TrainableLayer<CNeuron>, IConvLayer
     {
-        public IActivation Activation { get; }
-        public IInitializer WeightInit { get; }
-        public IInitializer BiasInit { get; }
-        public override bool IsTrainable { get; set; } = true;
+        public ArrayImmutable<Kernel> Kernels { get; }
+        public ArrayImmutable<int> Strides { get; }
+        public ArrayImmutable<int> Paddings { get; }
+        public Shape InputShape { get; }
+        public Shape PaddedShape { get; }
+        public Shape KernelShape { get; }
+        public int KernelsNum => Kernels.Length;
 
         public Convolutional(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int nKernels, IActivation activation, IInitializer weightInit, IInitializer biasInit) :
-            base(inputShape, kernelShape, strides, paddings, nKernels)
+            base(CalcOutShape(inputShape, kernelShape, strides, paddings, nKernels), activation, biasInit, weightInit)
         {
-            Activation = activation;
-            WeightInit = weightInit;
-            BiasInit = biasInit;
+            InputShape = inputShape;
+            KernelShape = kernelShape;
+            Strides = strides;
+            Paddings = paddings;
+
+            PaddedShape = Pad.Shape(inputShape, paddings);
+
+            Kernels = new ArrayImmutable<Kernel>(nKernels, () => new Kernel(kernelShape));
         }
 
-        protected override Shape CalcOutputShape(Shape inputShape)
+        private static Shape CalcOutShape(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int nKernels)
         {
-            ArrayImmutable<int> channelDims = inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * Paddings[i] - KernelShape.Dimensions[i]) / Strides[i]);
+            Validator.CheckParams(inputShape, kernelShape, strides, paddings);
 
-            return new Shape(new ArrayImmutable<int>(KernelsNum).Concat(channelDims));
+            if (nKernels < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(nKernels));
+            }
+
+            ArrayImmutable<int> channelDims = inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * paddings[i] - kernelShape.Dimensions[i]) / strides[i]);
+
+            return new Shape(new ArrayImmutable<int>(nKernels).Concat(channelDims));
         }
 
         public override void Connect(ILayer inLayer)
@@ -36,9 +51,9 @@ namespace GNet.Layers
                 throw new ArgumentException("InLayer shape mismatch.");
             }
 
-            ShapedArrayImmutable<Neuron> padded = PadInNeurons(inLayer);
+            ShapedArrayImmutable<Neuron> padded = Pad.ShapedArray(inLayer.Neurons, Paddings, () => new Neuron());
 
-            var inConnections = new ShapedArrayImmutable<ArrayBuilder<Synapse>>(PaddedShape, () => new ArrayBuilder<Synapse>());
+            var inConnections = new ShapedArrayImmutable<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 
             Kernels.ForEach((kernel, i) =>
             {
@@ -63,7 +78,7 @@ namespace GNet.Layers
                 });
             });
 
-            padded.ForEach((N, i) => N.OutSynapses = inConnections[i].ToImmutable());
+            padded.ForEach((N, i) => N.OutSynapses = new ArrayImmutable<Synapse>(inConnections[i]));
         }
 
         public override void Initialize()
@@ -77,62 +92,9 @@ namespace GNet.Layers
             });
         }
 
-        public override void Forward()
+        public override void Input(ShapedArrayImmutable<double> values)
         {
-            Neurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Sum(S => S.Weight * S.InNeuron.ActivatedValue));
-
-            ShapedArrayImmutable<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
-
-            Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
-        }
-
-        public override void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
-        {
-            if (targets.Shape != Shape)
-            {
-                throw new ArgumentException("Targets shape mismatch.");
-            }
-
-            if (loss is IOutTransformer)
-            {
-                throw new ArgumentException($"{nameof(loss)} loss doesn't support backpropogation.");
-            }
-
-            ShapedArrayImmutable<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
-            ShapedArrayImmutable<double> lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
-            ShapedArrayImmutable<double> grads = lossDers.Combine(actvDers, (LD, AD) => LD * AD);
-
-            Neurons.ForEach((N, i) =>
-            {
-                N.Gradient = grads[i];
-                N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
-            });
-        }
-
-        public override void CalcGrads()
-        {
-            ShapedArrayImmutable<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
-
-            Neurons.ForEach((N, i) =>
-            {
-                N.Gradient = N.OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient) * actvDers[i];
-                N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
-            });
-        }
-
-        public override void Update()
-        {
-            Neurons.ForEach(N =>
-            {
-                N.Bias += N.BatchDelta;
-                N.BatchDelta = 0.0;
-
-                N.InSynapses.ForEach(S =>
-                {
-                    S.Weight += S.BatchDelta;
-                    S.BatchDelta = 0.0;
-                });
-            });
+            throw new NotSupportedException("This layer doesn't support input.");
         }
     }
 }

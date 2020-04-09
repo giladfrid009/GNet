@@ -20,6 +20,8 @@ namespace GNet
 
         void CalcGrads();
 
+        void Optimize(IOptimizer optimizer);
+
         void Update();
     }
 }

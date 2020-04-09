@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GNet.Layers;
+using System;
 
 namespace GNet
 {
@@ -143,7 +144,7 @@ namespace GNet
             //{
             //    if (Layers[i].IsTrainable)
             //    {
-            //        optimizer.Optimize(Layers[i], epoch);
+            //        Layers[i].Optimize(optimizer);
             //    }
             //});
 
@@ -153,11 +154,7 @@ namespace GNet
             {
                 if (Layers[i].IsTrainable)
                 {
-                    Layers[i].Neurons.ForEach(N =>
-                    {
-                        N.BatchDelta += optimizer.Optimize(N);
-                        N.InSynapses.ForEach(S => S.BatchDelta += optimizer.Optimize(S));
-                    });
+                    Layers[i].Optimize(optimizer);
                 }
             }
         }

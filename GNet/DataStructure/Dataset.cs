@@ -38,8 +38,8 @@ namespace GNet
             inputNormalizer ??= new Normalizers.None();
             outputNormalizer ??= new Normalizers.None();
 
-            inputNormalizer.ExtractParams(dataCollection.Select(D => D.Inputs));
-            outputNormalizer.ExtractParams(dataCollection.Select(D => D.Outputs));
+            inputNormalizer.UpdateParams(dataCollection.Select(D => D.Inputs));
+            outputNormalizer.UpdateParams(dataCollection.Select(D => D.Outputs));
 
             dataCollection = dataCollection.Select(D => new Data(inputNormalizer.Normalize(D.Inputs), outputNormalizer.Normalize(D.Outputs)));
         }

@@ -1,38 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using GNet.Model;
-using GNet.Utils;
+using GNet.Utils.Convolutional;
 
 namespace GNet.Layers
 {
     [Serializable]
-    public class Pooling : ConvBase
+    public class Pooling : IConvLayer
     {
+        public ShapedArrayImmutable<Neuron> Neurons { get; }
+        public ArrayImmutable<int> Strides { get; }
+        public ArrayImmutable<int> Paddings { get; }
+        public Shape InputShape { get; }
+        public Shape PaddedShape { get; }
+        public Shape KernelShape { get; }
+        public Shape Shape { get; }
         public IPooler Pooler { get; }
-        public override bool IsTrainable { get => false; set => throw new NotSupportedException(); }
+        public bool IsTrainable { get => false; }
 
-        public Pooling(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IPooler pooler) :
-            base(inputShape, kernelShape, strides, paddings, 1)
+        public Pooling(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IPooler pooler)
         {
+            Validator.CheckParams(inputShape, kernelShape, strides, paddings);
+
             Pooler = pooler;
+            InputShape = inputShape;
+            KernelShape = kernelShape;
+            Strides = strides;
+            Paddings = paddings;
+
+            PaddedShape = Pad.Shape(inputShape, paddings);
+
+            Shape = CalcOutShape(inputShape, kernelShape, strides, paddings);
+
+            Neurons = new ShapedArrayImmutable<Neuron>(Shape, () => new Neuron());
         }
 
-        protected override Shape CalcOutputShape(Shape inputShape)
+        private static Shape CalcOutShape(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
         {
-            return new Shape(inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * Paddings[i] - KernelShape.Dimensions[i]) / Strides[i]));
+            return new Shape(inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * paddings[i] - kernelShape.Dimensions[i]) / strides[i]));
         }
 
-        public override void Connect(ILayer inLayer)
+        public void Connect(ILayer inLayer)
         {
             if (inLayer.Shape != InputShape)
             {
                 throw new ArgumentException("InLayer shape mismatch.");
             }
 
-            ShapedArrayImmutable<Neuron> padded = PadInNeurons(inLayer);
+            ShapedArrayImmutable<Neuron> padded = Pad.ShapedArray(inLayer.Neurons, Paddings, () => new Neuron());
 
-            var inConnections = new ShapedArrayImmutable<ArrayBuilder<Synapse>>(PaddedShape, () => new ArrayBuilder<Synapse>());
+            var inConnections = new ShapedArrayImmutable<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 
             IndexGen.ByStrides(PaddedShape, Strides, KernelShape).ForEach((idxKernel, i) =>
             {
@@ -46,15 +63,19 @@ namespace GNet.Layers
                 });
             });
 
-            padded.ForEach((N, i) => N.OutSynapses = inConnections[i].ToImmutable());
+            padded.ForEach((N, i) => N.OutSynapses = new ArrayImmutable<Synapse>(inConnections[i]));
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
-            Kernels[0].Bias.Value = 0;
         }
 
-        public override void Forward()
+        public void Input(ShapedArrayImmutable<double> values)
+        {
+            throw new NotSupportedException("This layer doesn't support input.");
+        }
+
+        public void Forward()
         {
             Neurons.ForEach(N =>
             {
@@ -66,7 +87,7 @@ namespace GNet.Layers
             });
         }
 
-        public override void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
+        public void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
         {
             if (targets.Shape != Shape)
             {
@@ -83,13 +104,17 @@ namespace GNet.Layers
             Neurons.ForEach((N, i) => N.Gradient = grads[i]);
         }
 
-        public override void CalcGrads()
+        public void CalcGrads()
         {
             Neurons.ForEach((N, i) => N.Gradient = N.OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient));
         }
 
-        public override void Update()
+        public void Optimize(IOptimizer optimizer)
         {
         }
+
+        public void Update()
+        {
+        }       
     }
 }

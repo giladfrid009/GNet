@@ -8,7 +8,7 @@ namespace GNet.Normalizers
 
         private double min = 0;
 
-        public void ExtractParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector)
+        public void UpdateParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector)
         {
             max = 0;
             min = 0;

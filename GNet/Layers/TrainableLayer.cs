@@ -3,19 +3,24 @@ using GNet.Model;
 
 namespace GNet.Layers
 {
-    public abstract class TrainableBase : ILayer
+    [Serializable]
+    public abstract class TrainableLayer<TNeuron> : ILayer where TNeuron : Neuron, new()
     {
         public ShapedArrayImmutable<Neuron> Neurons { get; }
         public Shape Shape { get; }
         public IActivation Activation { get; }
+        public IInitializer WeightInit { get; }
+        public IInitializer BiasInit { get; }
         public bool IsTrainable { get; set; } = true;
 
-        protected TrainableBase(Shape shape, IActivation activation)
+        protected TrainableLayer(Shape shape, IActivation activation, IInitializer biasInit, IInitializer weightInit)
         {
-            Activation = activation;
             Shape = shape;
+            Activation = activation;
+            BiasInit = biasInit;
+            WeightInit = weightInit;
 
-            Neurons = new ShapedArrayImmutable<Neuron>();
+            Neurons = new ShapedArrayImmutable<Neuron>(shape, () => new TNeuron());
         }
 
         public void Forward()
@@ -58,6 +63,20 @@ namespace GNet.Layers
             {
                 N.Gradient = N.OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient) * actvDers[i];
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
+            });
+        }
+
+        public void Optimize(IOptimizer optimizer)
+        {
+            if (IsTrainable == false)
+            {
+                return;
+            }
+
+            Neurons.ForEach(N =>
+            {
+                N.BatchDelta += optimizer.Optimize(N);
+                N.InSynapses.ForEach(S => S.BatchDelta += optimizer.Optimize(S));
             });
         }
 

@@ -8,7 +8,7 @@ namespace GNet.Normalizers
 
         private double sd;
 
-        public void ExtractParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector)
+        public void UpdateParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector)
         {
             mean = dataVector.Sum(D => D.Avarage()) / dataVector.Length;
 

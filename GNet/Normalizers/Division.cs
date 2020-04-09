@@ -9,7 +9,7 @@
             Divisor = divisor;
         }
 
-        public void ExtractParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector)
+        public void UpdateParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector)
         {
         }
 

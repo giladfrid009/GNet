@@ -2,7 +2,7 @@
 {
     public interface INormalizer
     {
-        void ExtractParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector);
+        void UpdateParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector);
 
         ShapedArrayImmutable<double> Normalize(ShapedArrayImmutable<double> vals);
     }

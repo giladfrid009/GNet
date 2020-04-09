@@ -1,6 +1,6 @@
 ﻿using static System.Math;
 
-namespace GNet.Losses.Advanced
+namespace GNet.Losses
 {
     public class LogCosh : ILoss
     {
