@@ -4,23 +4,20 @@ using GNet.Model;
 namespace GNet.Layers
 {
     [Serializable]
-    public abstract class TrainableLayer<TNeuron> : ILayer where TNeuron : Neuron, new()
+    public abstract class TrainableLayer : ILayer
     {
-        public ShapedArrayImmutable<Neuron> Neurons { get; }
-        public Shape Shape { get; }
+        public abstract ShapedArrayImmutable<Neuron> Neurons { get; }
+        public abstract Shape Shape { get; }
         public IActivation Activation { get; }
         public IInitializer WeightInit { get; }
         public IInitializer BiasInit { get; }
         public bool IsTrainable { get; set; } = true;
 
-        protected TrainableLayer(Shape shape, IActivation activation, IInitializer biasInit, IInitializer weightInit)
+        protected TrainableLayer(IActivation activation, IInitializer biasInit, IInitializer weightInit)
         {
-            Shape = shape;
             Activation = activation;
             BiasInit = biasInit;
             WeightInit = weightInit;
-
-            Neurons = new ShapedArrayImmutable<Neuron>(shape, () => new TNeuron());
         }
 
         public void Forward()
@@ -36,12 +33,7 @@ namespace GNet.Layers
         {
             if (targets.Shape != Shape)
             {
-                throw new ArgumentException("Targets shape mismatch.");
-            }
-
-            if (loss is IOutTransformer)
-            {
-                throw new ArgumentException($"{nameof(loss)} loss doesn't support backpropogation.");
+                throw new ShapeMismatchException(nameof(targets));
             }
 
             ShapedArrayImmutable<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));

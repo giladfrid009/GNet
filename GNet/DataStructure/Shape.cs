@@ -15,7 +15,7 @@ namespace GNet
             {
                 if (dimensions[i] < 0)
                 {
-                    throw new ArgumentOutOfRangeException($"Dimensions [{i}] is out of range.");
+                    throw new ArgumentOutOfRangeException($"{nameof(dimensions)} [{i}] is out of range.");
                 }
             }
 
@@ -32,14 +32,14 @@ namespace GNet
         {
             if (indices.Length != Rank)
             {
-                throw new ArgumentException("Indices length and rank mismatch.");
+                throw new RankException(nameof(indices));
             }
 
             for (int i = 0; i < indices.Length; i++)
             {
                 if (indices[i] < 0 || indices[i] > Dimensions[i] - 1)
                 {
-                    throw new IndexOutOfRangeException($"Indices [{i}] is out of range.");
+                    throw new ArgumentOutOfRangeException($"{nameof(indices)} [{i}] is out of range.");
                 }
             }
 

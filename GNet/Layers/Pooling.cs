@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GNet.Model;
 using GNet.Utils.Convolutional;
+using GNet;
 
 namespace GNet.Layers
 {
@@ -20,7 +21,7 @@ namespace GNet.Layers
 
         public Pooling(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IPooler pooler)
         {
-            Validator.CheckParams(inputShape, kernelShape, strides, paddings);
+            ConvValidator.CheckParams(inputShape, kernelShape, strides, paddings);
 
             Pooler = pooler;
             InputShape = inputShape;
@@ -44,7 +45,7 @@ namespace GNet.Layers
         {
             if (inLayer.Shape != InputShape)
             {
-                throw new ArgumentException("InLayer shape mismatch.");
+                throw new ShapeMismatchException(nameof(inLayer));
             }
 
             ShapedArrayImmutable<Neuron> padded = Pad.ShapedArray(inLayer.Neurons, Paddings, () => new Neuron());
@@ -72,7 +73,7 @@ namespace GNet.Layers
 
         public void Input(ShapedArrayImmutable<double> values)
         {
-            throw new NotSupportedException("This layer doesn't support input.");
+            throw new NotSupportedException();
         }
 
         public void Forward()
@@ -91,12 +92,7 @@ namespace GNet.Layers
         {
             if (targets.Shape != Shape)
             {
-                throw new ArgumentException("Targets shape mismatch.");
-            }
-
-            if (loss is IOutTransformer)
-            {
-                throw new ArgumentException($"{nameof(loss)} loss doesn't support backpropogation.");
+                throw new ShapeMismatchException(nameof(targets));
             }
 
             ShapedArrayImmutable<double> grads = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));

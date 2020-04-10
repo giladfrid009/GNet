@@ -22,7 +22,7 @@ namespace GNet
             {
                 if (D.Inputs.Shape != InputShape || D.Outputs.Shape != OutputShape)
                 {
-                    throw new ArgumentException($"DataCollection[{i}] structure mismatch.");
+                    throw new ShapeMismatchException($"{nameof(dataCollection)} [{i}] mismatch.");
                 }
             });
 

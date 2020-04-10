@@ -4,11 +4,16 @@ using GNet.Model;
 namespace GNet.Layers
 {
     [Serializable]
-    public class Dense : TrainableLayer<Neuron>
+    public class Dense : TrainableLayer
     {
+        public override ShapedArrayImmutable<Neuron> Neurons { get; }
+        public override Shape Shape { get; }
+
         public Dense(Shape shape, IActivation activation, IInitializer weightInit, IInitializer biasInit) : 
-            base(shape, activation, biasInit, weightInit)
+            base(activation, biasInit, weightInit)
         {
+            Shape = shape;
+            Neurons = new ShapedArrayImmutable<Neuron>(shape, () => new Neuron());
         }
 
         public override void Connect(ILayer inLayer)
@@ -34,7 +39,7 @@ namespace GNet.Layers
         {
             if (values.Shape != Shape)
             {
-                throw new ArgumentOutOfRangeException("Values shape mismatch.");
+                throw new ShapeMismatchException(nameof(values));
             }
 
             Neurons.ForEach((N, i) => N.Value = values[i]);

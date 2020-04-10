@@ -48,7 +48,7 @@ namespace GNet
         {
             if (shape.Volume != Length)
             {
-                throw new ArgumentException("Shape volume and length mismatch.");
+                throw new ArgumentOutOfRangeException(nameof(shape));
             }
         }
 

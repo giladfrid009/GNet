@@ -7,19 +7,28 @@ using GNet.Model.Convolutional;
 namespace GNet.Layers
 {
     [Serializable]
-    public class Convolutional : TrainableLayer<CNeuron>, IConvLayer
+    public class Convolutional : TrainableLayer, IConvLayer
     {
+        public override ShapedArrayImmutable<Neuron> Neurons { get; }
         public ArrayImmutable<Kernel> Kernels { get; }
         public ArrayImmutable<int> Strides { get; }
         public ArrayImmutable<int> Paddings { get; }
+        public override Shape Shape { get; }
         public Shape InputShape { get; }
         public Shape PaddedShape { get; }
         public Shape KernelShape { get; }
         public int KernelsNum => Kernels.Length;
 
-        public Convolutional(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int nKernels, IActivation activation, IInitializer weightInit, IInitializer biasInit) :
-            base(CalcOutShape(inputShape, kernelShape, strides, paddings, nKernels), activation, biasInit, weightInit)
+        public Convolutional(Shape inputShape, Shape kernelShape, int nKernels, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IActivation activation, IInitializer weightInit, IInitializer biasInit) :
+            base(activation, biasInit, weightInit)
         {
+            ConvValidator.CheckParams(inputShape, kernelShape, strides, paddings);
+
+            if (nKernels < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(nKernels));
+            }
+
             InputShape = inputShape;
             KernelShape = kernelShape;
             Strides = strides;
@@ -28,17 +37,14 @@ namespace GNet.Layers
             PaddedShape = Pad.Shape(inputShape, paddings);
 
             Kernels = new ArrayImmutable<Kernel>(nKernels, () => new Kernel(kernelShape));
+
+            Shape = CalcOutShape(inputShape, kernelShape, nKernels, strides, paddings);
+
+            Neurons = new ShapedArrayImmutable<Neuron>(Shape, () => new CNeuron());
         }
 
-        private static Shape CalcOutShape(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, int nKernels)
+        private static Shape CalcOutShape(Shape inputShape, Shape kernelShape, int nKernels, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
         {
-            Validator.CheckParams(inputShape, kernelShape, strides, paddings);
-
-            if (nKernels < 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(nKernels));
-            }
-
             ArrayImmutable<int> channelDims = inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * paddings[i] - kernelShape.Dimensions[i]) / strides[i]);
 
             return new Shape(new ArrayImmutable<int>(nKernels).Concat(channelDims));
@@ -48,7 +54,7 @@ namespace GNet.Layers
         {
             if (inLayer.Shape != InputShape)
             {
-                throw new ArgumentException("InLayer shape mismatch.");
+                throw new ShapeMismatchException(nameof(inLayer));
             }
 
             ShapedArrayImmutable<Neuron> padded = Pad.ShapedArray(inLayer.Neurons, Paddings, () => new Neuron());
@@ -94,7 +100,7 @@ namespace GNet.Layers
 
         public override void Input(ShapedArrayImmutable<double> values)
         {
-            throw new NotSupportedException("This layer doesn't support input.");
+            throw new NotSupportedException();
         }
     }
 }

@@ -66,22 +66,22 @@ namespace GNet
         {
             if (dataset.InputShape != Layers[0].Shape)
             {
-                throw new Exception("Dataset input shape mismatch.");
+                throw new ShapeMismatchException($"{nameof(dataset)} {nameof(dataset.InputShape)}");
             }
 
             if (dataset.OutputShape != Layers[Length - 1].Shape)
             {
-                throw new Exception("Dataset output shape mismatch.");
+                throw new ShapeMismatchException($"{nameof(dataset)} {nameof(dataset.OutputShape)}");
             }
 
             if (valDataset.InputShape != Layers[0].Shape)
             {
-                throw new Exception("ValDataset input shape mismatch.");
+                throw new ShapeMismatchException($"{nameof(valDataset)} {nameof(dataset.InputShape)}");
             }
 
             if (valDataset.OutputShape != Layers[Length - 1].Shape)
             {
-                throw new Exception("ValDataset output shape mismatch.");
+                throw new ShapeMismatchException($"{nameof(valDataset)} {nameof(dataset.OutputShape)}");
             }
 
             double valError = Validate(valDataset, valLoss);

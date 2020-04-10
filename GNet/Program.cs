@@ -34,9 +34,9 @@ namespace GNet
                 (
                     new Shape(30, 30),
                     new Shape(4, 4),
+                    20,
                     new ArrayImmutable<int>(2, 2),
                     new ArrayImmutable<int>(0, 0),
-                    20,
                     new Activations.Tanh(),
                     new Initializers.Normal(),
                     new Initializers.Zero()

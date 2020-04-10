@@ -18,7 +18,7 @@ namespace GNet.Layers
             {
                 if (dropChance < 0 || dropChance > 1)
                 {
-                    throw new ArgumentOutOfRangeException("DropChance must be in range (0 - 1).");
+                    throw new ArgumentOutOfRangeException();
                 }
 
                 dropChance = value;
@@ -40,7 +40,7 @@ namespace GNet.Layers
         {
             if (inLayer.Shape != Shape)
             {
-                throw new ArgumentException("InLayer shape mismatch.");
+                throw new ShapeMismatchException(nameof(inLayer));
             }
 
             Neurons.ForEach((N, i) =>
@@ -67,7 +67,7 @@ namespace GNet.Layers
         {
             if (values.Shape != Shape)
             {
-                throw new ArgumentOutOfRangeException("Values shape mismatch.");
+                throw new ShapeMismatchException(nameof(values));
             }
 
             Neurons.ForEach((N, i) =>
@@ -90,12 +90,7 @@ namespace GNet.Layers
         {
             if (targets.Shape != Shape)
             {
-                throw new ArgumentException("Targets shape mismatch.");
-            }
-
-            if (loss is IOutTransformer)
-            {
-                throw new ArgumentException($"{nameof(loss)} loss doesn't support backpropogation.");
+                throw new ShapeMismatchException(nameof(targets));
             }
 
             ShapedArrayImmutable<double> grads = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));

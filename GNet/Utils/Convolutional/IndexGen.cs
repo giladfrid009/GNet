@@ -7,26 +7,36 @@ namespace GNet.Utils.Convolutional
     {
         public static ArrayImmutable<int[]> Generate(Shape shape, ArrayImmutable<int> start, ArrayImmutable<int> strides, Shape kernel)
         {
-            if (strides.Length != shape.Rank)
+            if (shape.Rank != strides.Length)
             {
-                throw new ArgumentOutOfRangeException("Strides dimensions length mismatch.");
+                throw new RankException(nameof(strides));
             }
 
-            if (start.Length != shape.Rank)
+            if (shape.Rank != start.Length)
             {
-                throw new ArgumentOutOfRangeException("Start dimensions length mismatch.");
+                throw new RankException(nameof(start));
             }
 
-            if (kernel.Rank != shape.Rank)
+            if (shape.Rank != kernel.Rank)
             {
-                throw new ArgumentOutOfRangeException("Kernel dimensions length mismatch.");
+                throw new RankException(nameof(kernel));
             }
 
             for (int i = 0; i < shape.Rank; i++)
             {
-                if (start[i] < 0 || strides[i] < 1 || kernel.Dimensions[i] > shape.Dimensions[i])
+                if(start[i] < 0)
                 {
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException($"{nameof(start)} [{i}] is out of range.");
+                }
+
+                if (strides[i] < 1)
+                {
+                    throw new ArgumentOutOfRangeException($"{nameof(strides)} [{i}] is out of range.");
+                }
+
+                if (kernel.Dimensions[i] > shape.Dimensions[i])
+                {
+                    throw new ArgumentOutOfRangeException($"{nameof(kernel)} {nameof(kernel.Dimensions)} [{i}] is out of range.");
                 }
             }
 

@@ -36,7 +36,7 @@ namespace GNet
         {
             if (source.Length != other.Length)
             {
-                throw new ArgumentException("source and array length mismatch.");
+                throw new ArgumentOutOfRangeException(nameof(other));
             }
 
             var combined = new TSource[source.Length];
