@@ -11,7 +11,7 @@ namespace GNet.Losses
 
         public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)
         {
-            return targets.Combine(outputs, (T, O) => T > O ? 1.0 : -1.0);
+            return targets.Combine(outputs, (T, O) => (O - T) / Abs(O - T + double.Epsilon));
         }
     }
 }

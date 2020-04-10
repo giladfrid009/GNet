@@ -11,7 +11,7 @@
 
         public ShapedArrayImmutable<double> Transform(ShapedArrayImmutable<double> output)
         {
-            return output.Select(X => X < Bound ? 0.0 : 1);
+            return output.Select(X => X < Bound ? 0.0 : 1.0);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace GNet.OutTransformers.Losses
+﻿using System;
+
+namespace GNet.OutTransformers.Losses
 {
     public class BinaryMaxLoss : BinaryMax, ILoss
     {
@@ -9,7 +11,7 @@
 
         public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)
         {
-            return targets.Combine(Transform(outputs), (T, O) => T - O);
+            throw new NotSupportedException();
         }
     }
 }
