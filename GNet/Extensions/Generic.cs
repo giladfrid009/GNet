@@ -7,9 +7,10 @@ namespace GNet
     {
         public static ArrayImmutable<TOut> Select<TSource, TOut>(this IArray<TSource> source, Func<TSource, int, TOut> selector)
         {
-            var selected = new TOut[source.Length];
+            int length = source.Length;
+            var selected = new TOut[length];
 
-            for (int i = 0; i < source.Length; i++)
+            for (int i = 0; i < length; i++)
             {
                 selected[i] = selector(source[i], i);
             }
@@ -34,14 +35,16 @@ namespace GNet
 
         public static ArrayImmutable<TSource> Combine<TSource>(this IArray<TSource> source, IArray<TSource> other, Func<TSource, TSource, TSource> selector)
         {
-            if (source.Length != other.Length)
+            int length = source.Length;
+
+            if (length != other.Length)
             {
                 throw new ArgumentOutOfRangeException(nameof(other));
             }
 
-            var combined = new TSource[source.Length];
+            var combined = new TSource[length];
 
-            for (int i = 0; i < source.Length; i++)
+            for (int i = 0; i < length; i++)
             {
                 combined[i] = selector(source[i], other[i]);
             }
@@ -56,16 +59,19 @@ namespace GNet
 
         public static ArrayImmutable<TSource> Concat<TSource>(this IArray<TSource> source, IArray<TSource> other)
         {
-            TSource[] concated = new TSource[source.Length + other.Length];
+            int length1 = source.Length;
+            int length2 = other.Length;
 
-            for (int i = 0; i < source.Length; i++)
+            TSource[] concated = new TSource[length1 + length2];
+
+            for (int i = 0; i < length1; i++)
             {
                 concated[i] = source[i];
             }
 
-            for (int i = 0; i < other.Length; i++)
+            for (int i = 0; i < length2; i++)
             {
-                concated[i + source.Length] = other[i];
+                concated[i + length1] = other[i];
             }
 
             return new ArrayImmutable<TSource>(in concated);
@@ -73,7 +79,9 @@ namespace GNet
 
         public static void ForEach<TSource>(this IArray<TSource> source, Action<TSource, int> action)
         {
-            for (int i = 0; i < source.Length; i++)
+            int length = source.Length;
+
+            for (int i = 0; i < length; i++)
             {
                 action(source[i], i);
             }

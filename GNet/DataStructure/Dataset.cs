@@ -7,7 +7,7 @@ namespace GNet
     {
         public Shape InputShape { get; }
         public Shape OutputShape { get; }
-        public int Length => dataCollection.Length;
+        public int Length { get; }
 
         public Data this[int index] => dataCollection[index];
 
@@ -27,6 +27,7 @@ namespace GNet
             });
 
             this.dataCollection = dataCollection;
+            Length = dataCollection.Length;
         }
 
         public Dataset(params Data[] dataCollection) : this(new ArrayImmutable<Data>(dataCollection))
@@ -48,7 +49,7 @@ namespace GNet
         {
             Data[] shuffled = dataCollection.ToMutable();
 
-            for (int i = 0; i < shuffled.Length; i++)
+            for (int i = 0; i < Length; i++)
             {
                 int iRnd = Utils.GRandom.Next(i, Length);
                 Data temp = shuffled[i];

@@ -6,12 +6,14 @@ namespace GNet
     public class Shape : IEquatable<Shape>
     {
         public ArrayImmutable<int> Dimensions { get; }
+        public int Rank { get; }
         public int Volume { get; }
-        public int Rank => Dimensions.Length;
 
         public Shape(ArrayImmutable<int> dimensions)
         {
-            for (int i = 0; i < dimensions.Length; i++)
+            int length = dimensions.Length;
+
+            for (int i = 0; i < length; i++)
             {
                 if (dimensions[i] < 0)
                 {
@@ -20,7 +22,7 @@ namespace GNet
             }
 
             Dimensions = dimensions;
-
+            Rank = dimensions.Length;
             Volume = (int)dimensions.Accumulate(1, (R, X) => R * X);
         }
 
@@ -30,12 +32,14 @@ namespace GNet
 
         public int FlattenIndices(params int[] indices)
         {
-            if (indices.Length != Rank)
+            int length = indices.Length;
+
+            if (length != Rank)
             {
                 throw new RankException(nameof(indices));
             }
 
-            for (int i = 0; i < indices.Length; i++)
+            for (int i = 0; i < length; i++)
             {
                 if (indices[i] < 0 || indices[i] > Dimensions[i] - 1)
                 {

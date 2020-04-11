@@ -17,7 +17,7 @@ namespace GNet.Layers
         public Shape InputShape { get; }
         public Shape PaddedShape { get; }
         public Shape KernelShape { get; }
-        public int KernelsNum => Kernels.Length;
+        public int KernelsNum { get; }
 
         public Convolutional(Shape inputShape, Shape kernelShape, int nKernels, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IActivation activation, IInitializer weightInit, IInitializer biasInit) :
             base(activation, biasInit, weightInit)
@@ -33,6 +33,7 @@ namespace GNet.Layers
             KernelShape = kernelShape;
             Strides = strides;
             Paddings = paddings;
+            KernelsNum = nKernels;
 
             PaddedShape = Pad.Shape(inputShape, paddings);
 

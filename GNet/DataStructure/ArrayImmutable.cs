@@ -6,30 +6,35 @@ namespace GNet
     [Serializable]
     public class ArrayImmutable<T> : IArray<T>
     {
-        public int Length => internalArray.Length;
+        public int Length { get; }
+
         public T this[int i] => internalArray[i];
 
         private readonly T[] internalArray;
 
         public ArrayImmutable(params T[] elements)
         {
-            internalArray = new T[elements.Length];
+            Length = elements.Length;
 
-            Array.Copy(elements, 0, internalArray, 0, elements.Length);
+            internalArray = new T[Length];
+
+            Array.Copy(elements, 0, internalArray, 0, Length);
         }
 
         public ArrayImmutable(in T[] array)
         {
+            Length = array.Length;
+
             internalArray = array;
         }
 
         public ArrayImmutable(IList<T> list)
         {
-            int length = list.Count;
+            Length = list.Count;
 
-            internalArray = new T[length];
+            internalArray = new T[Length];
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < Length; i++)
             {
                 internalArray[i] = list[i];
             }
@@ -37,9 +42,9 @@ namespace GNet
 
         public ArrayImmutable(IEnumerable<T> enumerable)
         {
-            int length = System.Linq.Enumerable.Count(enumerable);
+            Length = System.Linq.Enumerable.Count(enumerable);
 
-            internalArray = new T[length];
+            internalArray = new T[Length];
 
             int i = 0;
             foreach (T x in enumerable)
@@ -50,7 +55,9 @@ namespace GNet
 
         public ArrayImmutable(int length, Func<T> element)
         {
-            internalArray = new T[length];
+            Length = length;
+
+            internalArray = new T[Length];
 
             for (int i = 0; i < Length; i++)
             {

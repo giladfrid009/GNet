@@ -1,5 +1,4 @@
-﻿using GNet.Layers;
-using System;
+﻿using System;
 
 namespace GNet
 {
@@ -16,11 +15,13 @@ namespace GNet
         public event EpochErrorLogger? OnFinish;
 
         public ArrayImmutable<ILayer> Layers { get; }
-        public int Length => Layers.Length;
+        public int Length { get; }
 
         public Network(ArrayImmutable<ILayer> layers)
         {
             Layers = layers;
+            Length = layers.Length;
+
             Connect();
             Initialize();
         }

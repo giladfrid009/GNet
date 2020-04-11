@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using GNet.Model;
 using GNet.Utils.Convolutional;
-using GNet;
 
 namespace GNet.Layers
 {
@@ -17,7 +16,7 @@ namespace GNet.Layers
         public Shape KernelShape { get; }
         public Shape Shape { get; }
         public IPooler Pooler { get; }
-        public bool IsTrainable { get => false; }
+        public bool IsTrainable { get; } = false;
 
         public Pooling(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IPooler pooler)
         {
