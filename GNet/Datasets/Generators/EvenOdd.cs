@@ -33,7 +33,7 @@ namespace GNet.Datasets.Generators
 
                 double output = zeroCount % 2 == 0 ? 0.0 : 1.0;
 
-                dataCollection[i] = new Data(input, new ShapedArrayImmutable<double>(new Shape(1), output));
+                dataCollection[i] = new Data(input, ShapedArrayImmutable<double>.FromRef(new Shape(1), output));
             }
 
             return new Dataset(dataCollection);

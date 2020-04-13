@@ -13,7 +13,7 @@ namespace GNet.Model
         public double Gradient { get; set; }
         public double Cache1 { get; set; }
         public double Cache2 { get; set; }
-        public double BatchDelta { get; set; }   
+        public double BatchDelta { get; set; }
 
         public Neuron()
         {

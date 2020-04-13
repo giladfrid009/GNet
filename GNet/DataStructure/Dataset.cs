@@ -57,7 +57,7 @@ namespace GNet
                 shuffled[iRnd] = temp;
             }
 
-            dataCollection = new ArrayImmutable<Data>(in shuffled);
+            dataCollection = ArrayImmutable<Data>.FromRef(shuffled);
         }
     }
 }

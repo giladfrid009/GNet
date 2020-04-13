@@ -72,7 +72,7 @@ namespace GNet.Layers
 
                     N.KernelBias = kernel.Bias;
 
-                    N.InSynapses = IndexGen.ByStart(KernelShape, new ArrayImmutable<int>(in idxKernel)).Select((idx, k) =>
+                    N.InSynapses = IndexGen.ByStart(KernelShape, ArrayImmutable<int>.FromRef(idxKernel)).Select((idx, k) =>
                     {
                         var S = new CSynapse(padded[idx], N)
                         {

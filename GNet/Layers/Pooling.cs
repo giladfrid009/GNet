@@ -55,7 +55,7 @@ namespace GNet.Layers
             {
                 Neuron N = Neurons[i];
 
-                N.InSynapses = IndexGen.ByStart(KernelShape, new ArrayImmutable<int>(in idxKernel)).Select((idx, j) =>
+                N.InSynapses = IndexGen.ByStart(KernelShape, ArrayImmutable<int>.FromRef(idxKernel)).Select((idx, j) =>
                 {
                     var S = new Synapse(padded[idx], N);
                     inConnections[idx].Add(S);

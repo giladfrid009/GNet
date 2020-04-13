@@ -14,7 +14,7 @@ namespace GNet
                 selected[i] = selector(source[i], i);
             }
 
-            return new ArrayImmutable<TOut>(in selected);
+            return ArrayImmutable<TOut>.FromRef(selected);
         }
 
         public static ArrayImmutable<TOut> Select<TSource, TOut>(this IArray<TSource> source, Func<TSource, TOut> selector)
@@ -48,7 +48,7 @@ namespace GNet
                 combined[i] = selector(source[i], other[i]);
             }
 
-            return new ArrayImmutable<TSource>(in combined);
+            return ArrayImmutable<TSource>.FromRef(combined);
         }
 
         public static ShapedArrayImmutable<TSource> Combine<TSource>(this ShapedArrayImmutable<TSource> source, IArray<TSource> other, Func<TSource, TSource, TSource> selector)
@@ -73,7 +73,7 @@ namespace GNet
                 concated[i + length1] = other[i];
             }
 
-            return new ArrayImmutable<TSource>(in concated);
+            return ArrayImmutable<TSource>.FromRef(concated);
         }
 
         public static void ForEach<TSource>(this IArray<TSource> source, Action<TSource, int> action)

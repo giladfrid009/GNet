@@ -32,8 +32,8 @@ namespace GNet.Datasets.Generators
                 }
 
                 dataCollection[i] = new Data(
-                    new ShapedArrayImmutable<double>(new Shape(1), num),
-                    new ShapedArrayImmutable<double>(new Shape(1), res));
+                    ShapedArrayImmutable<double>.FromRef(new Shape(1), num),
+                    ShapedArrayImmutable<double>.FromRef(new Shape(1), res));
             }
 
             return new Dataset(dataCollection);
