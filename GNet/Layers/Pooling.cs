@@ -20,7 +20,7 @@ namespace GNet.Layers
 
         public Pooling(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IPooler pooler)
         {
-            ConvValidator.CheckParams(inputShape, kernelShape, strides, paddings);
+            Validator.CheckParams(inputShape, kernelShape, strides, paddings);
 
             Pooler = pooler;
             InputShape = inputShape;
@@ -55,7 +55,7 @@ namespace GNet.Layers
             {
                 Neuron N = Neurons[i];
 
-                N.InSynapses = IndexGen.ByStart(KernelShape, new ArrayImmutable<int>(idxKernel)).Select((idx, j) =>
+                N.InSynapses = IndexGen.ByStart(KernelShape, new ArrayImmutable<int>(in idxKernel)).Select((idx, j) =>
                 {
                     var S = new Synapse(padded[idx], N);
                     inConnections[idx].Add(S);

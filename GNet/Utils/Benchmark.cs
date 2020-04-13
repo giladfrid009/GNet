@@ -23,8 +23,6 @@ namespace GNet.Utils
             var sw = new Stopwatch();
             int nBatches = 0;
 
-            
-
             for (int i = 0; i < iterations; i++)
             {
                 Network N = netCreator();

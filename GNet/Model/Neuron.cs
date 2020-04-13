@@ -17,8 +17,8 @@ namespace GNet.Model
 
         public Neuron()
         {
-            InSynapses = new ShapedArrayImmutable<Synapse>();
-            OutSynapses = new ShapedArrayImmutable<Synapse>();
+            InSynapses = new ArrayImmutable<Synapse>();
+            OutSynapses = new ArrayImmutable<Synapse>();
         }
     }
 }

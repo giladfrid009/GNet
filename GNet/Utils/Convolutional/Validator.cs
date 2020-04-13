@@ -2,7 +2,7 @@
 
 namespace GNet.Utils.Convolutional
 {
-    public static class ConvValidator
+    public static class Validator
     {
         public static void CheckParams(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
         {

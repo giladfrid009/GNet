@@ -47,8 +47,8 @@ namespace GNet.Layers
             {
                 var S = new Synapse(inLayer.Neurons[i], N);
 
-                N.InSynapses = new ShapedArrayImmutable<Synapse>(new Shape(1), S);
-                inLayer.Neurons[i].OutSynapses = new ShapedArrayImmutable<Synapse>(new Shape(1), S);
+                N.InSynapses = new ArrayImmutable<Synapse>(S);
+                inLayer.Neurons[i].OutSynapses = new ArrayImmutable<Synapse>(S);
             });
         }
 

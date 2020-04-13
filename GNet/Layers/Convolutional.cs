@@ -22,7 +22,7 @@ namespace GNet.Layers
         public Convolutional(Shape inputShape, Shape kernelShape, int nKernels, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IActivation activation, IInitializer weightInit, IInitializer biasInit) :
             base(activation, biasInit, weightInit)
         {
-            ConvValidator.CheckParams(inputShape, kernelShape, strides, paddings);
+            Validator.CheckParams(inputShape, kernelShape, strides, paddings);
 
             if (nKernels < 1)
             {
@@ -72,7 +72,7 @@ namespace GNet.Layers
 
                     N.KernelBias = kernel.Bias;
 
-                    N.InSynapses = IndexGen.ByStart(KernelShape, new ArrayImmutable<int>(idxKernel)).Select((idx, k) =>
+                    N.InSynapses = IndexGen.ByStart(KernelShape, new ArrayImmutable<int>(in idxKernel)).Select((idx, k) =>
                     {
                         var S = new CSynapse(padded[idx], N)
                         {
