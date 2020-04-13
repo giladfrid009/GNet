@@ -6,11 +6,27 @@ namespace GNet
     [Serializable]
     public class ArrayImmutable<T> : IArray<T>
     {
-        public int Length { get; private set; }
+        public int Length { get; }
 
         public T this[int i] => internalArray[i];
 
-        private T[] internalArray;
+        private readonly T[] internalArray;
+
+        protected ArrayImmutable(T[] array, bool asRef = false)
+        {
+            Length = array.Length;
+
+            if (asRef)
+            {
+                internalArray = array;
+            }
+            else
+            {
+                internalArray = new T[Length];
+
+                Array.Copy(array, 0, internalArray, 0, Length);
+            }
+        }
 
         public ArrayImmutable()
         {
@@ -19,14 +35,9 @@ namespace GNet
             internalArray = Array.Empty<T>();
         }
 
-        public ArrayImmutable(params T[] elements)
+        public ArrayImmutable(params T[] elements) : this(elements, false)
         {
-            Length = elements.Length;
-
-            internalArray = new T[Length];
-
-            Array.Copy(elements, 0, internalArray, 0, Length);
-        }       
+        }
 
         public ArrayImmutable(IList<T> list)
         {
@@ -67,11 +78,7 @@ namespace GNet
 
         public static ArrayImmutable<T> FromRef(params T[] array)
         {
-            return new ArrayImmutable<T>()
-            {
-                Length = array.Length,
-                internalArray = array
-            };
+            return new ArrayImmutable<T>(array, true);
         }
 
         public T[] ToMutable()
