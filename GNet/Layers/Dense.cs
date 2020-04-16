@@ -6,14 +6,14 @@ namespace GNet.Layers
     [Serializable]
     public class Dense : TrainableLayer
     {
-        public override ShapedArrayImmutable<Neuron> Neurons { get; }
+        public override ImmutableShapedArray<Neuron> Neurons { get; }
         public override Shape Shape { get; }
 
         public Dense(Shape shape, IActivation activation, IInitializer weightInit, IInitializer biasInit) : 
             base(activation, biasInit, weightInit)
         {
             Shape = shape;
-            Neurons = new ShapedArrayImmutable<Neuron>(shape, () => new Neuron());
+            Neurons = new ImmutableShapedArray<Neuron>(shape, () => new Neuron());
         }
 
         public override void Connect(ILayer inLayer)
@@ -35,7 +35,7 @@ namespace GNet.Layers
             });
         }
 
-        public override void Input(ShapedArrayImmutable<double> values)
+        public override void Input(ImmutableShapedArray<double> values)
         {
             if (values.Shape != Shape)
             {
@@ -44,7 +44,7 @@ namespace GNet.Layers
 
             Neurons.ForEach((N, i) => N.Value = values[i]);
 
-            ShapedArrayImmutable<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
+            ImmutableShapedArray<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
 
             Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }

@@ -6,7 +6,7 @@ namespace GNet.Model.Convolutional
     public class Kernel
     {
         public SharedVal<double> Bias { get; }
-        public ShapedArrayImmutable<SharedVal<double>> Weights { get; }
+        public ImmutableShapedArray<SharedVal<double>> Weights { get; }
         public Shape Shape { get; }
 
         public Kernel(Shape shape)
@@ -14,7 +14,7 @@ namespace GNet.Model.Convolutional
             Shape = shape;
 
             Bias = new SharedVal<double>();
-            Weights = new ShapedArrayImmutable<SharedVal<double>>(shape, () => new SharedVal<double>());
+            Weights = new ImmutableShapedArray<SharedVal<double>>(shape, () => new SharedVal<double>());
         }
     }
 }

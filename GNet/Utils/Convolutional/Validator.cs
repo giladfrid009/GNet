@@ -4,7 +4,7 @@ namespace GNet.Utils.Convolutional
 {
     public static class Validator
     {
-        public static void CheckParams(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
+        public static void CheckParams(Shape inputShape, Shape kernelShape, ImmutableArray<int> strides, ImmutableArray<int> paddings)
         {
             if (inputShape.Rank != kernelShape.Rank)
             {

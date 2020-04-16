@@ -6,7 +6,7 @@ namespace GNet.Layers
     [Serializable]
     public abstract class TrainableLayer : ILayer
     {
-        public abstract ShapedArrayImmutable<Neuron> Neurons { get; }
+        public abstract ImmutableShapedArray<Neuron> Neurons { get; }
         public abstract Shape Shape { get; }
         public IActivation Activation { get; }
         public IInitializer WeightInit { get; }
@@ -24,21 +24,21 @@ namespace GNet.Layers
         {
             Neurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Sum(S => S.Weight * S.InNeuron.ActivatedValue));
 
-            ShapedArrayImmutable<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
+            ImmutableShapedArray<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
 
             Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }
 
-        public void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
+        public void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
             if (targets.Shape != Shape)
             {
                 throw new ShapeMismatchException(nameof(targets));
             }
 
-            ShapedArrayImmutable<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
-            ShapedArrayImmutable<double> lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
-            ShapedArrayImmutable<double> grads = lossDers.Combine(actvDers, (LD, AD) => LD * AD);
+            ImmutableShapedArray<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
+            ImmutableShapedArray<double> lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
+            ImmutableShapedArray<double> grads = lossDers.Combine(actvDers, (LD, AD) => LD * AD);
 
             Neurons.ForEach((N, i) =>
             {
@@ -49,7 +49,7 @@ namespace GNet.Layers
 
         public void CalcGrads()
         {
-            ShapedArrayImmutable<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
+            ImmutableShapedArray<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
 
             Neurons.ForEach((N, i) =>
             {
@@ -96,6 +96,6 @@ namespace GNet.Layers
 
         public abstract void Initialize();
 
-        public abstract void Input(ShapedArrayImmutable<double> values);
+        public abstract void Input(ImmutableShapedArray<double> values);
     }
 }

@@ -8,9 +8,9 @@ namespace GNet.Layers
     [Serializable]
     public class Pooling : IConvLayer
     {
-        public ShapedArrayImmutable<Neuron> Neurons { get; }
-        public ArrayImmutable<int> Strides { get; }
-        public ArrayImmutable<int> Paddings { get; }
+        public ImmutableShapedArray<Neuron> Neurons { get; }
+        public ImmutableArray<int> Strides { get; }
+        public ImmutableArray<int> Paddings { get; }
         public Shape InputShape { get; }
         public Shape PaddedShape { get; }
         public Shape KernelShape { get; }
@@ -18,7 +18,7 @@ namespace GNet.Layers
         public IPooler Pooler { get; }
         public bool IsTrainable { get; } = false;
 
-        public Pooling(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IPooler pooler)
+        public Pooling(Shape inputShape, Shape kernelShape, ImmutableArray<int> strides, ImmutableArray<int> paddings, IPooler pooler)
         {
             Validator.CheckParams(inputShape, kernelShape, strides, paddings);
 
@@ -32,10 +32,10 @@ namespace GNet.Layers
 
             Shape = CalcOutShape(inputShape, kernelShape, strides, paddings);
 
-            Neurons = new ShapedArrayImmutable<Neuron>(Shape, () => new Neuron());
+            Neurons = new ImmutableShapedArray<Neuron>(Shape, () => new Neuron());
         }
 
-        private static Shape CalcOutShape(Shape inputShape, Shape kernelShape, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
+        private static Shape CalcOutShape(Shape inputShape, Shape kernelShape, ImmutableArray<int> strides, ImmutableArray<int> paddings)
         {
             return new Shape(inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * paddings[i] - kernelShape.Dimensions[i]) / strides[i]));
         }
@@ -47,15 +47,15 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(inLayer));
             }
 
-            ShapedArrayImmutable<Neuron> padded = Pad.ShapedArray(inLayer.Neurons, Paddings, () => new Neuron());
+            ImmutableShapedArray<Neuron> padded = Pad.ShapedArray(inLayer.Neurons, Paddings, () => new Neuron());
 
-            var inConnections = new ShapedArrayImmutable<List<Synapse>>(PaddedShape, () => new List<Synapse>());
+            var inConnections = new ImmutableShapedArray<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 
             IndexGen.ByStrides(PaddedShape, Strides, KernelShape).ForEach((idxKernel, i) =>
             {
                 Neuron N = Neurons[i];
 
-                N.InSynapses = IndexGen.ByStart(KernelShape, ArrayImmutable<int>.FromRef(idxKernel)).Select((idx, j) =>
+                N.InSynapses = IndexGen.ByStart(KernelShape, ImmutableArray<int>.FromRef(idxKernel)).Select((idx, j) =>
                 {
                     var S = new Synapse(padded[idx], N);
                     inConnections[idx].Add(S);
@@ -63,14 +63,14 @@ namespace GNet.Layers
                 });
             });
 
-            padded.ForEach((N, i) => N.OutSynapses = new ArrayImmutable<Synapse>(inConnections[i]));
+            padded.ForEach((N, i) => N.OutSynapses = new ImmutableArray<Synapse>(inConnections[i]));
         }
 
         public void Initialize()
         {
         }
 
-        public void Input(ShapedArrayImmutable<double> values)
+        public void Input(ImmutableShapedArray<double> values)
         {
             throw new NotSupportedException();
         }
@@ -79,7 +79,7 @@ namespace GNet.Layers
         {
             Neurons.ForEach(N =>
             {
-                N.Value = Pooler.Pool(N.InSynapses.Select(S => S.InNeuron.ActivatedValue), out ArrayImmutable<double> inWeights);
+                N.Value = Pooler.Pool(N.InSynapses.Select(S => S.InNeuron.ActivatedValue), out ImmutableArray<double> inWeights);
 
                 N.ActivatedValue = N.Value;
 
@@ -87,14 +87,14 @@ namespace GNet.Layers
             });
         }
 
-        public void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
+        public void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
             if (targets.Shape != Shape)
             {
                 throw new ShapeMismatchException(nameof(targets));
             }
 
-            ShapedArrayImmutable<double> grads = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
+            ImmutableShapedArray<double> grads = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
 
             Neurons.ForEach((N, i) => N.Gradient = grads[i]);
         }

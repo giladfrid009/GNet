@@ -19,7 +19,7 @@ namespace GNet.Datasets.Generators
 
             for (int i = 0; i < length; i++)
             {
-                var input = new ShapedArrayImmutable<double>(InputShape, () => Utils.GRandom.NextDouble() < 0.5 ? 0.0 : 1.0);
+                var input = new ImmutableShapedArray<double>(InputShape, () => Utils.GRandom.NextDouble() < 0.5 ? 0.0 : 1.0);
 
                 int zeroCount = 0;
 
@@ -33,7 +33,7 @@ namespace GNet.Datasets.Generators
 
                 double output = zeroCount % 2 == 0 ? 0.0 : 1.0;
 
-                dataCollection[i] = new Data(input, ShapedArrayImmutable<double>.FromRef(new Shape(1), output));
+                dataCollection[i] = new Data(input, ImmutableShapedArray<double>.FromRef(new Shape(1), output));
             }
 
             return new Dataset(dataCollection);

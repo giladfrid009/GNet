@@ -7,7 +7,7 @@ namespace GNet.Layers
     [Serializable]
     public class Dropout : ILayer
     {
-        public ShapedArrayImmutable<Neuron> Neurons { get; }
+        public ImmutableShapedArray<Neuron> Neurons { get; }
         public Shape Shape { get; }
         public bool IsTrainable { get; } = false;
 
@@ -25,15 +25,15 @@ namespace GNet.Layers
             }
         }
 
-        private ShapedArrayImmutable<bool> dropArray;
+        private ImmutableShapedArray<bool> dropArray;
         private double dropChance;
 
         public Dropout(Shape shape, double dropChance)
         {
             Shape = shape;
             DropChance = dropChance;
-            Neurons = new ShapedArrayImmutable<Neuron>(shape, () => new Neuron());
-            dropArray = new ShapedArrayImmutable<bool>();
+            Neurons = new ImmutableShapedArray<Neuron>(shape, () => new Neuron());
+            dropArray = new ImmutableShapedArray<bool>();
         }
 
         public virtual void Connect(ILayer inLayer)
@@ -47,8 +47,8 @@ namespace GNet.Layers
             {
                 var S = new Synapse(inLayer.Neurons[i], N);
 
-                N.InSynapses = new ArrayImmutable<Synapse>(S);
-                inLayer.Neurons[i].OutSynapses = new ArrayImmutable<Synapse>(S);
+                N.InSynapses = new ImmutableArray<Synapse>(S);
+                inLayer.Neurons[i].OutSynapses = new ImmutableArray<Synapse>(S);
             });
         }
 
@@ -63,7 +63,7 @@ namespace GNet.Layers
             });
         }
 
-        public virtual void Input(ShapedArrayImmutable<double> values)
+        public virtual void Input(ImmutableShapedArray<double> values)
         {
             if (values.Shape != Shape)
             {
@@ -86,14 +86,14 @@ namespace GNet.Layers
             });
         }
 
-        public void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
+        public void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
             if (targets.Shape != Shape)
             {
                 throw new ShapeMismatchException(nameof(targets));
             }
 
-            ShapedArrayImmutable<double> grads = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
+            ImmutableShapedArray<double> grads = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
 
             Neurons.ForEach((N, i) => N.Gradient = dropArray[i] ? 0 : grads[i]);
         }
@@ -109,7 +109,7 @@ namespace GNet.Layers
 
         public void Update()
         {
-            dropArray = new ShapedArrayImmutable<bool>(Shape, () => GRandom.NextDouble(0, 1) <= DropChance);
+            dropArray = new ImmutableShapedArray<bool>(Shape, () => GRandom.NextDouble(0, 1) <= DropChance);
         }
     }
 }

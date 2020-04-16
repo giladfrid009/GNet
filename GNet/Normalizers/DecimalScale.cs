@@ -6,7 +6,7 @@ namespace GNet.Normalizers
     {
         private double scale = 1;
 
-        public void UpdateParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector)
+        public void UpdateParams(ImmutableArray<ImmutableShapedArray<double>> dataVector)
         {
             double max = double.Epsilon;
 
@@ -15,7 +15,7 @@ namespace GNet.Normalizers
             scale = (int)Log10(max) + 1;
         }
 
-        public ShapedArrayImmutable<double> Normalize(ShapedArrayImmutable<double> vals)
+        public ImmutableShapedArray<double> Normalize(ImmutableShapedArray<double> vals)
         {
             return vals.Select(X => X / scale);
         }

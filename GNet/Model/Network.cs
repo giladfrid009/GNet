@@ -14,10 +14,10 @@ namespace GNet
         public event EpochErrorLogger? OnEpoch;
         public event EpochErrorLogger? OnFinish;
 
-        public ArrayImmutable<ILayer> Layers { get; }
+        public ImmutableArray<ILayer> Layers { get; }
         public int Length { get; }
 
-        public Network(ArrayImmutable<ILayer> layers)
+        public Network(ImmutableArray<ILayer> layers)
         {
             Layers = layers;
             Length = layers.Length;
@@ -26,7 +26,7 @@ namespace GNet
             Initialize();
         }
 
-        public Network(params ILayer[] layers) : this(new ArrayImmutable<ILayer>(layers))
+        public Network(params ILayer[] layers) : this(new ImmutableArray<ILayer>(layers))
         {
         }
        
@@ -46,7 +46,7 @@ namespace GNet
             }
         }
 
-        public ShapedArrayImmutable<double> Forward(ShapedArrayImmutable<double> inputs)
+        public ImmutableShapedArray<double> Forward(ImmutableShapedArray<double> inputs)
         {
             Layers[0].Input(inputs);
 
@@ -129,7 +129,7 @@ namespace GNet
             Train(dataset, loss, optimizer, batchSize, nEpoches, minError, dataset, loss, shuffle);
         }
 
-        private void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets)
+        private void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
             Layers[Length - 1].CalcGrads(loss, targets);
 

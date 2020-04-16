@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace GNet
 {
     [Serializable]
-    public class ArrayImmutable<T> : IArray<T>
+    public class ImmutableArray<T> : IArray<T>
     {
         public int Length { get; }
 
@@ -12,7 +12,7 @@ namespace GNet
 
         private readonly T[] internalArray;
 
-        protected ArrayImmutable(T[] array, bool asRef = false)
+        protected ImmutableArray(T[] array, bool asRef = false)
         {
             Length = array.Length;
 
@@ -28,18 +28,18 @@ namespace GNet
             }
         }
 
-        public ArrayImmutable()
+        public ImmutableArray()
         {
             Length = 0;
 
             internalArray = Array.Empty<T>();
         }
 
-        public ArrayImmutable(params T[] elements) : this(elements, false)
+        public ImmutableArray(params T[] elements) : this(elements, false)
         {
         }
 
-        public ArrayImmutable(IList<T> list)
+        public ImmutableArray(IList<T> list)
         {
             Length = list.Count;
 
@@ -51,7 +51,7 @@ namespace GNet
             }
         }
 
-        public ArrayImmutable(IEnumerable<T> enumerable)
+        public ImmutableArray(IEnumerable<T> enumerable)
         {
             Length = System.Linq.Enumerable.Count(enumerable);
 
@@ -64,7 +64,7 @@ namespace GNet
             }
         }
 
-        public ArrayImmutable(int length, Func<T> element)
+        public ImmutableArray(int length, Func<T> element)
         {
             Length = length;
 
@@ -76,9 +76,9 @@ namespace GNet
             }
         }
 
-        public static ArrayImmutable<T> FromRef(params T[] array)
+        public static ImmutableArray<T> FromRef(params T[] array)
         {
-            return new ArrayImmutable<T>(array, true);
+            return new ImmutableArray<T>(array, true);
         }
 
         public T[] ToMutable()
@@ -90,9 +90,9 @@ namespace GNet
             return array;
         }
 
-        public ShapedArrayImmutable<T> ToShape(Shape shape)
+        public ImmutableShapedArray<T> ToShape(Shape shape)
         {
-            return ShapedArrayImmutable<T>.FromRef(shape, internalArray);
+            return ImmutableShapedArray<T>.FromRef(shape, internalArray);
         }
     }
 }

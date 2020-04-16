@@ -2,7 +2,7 @@
 {
     public class BinaryMax : IOutTransformer
     {
-        public ShapedArrayImmutable<double> Transform(ShapedArrayImmutable<double> output)
+        public ImmutableShapedArray<double> Transform(ImmutableShapedArray<double> output)
         {
             double max = output.Max();
 

@@ -8,12 +8,12 @@ namespace GNet.OutTransformers.Losses
         {
         }
 
-        public double Compute(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)
+        public double Compute(ImmutableShapedArray<double> targets, ImmutableShapedArray<double> outputs)
         {
             return targets.Combine(Transform(outputs), (T, O) => T == O ? 0.0 : 1.0).Avarage();
         }
 
-        public ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs)
+        public ImmutableShapedArray<double> Derivative(ImmutableShapedArray<double> targets, ImmutableShapedArray<double> outputs)
         {
             throw new NotSupportedException();
         }

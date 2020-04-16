@@ -9,11 +9,11 @@
             Activation = activation;
         }
 
-        public void UpdateParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector)
+        public void UpdateParams(ImmutableArray<ImmutableShapedArray<double>> dataVector)
         {
         }
 
-        public ShapedArrayImmutable<double> Normalize(ShapedArrayImmutable<double> vals)
+        public ImmutableShapedArray<double> Normalize(ImmutableShapedArray<double> vals)
         {
             return Activation.Activate(vals);
         }

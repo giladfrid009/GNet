@@ -4,49 +4,49 @@ using System.Collections.Generic;
 namespace GNet
 {
     [Serializable]
-    public class ShapedArrayImmutable<T> : ArrayImmutable<T>
+    public class ImmutableShapedArray<T> : ImmutableArray<T>
     {
         public Shape Shape { get; }
         public new T this[int i] => base[i];
         public T this[params int[] idxs] => base[Shape.FlattenIndices(idxs)];
 
-        protected ShapedArrayImmutable(Shape shape, T[] array, bool asRef = false) : base(array, asRef)
+        protected ImmutableShapedArray(Shape shape, T[] array, bool asRef = false) : base(array, asRef)
         {
             ValidateShape(shape);
             Shape = shape;
         }
 
-        public ShapedArrayImmutable() : base()
+        public ImmutableShapedArray() : base()
         {
             Shape = new Shape();
         }
 
-        public ShapedArrayImmutable(Shape shape, params T[] elements) : base(elements)
+        public ImmutableShapedArray(Shape shape, params T[] elements) : base(elements)
         {
             ValidateShape(shape);
             Shape = shape;
         }
 
-        public ShapedArrayImmutable(Shape shape, IList<T> list) : base(list)
+        public ImmutableShapedArray(Shape shape, IList<T> list) : base(list)
         {
             ValidateShape(shape);
             Shape = shape;
         }
 
-        public ShapedArrayImmutable(Shape shape, IEnumerable<T> enumerable) : base(enumerable)
+        public ImmutableShapedArray(Shape shape, IEnumerable<T> enumerable) : base(enumerable)
         {
             ValidateShape(shape);
             Shape = shape;
         }
 
-        public ShapedArrayImmutable(Shape shape, Func<T> element) : base(shape.Volume, element)
+        public ImmutableShapedArray(Shape shape, Func<T> element) : base(shape.Volume, element)
         {
             Shape = shape;
         }
 
-        public static ShapedArrayImmutable<T> FromRef(Shape shape, params T[] array)
+        public static ImmutableShapedArray<T> FromRef(Shape shape, params T[] array)
         {
-            return new ShapedArrayImmutable<T>(shape, array, true);
+            return new ImmutableShapedArray<T>(shape, array, true);
         }
 
         private void ValidateShape(Shape shape)
@@ -57,7 +57,7 @@ namespace GNet
             }
         }
 
-        public ArrayImmutable<T> Flatten()
+        public ImmutableArray<T> Flatten()
         {
             return this;
         }

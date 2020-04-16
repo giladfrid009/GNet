@@ -11,9 +11,9 @@ namespace GNet
 
         public Data this[int index] => dataCollection[index];
 
-        private ArrayImmutable<Data> dataCollection;
+        private ImmutableArray<Data> dataCollection;
 
-        public Dataset(ArrayImmutable<Data> dataCollection)
+        public Dataset(ImmutableArray<Data> dataCollection)
         {
             InputShape = dataCollection[0].Inputs.Shape;
             OutputShape = dataCollection[0].Outputs.Shape;
@@ -30,7 +30,7 @@ namespace GNet
             Length = dataCollection.Length;
         }
 
-        public Dataset(params Data[] dataCollection) : this(new ArrayImmutable<Data>(dataCollection))
+        public Dataset(params Data[] dataCollection) : this(new ImmutableArray<Data>(dataCollection))
         {
         }
 
@@ -57,7 +57,7 @@ namespace GNet
                 shuffled[iRnd] = temp;
             }
 
-            dataCollection = ArrayImmutable<Data>.FromRef(shuffled);
+            dataCollection = ImmutableArray<Data>.FromRef(shuffled);
         }
     }
 }

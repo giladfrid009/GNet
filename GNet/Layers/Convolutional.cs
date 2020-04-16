@@ -9,17 +9,17 @@ namespace GNet.Layers
     [Serializable]
     public class Convolutional : TrainableLayer, IConvLayer
     {
-        public override ShapedArrayImmutable<Neuron> Neurons { get; }
-        public ArrayImmutable<Kernel> Kernels { get; }
-        public ArrayImmutable<int> Strides { get; }
-        public ArrayImmutable<int> Paddings { get; }
+        public override ImmutableShapedArray<Neuron> Neurons { get; }
+        public ImmutableArray<Kernel> Kernels { get; }
+        public ImmutableArray<int> Strides { get; }
+        public ImmutableArray<int> Paddings { get; }
         public override Shape Shape { get; }
         public Shape InputShape { get; }
         public Shape PaddedShape { get; }
         public Shape KernelShape { get; }
         public int KernelsNum { get; }
 
-        public Convolutional(Shape inputShape, Shape kernelShape, int nKernels, ArrayImmutable<int> strides, ArrayImmutable<int> paddings, IActivation activation, IInitializer weightInit, IInitializer biasInit) :
+        public Convolutional(Shape inputShape, Shape kernelShape, int nKernels, ImmutableArray<int> strides, ImmutableArray<int> paddings, IActivation activation, IInitializer weightInit, IInitializer biasInit) :
             base(activation, biasInit, weightInit)
         {
             Validator.CheckParams(inputShape, kernelShape, strides, paddings);
@@ -37,18 +37,18 @@ namespace GNet.Layers
 
             PaddedShape = Pad.Shape(inputShape, paddings);
 
-            Kernels = new ArrayImmutable<Kernel>(nKernels, () => new Kernel(kernelShape));
+            Kernels = new ImmutableArray<Kernel>(nKernels, () => new Kernel(kernelShape));
 
             Shape = CalcOutShape(inputShape, kernelShape, nKernels, strides, paddings);
 
-            Neurons = new ShapedArrayImmutable<Neuron>(Shape, () => new CNeuron());
+            Neurons = new ImmutableShapedArray<Neuron>(Shape, () => new CNeuron());
         }
 
-        private static Shape CalcOutShape(Shape inputShape, Shape kernelShape, int nKernels, ArrayImmutable<int> strides, ArrayImmutable<int> paddings)
+        private static Shape CalcOutShape(Shape inputShape, Shape kernelShape, int nKernels, ImmutableArray<int> strides, ImmutableArray<int> paddings)
         {
-            ArrayImmutable<int> channelDims = inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * paddings[i] - kernelShape.Dimensions[i]) / strides[i]);
+            ImmutableArray<int> channelDims = inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * paddings[i] - kernelShape.Dimensions[i]) / strides[i]);
 
-            return new Shape(new ArrayImmutable<int>(nKernels).Concat(channelDims));
+            return new Shape(new ImmutableArray<int>(nKernels).Concat(channelDims));
         }
 
         public override void Connect(ILayer inLayer)
@@ -58,9 +58,9 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(inLayer));
             }
 
-            ShapedArrayImmutable<Neuron> padded = Pad.ShapedArray(inLayer.Neurons, Paddings, () => new Neuron());
+            ImmutableShapedArray<Neuron> padded = Pad.ShapedArray(inLayer.Neurons, Paddings, () => new Neuron());
 
-            var inConnections = new ShapedArrayImmutable<List<Synapse>>(PaddedShape, () => new List<Synapse>());
+            var inConnections = new ImmutableShapedArray<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 
             Kernels.ForEach((kernel, i) =>
             {
@@ -72,7 +72,7 @@ namespace GNet.Layers
 
                     N.KernelBias = kernel.Bias;
 
-                    N.InSynapses = IndexGen.ByStart(KernelShape, ArrayImmutable<int>.FromRef(idxKernel)).Select((idx, k) =>
+                    N.InSynapses = IndexGen.ByStart(KernelShape, ImmutableArray<int>.FromRef(idxKernel)).Select((idx, k) =>
                     {
                         var S = new CSynapse(padded[idx], N)
                         {
@@ -85,7 +85,7 @@ namespace GNet.Layers
                 });
             });
 
-            padded.ForEach((N, i) => N.OutSynapses = new ArrayImmutable<Synapse>(inConnections[i]));
+            padded.ForEach((N, i) => N.OutSynapses = new ImmutableArray<Synapse>(inConnections[i]));
         }
 
         public override void Initialize()
@@ -99,7 +99,7 @@ namespace GNet.Layers
             });
         }
 
-        public override void Input(ShapedArrayImmutable<double> values)
+        public override void Input(ImmutableShapedArray<double> values)
         {
             throw new NotSupportedException();
         }

@@ -4,7 +4,7 @@ namespace GNet
 {
     public interface ILayer
     {
-        ShapedArrayImmutable<Neuron> Neurons { get; }
+        ImmutableShapedArray<Neuron> Neurons { get; }
         Shape Shape { get; }
         bool IsTrainable { get; }
 
@@ -12,11 +12,11 @@ namespace GNet
 
         void Initialize();
 
-        void Input(ShapedArrayImmutable<double> values);
+        void Input(ImmutableShapedArray<double> values);
 
         void Forward();
 
-        void CalcGrads(ILoss loss, ShapedArrayImmutable<double> targets);
+        void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets);
 
         void CalcGrads();
 

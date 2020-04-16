@@ -5,11 +5,11 @@ namespace GNet
     [Serializable]
     public class Shape : IEquatable<Shape>
     {
-        public ArrayImmutable<int> Dimensions { get; }
+        public ImmutableArray<int> Dimensions { get; }
         public int Rank { get; }
         public int Volume { get; }
 
-        public Shape(ArrayImmutable<int> dimensions)
+        public Shape(ImmutableArray<int> dimensions)
         {
             int length = dimensions.Length;
 
@@ -26,7 +26,7 @@ namespace GNet
             Volume = (int)dimensions.Accumulate(1, (R, X) => R * X);
         }
 
-        public Shape(params int[] dimensions) : this(new ArrayImmutable<int>(dimensions))
+        public Shape(params int[] dimensions) : this(new ImmutableArray<int>(dimensions))
         {
         }
 

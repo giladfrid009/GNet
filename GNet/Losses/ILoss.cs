@@ -5,8 +5,8 @@
         //TODO: GO OVER ALL LOSSES
         //TODO: VERIFY ALL DERIVATIVES ARE CORRECT
         //TODO: UNDERSTAND CROSSENTROPY LOSS.
-        double Compute(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs);
+        double Compute(ImmutableShapedArray<double> targets, ImmutableShapedArray<double> outputs);
 
-        ShapedArrayImmutable<double> Derivative(ShapedArrayImmutable<double> targets, ShapedArrayImmutable<double> outputs);
+        ImmutableShapedArray<double> Derivative(ImmutableShapedArray<double> targets, ImmutableShapedArray<double> outputs);
     }
 }

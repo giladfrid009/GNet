@@ -2,8 +2,8 @@
 {
     public interface INormalizer
     {
-        void UpdateParams(ArrayImmutable<ShapedArrayImmutable<double>> dataVector);
+        void UpdateParams(ImmutableArray<ImmutableShapedArray<double>> dataVector);
 
-        ShapedArrayImmutable<double> Normalize(ShapedArrayImmutable<double> vals);
+        ImmutableShapedArray<double> Normalize(ImmutableShapedArray<double> vals);
     }
 }

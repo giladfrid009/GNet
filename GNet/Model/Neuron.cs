@@ -5,8 +5,8 @@ namespace GNet.Model
     [Serializable]
     public class Neuron : IOptimizable
     {
-        public ArrayImmutable<Synapse> InSynapses { get; set; }
-        public ArrayImmutable<Synapse> OutSynapses { get; set; }
+        public ImmutableArray<Synapse> InSynapses { get; set; }
+        public ImmutableArray<Synapse> OutSynapses { get; set; }
         public virtual double Bias { get; set; }
         public double Value { get; set; }
         public double ActivatedValue { get; set; }
@@ -17,8 +17,8 @@ namespace GNet.Model
 
         public Neuron()
         {
-            InSynapses = new ArrayImmutable<Synapse>();
-            OutSynapses = new ArrayImmutable<Synapse>();
+            InSynapses = new ImmutableArray<Synapse>();
+            OutSynapses = new ImmutableArray<Synapse>();
         }
     }
 }

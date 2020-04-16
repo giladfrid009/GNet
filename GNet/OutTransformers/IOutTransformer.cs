@@ -2,6 +2,6 @@
 {
     public interface IOutTransformer
     {
-        ShapedArrayImmutable<double> Transform(ShapedArrayImmutable<double> output);
+        ImmutableShapedArray<double> Transform(ImmutableShapedArray<double> output);
     }
 }

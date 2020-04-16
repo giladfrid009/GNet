@@ -5,10 +5,10 @@ namespace GNet
     [Serializable]
     public class Data
     {
-        public ShapedArrayImmutable<double> Inputs { get; }
-        public ShapedArrayImmutable<double> Outputs { get; }
+        public ImmutableShapedArray<double> Inputs { get; }
+        public ImmutableShapedArray<double> Outputs { get; }
 
-        public Data(ShapedArrayImmutable<double> inputs, ShapedArrayImmutable<double> outputs)
+        public Data(ImmutableShapedArray<double> inputs, ImmutableShapedArray<double> outputs)
         {
             Inputs = inputs;
             Outputs = outputs;

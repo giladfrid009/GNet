@@ -9,7 +9,7 @@
             Bound = bound;
         }
 
-        public ShapedArrayImmutable<double> Transform(ShapedArrayImmutable<double> output)
+        public ImmutableShapedArray<double> Transform(ImmutableShapedArray<double> output)
         {
             return output.Select(X => X < Bound ? 0.0 : 1.0);
         }

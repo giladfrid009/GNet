@@ -4,12 +4,12 @@ namespace GNet.Utils.Convolutional
 {
     public static class Pad
     {
-        public static Shape Shape(Shape shape, ArrayImmutable<int> paddings)
+        public static Shape Shape(Shape shape, ImmutableArray<int> paddings)
         {
             return new Shape(shape.Dimensions.Select((D, i) => D + 2 * paddings[i]));
         }
 
-        public static ShapedArrayImmutable<T> ShapedArray<T>(ShapedArrayImmutable<T> array, ArrayImmutable<int> paddings, Func<T> padVal)
+        public static ImmutableShapedArray<T> ShapedArray<T>(ImmutableShapedArray<T> array, ImmutableArray<int> paddings, Func<T> padVal)
         {
             Shape paddedShape = Pad.Shape(array.Shape, paddings);
 
@@ -22,7 +22,7 @@ namespace GNet.Utils.Convolutional
                 internalArray[i] ??= padVal();
             }
 
-            return ShapedArrayImmutable<T>.FromRef(paddedShape, internalArray);
+            return GNet.ImmutableShapedArray<T>.FromRef(paddedShape, internalArray);
         }
     }
 }

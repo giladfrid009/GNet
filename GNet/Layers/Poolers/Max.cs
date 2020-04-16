@@ -5,7 +5,7 @@ namespace GNet.Layers.Poolers
     [Serializable]
     public class Max : IPooler
     {
-        public double Pool(ArrayImmutable<double> vals, out ArrayImmutable<double> inWeights)
+        public double Pool(ImmutableArray<double> vals, out ImmutableArray<double> inWeights)
         {
             double max = vals.Max();
 

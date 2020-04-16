@@ -5,7 +5,7 @@ namespace GNet.Layers.Poolers
     [Serializable]
     public class Avarage : IPooler
     {
-        public double Pool(ArrayImmutable<double> vals, out ArrayImmutable<double> inWeights)
+        public double Pool(ImmutableArray<double> vals, out ImmutableArray<double> inWeights)
         {
             int nIn = vals.Length;
 

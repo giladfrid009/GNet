@@ -2,6 +2,6 @@
 {
     public interface IPooler
     {
-        double Pool(ArrayImmutable<double> vals, out ArrayImmutable<double> inWeights);
+        double Pool(ImmutableArray<double> vals, out ImmutableArray<double> inWeights);
     }
 }
