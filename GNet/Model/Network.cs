@@ -15,12 +15,16 @@ namespace GNet
         public event EpochErrorLogger? OnFinish;
 
         public ImmutableArray<ILayer> Layers { get; }
+        public Shape InputShape { get; }
+        public Shape OutputShape { get; }
         public int Length { get; }
 
         public Network(ImmutableArray<ILayer> layers)
         {
             Layers = layers;
             Length = layers.Length;
+            InputShape = layers[0].Shape;
+            OutputShape = layers[layers.Length - 1].Shape;
 
             Connect();
             Initialize();
@@ -55,7 +59,7 @@ namespace GNet
                 Layers[i].Forward();
             }
 
-            return Layers[Length - 1].Neurons.Select(N => N.ActivatedValue);
+            return Layers[Length - 1].Neurons.Select(N => N.ActivatedValue).ToShape(OutputShape);
         }
 
         public double Validate(Dataset dataset, ILoss loss)

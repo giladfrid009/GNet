@@ -1,6 +1,6 @@
 ﻿using static System.Math;
 
-namespace GNet.Losses
+namespace GNet.Losses.Binary
 {
     public class HingeSquared : ILoss
     {
@@ -11,12 +11,12 @@ namespace GNet.Losses
             Margin = margin;
         }
 
-        public double Compute(ImmutableShapedArray<double> targets, ImmutableShapedArray<double> outputs)
+        public double Compute(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => Max(0.0, Margin - T * O) * Max(0.0, Margin - T * O)).Avarage();
         }
 
-        public ImmutableShapedArray<double> Derivative(ImmutableShapedArray<double> targets, ImmutableShapedArray<double> outputs)
+        public ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => T * O < Margin ? -2.0 * T * (Margin - T * O) : 0.0);
         }

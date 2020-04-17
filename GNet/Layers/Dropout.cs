@@ -25,7 +25,7 @@ namespace GNet.Layers
             }
         }
 
-        private ImmutableShapedArray<bool> dropArray;
+        private ImmutableArray<bool> dropArray;
         private double dropChance;
 
         public Dropout(Shape shape, double dropChance)
@@ -33,7 +33,7 @@ namespace GNet.Layers
             Shape = shape;
             DropChance = dropChance;
             Neurons = new ImmutableShapedArray<Neuron>(shape, () => new Neuron());
-            dropArray = new ImmutableShapedArray<bool>();
+            dropArray = new ImmutableArray<bool>();
         }
 
         public virtual void Connect(ILayer inLayer)
@@ -93,7 +93,7 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(targets));
             }
 
-            ImmutableShapedArray<double> grads = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
+            ImmutableArray<double> grads = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
 
             Neurons.ForEach((N, i) => N.Gradient = dropArray[i] ? 0 : grads[i]);
         }
@@ -109,7 +109,7 @@ namespace GNet.Layers
 
         public void Update()
         {
-            dropArray = new ImmutableShapedArray<bool>(Shape, () => GRandom.NextDouble(0, 1) <= DropChance);
+            dropArray = new ImmutableArray<bool>(Shape.Volume, () => GRandom.NextDouble(0, 1) <= DropChance);
         }
     }
 }

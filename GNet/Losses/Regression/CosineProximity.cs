@@ -1,10 +1,10 @@
 ﻿using static System.Math;
 
-namespace GNet.Losses
+namespace GNet.Losses.Regression
 {
     public class CosineProximity : ILoss
     {
-        public double Compute(ImmutableShapedArray<double> targets, ImmutableShapedArray<double> outputs)
+        public double Compute(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
             double tProd = targets.Accumulate(1.0, (R, X) => R * X);
             double oProd = outputs.Accumulate(1.0, (R, X) => R * X);
@@ -14,7 +14,7 @@ namespace GNet.Losses
             return -tProd * oProd / (Sqrt(tSumSqr + double.Epsilon) * Sqrt(oSumSqr + double.Epsilon));
         }
 
-        public ImmutableShapedArray<double> Derivative(ImmutableShapedArray<double> targets, ImmutableShapedArray<double> outputs)
+        public ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
             double tProd = targets.Accumulate(1.0, (R, X) => R * X);
             double oProd = outputs.Accumulate(1.0, (R, X) => R * X);

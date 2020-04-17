@@ -44,7 +44,7 @@ namespace GNet.Layers
 
             Neurons.ForEach((N, i) => N.Value = values[i]);
 
-            ImmutableShapedArray<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
+            ImmutableArray<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
 
             Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }

@@ -8,18 +8,18 @@ namespace GNet.Normalizers
 
         private double sd;
 
-        public void UpdateParams(ImmutableArray<ImmutableShapedArray<double>> dataVector)
+        public void UpdateParams<TData>(ImmutableArray<TData> dataVector) where TData : ImmutableArray<double>
         {
             mean = dataVector.Sum(D => D.Avarage()) / dataVector.Length;
 
             double variance = dataVector.Sum(D => D.Sum(X => (X - mean) * (X - mean)));
 
-            int nVals = dataVector[0].Shape.Volume * dataVector.Length;
+            int nVals = dataVector[0].Length * dataVector.Length;
 
             sd = Sqrt((variance + double.Epsilon) / nVals);
         }
 
-        public ImmutableShapedArray<double> Normalize(ImmutableShapedArray<double> vals)
+        public ImmutableArray<double> Normalize(ImmutableArray<double> vals)
         {
             return vals.Select(X => (X - mean) / sd);
         }

@@ -1,17 +1,15 @@
-﻿using System;
-
-namespace GNet.OutTransformers.Losses
+﻿namespace GNet.Losses.Regression
 {
-    public class BinaryMaxLoss : BinaryMax, ILoss
+    public class MSE : ILoss
     {
         public double Compute(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
-            return targets.Combine(Transform(outputs), (T, O) => T == O ? 0.0 : 1.0).Avarage();
+            return targets.Combine(outputs, (T, O) => (T - O) * (T - O)).Avarage();
         }
 
         public ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
-            throw new NotSupportedException();
+            return targets.Combine(outputs, (T, O) => 2.0 * (O - T));
         }
     }
 }

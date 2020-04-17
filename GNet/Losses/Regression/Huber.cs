@@ -1,6 +1,6 @@
 ﻿using static System.Math;
 
-namespace GNet.Losses
+namespace GNet.Losses.Regression
 {
     public class Huber : ILoss
     {
@@ -11,7 +11,7 @@ namespace GNet.Losses
             Margin = margin;
         }
 
-        public double Compute(ImmutableShapedArray<double> targets, ImmutableShapedArray<double> outputs)
+        public double Compute(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) =>
             {
@@ -29,7 +29,7 @@ namespace GNet.Losses
             .Avarage();
         }
 
-        public ImmutableShapedArray<double> Derivative(ImmutableShapedArray<double> targets, ImmutableShapedArray<double> outputs)
+        public ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => Abs(T - O) <= Margin ? O - T : -Margin);
         }

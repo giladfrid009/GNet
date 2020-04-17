@@ -8,7 +8,7 @@ namespace GNet.Normalizers
 
         private double min = 0;
 
-        public void UpdateParams(ImmutableArray<ImmutableShapedArray<double>> dataVector)
+        public void UpdateParams<TData>(ImmutableArray<TData> dataVector) where TData : ImmutableArray<double>
         {
             max = 0;
             min = 0;
@@ -17,7 +17,7 @@ namespace GNet.Normalizers
             dataVector.ForEach(D => min = Min(min, D.Min()));
         }
 
-        public ImmutableShapedArray<double> Normalize(ImmutableShapedArray<double> vals)
+        public ImmutableArray<double> Normalize(ImmutableArray<double> vals)
         {
             return vals.Select(X => (X - min) / (max - min));
         }

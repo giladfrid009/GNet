@@ -24,7 +24,7 @@ namespace GNet.Layers
         {
             Neurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Sum(S => S.Weight * S.InNeuron.ActivatedValue));
 
-            ImmutableShapedArray<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
+            ImmutableArray<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
 
             Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
         }
@@ -36,9 +36,9 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(targets));
             }
 
-            ImmutableShapedArray<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
-            ImmutableShapedArray<double> lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
-            ImmutableShapedArray<double> grads = lossDers.Combine(actvDers, (LD, AD) => LD * AD);
+            ImmutableArray<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
+            ImmutableArray<double> lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
+            ImmutableArray<double> grads = lossDers.Combine(actvDers, (LD, AD) => LD * AD);
 
             Neurons.ForEach((N, i) =>
             {
@@ -49,7 +49,7 @@ namespace GNet.Layers
 
         public void CalcGrads()
         {
-            ImmutableShapedArray<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
+            ImmutableArray<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
 
             Neurons.ForEach((N, i) =>
             {

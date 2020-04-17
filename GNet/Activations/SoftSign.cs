@@ -6,12 +6,12 @@ namespace GNet.Activations
     [Serializable]
     public class SoftSign : IActivation
     {
-        public ImmutableShapedArray<double> Activate(ImmutableShapedArray<double> vals)
+        public ImmutableArray<double> Activate(ImmutableArray<double> vals)
         {
             return vals.Select(X => X / (1.0 + Abs(X)));
         }
 
-        public ImmutableShapedArray<double> Derivative(ImmutableShapedArray<double> vals)
+        public ImmutableArray<double> Derivative(ImmutableArray<double> vals)
         {
             return vals.Select(X => 1.0 / Pow(1.0 + Abs(X), 2));
         }

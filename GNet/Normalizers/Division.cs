@@ -9,11 +9,11 @@
             Divisor = divisor;
         }
 
-        public void UpdateParams(ImmutableArray<ImmutableShapedArray<double>> dataVector)
+        public void UpdateParams<TData>(ImmutableArray<TData> dataVector) where TData : ImmutableArray<double>
         {
         }
 
-        public ImmutableShapedArray<double> Normalize(ImmutableShapedArray<double> vals)
+        public ImmutableArray<double> Normalize(ImmutableArray<double> vals)
         {
             return vals.Select(X => X / Divisor);
         }

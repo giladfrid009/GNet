@@ -15,12 +15,12 @@ namespace GNet
 
         public Dataset(ImmutableArray<Data> dataCollection)
         {
-            InputShape = dataCollection[0].Inputs.Shape;
-            OutputShape = dataCollection[0].Outputs.Shape;
+            InputShape = dataCollection[0].InputShape;
+            OutputShape = dataCollection[0].OutputShape;
 
             dataCollection.ForEach((D, i) =>
             {
-                if (D.Inputs.Shape != InputShape || D.Outputs.Shape != OutputShape)
+                if (D.InputShape != InputShape || D.OutputShape != OutputShape)
                 {
                     throw new ShapeMismatchException($"{nameof(dataCollection)} [{i}] mismatch.");
                 }
@@ -42,7 +42,7 @@ namespace GNet
             inputNormalizer.UpdateParams(dataCollection.Select(D => D.Inputs));
             outputNormalizer.UpdateParams(dataCollection.Select(D => D.Outputs));
 
-            dataCollection = dataCollection.Select(D => new Data(inputNormalizer.Normalize(D.Inputs), outputNormalizer.Normalize(D.Outputs)));
+            dataCollection = dataCollection.Select(D => new Data(inputNormalizer.Normalize(D.Inputs).ToShape(D.InputShape), outputNormalizer.Normalize(D.Outputs).ToShape(D.OutputShape)));
         }
 
         public void Shuffle()

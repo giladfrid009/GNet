@@ -6,12 +6,12 @@ namespace GNet.Activations
     [Serializable]
     public class Exponential : IActivation
     {
-        public ImmutableShapedArray<double> Activate(ImmutableShapedArray<double> vals)
+        public ImmutableArray<double> Activate(ImmutableArray<double> vals)
         {
             return vals.Select(X => Exp(X));
         }
 
-        public ImmutableShapedArray<double> Derivative(ImmutableShapedArray<double> vals)
+        public ImmutableArray<double> Derivative(ImmutableArray<double> vals)
         {
             return vals.Select(X => Exp(X));
         }

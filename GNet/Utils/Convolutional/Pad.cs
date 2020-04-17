@@ -22,7 +22,7 @@ namespace GNet.Utils.Convolutional
                 internalArray[i] ??= padVal();
             }
 
-            return GNet.ImmutableShapedArray<T>.FromRef(paddedShape, internalArray);
+            return ImmutableShapedArray<T>.FromRef(paddedShape, internalArray);
         }
     }
 }
