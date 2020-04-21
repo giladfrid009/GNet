@@ -62,12 +62,12 @@ namespace GNet.Layers
         {
         }
 
-        public void Input(ImmutableShapedArray<double> values)
+        public void Input(ImmutableShapedArray<double> values, bool isTraining)
         {
             throw new NotSupportedException();
         }
 
-        public void Forward()
+        public void Forward(bool isTraining)
         {
             Neurons.ForEach(N =>
             {

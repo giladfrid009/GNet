@@ -105,7 +105,7 @@ namespace GNet.Layers
             });
         }
 
-        public override void Input(ImmutableShapedArray<double> values)
+        public override void Input(ImmutableShapedArray<double> values, bool isTraining)
         {
             throw new NotSupportedException();
         }

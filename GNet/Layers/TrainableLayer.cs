@@ -23,7 +23,7 @@ namespace GNet.Layers
             BiasInit = biasInit ?? DefaultBiasInit;
         }
 
-        public void Forward()
+        public void Forward(bool isTraining)
         {
             Neurons.ForEach(N => N.InVal = N.Bias + N.InSynapses.Sum(S => S.Weight * S.InNeuron.OutVal));
 
@@ -100,6 +100,6 @@ namespace GNet.Layers
 
         public abstract void Initialize();
 
-        public abstract void Input(ImmutableShapedArray<double> values);
+        public abstract void Input(ImmutableShapedArray<double> values, bool isTraining);
     }
 }

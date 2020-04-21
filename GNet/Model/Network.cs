@@ -50,13 +50,13 @@ namespace GNet
             }
         }
 
-        public ImmutableShapedArray<double> Forward(ImmutableShapedArray<double> inputs)
+        public ImmutableShapedArray<double> Forward(ImmutableShapedArray<double> inputs, bool isTraining = false)
         {
-            Layers[0].Input(inputs);
+            Layers[0].Input(inputs, isTraining);
 
             for (int i = 1; i < Length; i++)
             {
-                Layers[i].Forward();
+                Layers[i].Forward(isTraining);
             }
 
             return Layers[Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
@@ -64,7 +64,7 @@ namespace GNet
 
         public double Validate(Dataset dataset, ILoss loss)
         {
-            return dataset.Sum(D => loss.Compute(D.Outputs, Forward(D.Inputs))) / dataset.Length;
+            return dataset.Sum(D => loss.Compute(D.Outputs, Forward(D.Inputs, false))) / dataset.Length;
         }
 
         public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int nEpoches, double minError, Dataset valDataset, ILoss valLoss, bool shuffle = true)
@@ -108,7 +108,7 @@ namespace GNet
 
                 dataset.ForEach((D, index) =>
                 {
-                    Forward(D.Inputs);
+                    Forward(D.Inputs, true);
                     CalcGrads(loss, D.Outputs);
                     Optimize(optimizer, epoch);
 

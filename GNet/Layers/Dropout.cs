@@ -9,33 +9,24 @@ namespace GNet.Layers
     {
         public ImmutableShapedArray<Neuron> Neurons { get; }
         public Shape Shape { get; }
-
-        public double DropChance
-        {
-            get => dropChance;
-            set
-            {
-                if (dropChance < 0 || dropChance > 1)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-
-                dropChance = value;
-            }
-        }
+        public double DropChance { get; }
 
         private ImmutableArray<bool> dropArray;
-        private double dropChance;
 
         public Dropout(Shape shape, double dropChance)
         {
+            if (dropChance < 0 || dropChance > 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(dropChance));
+            }
+
             Shape = shape;
             DropChance = dropChance;
             Neurons = new ImmutableShapedArray<Neuron>(shape, () => new Neuron());
             dropArray = new ImmutableArray<bool>();
         }
 
-        public virtual void Connect(ILayer inLayer)
+        public void Connect(ILayer inLayer)
         {
             if (inLayer.Shape != Shape)
             {
@@ -62,27 +53,35 @@ namespace GNet.Layers
             });
         }
 
-        public virtual void Input(ImmutableShapedArray<double> values)
+        public void Input(ImmutableShapedArray<double> values, bool isTraining)
         {
             if (values.Shape != Shape)
             {
                 throw new ShapeMismatchException(nameof(values));
             }
 
-            Neurons.ForEach((N, i) =>
+            Neurons.ForEach((N, i) => N.InVal = values[i]);
+
+            if (isTraining == false)
             {
-                N.InVal = values[i];
-                N.OutVal = dropArray[i] ? 0 : N.InVal;
-            });
+                Neurons.ForEach((N, i) => N.OutVal = N.InVal);
+                return;
+            }
+
+            Neurons.ForEach((N, i) => N.OutVal = dropArray[i] ? 0 : N.InVal);
         }
 
-        public virtual void Forward()
+        public void Forward(bool isTraining)
         {
-            Neurons.ForEach((N, i) =>
+            Neurons.ForEach((N, i) => N.InVal = N.InSynapses[0].InNeuron.OutVal);
+
+            if(isTraining == false)
             {
-                N.InVal = N.InSynapses[0].InNeuron.OutVal;
-                N.OutVal = dropArray[i] ? 0 : N.InVal;
-            });
+                Neurons.ForEach((N, i) => N.OutVal = N.InVal);
+                return;
+            }
+
+            Neurons.ForEach((N, i) => N.OutVal = dropArray[i] ? 0 : N.InVal);
         }
 
         public void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)

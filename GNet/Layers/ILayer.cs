@@ -11,9 +11,9 @@ namespace GNet
 
         void Initialize();
 
-        void Input(ImmutableShapedArray<double> values);
+        void Input(ImmutableShapedArray<double> values, bool isTraining);
 
-        void Forward();
+        void Forward(bool isTraining);
 
         void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets);
 
