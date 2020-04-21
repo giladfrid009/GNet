@@ -9,13 +9,20 @@ namespace GNet
         public int Rank { get; }
         public int Volume { get; }
 
+        public Shape()
+        {
+            Dims = new ImmutableArray<int>();
+            Rank = 0;
+            Volume = 0;
+        }
+
         public Shape(ImmutableArray<int> dims)
         {
             int length = dims.Length;
 
             for (int i = 0; i < length; i++)
             {
-                if (dims[i] < 0)
+                if (dims[i] < 1)
                 {
                     throw new ArgumentOutOfRangeException($"{nameof(dims)} [{i}] is out of range.");
                 }
