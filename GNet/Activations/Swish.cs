@@ -4,16 +4,20 @@ using static System.Math;
 namespace GNet.Activations
 {
     [Serializable]
-    public class ELU : IActivation
+    public class Swish : IActivation
     {
         public ImmutableArray<double> Activate(ImmutableArray<double> inputs)
         {
-            return inputs.Select(X => X < 0.0 ? (Exp(X) - 1.0) : X);
+            return inputs.Select(X => X / (Exp(-X) + 1.0));
         }
 
         public ImmutableArray<double> Derivative(ImmutableArray<double> inputs)
         {
-            return inputs.Select(X => X < 0.0 ? Exp(X) : 1.0);
+            return inputs.Select(X =>
+            {
+                double exp = Exp(X);
+                return exp * (1.0 + exp + X) / Pow(1.0 + exp, 2.0);
+            });
         }
     }
 }

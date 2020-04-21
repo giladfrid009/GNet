@@ -5,25 +5,25 @@ namespace GNet
     [Serializable]
     public class Shape : IEquatable<Shape>
     {
-        public ImmutableArray<int> Dimensions { get; }
+        public ImmutableArray<int> Dims { get; }
         public int Rank { get; }
         public int Volume { get; }
 
-        public Shape(ImmutableArray<int> dimensions)
+        public Shape(ImmutableArray<int> dims)
         {
-            int length = dimensions.Length;
+            int length = dims.Length;
 
             for (int i = 0; i < length; i++)
             {
-                if (dimensions[i] < 0)
+                if (dims[i] < 0)
                 {
-                    throw new ArgumentOutOfRangeException($"{nameof(dimensions)} [{i}] is out of range.");
+                    throw new ArgumentOutOfRangeException($"{nameof(dims)} [{i}] is out of range.");
                 }
             }
 
-            Dimensions = dimensions;
-            Rank = dimensions.Length;
-            Volume = (int)dimensions.Accumulate(1, (R, X) => R * X);
+            Dims = dims;
+            Rank = dims.Length;
+            Volume = (int)dims.Accumulate(1, (R, X) => R * X);
         }
 
         public Shape(params int[] dimensions) : this(new ImmutableArray<int>(dimensions))
@@ -41,7 +41,7 @@ namespace GNet
 
             for (int i = 0; i < length; i++)
             {
-                if (indices[i] < 0 || indices[i] > Dimensions[i] - 1)
+                if (indices[i] < 0 || indices[i] > Dims[i] - 1)
                 {
                     throw new ArgumentOutOfRangeException($"{nameof(indices)} [{i}] is out of range.");
                 }
@@ -51,24 +51,34 @@ namespace GNet
 
             for (int i = 0; i < Rank; i++)
             {
-                flat = flat * Dimensions[i] + indices[i];
+                flat = flat * Dims[i] + indices[i];
             }
 
             return flat;
         }
 
-        public static bool operator !=(Shape left, Shape right)
+        public static bool operator !=(Shape? left, Shape? right)
         {
-            return !left.Equals(right);
+            return !(left == right);
         }
 
-        public static bool operator ==(Shape left, Shape right)
+        public static bool operator ==(Shape? left, Shape? right)
         {
-            return left.Equals(right);
+            return left?.Equals(right) ?? ReferenceEquals(left, right);
         }
 
-        public bool Equals(Shape other)
+        public bool Equals(Shape? other)
         {
+            if(other is null)
+            {
+                return false;
+            }
+
+            if(ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
             if(Rank != other.Rank)
             {
                 return false;
@@ -76,7 +86,7 @@ namespace GNet
 
             for (int i = 0; i < Rank; i++)
             {
-                if(Dimensions[i] != other.Dimensions[i])
+                if(Dims[i] != other.Dims[i])
                 {
                     return false;
                 }
@@ -87,12 +97,12 @@ namespace GNet
 
         public override bool Equals(object? obj)
         {
-            return (obj is Shape shape) && Equals(shape);
+            return Equals(obj as Shape);
         }
 
         public override int GetHashCode()
         {
-            return Dimensions.GetHashCode() + Volume * 17;
+            return Dims.GetHashCode() + Volume * 17;
         }
     }
 }

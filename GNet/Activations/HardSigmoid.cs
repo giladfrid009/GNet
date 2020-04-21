@@ -5,14 +5,14 @@ namespace GNet.Activations
     [Serializable]
     public class HardSigmoid : IActivation
     {
-        public ImmutableArray<double> Activate(ImmutableArray<double> vals)
+        public ImmutableArray<double> Activate(ImmutableArray<double> inputs)
         {
-            return vals.Select(X => X < -2.5 ? 0.0 : X > 2.5 ? 1.0 : 0.2 * X + 0.5);
+            return inputs.Select(X => X < -2.5 ? 0.0 : X > 2.5 ? 1.0 : 0.2 * X + 0.5);
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> vals)
+        public ImmutableArray<double> Derivative(ImmutableArray<double> inputs)
         {
-            return vals.Select(X => X < -2.5 || X > 2.5 ? 0.0 : 0.2);
+            return inputs.Select(X => X < -2.5 || X > 2.5 ? 0.0 : 0.2);
         }
     }
 }

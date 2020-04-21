@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace GNet
 {
@@ -28,40 +27,8 @@ namespace GNet
             }
         }
 
-        public ImmutableArray()
-        {
-            Length = 0;
-
-            internalArray = Array.Empty<T>();
-        }
-
         public ImmutableArray(params T[] elements) : this(elements, false)
         {
-        }
-
-        public ImmutableArray(IList<T> list)
-        {
-            Length = list.Count;
-
-            internalArray = new T[Length];
-
-            for (int i = 0; i < Length; i++)
-            {
-                internalArray[i] = list[i];
-            }
-        }
-
-        public ImmutableArray(IEnumerable<T> enumerable)
-        {
-            Length = System.Linq.Enumerable.Count(enumerable);
-
-            internalArray = new T[Length];
-
-            int i = 0;
-            foreach (T x in enumerable)
-            {
-                internalArray[i++] = x;
-            }
         }
 
         public ImmutableArray(int length, Func<T> element)

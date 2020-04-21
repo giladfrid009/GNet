@@ -6,17 +6,17 @@ namespace GNet.Activations
     [Serializable]
     public class SELU : IActivation
     {
-        private readonly double a = 1.0507009873554805;
-        private readonly double b = 1.6732632423543772;
+        private const double A = 1.0507009873554805;
+        private const double B = 1.6732632423543772;
 
-        public ImmutableArray<double> Activate(ImmutableArray<double> vals)
+        public ImmutableArray<double> Activate(ImmutableArray<double> inputs)
         {
-            return vals.Select(X => X < 0.0 ? a * b * (Exp(X) - 1.0) : a * X);
+            return inputs.Select(X => X < 0.0 ? A * B * (Exp(X) - 1.0) : A * X);
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> vals)
+        public ImmutableArray<double> Derivative(ImmutableArray<double> inputs)
         {
-            return vals.Select(X => X < 0.0 ? a * b * Exp(X) : a);
+            return inputs.Select(X => X < 0.0 ? A * B * Exp(X) : A);
         }
     }
 }

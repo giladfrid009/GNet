@@ -6,22 +6,27 @@ namespace GNet.Losses.Regression
     {
         public double Compute(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
-            double tProd = targets.Accumulate(1.0, (R, X) => R * X);
-            double oProd = outputs.Accumulate(1.0, (R, X) => R * X);
-            double tSumSqr = targets.Sum(X => X * X);
-            double oSumSqr = outputs.Sum(X => X * X);
+            int i = 0;
+            double dotProd = targets.Sum(T => T * outputs[i++]);
 
-            return -tProd * oProd / (Sqrt(tSumSqr + double.Epsilon) * Sqrt(oSumSqr + double.Epsilon));
+            double tNorm = Sqrt(targets.Sum(X => X * X));
+            double oNorm = Sqrt(outputs.Sum(X => X * X));
+
+            return dotProd / (tNorm * oNorm);
         }
 
         public ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
-            double tProd = targets.Accumulate(1.0, (R, X) => R * X);
-            double oProd = outputs.Accumulate(1.0, (R, X) => R * X);
-            double tSumSqr = targets.Sum(X => X * X);
-            double oSumSqr = outputs.Sum(X => X * X);
+            int i = 0;
+            double dotProd = targets.Sum(T => T * outputs[i++]);
 
-            return outputs.Select(O => -tProd * (oProd / (O + double.Epsilon)) * Pow(oSumSqr - O * O, 2.0) / (Abs(tSumSqr) * Pow(oSumSqr, 1.5)));
+            double tNorm = Sqrt(targets.Sum(X => X * X));
+            double oNorm = Sqrt(outputs.Sum(X => X * X));
+
+            double A = 1.0 / (tNorm * oNorm);
+            double B = dotProd / (oNorm * oNorm);
+
+            return outputs.Combine(targets, (O, T) => A * (T - B * O));            
         }
     }
 }

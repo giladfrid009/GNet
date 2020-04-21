@@ -16,28 +16,22 @@ namespace GNet.Layers
         public Shape KernelShape { get; }
         public Shape Shape { get; }
         public IPooler Pooler { get; }
-        public bool IsTrainable { get; } = false;
 
-        public Pooling(Shape inputShape, Shape kernelShape, ImmutableArray<int> strides, ImmutableArray<int> paddings, IPooler pooler)
+        public Pooling(IPooler pooler, Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides)
         {
-            Validator.CheckParams(inputShape, kernelShape, strides, paddings);
+            //todo: remove param validation from calcPaddings and place it in a different method.
 
-            Pooler = pooler;
             InputShape = inputShape;
+            Shape = outputShape;
             KernelShape = kernelShape;
             Strides = strides;
-            Paddings = paddings;
+            Pooler = pooler;
 
-            PaddedShape = Pad.Shape(inputShape, paddings);
+            Paddings = ParamCalc.CalcPaddings(inputShape, outputShape, kernelShape, strides);
 
-            Shape = CalcOutShape(inputShape, kernelShape, strides, paddings);
+            PaddedShape = Padder.PadShape(inputShape, Paddings);
 
-            Neurons = new ImmutableShapedArray<Neuron>(Shape, () => new Neuron());
-        }
-
-        private static Shape CalcOutShape(Shape inputShape, Shape kernelShape, ImmutableArray<int> strides, ImmutableArray<int> paddings)
-        {
-            return new Shape(inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * paddings[i] - kernelShape.Dimensions[i]) / strides[i]));
+            Neurons = new ImmutableShapedArray<Neuron>(outputShape, () => new Neuron());
         }
 
         public void Connect(ILayer inLayer)
@@ -47,7 +41,7 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(inLayer));
             }
 
-            ImmutableShapedArray<Neuron> padded = Pad.ShapedArray(inLayer.Neurons, Paddings, () => new Neuron());
+            ImmutableShapedArray<Neuron> padded = Padder.PadArray(inLayer.Neurons, Paddings, () => new Neuron());
 
             var inConnections = new ImmutableShapedArray<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 
@@ -63,7 +57,7 @@ namespace GNet.Layers
                 });
             });
 
-            padded.ForEach((N, i) => N.OutSynapses = new ImmutableArray<Synapse>(inConnections[i]));
+            padded.ForEach((N, i) => N.OutSynapses = new ImmutableArray<Synapse>(inConnections[i].ToArray()));
         }
 
         public void Initialize()
@@ -79,9 +73,9 @@ namespace GNet.Layers
         {
             Neurons.ForEach(N =>
             {
-                N.Value = Pooler.Pool(N.InSynapses.Select(S => S.InNeuron.ActivatedValue), out ImmutableArray<double> inWeights);
+                N.InVal = Pooler.Pool(N.InSynapses.Select(S => S.InNeuron.OutVal), out ImmutableArray<double> inWeights);
 
-                N.ActivatedValue = N.Value;
+                N.OutVal = N.InVal;
 
                 N.InSynapses.ForEach((S, i) => S.Weight = inWeights[i]);
             });
@@ -94,7 +88,7 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(targets));
             }
 
-            ImmutableArray<double> grads = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
+            ImmutableArray<double> grads = loss.Derivative(targets, Neurons.Select(N => N.OutVal));
 
             Neurons.ForEach((N, i) => N.Gradient = grads[i]);
         }

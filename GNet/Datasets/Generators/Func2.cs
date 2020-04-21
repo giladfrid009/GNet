@@ -33,9 +33,7 @@ namespace GNet.Datasets.Generators
                     res = IOFunc(n1, n2);
                 }
 
-                dataCollection[i] = new Data(
-                    ImmutableShapedArray<double>.FromRef(new Shape(2), n1, n2),
-                    ImmutableShapedArray<double>.FromRef(new Shape(1), res));
+                dataCollection[i] = new Data(new ImmutableShapedArray<double>(n1, n2), new ImmutableShapedArray<double>(res));
             }
 
             return new Dataset(dataCollection);

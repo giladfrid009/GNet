@@ -59,7 +59,7 @@ namespace GNet
                 Layers[i].Forward();
             }
 
-            return Layers[Length - 1].Neurons.Select(N => N.ActivatedValue).ToShape(OutputShape);
+            return Layers[Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
         }
 
         public double Validate(Dataset dataset, ILoss loss)
@@ -147,20 +147,14 @@ namespace GNet
         {
             //Parallel.For(1, Length, i =>
             //{
-            //    if (Layers[i].IsTrainable)
-            //    {
-            //        Layers[i].Optimize(optimizer);
-            //    }
+            //    Layers[i].Optimize(optimizer);
             //});
 
             optimizer.UpdateParams(epoch);
 
             for (int i = 1; i < Length; i++)
-            {
-                if (Layers[i].IsTrainable)
-                {
-                    Layers[i].Optimize(optimizer);
-                }
+            {       
+                Layers[i].Optimize(optimizer);
             }
         }
 
@@ -168,10 +162,7 @@ namespace GNet
         {
             //Parallel.For(1, Length, i =>
             //{
-            //    if (Layers[i].IsTrainable)
-            //    {
-            //        Layers[i].Update();
-            //    }
+            //    Layers[i].Update();
             //});
 
             for (int i = 1; i < Length; i++)

@@ -31,7 +31,7 @@ namespace GNet.Losses.Regression
 
         public ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
-            return targets.Combine(outputs, (T, O) => Abs(T - O) <= Margin ? O - T : -Margin);
+            return targets.Combine(outputs, (T, O) => Abs(T - O) <= Margin ? O - T : Margin * Sign(O - T));
         }
     }
 }

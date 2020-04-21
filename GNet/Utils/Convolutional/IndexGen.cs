@@ -34,9 +34,9 @@ namespace GNet.Utils.Convolutional
                     throw new ArgumentOutOfRangeException($"{nameof(strides)} [{i}] is out of range.");
                 }
 
-                if (kernel.Dimensions[i] > shape.Dimensions[i])
+                if (kernel.Dims[i] > shape.Dims[i])
                 {
-                    throw new ArgumentOutOfRangeException($"{nameof(kernel)} {nameof(kernel.Dimensions)} [{i}] is out of range.");
+                    throw new ArgumentOutOfRangeException($"{nameof(kernel)} {nameof(kernel.Dims)} [{i}] is out of range.");
                 }
             }
 
@@ -46,11 +46,11 @@ namespace GNet.Utils.Convolutional
 
             PopulateRecursive(new int[shape.Rank], 0);
 
-            return new ImmutableArray<int[]>(indices);
+            return new ImmutableArray<int[]>(indices.ToArray());
 
             void PopulateRecursive(int[] current, int dim)
             {
-                int bound = start[dim] + shape.Dimensions[dim] - (kernel.Dimensions[dim] - 1);
+                int bound = start[dim] + shape.Dims[dim] - (kernel.Dims[dim] - 1);
 
                 if (dim == lastIndex)
                 {

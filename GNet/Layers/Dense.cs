@@ -9,8 +9,8 @@ namespace GNet.Layers
         public override ImmutableShapedArray<Neuron> Neurons { get; }
         public override Shape Shape { get; }
 
-        public Dense(Shape shape, IActivation activation, IInitializer weightInit, IInitializer biasInit) : 
-            base(activation, biasInit, weightInit)
+        public Dense(Shape shape, IActivation activation, IInitializer? weightInit = null, IInitializer? biasInit = null) : 
+            base(activation, weightInit, biasInit)
         {
             Shape = shape;
             Neurons = new ImmutableShapedArray<Neuron>(shape, () => new Neuron());
@@ -42,11 +42,11 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(values));
             }
 
-            Neurons.ForEach((N, i) => N.Value = values[i]);
+            Neurons.ForEach((N, i) => N.InVal = values[i]);
 
-            ImmutableArray<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
+            ImmutableArray<double> activated = Activation.Activate(Neurons.Select(N => N.InVal));
 
-            Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
+            Neurons.ForEach((N, i) => N.OutVal = activated[i]);
         }
     }
 }

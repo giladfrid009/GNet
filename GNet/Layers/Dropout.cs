@@ -9,7 +9,6 @@ namespace GNet.Layers
     {
         public ImmutableShapedArray<Neuron> Neurons { get; }
         public Shape Shape { get; }
-        public bool IsTrainable { get; } = false;
 
         public double DropChance
         {
@@ -72,8 +71,8 @@ namespace GNet.Layers
 
             Neurons.ForEach((N, i) =>
             {
-                N.Value = values[i];
-                N.ActivatedValue = dropArray[i] ? 0 : N.Value;
+                N.InVal = values[i];
+                N.OutVal = dropArray[i] ? 0 : N.InVal;
             });
         }
 
@@ -81,8 +80,8 @@ namespace GNet.Layers
         {
             Neurons.ForEach((N, i) =>
             {
-                N.Value = N.InSynapses[0].InNeuron.ActivatedValue;
-                N.ActivatedValue = dropArray[i] ? 0 : N.Value;
+                N.InVal = N.InSynapses[0].InNeuron.OutVal;
+                N.OutVal = dropArray[i] ? 0 : N.InVal;
             });
         }
 
@@ -93,7 +92,7 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(targets));
             }
 
-            ImmutableArray<double> grads = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
+            ImmutableArray<double> grads = loss.Derivative(targets, Neurons.Select(N => N.OutVal));
 
             Neurons.ForEach((N, i) => N.Gradient = dropArray[i] ? 0 : grads[i]);
         }

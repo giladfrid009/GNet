@@ -6,6 +6,9 @@ namespace GNet.Layers
     [Serializable]
     public abstract class TrainableLayer : ILayer
     {
+        public static IInitializer DefaultWeightInit { get; set; } = new Initializers.GlorotUniform();
+        public static IInitializer DefaultBiasInit { get; set; } = new Initializers.Zero();
+
         public abstract ImmutableShapedArray<Neuron> Neurons { get; }
         public abstract Shape Shape { get; }
         public IActivation Activation { get; }
@@ -13,20 +16,20 @@ namespace GNet.Layers
         public IInitializer BiasInit { get; }
         public bool IsTrainable { get; set; } = true;
 
-        protected TrainableLayer(IActivation activation, IInitializer biasInit, IInitializer weightInit)
+        protected TrainableLayer(IActivation activation, IInitializer? weightInit, IInitializer? biasInit)
         {
             Activation = activation;
-            BiasInit = biasInit;
-            WeightInit = weightInit;
+            WeightInit = weightInit ?? DefaultWeightInit;
+            BiasInit = biasInit ?? DefaultBiasInit;
         }
 
         public void Forward()
         {
-            Neurons.ForEach(N => N.Value = N.Bias + N.InSynapses.Sum(S => S.Weight * S.InNeuron.ActivatedValue));
+            Neurons.ForEach(N => N.InVal = N.Bias + N.InSynapses.Sum(S => S.Weight * S.InNeuron.OutVal));
 
-            ImmutableArray<double> activated = Activation.Activate(Neurons.Select(N => N.Value));
+            ImmutableArray<double> activated = Activation.Activate(Neurons.Select(N => N.InVal));
 
-            Neurons.ForEach((N, i) => N.ActivatedValue = activated[i]);
+            Neurons.ForEach((N, i) => N.OutVal = activated[i]);
         }
 
         public void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
@@ -36,25 +39,26 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(targets));
             }
 
-            ImmutableArray<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
-            ImmutableArray<double> lossDers = loss.Derivative(targets, Neurons.Select(N => N.ActivatedValue));
+            //todo: appereneatly its correct only for regression problems? maybe?
+            ImmutableArray<double> actvDers = Activation.Derivative(Neurons.Select(N => N.InVal));
+            ImmutableArray<double> lossDers = loss.Derivative(targets, Neurons.Select(N => N.OutVal));
             ImmutableArray<double> grads = lossDers.Combine(actvDers, (LD, AD) => LD * AD);
 
             Neurons.ForEach((N, i) =>
             {
                 N.Gradient = grads[i];
-                N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
+                N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.OutVal);
             });
         }
 
         public void CalcGrads()
         {
-            ImmutableArray<double> actvDers = Activation.Derivative(Neurons.Select(N => N.Value));
+            ImmutableArray<double> actvDers = Activation.Derivative(Neurons.Select(N => N.InVal));
 
             Neurons.ForEach((N, i) =>
             {
                 N.Gradient = N.OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient) * actvDers[i];
-                N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.ActivatedValue);
+                N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.OutVal);
             });
         }
 

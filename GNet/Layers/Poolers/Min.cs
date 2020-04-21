@@ -5,11 +5,11 @@ namespace GNet.Layers.Poolers
     [Serializable]
     public class Min : IPooler
     {
-        public double Pool(ImmutableArray<double> vals, out ImmutableArray<double> inWeights)
+        public double Pool(ImmutableArray<double> inVals, out ImmutableArray<double> inWeights)
         {
-            double min = vals.Min();
+            double min = inVals.Min();
 
-            inWeights = vals.Select(X => X == min ? 1.0 : 0.0);
+            inWeights = inVals.Select(X => X == min ? 1.0 : 0.0);
 
             return min;
         }

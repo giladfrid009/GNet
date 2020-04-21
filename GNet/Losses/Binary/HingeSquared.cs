@@ -13,7 +13,7 @@ namespace GNet.Losses.Binary
 
         public double Compute(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
-            return targets.Combine(outputs, (T, O) => Max(0.0, Margin - T * O) * Max(0.0, Margin - T * O)).Avarage();
+            return targets.Combine(outputs, (T, O) => T * O < Margin ? Pow(Margin - T * O, 2.0) : 1.0).Avarage();
         }
 
         public ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs)

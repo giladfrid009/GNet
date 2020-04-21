@@ -5,13 +5,13 @@ namespace GNet.Layers.Poolers
     [Serializable]
     public class Avarage : IPooler
     {
-        public double Pool(ImmutableArray<double> vals, out ImmutableArray<double> inWeights)
+        public double Pool(ImmutableArray<double> inVals, out ImmutableArray<double> inWeights)
         {
-            int nIn = vals.Length;
+            int nIn = inVals.Length;
 
-            inWeights = vals.Select(X => 1.0 / nIn);
+            inWeights = inVals.Select(X => 1.0 / nIn);
 
-            return vals.Avarage();
+            return inVals.Avarage();
         }
     }
 }

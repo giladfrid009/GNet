@@ -5,11 +5,11 @@ namespace GNet.Layers.Poolers
     [Serializable]
     public class Max : IPooler
     {
-        public double Pool(ImmutableArray<double> vals, out ImmutableArray<double> inWeights)
+        public double Pool(ImmutableArray<double> inVals, out ImmutableArray<double> inWeights)
         {
-            double max = vals.Max();
+            double max = inVals.Max();
 
-            inWeights = vals.Select(X => X == max ? 1.0 : 0.0);
+            inWeights = inVals.Select(X => X == max ? 1.0 : 0.0);
 
             return max;
         }

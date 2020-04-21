@@ -19,10 +19,16 @@ namespace GNet.Layers
         public Shape KernelShape { get; }
         public int KernelsNum { get; }
 
-        public Convolutional(Shape inputShape, Shape kernelShape, int nKernels, ImmutableArray<int> strides, ImmutableArray<int> paddings, IActivation activation, IInitializer weightInit, IInitializer biasInit) :
-            base(activation, biasInit, weightInit)
+        //TODO: important! find a way to not increase the dimentiality of the network at output!! dimentiality should always be 1 more than kernel dimentions.
+        //TODO: find a way for kernel to work with higher dimention. or perhaps just pad the kernel with 1 always
+        //todo: add a constructor without padding specification. it will auto calc the padding for the dersired output shape
+        //TODO: kernelsNum won't be used once we implement the outputShape constructor. we could just use the first dim of the outputShape. (check in depth)
+        public Convolutional(
+            Shape inputShape, Shape kernelShape, int nKernels, ImmutableArray<int> strides, ImmutableArray<int> paddings, 
+            IActivation activation, IInitializer? weightInit = null, IInitializer? biasInit = null)
+            : base(activation, weightInit, biasInit)
         {
-            Validator.CheckParams(inputShape, kernelShape, strides, paddings);
+            ParamCalc.CalcOutputShape(inputShape, kernelShape, strides, paddings);
 
             if (nKernels < 1)
             {
@@ -35,7 +41,7 @@ namespace GNet.Layers
             Paddings = paddings;
             KernelsNum = nKernels;
 
-            PaddedShape = Pad.Shape(inputShape, paddings);
+            PaddedShape = Padder.PadShape(inputShape, paddings);
 
             Kernels = new ImmutableArray<Kernel>(nKernels, () => new Kernel(kernelShape));
 
@@ -46,7 +52,7 @@ namespace GNet.Layers
 
         private static Shape CalcOutShape(Shape inputShape, Shape kernelShape, int nKernels, ImmutableArray<int> strides, ImmutableArray<int> paddings)
         {
-            ImmutableArray<int> channelDims = inputShape.Dimensions.Select((D, i) => 1 + (D + 2 * paddings[i] - kernelShape.Dimensions[i]) / strides[i]);
+            ImmutableArray<int> channelDims = inputShape.Dims.Select((D, i) => 1 + (D + 2 * paddings[i] - kernelShape.Dims[i]) / strides[i]);
 
             return new Shape(new ImmutableArray<int>(nKernels).Concat(channelDims));
         }
@@ -58,7 +64,7 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(inLayer));
             }
 
-            ImmutableShapedArray<Neuron> padded = Pad.ShapedArray(inLayer.Neurons, Paddings, () => new Neuron());
+            ImmutableShapedArray<Neuron> padded = Padder.PadArray(inLayer.Neurons, Paddings, () => new Neuron());
 
             var inConnections = new ImmutableShapedArray<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 
@@ -85,7 +91,7 @@ namespace GNet.Layers
                 });
             });
 
-            padded.ForEach((N, i) => N.OutSynapses = new ImmutableArray<Synapse>(inConnections[i]));
+            padded.ForEach((N, i) => N.OutSynapses = new ImmutableArray<Synapse>(inConnections[i].ToArray()));
         }
 
         public override void Initialize()

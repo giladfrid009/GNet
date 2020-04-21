@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace GNet
 {
@@ -12,31 +11,20 @@ namespace GNet
 
         protected ImmutableShapedArray(Shape shape, T[] array, bool asRef = false) : base(array, asRef)
         {
-            ValidateShape(shape);
+            if (shape.Volume != Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(shape), nameof(shape.Volume));
+            }
+
             Shape = shape;
         }
 
-        public ImmutableShapedArray() : base()
+        public ImmutableShapedArray(params T[] elements) : this(new Shape(elements.Length), elements, false)
         {
-            Shape = new Shape();
         }
 
-        public ImmutableShapedArray(Shape shape, params T[] elements) : base(elements)
+        public ImmutableShapedArray(Shape shape, params T[] elements) : this(shape, elements, false)
         {
-            ValidateShape(shape);
-            Shape = shape;
-        }
-
-        public ImmutableShapedArray(Shape shape, IList<T> list) : base(list)
-        {
-            ValidateShape(shape);
-            Shape = shape;
-        }
-
-        public ImmutableShapedArray(Shape shape, IEnumerable<T> enumerable) : base(enumerable)
-        {
-            ValidateShape(shape);
-            Shape = shape;
         }
 
         public ImmutableShapedArray(Shape shape, Func<T> element) : base(shape.Volume, element)
@@ -47,14 +35,6 @@ namespace GNet
         public static ImmutableShapedArray<T> FromRef(Shape shape, params T[] array)
         {
             return new ImmutableShapedArray<T>(shape, array, true);
-        }
-
-        private void ValidateShape(Shape shape)
-        {
-            if (shape.Volume != Length)
-            {
-                throw new ArgumentOutOfRangeException(nameof(shape));
-            }
         }
 
         public ImmutableArray<T> Flatten()

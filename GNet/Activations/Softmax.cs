@@ -6,22 +6,23 @@ namespace GNet.Activations
     [Serializable]
     public class Softmax : IActivation
     {
-        public ImmutableArray<double> Activate(ImmutableArray<double> vals)
+        public ImmutableArray<double> Activate(ImmutableArray<double> inputs)
         {
-            ImmutableArray<double> exps = vals.Select(X => Exp(X));
+            ImmutableArray<double> exps = inputs.Select(X => Exp(X));
 
             double sum = exps.Sum();
 
             return exps.Select(E => E / sum);
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> vals)
+        //todo: fix derivative. it should be wrt to  everyone cuz loss of single neuron is dependent on all the neurons
+        public ImmutableArray<double> Derivative(ImmutableArray<double> inputs)
         {
-            ImmutableArray<double> exps = vals.Select(X => Exp(X));
+            ImmutableArray<double> exps = inputs.Select(X => Exp(X));
 
             double sum = exps.Sum();
 
-            return exps.Select(E => E * (sum - E) / (sum * sum));
+            return exps.Select(E => E / sum * (1.0 - E / sum));
         }
     }
 }
