@@ -21,23 +21,7 @@ namespace GNet.Layers
 
         public Convolutional(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IActivation activation, IInitializer? weightInit = null, IInitializer? biasInit = null) : base(activation, weightInit, biasInit)
         {
-            if(strides[0] != 1)
-            {
-                throw new ArgumentOutOfRangeException($"{nameof(strides)} [0] is out of range. It must be 1.");
-            }
-
-            if(kernelShape.Dims[0] != 1)
-            {
-                throw new ArgumentOutOfRangeException($"{nameof(kernelShape)} {nameof(kernelShape.Dims)} [0] is out of range. It must be 1.");
-            }
-
-            int inChannels = inputShape.Dims[0];
-            int outChannels = outputShape.Dims[0];
-
-            if (outChannels < inChannels || outChannels % inChannels != 0)
-            {
-                throw new ShapeMismatchException(nameof(outputShape));
-            }
+            ValidateChannels(inputShape, outputShape, kernelShape, strides);
 
             InputShape = inputShape;
             Shape = outputShape;
@@ -48,11 +32,29 @@ namespace GNet.Layers
 
             PaddedShape = Padder.PadShape(inputShape, Paddings);
 
-            KernelsNum = outChannels / inChannels;
+            KernelsNum = outputShape.Dims[0] / inputShape.Dims[0];
 
             Kernels = new ImmutableArray<Kernel>(KernelsNum, () => new Kernel(kernelShape));
 
             Neurons = new ImmutableShapedArray<Neuron>(outputShape, () => new CNeuron());
+        }
+
+        private static void ValidateChannels(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides)
+        {
+            if (strides[0] != 1)
+            {
+                throw new ArgumentOutOfRangeException($"{nameof(strides)} channels dim is not 1.");
+            }
+
+            if (kernelShape.Dims[0] != 1)
+            {
+                throw new ArgumentOutOfRangeException($"{nameof(kernelShape)} channels dim is not 1.");
+            }
+
+            if (outputShape.Dims[0] < inputShape.Dims[0] || outputShape.Dims[0] % inputShape.Dims[0] != 0)
+            {
+                throw new ShapeMismatchException($"{nameof(outputShape)} channel dim params are invalid.");
+            }
         }
 
         public override void Connect(ILayer inLayer)

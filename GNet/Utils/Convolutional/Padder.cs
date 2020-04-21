@@ -4,7 +4,7 @@ namespace GNet.Utils.Convolutional
 {
     public static class Padder
     {
-        public static ImmutableArray<int> CalcPadding(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, bool padFirst)
+        public static ImmutableArray<int> CalcPadding(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, bool padChannels)
         {
             int length = inputShape.Rank;
 
@@ -37,7 +37,7 @@ namespace GNet.Utils.Convolutional
                     throw new ArgumentOutOfRangeException($"{nameof(kernelShape)} {nameof(kernelShape.Dims)} [{i}] is out of range.");
                 }
 
-                if(i == 0 && padFirst == false)
+                if(padChannels == false && i == 0)
                 {
                     continue;
                 }
