@@ -31,7 +31,10 @@ namespace GNet.Layers
                 throw new ArgumentOutOfRangeException($"{nameof(kernelShape)} {nameof(kernelShape.Dims)} [0] is out of range. It must be 1.");
             }
 
-            if (outputShape.Dims[0] % inputShape.Dims[0] != 0)
+            int inChannels = inputShape.Dims[0];
+            int outChannels = outputShape.Dims[0];
+
+            if (outChannels < inChannels || outChannels % inChannels != 0)
             {
                 throw new ShapeMismatchException(nameof(outputShape));
             }
@@ -45,7 +48,7 @@ namespace GNet.Layers
 
             PaddedShape = Padder.PadShape(inputShape, Paddings);
 
-            KernelsNum = outputShape.Dims[0] / inputShape.Dims[0];
+            KernelsNum = outChannels / inChannels;
 
             Kernels = new ImmutableArray<Kernel>(KernelsNum, () => new Kernel(kernelShape));
 
