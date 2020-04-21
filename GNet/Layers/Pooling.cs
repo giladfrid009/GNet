@@ -17,17 +17,15 @@ namespace GNet.Layers
         public Shape Shape { get; }
         public IPooler Pooler { get; }
 
-        public Pooling(IPooler pooler, Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides)
+        public Pooling(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IPooler pooler)
         {
-            //todo: remove param validation from calcPaddings and place it in a different method.
-
             InputShape = inputShape;
             Shape = outputShape;
             KernelShape = kernelShape;
             Strides = strides;
             Pooler = pooler;
 
-            Paddings = ParamCalc.CalcPaddings(inputShape, outputShape, kernelShape, strides);
+            Paddings = Padder.CalcPadding(inputShape, outputShape, kernelShape, strides, true);
 
             PaddedShape = Padder.PadShape(inputShape, Paddings);
 
@@ -41,7 +39,7 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(inLayer));
             }
 
-            ImmutableShapedArray<Neuron> padded = Padder.PadArray(inLayer.Neurons, Paddings, () => new Neuron());
+            ImmutableShapedArray<Neuron> padded = Padder.PadShapedArray(inLayer.Neurons, Paddings, () => new Neuron());
 
             var inConnections = new ImmutableShapedArray<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 

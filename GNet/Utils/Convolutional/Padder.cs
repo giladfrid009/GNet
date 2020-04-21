@@ -4,6 +4,57 @@ namespace GNet.Utils.Convolutional
 {
     public static class Padder
     {
+        public static ImmutableArray<int> CalcPadding(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, bool padFirst)
+        {
+            int length = inputShape.Rank;
+
+            if (outputShape.Rank != length)
+            {
+                throw new RankException(nameof(outputShape));
+            }
+
+            if (kernelShape.Rank != length)
+            {
+                throw new RankException(nameof(kernelShape));
+            }
+
+            if (strides.Length != length)
+            {
+                throw new RankException(nameof(strides));
+            }
+
+            int[] paddings = new int[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                if (strides[i] < 1)
+                {
+                    throw new ArgumentOutOfRangeException($"{nameof(strides)} [{i}] is out of range.");
+                }
+
+                if (inputShape.Dims[i] < kernelShape.Dims[i])
+                {
+                    throw new ArgumentOutOfRangeException($"{nameof(kernelShape)} {nameof(kernelShape.Dims)} [{i}] is out of range.");
+                }
+
+                if(i == 0 && padFirst == false)
+                {
+                    continue;
+                }
+                
+                int doublePad = strides[i] * (outputShape.Dims[i] - 1) - inputShape.Dims[i] + kernelShape.Dims[i];
+
+                if (doublePad < 0 || doublePad % 2 != 0)
+                {
+                    throw new RankException($"Convolution {nameof(inputShape.Rank)} [{i}] params are invalid.");
+                }
+
+                paddings[i] = doublePad / 2;     
+            }
+
+            return ImmutableArray<int>.FromRef(paddings);
+        }
+
         public static Shape PadShape(Shape shape, ImmutableArray<int> paddings)
         {
             if (shape.Rank != paddings.Length)
@@ -14,7 +65,7 @@ namespace GNet.Utils.Convolutional
             return new Shape(shape.Dims.Select((D, i) => D + 2 * paddings[i]));
         }
 
-        public static ImmutableShapedArray<T> PadArray<T>(ImmutableShapedArray<T> array, ImmutableArray<int> paddings, Func<T> padVal)
+        public static ImmutableShapedArray<T> PadShapedArray<T>(ImmutableShapedArray<T> array, ImmutableArray<int> paddings, Func<T> padVal)
         {
             if(array.Shape.Rank != paddings.Length)
             {

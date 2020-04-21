@@ -19,42 +19,37 @@ namespace GNet.Layers
         public Shape KernelShape { get; }
         public int KernelsNum { get; }
 
-        //TODO: important! find a way to not increase the dimentiality of the network at output!! dimentiality should always be 1 more than kernel dimentions.
-        //TODO: find a way for kernel to work with higher dimention. or perhaps just pad the kernel with 1 always
-        //todo: add a constructor without padding specification. it will auto calc the padding for the dersired output shape
-        //TODO: kernelsNum won't be used once we implement the outputShape constructor. we could just use the first dim of the outputShape. (check in depth)
-        public Convolutional(
-            Shape inputShape, Shape kernelShape, int nKernels, ImmutableArray<int> strides, ImmutableArray<int> paddings, 
-            IActivation activation, IInitializer? weightInit = null, IInitializer? biasInit = null)
-            : base(activation, weightInit, biasInit)
+        public Convolutional(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IActivation activation, IInitializer? weightInit = null, IInitializer? biasInit = null) : base(activation, weightInit, biasInit)
         {
-            ParamCalc.CalcOutputShape(inputShape, kernelShape, strides, paddings);
-
-            if (nKernels < 1)
+            if(strides[0] != 1)
             {
-                throw new ArgumentOutOfRangeException(nameof(nKernels));
+                throw new ArgumentOutOfRangeException($"{nameof(strides)} [0] is out of range. It must be 1.");
+            }
+
+            if(kernelShape.Dims[0] != 1)
+            {
+                throw new ArgumentOutOfRangeException($"{nameof(kernelShape)} {nameof(kernelShape.Dims)} [0] is out of range. It must be 1.");
+            }
+
+            if (outputShape.Dims[0] % inputShape.Dims[0] != 0)
+            {
+                throw new ShapeMismatchException(nameof(outputShape));
             }
 
             InputShape = inputShape;
+            Shape = outputShape;
             KernelShape = kernelShape;
             Strides = strides;
-            Paddings = paddings;
-            KernelsNum = nKernels;
 
-            PaddedShape = Padder.PadShape(inputShape, paddings);
+            Paddings = Padder.CalcPadding(inputShape, outputShape, kernelShape, strides, false);
 
-            Kernels = new ImmutableArray<Kernel>(nKernels, () => new Kernel(kernelShape));
+            PaddedShape = Padder.PadShape(inputShape, Paddings);
 
-            Shape = CalcOutShape(inputShape, kernelShape, nKernels, strides, paddings);
+            KernelsNum = outputShape.Dims[0] / inputShape.Dims[0];
 
-            Neurons = new ImmutableShapedArray<Neuron>(Shape, () => new CNeuron());
-        }
+            Kernels = new ImmutableArray<Kernel>(KernelsNum, () => new Kernel(kernelShape));
 
-        private static Shape CalcOutShape(Shape inputShape, Shape kernelShape, int nKernels, ImmutableArray<int> strides, ImmutableArray<int> paddings)
-        {
-            ImmutableArray<int> channelDims = inputShape.Dims.Select((D, i) => 1 + (D + 2 * paddings[i] - kernelShape.Dims[i]) / strides[i]);
-
-            return new Shape(new ImmutableArray<int>(nKernels).Concat(channelDims));
+            Neurons = new ImmutableShapedArray<Neuron>(outputShape, () => new CNeuron());
         }
 
         public override void Connect(ILayer inLayer)
@@ -64,7 +59,7 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(inLayer));
             }
 
-            ImmutableShapedArray<Neuron> padded = Padder.PadArray(inLayer.Neurons, Paddings, () => new Neuron());
+            ImmutableShapedArray<Neuron> padded = Padder.PadShapedArray(inLayer.Neurons, Paddings, () => new Neuron());
 
             var inConnections = new ImmutableShapedArray<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 
