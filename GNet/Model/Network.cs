@@ -50,7 +50,7 @@ namespace GNet
             }
         }
 
-        public ImmutableShapedArray<double> Forward(ImmutableShapedArray<double> inputs, bool isTraining = false)
+        private ImmutableShapedArray<double> Forward(ImmutableShapedArray<double> inputs, bool isTraining)
         {
             Layers[0].Input(inputs, isTraining);
 
@@ -60,6 +60,11 @@ namespace GNet
             }
 
             return Layers[Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
+        }
+
+        public ImmutableShapedArray<double> Forward(ImmutableShapedArray<double> inputs)
+        {
+            return Forward(inputs, false);
         }
 
         public double Validate(Dataset dataset, ILoss loss)
