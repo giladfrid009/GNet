@@ -2,7 +2,7 @@
 {
     public class MSE : ILoss
     {
-        public double Compute(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => (T - O) * (T - O)).Avarage();
         }

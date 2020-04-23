@@ -5,15 +5,13 @@ namespace GNet.Datasets.Generators
     [Serializable]
     public class Func2 : IDatasetGenerator
     {
-        public Func<double, double, double> IOFunc { get; }
+        public Func<double, double, double> Func { get; }
         public Shape InputShape { get; } = new Shape(2);
-        public Shape OutputShape { get; } = new Shape(1);
-        public double Range { get; }
+        public Shape TargetShape { get; } = new Shape(1);
 
-        public Func2(Func<double, double, double> ioFunc, double range)
+        public Func2(Func<double, double, double> func)
         {
-            IOFunc = ioFunc;
-            Range = range;
+            Func = func;
         }
 
         public Dataset Generate(int length)
@@ -28,15 +26,15 @@ namespace GNet.Datasets.Generators
 
                 while (res == 0.0)
                 {
-                    n1 = Range * Utils.GRandom.NextDouble();
-                    n2 = Range * Utils.GRandom.NextDouble();
-                    res = IOFunc(n1, n2);
+                    n1 = Utils.GRandom.NextDouble();
+                    n2 = Utils.GRandom.NextDouble();
+                    res = Func(n1, n2);
                 }
 
                 dataCollection[i] = new Data(new ImmutableShapedArray<double>(n1, n2), new ImmutableShapedArray<double>(res));
             }
 
-            return new Dataset(dataCollection);
+            return new Dataset(ImmutableArray<Data>.FromRef(dataCollection));
         }
     }
 }

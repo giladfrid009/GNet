@@ -6,7 +6,7 @@ namespace GNet
     public class Dataset : IArray<Data>
     {
         public Shape InputShape { get; }
-        public Shape OutputShape { get; }
+        public Shape TargetShape { get; }
         public int Length { get; }
 
         public Data this[int index] => dataCollection[index];
@@ -16,11 +16,11 @@ namespace GNet
         public Dataset(ImmutableArray<Data> dataCollection)
         {
             InputShape = dataCollection[0].InputShape;
-            OutputShape = dataCollection[0].OutputShape;
+            TargetShape = dataCollection[0].TargetShape;
 
             dataCollection.ForEach((D, i) =>
             {
-                if (D.InputShape != InputShape || D.OutputShape != OutputShape)
+                if (D.InputShape != InputShape || D.TargetShape != TargetShape)
                 {
                     throw new ShapeMismatchException($"{nameof(dataCollection)} [{i}] mismatch.");
                 }
@@ -40,9 +40,9 @@ namespace GNet
             outputNormalizer ??= new Normalizers.None();
 
             inputNormalizer.UpdateParams(dataCollection.Select(D => D.Inputs));
-            outputNormalizer.UpdateParams(dataCollection.Select(D => D.Outputs));
+            outputNormalizer.UpdateParams(dataCollection.Select(D => D.Targets));
 
-            dataCollection = dataCollection.Select(D => new Data(inputNormalizer.Normalize(D.Inputs).ToShape(D.InputShape), outputNormalizer.Normalize(D.Outputs).ToShape(D.OutputShape)));
+            dataCollection = dataCollection.Select(D => new Data(inputNormalizer.Normalize(D.Inputs).ToShape(D.InputShape), outputNormalizer.Normalize(D.Targets).ToShape(D.TargetShape)));
         }
 
         public void Shuffle()

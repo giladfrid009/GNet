@@ -67,21 +67,21 @@ namespace GNet
             return Forward(inputs, false);
         }
 
-        public double Validate(Dataset dataset, ILoss loss)
+        public double Validate(Dataset dataset, IMetric metric)
         {
-            return dataset.Sum(D => loss.Compute(D.Outputs, Forward(D.Inputs, false))) / dataset.Length;
+            return dataset.Sum(D => metric.Evaluate(D.Targets, Forward(D.Inputs, false))) / dataset.Length;
         }
 
-        public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int nEpoches, double minError, Dataset valDataset, ILoss valLoss, bool shuffle = true)
+        public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int nEpoches, double minError, Dataset valDataset, IMetric metric, bool shuffle = true)
         {
             if (dataset.InputShape != Layers[0].Shape)
             {
                 throw new ShapeMismatchException($"{nameof(dataset)} {nameof(dataset.InputShape)}");
             }
 
-            if (dataset.OutputShape != Layers[Length - 1].Shape)
+            if (dataset.TargetShape != Layers[Length - 1].Shape)
             {
-                throw new ShapeMismatchException($"{nameof(dataset)} {nameof(dataset.OutputShape)}");
+                throw new ShapeMismatchException($"{nameof(dataset)} {nameof(dataset.TargetShape)}");
             }
 
             if (valDataset.InputShape != Layers[0].Shape)
@@ -89,12 +89,12 @@ namespace GNet
                 throw new ShapeMismatchException($"{nameof(valDataset)} {nameof(dataset.InputShape)}");
             }
 
-            if (valDataset.OutputShape != Layers[Length - 1].Shape)
+            if (valDataset.TargetShape != Layers[Length - 1].Shape)
             {
-                throw new ShapeMismatchException($"{nameof(valDataset)} {nameof(dataset.OutputShape)}");
+                throw new ShapeMismatchException($"{nameof(valDataset)} {nameof(dataset.TargetShape)}");
             }
 
-            double valError = Validate(valDataset, valLoss);
+            double valError = Validate(valDataset, metric);
             int epoch;
 
             OnStart?.Invoke(valError);
@@ -114,7 +114,7 @@ namespace GNet
                 dataset.ForEach((D, index) =>
                 {
                     Forward(D.Inputs, true);
-                    CalcGrads(loss, D.Outputs);
+                    CalcGrads(loss, D.Targets);
                     Optimize(optimizer, epoch);
 
                     if (index % batchSize == 0)
@@ -125,7 +125,7 @@ namespace GNet
                     }
                 });
 
-                valError = Validate(valDataset, valLoss);
+                valError = Validate(valDataset, metric);
 
                 OnEpoch?.Invoke(epoch, valError);
             }

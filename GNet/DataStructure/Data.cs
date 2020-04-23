@@ -5,17 +5,18 @@ namespace GNet
     [Serializable]
     public class Data
     {
+        //todo: go over the targets and check where labels are named outputs.
         public ImmutableShapedArray<double> Inputs { get; }
-        public ImmutableShapedArray<double> Outputs { get; }
+        public ImmutableShapedArray<double> Targets { get; }
         public Shape InputShape { get; }
-        public Shape OutputShape { get; }
+        public Shape TargetShape { get; }
 
-        public Data(ImmutableShapedArray<double> inputs, ImmutableShapedArray<double> outputs)
+        public Data(ImmutableShapedArray<double> inputs, ImmutableShapedArray<double> targets)
         {
             Inputs = inputs;
-            Outputs = outputs;
+            Targets = targets;
             InputShape = inputs.Shape;
-            OutputShape = outputs.Shape;
+            TargetShape = targets.Shape;
         }
     }
 }

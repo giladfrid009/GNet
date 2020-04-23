@@ -1,13 +1,13 @@
 ﻿namespace GNet.Optimizers
 {
-    public class SGD : IOptimizer
+    public class Default : IOptimizer
     {
         public IDecay Decay { get; }
         public double LearningRate { get; }
         
         private double epochLr;
 
-        public SGD(double learningRate = 0.01, IDecay? decay = null)
+        public Default(double learningRate = 0.01, IDecay? decay = null)
         {
             LearningRate = learningRate;
             Decay = decay ?? new Decays.None();

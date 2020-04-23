@@ -6,7 +6,7 @@ namespace GNet.Losses.Regression
     {
         private const double Tau = 2.0 * PI;
 
-        public double Compute(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => O - T >= 0.0 ? (Tau - 1.0) * (T - O) : Tau * (T - O)).Avarage();
         }

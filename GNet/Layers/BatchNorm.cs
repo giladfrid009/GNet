@@ -1,29 +1,29 @@
 ﻿using System;
 using GNet.Model;
-using GNet.Utils;
 
 namespace GNet.Layers
 {
+    //todo: implement
     [Serializable]
-    public class Dropout : ILayer
+    public class BatchNorm : ILayer
     {
         public ImmutableShapedArray<Neuron> Neurons { get; }
         public Shape Shape { get; }
-        public double DropChance { get; }
+        public double Momentum { get; }
+        public double Beta { get; private set; }
+        public double Gamma { get; private set; }
+        
+        private double movingAvg;
+        private double movingVar;
 
-        private ImmutableArray<bool> dropArray;
-
-        public Dropout(Shape shape, double dropChance)
+        public BatchNorm(Shape shape, double momentum = 0.99, double beta = 0.0, double gamma = 1.0)
         {
-            if (dropChance < 0 || dropChance > 1)
-            {
-                throw new ArgumentOutOfRangeException(nameof(dropChance));
-            }
-
             Shape = shape;
-            DropChance = dropChance;
+            Momentum = momentum;
+            Beta = beta;
+            Gamma = gamma;
+
             Neurons = new ImmutableShapedArray<Neuron>(shape, () => new Neuron());
-            dropArray = new ImmutableArray<bool>();
         }
 
         public void Connect(ILayer inLayer)
@@ -44,25 +44,11 @@ namespace GNet.Layers
 
         public void Initialize()
         {
-            Update();
-
             Neurons.ForEach(N =>
             {
                 N.Bias = 0.0;
                 N.InSynapses[0].Weight = 1.0;
             });
-        }
-
-        private void Drop(bool isTraining)
-        {
-            if (isTraining)
-            {
-                Neurons.ForEach((N, i) => N.OutVal = dropArray[i] ? 0 : N.InVal);
-            }
-            else
-            {
-                Neurons.ForEach((N, i) => N.OutVal = N.InVal);
-            }
         }
 
         public void Input(ImmutableShapedArray<double> values, bool isTraining)
@@ -74,15 +60,33 @@ namespace GNet.Layers
 
             Neurons.ForEach((N, i) => N.InVal = values[i]);
 
-            Drop(isTraining);
+            Normalize(isTraining);
         }
 
         public void Forward(bool isTraining)
         {
             Neurons.ForEach((N, i) => N.InVal = N.InSynapses[0].InNeuron.OutVal);
 
-            Drop(isTraining);
-        }   
+            Normalize(isTraining);
+        }
+
+        private void Normalize(bool isTraining)
+        {
+            if (isTraining)
+            {
+                ImmutableArray<double> values = Neurons.Select(N => N.InVal);
+
+                double avg = values.Avarage();
+
+                double var = values.Sum(X => (X - avg) * (X - avg));
+
+                movingAvg = Momentum * movingAvg + (1.0 - Momentum) * avg;
+
+                movingVar = Momentum * movingVar + (1.0 - Momentum) * var;
+            }
+
+            Neurons.ForEach((N, i) => N.OutVal = Gamma * (N.InVal - movingAvg) / Math.Sqrt(movingVar + double.Epsilon) + Beta);
+        }
 
         public void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
@@ -91,14 +95,12 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(targets));
             }
 
-            ImmutableArray<double> grads = loss.Derivative(targets, Neurons.Select(N => N.OutVal));
-
-            Neurons.ForEach((N, i) => N.Gradient = dropArray[i] ? 0 : grads[i]);
+            //todo: implement
         }
 
         public void CalcGrads()
         {
-            Neurons.ForEach((N, i) => N.Gradient = dropArray[i] ? 0 : N.OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient));
+            //todo: implement
         }
 
         public void Optimize(IOptimizer optimizer)
@@ -107,7 +109,7 @@ namespace GNet.Layers
 
         public void Update()
         {
-            dropArray = new ImmutableArray<bool>(Shape.Volume, () => GRandom.NextDouble(0, 1) <= DropChance);
+            //todo: reset batch params? or dont?
         }
     }
 }

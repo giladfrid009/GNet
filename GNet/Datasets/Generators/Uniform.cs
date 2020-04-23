@@ -6,12 +6,12 @@ namespace GNet.Datasets.Generators
     public class Uniform : IDatasetGenerator
     {
         public Shape InputShape { get; }
-        public Shape OutputShape { get; }
+        public Shape TargetShape { get; }
 
-        public Uniform(Shape ioShape)
+        public Uniform(Shape dataShape)
         {
-            InputShape = ioShape;
-            OutputShape = ioShape;
+            InputShape = dataShape;
+            TargetShape = dataShape;
         }
 
         public Dataset Generate(int length)
@@ -20,12 +20,12 @@ namespace GNet.Datasets.Generators
 
             for (int i = 0; i < length; i++)
             {
-                var io = new ImmutableShapedArray<double>(InputShape, () => Utils.GRandom.NextDouble() < 0.5 ? 0.0 : 1.0);
+                var arr = new ImmutableShapedArray<double>(InputShape, () => Utils.GRandom.NextDouble() < 0.5 ? 0.0 : 1.0);
 
-                dataCollection[i] = new Data(io, io);
+                dataCollection[i] = new Data(arr, arr);
             }
 
-            return new Dataset(dataCollection);
+            return new Dataset(ImmutableArray<Data>.FromRef(dataCollection));
         }
     }
 }

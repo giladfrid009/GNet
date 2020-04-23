@@ -3,7 +3,7 @@
     public interface IDatasetGenerator
     {
         Shape InputShape { get; }
-        Shape OutputShape { get; }
+        Shape TargetShape { get; }
 
         Dataset Generate(int length);
     }

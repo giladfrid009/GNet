@@ -1,9 +1,7 @@
 ﻿namespace GNet
 {
-    public interface ILoss
+    public interface ILoss : IMetric
     {
-        double Compute(ImmutableArray<double> targets, ImmutableArray<double> outputs);
-
         ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs);
     }
 }

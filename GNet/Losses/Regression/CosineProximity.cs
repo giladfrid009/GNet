@@ -4,7 +4,7 @@ namespace GNet.Losses.Regression
 {
     public class CosineProximity : ILoss
     {
-        public double Compute(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
             int i = 0;
             double dotProd = targets.Sum(T => T * outputs[i++]);

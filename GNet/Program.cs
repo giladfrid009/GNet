@@ -5,43 +5,27 @@ namespace GNet
     public class Program
     {
         private static void Main()
-        {
-            Func<Network> netCreator = () => new Network
-            (
-                new Layers.Dense(new Shape(1, 30, 30), new Activations.Identity()),
-                new Layers.Convolutional
-                (
-                    new Shape(1, 30, 30),
-                    new Shape(20, 14, 14),
-                    new Shape(1, 4, 4),
-                    new ImmutableArray<int>(1, 2, 2),
-                    new Activations.Tanh()
-                ),
-                new Layers.Pooling
-                (
-                    new Shape(20, 14, 14),
-                    new Shape(20, 6, 6),
-                    new Shape(1, 4, 4),
-                    new ImmutableArray<int>(1, 2, 2),
-                    new Layers.Poolers.Max()
-                ),
-                new Layers.Dense(new Shape(100), new Activations.Tanh()),
-                new Layers.Dense(new Shape(30), new Activations.Tanh()),
-                new Layers.Dense(new Shape(1), new Activations.Tanh())
-            );
-
-            var datasetGenerator = new Datasets.Generators.EvenOdd(new Shape(1, 30, 30));
-            Dataset tDataset = datasetGenerator.Generate(600);
+        {         
+            var datasetGenerator = new Datasets.Generators.EvenOdd(new Shape(10), true);
+            Dataset tDataset = datasetGenerator.Generate(100);
             Dataset vDataset = datasetGenerator.Generate(100);
 
-            TimeSpan time = Utils.Benchmark.BatchTime(netCreator, N =>
-            {
-                N.Train(tDataset, new Losses.Regression.MSE(), new Optimizers.NestrovMomentum(), 20, 5, 0.001, vDataset, new OutTransformers.Losses.BinaryRoundLoss(), false);
-                Console.WriteLine(".");
-            }, 
-            10);
+            Network net = new Network
+            (
+                new Layers.Dense(new Shape(10), new Activations.Identity()),
+                new Layers.Dense(new Shape(10), new Activations.Sigmoid()),
+                new Layers.Dense(new Shape(10), new Activations.Sigmoid()),
+                new Layers.Dense(new Shape(2), new Activations.Softmax())
+            );
 
-            Console.WriteLine(time);
+            using (new Logger(net))
+            {
+                net.Train(tDataset, new Losses.Regression.MSE(), new Optimizers.Default(), 1, 10000, 0.01/*, vDataset, new OutTransformers.Losses.BinaryMaxLoss()*/);
+            }
+
+            net.Forward(new ImmutableShapedArray<double>(new Shape(10), () => 1)).ForEach(X => Console.WriteLine(X));
+
+            net.Forward(new ImmutableShapedArray<double>(new Shape(10), () => 0)).ForEach(X => Console.WriteLine(X));
 
             Console.ReadKey();
         }

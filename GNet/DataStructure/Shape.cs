@@ -9,13 +9,6 @@ namespace GNet
         public int Rank { get; }
         public int Volume { get; }
 
-        public Shape()
-        {
-            Dims = new ImmutableArray<int>();
-            Rank = 0;
-            Volume = 0;
-        }
-
         public Shape(ImmutableArray<int> dims)
         {
             int length = dims.Length;

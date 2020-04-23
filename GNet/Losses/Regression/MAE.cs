@@ -4,7 +4,7 @@ namespace GNet.Losses.Regression
 {
     public class MAE : ILoss
     {
-        public double Compute(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
             return targets.Combine(outputs, (T, O) => Abs(T - O)).Avarage();
         }
