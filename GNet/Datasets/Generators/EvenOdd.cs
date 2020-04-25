@@ -6,15 +6,11 @@ namespace GNet.Datasets.Generators
     public class EvenOdd : IDatasetGenerator
     {
         public Shape InputShape { get; }
-        public Shape TargetShape { get; }
-        public bool IsBinary { get; }
+        public Shape TargetShape { get; } = new Shape(1);
 
-        public EvenOdd(Shape inputShape, bool binaryTarget)
+        public EvenOdd(Shape inputShape)
         {
             InputShape = inputShape;
-            IsBinary = binaryTarget;
-
-            TargetShape = binaryTarget ? new Shape(2) : new Shape(1);
         }
 
         public Dataset Generate(int length)
@@ -37,18 +33,7 @@ namespace GNet.Datasets.Generators
 
                 bool isEven = zeroCount % 2 == 0;
 
-                ImmutableShapedArray<double> output;
-
-                if(IsBinary)
-                {
-                    output = new ImmutableShapedArray<double>(isEven ? new double[] { 1.0, 0.0 } : new double[] { 0.0, 1.0 });
-                }
-                else
-                {
-                    output = new ImmutableShapedArray<double>(isEven ? 1.0 : 0.0);
-                }
-
-                dataCollection[i] = new Data(input, output);
+                dataCollection[i] = new Data(input, new ImmutableShapedArray<double>(isEven ? 1.0 : 0.0));
             }
 
             return new Dataset(ImmutableArray<Data>.FromRef(dataCollection));

@@ -6,7 +6,7 @@ namespace GNet
     {
         private static void Main()
         {         
-            var datasetGenerator = new Datasets.Generators.EvenOdd(new Shape(10), true);
+            var datasetGenerator = new Datasets.Generators.EvenOdd(new Shape(10));
             Dataset tDataset = datasetGenerator.Generate(100);
             Dataset vDataset = datasetGenerator.Generate(100);
 
@@ -15,7 +15,7 @@ namespace GNet
                 new Layers.Dense(new Shape(10), new Activations.Identity()),
                 new Layers.Dense(new Shape(10), new Activations.Sigmoid()),
                 new Layers.Dense(new Shape(10), new Activations.Sigmoid()),
-                new Layers.Dense(new Shape(2), new Activations.Softmax())
+                new Layers.Dense(new Shape(1), new Activations.Softmax())
             );
 
             using (new Logger(net))
