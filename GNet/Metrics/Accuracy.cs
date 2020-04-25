@@ -1,4 +1,4 @@
-﻿namespace GNet.Metrics.Classification
+﻿namespace GNet.Metrics
 {
     public class Accuracy : IMetric
     {

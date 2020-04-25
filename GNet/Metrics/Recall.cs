@@ -1,10 +1,10 @@
-﻿namespace GNet.Metrics.Classification
+﻿namespace GNet.Metrics
 {
-    public class Sensitivity : IMetric
+    public class Recall : IMetric
     {
         public double Threshold { get; }
 
-        public Sensitivity(double threshold = 0.5)
+        public Recall(double threshold = 0.5)
         {
             Threshold = threshold;
         }

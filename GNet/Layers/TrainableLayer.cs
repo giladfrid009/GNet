@@ -39,14 +39,12 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(targets));
             }
 
-            //todo: appereneatly its correct only for regression problems? maybe?
             ImmutableArray<double> actvDers = Activation.Derivative(Neurons.Select(N => N.InVal));
             ImmutableArray<double> lossDers = loss.Derivative(targets, Neurons.Select(N => N.OutVal));
-            ImmutableArray<double> grads = lossDers.Combine(actvDers, (LD, AD) => LD * AD);
 
             Neurons.ForEach((N, i) =>
             {
-                N.Gradient = grads[i];
+                N.Gradient = actvDers[i] * lossDers[i];
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.OutVal);
             });
         }

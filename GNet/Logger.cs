@@ -6,6 +6,7 @@ namespace GNet
 {
     public class Logger : IDisposable
     {
+        public string DateTimeFormat { get; set; } = "HH:mm:ss.ff";
         public bool LogEpoches { get; set; } = true;
         public bool LogBatches { get; set; } = false;
         public bool Output { get; set; } = true;
@@ -28,7 +29,7 @@ namespace GNet
 
         private void AddEntry(string message)
         {
-            string line = string.Format($"{DateTime.Now.ToString("HH:mm:ss.ff")} | {message}");
+            string line = string.Format($"{DateTime.Now.ToString(DateTimeFormat)} | {message}");
 
             if (Output)
             {
