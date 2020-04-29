@@ -22,8 +22,14 @@ namespace GNet
             }
 
             Dims = dims;
-            Rank = dims.Length;
-            Volume = (int)dims.Accumulate(1, (R, X) => R * X);
+            Rank = length;
+
+            Volume = 1;
+
+            for (int i = 0; i < length; i++)
+            {
+                Volume *= dims[i];
+            }
         }
 
         public Shape(params int[] dimensions) : this(new ImmutableArray<int>(dimensions))

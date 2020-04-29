@@ -4,19 +4,6 @@ namespace GNet
 {
     public static class MathExtensions
     {
-        public static double Accumulate<TSource>(this IArray<TSource> source, double seed, Func<double, TSource, double> selector)
-        {
-            int length = source.Length;
-            double res = seed;
-
-            for (int i = 0; i < length; i++)
-            {
-                res = selector(res, source[i]);
-            }
-
-            return res;
-        }
-
         public static double Avarage<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
         {
             return Sum(source, selector) / source.Length;
