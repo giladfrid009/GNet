@@ -17,6 +17,11 @@ namespace GNet
             return res;
         }
 
+        public static double Avarage<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
+        {
+            return Sum(source, selector) / source.Length;
+        }
+
         public static double Avarage(this IArray<double> source)
         {
             return Sum(source) / source.Length;
