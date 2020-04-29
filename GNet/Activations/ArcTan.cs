@@ -1,7 +1,7 @@
 ﻿using System;
 using static System.Math;
 
-namespace GNet.Activations.Advanced
+namespace GNet.Activations
 {
     [Serializable]
     public class ArcTan : IActivation

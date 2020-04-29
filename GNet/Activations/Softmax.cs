@@ -21,7 +21,7 @@ namespace GNet.Activations
 
             double sum = exps.Sum();
 
-            return exps.Select(E => E * (sum - E) / (sum * sum));
+            return exps.Select(E => E / sum * (1.0 - E / sum));
         }
     }
 }
