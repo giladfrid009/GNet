@@ -1,17 +1,16 @@
-﻿using System;
+﻿using GNet.Model;
+using System;
 
 namespace GNet.Layers.Poolers
 {
     [Serializable]
     public class Max : IPooler
     {
-        public double Pool(ImmutableArray<double> inVals, out ImmutableArray<double> inWeights)
+        public ImmutableArray<double> CalcWeights(ImmutableArray<Synapse> inSynapses)
         {
-            double max = inVals.Max();
+            double max = inSynapses.Max(X => X.InNeuron.OutVal);
 
-            inWeights = inVals.Select(X => X == max ? 1.0 : 0.0);
-
-            return max;
+            return inSynapses.Select(X => X.InNeuron.OutVal == max ? 1.0 : 0.0);
         }
     }
 }

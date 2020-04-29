@@ -1,17 +1,16 @@
-﻿using System;
+﻿using GNet.Model;
+using System;
 
 namespace GNet.Layers.Poolers
 {
     [Serializable]
     public class Avarage : IPooler
     {
-        public double Pool(ImmutableArray<double> inVals, out ImmutableArray<double> inWeights)
+        public ImmutableArray<double> CalcWeights(ImmutableArray<Synapse> inSynapses)
         {
-            int nIn = inVals.Length;
+            int nIn = inSynapses.Length;
 
-            inWeights = inVals.Select(X => 1.0 / nIn);
-
-            return inVals.Avarage();
+            return inSynapses.Select(X => 1.0 / nIn);
         }
     }
 }

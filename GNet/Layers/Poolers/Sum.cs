@@ -1,15 +1,14 @@
-﻿using System;
+﻿using GNet.Model;
+using System;
 
 namespace GNet.Layers.Poolers
 {
     [Serializable]
     public class Sum : IPooler
     {
-        public double Pool(ImmutableArray<double> inVals, out ImmutableArray<double> inWeights)
+        public ImmutableArray<double> CalcWeights(ImmutableArray<Synapse> inSynapses)
         {
-            inWeights = inVals.Select(X => 1.0);
-
-            return inVals.Sum();
+            return inSynapses.Select(X => 1.0);
         }
     }
 }

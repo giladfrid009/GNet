@@ -71,11 +71,13 @@ namespace GNet.Layers
         {
             Neurons.ForEach(N =>
             {
-                N.InVal = Pooler.Pool(N.InSynapses.Select(S => S.InNeuron.OutVal), out ImmutableArray<double> inWeights);
-
-                N.OutVal = N.InVal;
+                ImmutableArray<double> inWeights = Pooler.CalcWeights(N.InSynapses);
 
                 N.InSynapses.ForEach((S, i) => S.Weight = inWeights[i]);
+
+                N.InVal = N.InSynapses.Sum(S => S.Weight * S.InNeuron.OutVal);
+
+                N.OutVal = N.InVal;
             });
         }
 

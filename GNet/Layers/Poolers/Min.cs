@@ -1,17 +1,16 @@
-﻿using System;
+﻿using GNet.Model;
+using System;
 
 namespace GNet.Layers.Poolers
 {
     [Serializable]
     public class Min : IPooler
     {
-        public double Pool(ImmutableArray<double> inVals, out ImmutableArray<double> inWeights)
+        public ImmutableArray<double> CalcWeights(ImmutableArray<Synapse> inSynapses)
         {
-            double min = inVals.Min();
+            double min = inSynapses.Min(X => X.InNeuron.OutVal);
 
-            inWeights = inVals.Select(X => X == min ? 1.0 : 0.0);
-
-            return min;
+            return inSynapses.Select(X => X.InNeuron.OutVal == min ? 1.0 : 0.0);
         }
     }
 }

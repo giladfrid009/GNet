@@ -1,7 +1,9 @@
-﻿namespace GNet.Layers
+﻿using GNet.Model;
+
+namespace GNet.Layers
 {
     public interface IPooler
     {
-        double Pool(ImmutableArray<double> inVals, out ImmutableArray<double> inWeights);
+        ImmutableArray<double> CalcWeights(ImmutableArray<Synapse> inSynapses);
     }
 }

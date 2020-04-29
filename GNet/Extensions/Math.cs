@@ -22,6 +22,24 @@ namespace GNet
             return Sum(source) / source.Length;
         }
 
+        public static double Max<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
+        {
+            int length = source.Length;
+            double max = selector(source[0]);
+
+            for (int i = 1; i < length; i++)
+            {
+                double val = selector(source[i]);
+
+                if (val > max)
+                {
+                    max = val;
+                }
+            }
+
+            return max;
+        }
+
         public static double Max(this IArray<double> source)
         {
             int length = source.Length;
@@ -36,6 +54,24 @@ namespace GNet
             }
 
             return max;
+        }
+
+        public static double Min<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
+        {
+            int length = source.Length;
+            double min = selector(source[0]);
+
+            for (int i = 1; i < length; i++)
+            {
+                double val = selector(source[i]);
+
+                if (val < min)
+                {
+                    min = val;
+                }
+            }
+
+            return min;
         }
 
         public static double Min(this IArray<double> source)
