@@ -6,14 +6,14 @@ namespace GNet.Activations
     [Serializable]
     public class ELU : IActivation
     {
-        public ImmutableArray<double> Activate(ImmutableArray<double> inputs)
+        public double Activate(double X)
         {
-            return inputs.Select(X => X < 0.0 ? (Exp(X) - 1.0) : X);
+            return X < 0.0 ? (Exp(X) - 1.0) : X;
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> inputs)
+        public double Derivative(double X, double Y)
         {
-            return inputs.Select(X => X < 0.0 ? Exp(X) : 1.0);
+            return X < 0.0 ? Exp(X) : 1.0;
         }
     }
 }

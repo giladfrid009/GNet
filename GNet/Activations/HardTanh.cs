@@ -3,14 +3,14 @@ namespace GNet.Activations
 {
     public class HardTanh : IActivation
     {
-        public ImmutableArray<double> Activate(ImmutableArray<double> inputs)
+        public double Activate(double X)
         {
-            return inputs.Select(X => X < -1.0 ? -1 : X > 1.0 ? 1.0 : X);
+            return X < -1.0 ? -1 : X > 1.0 ? 1.0 : X;
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> inputs)
+        public double Derivative(double X, double Y)
         {
-            return inputs.Select(X => X < -1.0 || X > 1.0 ? 0.0 : 1.0);
+            return X < -1.0 || X > 1.0 ? 0.0 : 1.0;
         }
     }
 }

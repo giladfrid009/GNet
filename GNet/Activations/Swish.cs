@@ -6,18 +6,15 @@ namespace GNet.Activations
     [Serializable]
     public class Swish : IActivation
     {
-        public ImmutableArray<double> Activate(ImmutableArray<double> inputs)
+        public double Activate(double X)
         {
-            return inputs.Select(X => X / (Exp(-X) + 1.0));
+            return X / (1.0 + Exp(-X));
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> inputs)
+        public double Derivative(double X, double Y)
         {
-            return inputs.Select(X =>
-            {
-                double exp = Exp(X);
-                return exp * (1.0 + exp + X) / Pow(1.0 + exp, 2.0);
-            });
+            double E = Exp(X);
+            return E * (1.0 + E + X) / Pow(1.0 + E, 2.0);
         }
     }
 }

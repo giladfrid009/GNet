@@ -12,14 +12,14 @@ namespace GNet.Activations
             Slope = slope;
         }
 
-        public ImmutableArray<double> Activate(ImmutableArray<double> inputs)
+        public double Activate(double X)
         {
-            return inputs.Select(X => X < 0.0 ? Slope * X : X);
+            return X < 0.0 ? Slope * X : X;
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> inputs)
+        public double Derivative(double X, double Y)
         {
-            return inputs.Select(X => X < 0.0 ? Slope : 1.0);
+            return X < 0.0 ? Slope : 1.0;
         }
     }
 }

@@ -11,7 +11,15 @@
 
         public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
-            return targets.Combine(outputs.Select(X => X >= Threshold ? 1.0 : 0.0), (T, O) => T == O ? 0.0 : 1.0).Avarage();
+
+            int i = 0;
+
+            return 1.0 - targets.Avarage(T =>
+            {
+                double O = outputs[i++] >= Threshold ? 1.0 : 0.0;
+
+                return T == O ? 1.0 : 0.0;
+            });
         }
     }
 }

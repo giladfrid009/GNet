@@ -2,8 +2,8 @@
 {
     public interface IActivation
     {
-        ImmutableArray<double> Activate(ImmutableArray<double> inputs);
+        double Activate(double X);
 
-        ImmutableArray<double> Derivative(ImmutableArray<double> inputs);
+        double Derivative(double X, double Y);
     }
 }

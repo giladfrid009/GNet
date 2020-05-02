@@ -11,27 +11,21 @@ namespace GNet.Losses.Regression
             Margin = margin;
         }
 
-        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) =>
-            {
-                double diff = Abs(T - O);
+            double diff = Abs(T - O);
 
-                if (diff <= Margin)
-                {
-                    return 0.5 * diff * diff;
-                }
-                else
-                {
-                    return Margin * (diff - 0.5 * Margin);
-                }
-            })
-            .Avarage();
+            if (diff <= Margin)
+            {
+                return 0.5 * diff * diff;
+            }
+
+            return Margin * (diff - 0.5 * Margin);
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Derivative(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) => Abs(T - O) <= Margin ? O - T : Margin * Sign(O - T));
+            return Abs(T - O) <= Margin ? O - T : Margin * Sign(O - T);
         }
     }
 }

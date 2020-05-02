@@ -11,14 +11,14 @@ namespace GNet.Losses.Binary
             Margin = margin;
         }
 
-        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) => Max(0.0, Margin - T * O)).Avarage();
+            return Max(0.0, Margin - T * O);
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Derivative(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) => T * O < Margin ? -T : 0.0);
+            return T * O < Margin ? -T : 0.0;
         }
     }
 }

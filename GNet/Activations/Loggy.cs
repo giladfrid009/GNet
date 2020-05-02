@@ -6,14 +6,14 @@ namespace GNet.Activations
     [Serializable]
     public class Loggy : IActivation
     {
-        public ImmutableArray<double> Activate(ImmutableArray<double> inputs)
+        public double Activate(double X)
         {
-            return inputs.Select(X => Tanh(X / 2.0));
+            return Tanh(X / 2.0);
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> inputs)
+        public double Derivative(double X, double Y)
         {
-            return inputs.Select(X => 1.0 / (Cosh(X) + 1.0));
+            return 1.0 / (Cosh(X) + 1.0);
         }
     }
 }

@@ -2,8 +2,8 @@
 {
     public interface INormalizer
     {
-        void UpdateParams<TData>(ImmutableArray<TData> dataVector) where TData : ImmutableArray<double>;
+        void UpdateParams(Dataset dataArr, bool inputs, bool targets);
 
-        ImmutableArray<double> Normalize(ImmutableArray<double> vals);
+        double Normalize(double X);
     }
 }

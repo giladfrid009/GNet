@@ -4,14 +4,14 @@ namespace GNet.Losses.Categorical
 {
     public class CrossEntropy : ILoss
     {
-        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) => -T * Log(O + double.Epsilon)).Avarage();
+            return -T * Log(O + double.Epsilon);
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Derivative(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) => -T / (O + double.Epsilon));
+            return -T / (O + double.Epsilon);
         }
     }
 }

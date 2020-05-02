@@ -6,14 +6,14 @@ namespace GNet.Activations
     [Serializable]
     public class Sigmoid : IActivation
     {
-        public ImmutableArray<double> Activate(ImmutableArray<double> inputs)
+        public double Activate(double X)
         {
-            return inputs.Select(X => 1.0 / (1.0 + Exp(-X)));
+            return 1.0 / (1.0 + Exp(-X));
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> inputs)
+        public double Derivative(double X, double Y)
         {
-            return inputs.Select(X => Exp(X) / Pow(Exp(X) + 1.0, 2.0));
+            return Y * (1.0 - Y);
         }
     }
 }

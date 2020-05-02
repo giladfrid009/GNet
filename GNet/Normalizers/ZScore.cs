@@ -7,20 +7,46 @@ namespace GNet.Normalizers
         public double Avg { get; private set; }
         public double SD { get; private set; }
 
-        public void UpdateParams<TData>(ImmutableArray<TData> dataVector) where TData : ImmutableArray<double>
+        public void UpdateParams(Dataset dataset, bool inputs, bool targets)
         {
-            Avg = dataVector.Avarage(D => D.Avarage());
+            int nElems = 0;
+            double sumI = 0.0;
+            double sumT = 0.0;
 
-            double var = dataVector.Sum(D => D.Sum(X => (X - Avg) * (X - Avg)));
+            if(inputs)
+            {
+                sumI = dataset.Sum(D => D.Inputs.Sum());
 
-            int nVals = dataVector[0].Length * dataVector.Length;
+                nElems += dataset.InputShape.Volume * dataset.Length;
+            }
 
-            SD = Sqrt((var + double.Epsilon) / nVals);
+            if (targets)
+            {
+                sumT = dataset.Sum(D => D.Targets.Sum());
+
+                nElems += dataset.TargetShape.Volume * dataset.Length;
+            }
+
+            Avg = (sumI + sumT) / nElems;
+
+            double var = 0.0;
+
+            if (inputs)
+            {
+                var += dataset.Sum(D => D.Inputs.Sum(X => (X - Avg) * (X - Avg)));
+            }
+
+            if (targets)
+            {
+                var += dataset.Sum(D => D.Targets.Sum(X => (X - Avg) * (X - Avg)));
+            }
+
+            SD = Sqrt((var + double.Epsilon) / nElems);
         }
 
-        public ImmutableArray<double> Normalize(ImmutableArray<double> vals)
+        public double Normalize(double X)
         {
-            return vals.Select(X => (X - Avg) / SD);
+            return (X - Avg) / SD;
         }
     }
 }

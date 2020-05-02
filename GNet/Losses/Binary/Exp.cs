@@ -4,14 +4,14 @@ namespace GNet.Losses.Binary
 {
     public class Exp : ILoss
     {
-        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) => Exp(-T * O)).Avarage();
+            return Exp(-T * O);
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Derivative(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) => -Exp(-T * O));
+            return -Exp(-T * O);
         }
     }
 }

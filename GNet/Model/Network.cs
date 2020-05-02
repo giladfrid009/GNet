@@ -69,7 +69,7 @@ namespace GNet
 
         public double Validate(Dataset dataset, IMetric metric)
         {
-            return dataset.Sum(D => metric.Evaluate(D.Targets, Forward(D.Inputs, false))) / dataset.Length;
+            return dataset.Avarage(D => metric.Evaluate(D.Targets, Forward(D.Inputs, false)));
         }
 
         public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int nEpoches, double minError, Dataset valDataset, IMetric metric, bool shuffle = true)
@@ -150,11 +150,6 @@ namespace GNet
 
         private void Optimize(IOptimizer optimizer, int epoch)
         {
-            //Parallel.For(1, Length, i =>
-            //{
-            //    Layers[i].Optimize(optimizer);
-            //});
-
             optimizer.UpdateParams(epoch);
 
             for (int i = 1; i < Length; i++)
@@ -165,11 +160,6 @@ namespace GNet
 
         private void Update()
         {
-            //Parallel.For(1, Length, i =>
-            //{
-            //    Layers[i].Update();
-            //});
-
             for (int i = 1; i < Length; i++)
             {         
                 Layers[i].Update();             

@@ -6,14 +6,14 @@ namespace GNet.Losses.Regression
     {
         private const double Tau = 2.0 * PI;
 
-        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) => O - T >= 0.0 ? (Tau - 1.0) * (T - O) : Tau * (T - O)).Avarage();
+            return O - T >= 0.0 ? (Tau - 1.0) * (T - O) : Tau * (T - O);
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Derivative(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) => O - T >= 0.0 ? 1.0 - Tau : -Tau);
+            return O - T >= 0.0 ? 1.0 - Tau : -Tau;
         }
     }
 }

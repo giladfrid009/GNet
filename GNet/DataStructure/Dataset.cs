@@ -15,6 +15,11 @@ namespace GNet
 
         public Dataset(ImmutableArray<Data> dataCollection)
         {
+            if(dataCollection.Length == 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(dataCollection));
+            }
+
             InputShape = dataCollection[0].InputShape;
             TargetShape = dataCollection[0].TargetShape;
 
@@ -34,15 +39,18 @@ namespace GNet
         {
         }
 
-        public void Normalize(INormalizer? inputNormalizer, INormalizer? outputNormalizer)
+        public void Normalize(INormalizer normalizer, bool inputs, bool targets)
         {
-            inputNormalizer ??= new Normalizers.None();
-            outputNormalizer ??= new Normalizers.None();
+            if(!inputs && !targets)
+            {
+                return;
+            }
 
-            inputNormalizer.UpdateParams(dataCollection.Select(D => D.Inputs));
-            outputNormalizer.UpdateParams(dataCollection.Select(D => D.Targets));
+            normalizer.UpdateParams(this, inputs, targets);
 
-            dataCollection = dataCollection.Select(D => new Data(inputNormalizer.Normalize(D.Inputs).ToShape(D.InputShape), outputNormalizer.Normalize(D.Targets).ToShape(D.TargetShape)));
+            dataCollection = dataCollection.Select(D => new Data(
+                inputs ? D.Inputs.Select(X => normalizer.Normalize(X)).ToShape(InputShape) : D.Inputs,
+                targets ? D.Targets.Select(X => normalizer.Normalize(X)).ToShape(TargetShape) : D.Targets));
         }
 
         public void Shuffle()

@@ -2,6 +2,7 @@
 
 namespace GNet
 {
+    //todo: implement softmax layer
     public interface ILayer
     {
         ImmutableShapedArray<Neuron> Neurons { get; }

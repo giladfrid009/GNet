@@ -6,14 +6,14 @@ namespace GNet.Activations
     [Serializable]
     public class Tanh : IActivation
     {
-        public ImmutableArray<double> Activate(ImmutableArray<double> inputs)
+        public double Activate(double X)
         {
-            return inputs.Select(X => Tanh(X));
+            return Tanh(X);
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> inputs)
+        public double Derivative(double X, double Y)
         {
-            return inputs.Select(X => 1.0 / Pow(Cosh(X), 2.0));
+            return 1.0 - Y * Y;
         }
     }
 }

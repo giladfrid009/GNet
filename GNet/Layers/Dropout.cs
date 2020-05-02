@@ -91,9 +91,7 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(targets));
             }
 
-            ImmutableArray<double> grads = loss.Derivative(targets, Neurons.Select(N => N.OutVal));
-
-            Neurons.ForEach((N, i) => N.Gradient = dropArray[i] ? 0 : grads[i]);
+            Neurons.ForEach((N, i) => N.Gradient = dropArray[i] ? 0 : loss.Derivative(targets[i], N.OutVal));
         }
 
         public void CalcGrads()

@@ -9,13 +9,13 @@
             Divisor = divisor;
         }
 
-        public void UpdateParams<TData>(ImmutableArray<TData> dataVector) where TData : ImmutableArray<double>
+        public void UpdateParams(Dataset dataset, bool inputs, bool targets)
         {
         }
 
-        public ImmutableArray<double> Normalize(ImmutableArray<double> vals)
+        public double Normalize(double X)
         {
-            return vals.Select(X => X / Divisor);
+            return X / Divisor;
         }
     }
 }

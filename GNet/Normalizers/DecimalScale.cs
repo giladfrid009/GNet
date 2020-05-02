@@ -6,16 +6,27 @@ namespace GNet.Normalizers
     {
         public double Scale { get; private set; }
 
-        public void UpdateParams<TData>(ImmutableArray<TData> dataVector) where TData : ImmutableArray<double>
+        public void UpdateParams(Dataset dataset, bool inputs, bool targets)
         {
-            double max = dataVector.Max(D => D.Max(X => Abs(X)));
+            double maxI = 0.0;
+            double maxT = 0.0;
 
-            Scale = (int)Log10(max) + 1;
+            if(inputs)
+            {
+                maxI = dataset.Max(D => D.Inputs.Max(X => Abs(X)));
+            }
+
+            if (targets)
+            {
+                maxT = dataset.Max(D => D.Targets.Max(X => Abs(X)));
+            }
+
+            Scale = (int)Log10(Max(maxI, maxT)) + 1;
         }
 
-        public ImmutableArray<double> Normalize(ImmutableArray<double> vals)
+        public double Normalize(double X)
         {
-            return vals.Select(X => X / Scale);
+            return X / Scale;
         }
     }
 }

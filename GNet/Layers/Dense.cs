@@ -41,11 +41,11 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(values));
             }
 
-            Neurons.ForEach((N, i) => N.InVal = values[i]);
-
-            ImmutableArray<double> activated = Activation.Activate(Neurons.Select(N => N.InVal));
-
-            Neurons.ForEach((N, i) => N.OutVal = activated[i]);
+            Neurons.ForEach((N, i) =>
+            {
+                N.InVal = values[i];
+                N.OutVal = Activation.Activate(N.InVal);
+            });
         }
     }
 }

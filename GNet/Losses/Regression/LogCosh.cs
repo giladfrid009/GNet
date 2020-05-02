@@ -4,14 +4,14 @@ namespace GNet.Losses.Regression
 {
     public class LogCosh : ILoss
     {
-        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) => Log(Cosh(T - O))).Avarage();
+            return Log(Cosh(T - O));
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Derivative(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) => Tanh(O - T));
+            return Tanh(O - T);
         }
     }
 }

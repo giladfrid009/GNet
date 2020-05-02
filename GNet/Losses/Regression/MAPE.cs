@@ -4,14 +4,14 @@ namespace GNet.Losses.Regression
 {
     public class MAPE : ILoss
     {
-        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) => Abs((T - O) / (T + double.Epsilon))).Avarage();
+            return Abs((T - O) / (T + double.Epsilon));
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Derivative(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) => O * (T - O) / (Pow(T, 3.0) * Abs(1.0 - O / (T + double.Epsilon))));
+            return O * (T - O) / (Pow(T, 3.0) * Abs(1.0 - O / (T + double.Epsilon)));
         }
     }
 }

@@ -2,14 +2,14 @@
 {
     public class MSE : ILoss
     {
-        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) => (T - O) * (T - O)).Avarage();
+            return 0.5 * (T - O) * (T - O);
         }
 
-        public ImmutableArray<double> Derivative(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Derivative(double T, double O)
         {
-            return targets.Combine(outputs, (T, O) => 2.0 * (O - T));
+            return O - T;
         }
     }
 }
