@@ -4,23 +4,22 @@ using GNet.Model;
 namespace GNet.Layers
 {
     [Serializable]
-    public abstract class TrainableLayer : ILayer
-    {
-        public static IInitializer DefaultWeightInit { get; set; } = new Initializers.GlorotUniform();
-        public static IInitializer DefaultBiasInit { get; set; } = new Initializers.Zero();
-
-        public abstract ImmutableShapedArray<Neuron> Neurons { get; }
-        public abstract Shape Shape { get; }
+    public abstract class TrainableLayer<TNeuron> : ILayer where TNeuron : Neuron, new()
+    {      
+        public ImmutableShapedArray<Neuron> Neurons { get; }
+        public Shape Shape { get; }
         public IActivation Activation { get; }
         public IInitializer WeightInit { get; }
         public IInitializer BiasInit { get; }
         public bool IsTrainable { get; set; } = true;
 
-        protected TrainableLayer(IActivation activation, IInitializer? weightInit, IInitializer? biasInit)
+        protected TrainableLayer(Shape shape, IActivation activation, IInitializer? weightInit, IInitializer? biasInit)
         {
+            Shape = shape;
             Activation = activation;
-            WeightInit = weightInit ?? DefaultWeightInit;
-            BiasInit = biasInit ?? DefaultBiasInit;
+            WeightInit = weightInit ?? DefaultParams.WeightInit;
+            BiasInit = biasInit ?? DefaultParams.BiasInit;
+            Neurons = new ImmutableShapedArray<Neuron>(shape, new TNeuron());
         }
 
         public void Forward(bool isTraining)

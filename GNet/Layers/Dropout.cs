@@ -13,7 +13,7 @@ namespace GNet.Layers
 
         private ImmutableArray<bool> dropArray;
 
-        public Dropout(Shape shape, double dropChance)
+        public Dropout(Shape shape, double dropChance = 0.1)
         {
             if (dropChance < 0 || dropChance > 1)
             {

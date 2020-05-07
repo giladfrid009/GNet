@@ -6,7 +6,7 @@ using GNet.Utils.Convolutional;
 namespace GNet.Layers
 {
     [Serializable]
-    public class Pooling : IConvLayer
+    public class Pooling : ILayer
     {
         public ImmutableShapedArray<Neuron> Neurons { get; }
         public ImmutableArray<int> Strides { get; }
@@ -16,14 +16,16 @@ namespace GNet.Layers
         public Shape KernelShape { get; }
         public Shape Shape { get; }
         public IPooler Pooler { get; }
+        public double PadVal { get; }
 
-        public Pooling(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IPooler pooler)
+        public Pooling(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IPooler pooler, double padVal = 0.0)
         {
             InputShape = inputShape;
             Shape = outputShape;
             KernelShape = kernelShape;
             Strides = strides;
             Pooler = pooler;
+            PadVal = padVal;
 
             Paddings = Padder.CalcPadding(inputShape, outputShape, kernelShape, strides, true);
 
@@ -39,7 +41,7 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(inLayer));
             }
 
-            ImmutableShapedArray<Neuron> padded = Padder.PadShapedArray(inLayer.Neurons, Paddings, () => new Neuron());
+            ImmutableShapedArray<Neuron> padded = Padder.PadShapedArray(inLayer.Neurons, Paddings, () => new Neuron() { OutVal = PadVal });
 
             var inConnections = new ImmutableShapedArray<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 

@@ -14,9 +14,8 @@ namespace GNet.Layers
         public Softmax(Shape shape, IInitializer? weightInit = null, IInitializer? biasInit = null)
         {
             Shape = shape;
-            WeightInit = weightInit ?? TrainableLayer.DefaultWeightInit;
-            BiasInit = biasInit ?? TrainableLayer.DefaultBiasInit;
-
+            WeightInit = weightInit ?? DefaultParams.WeightInit;
+            BiasInit = biasInit ?? DefaultParams.BiasInit;
             Neurons = new ImmutableShapedArray<Neuron>(shape, () => new Neuron());      
         }
 
