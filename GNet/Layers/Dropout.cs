@@ -36,7 +36,6 @@ namespace GNet.Layers
             Neurons.ForEach((N, i) =>
             {
                 var S = new Synapse(inLayer.Neurons[i], N);
-
                 N.InSynapses = new ImmutableArray<Synapse>(S);
                 inLayer.Neurons[i].OutSynapses = new ImmutableArray<Synapse>(S);
             });
@@ -53,8 +52,15 @@ namespace GNet.Layers
             });
         }
 
-        private void Drop(bool isTraining)
+        public void Input(ImmutableShapedArray<double> values, bool isTraining)
         {
+            if (values.Shape != Shape)
+            {
+                throw new ShapeMismatchException(nameof(values));
+            }
+
+            Neurons.ForEach((N, i) => N.InVal = values[i]);
+
             if (isTraining)
             {
                 Neurons.ForEach((N, i) => N.OutVal = dropArray[i] ? 0 : N.InVal);
@@ -65,23 +71,18 @@ namespace GNet.Layers
             }
         }
 
-        public void Input(ImmutableShapedArray<double> values, bool isTraining)
-        {
-            if (values.Shape != Shape)
-            {
-                throw new ShapeMismatchException(nameof(values));
-            }
-
-            Neurons.ForEach((N, i) => N.InVal = values[i]);
-
-            Drop(isTraining);
-        }
-
         public void Forward(bool isTraining)
         {
             Neurons.ForEach((N, i) => N.InVal = N.InSynapses[0].InNeuron.OutVal);
 
-            Drop(isTraining);
+            if (isTraining)
+            {
+                Neurons.ForEach((N, i) => N.OutVal = dropArray[i] ? 0 : N.InVal);
+            }
+            else
+            {
+                Neurons.ForEach((N, i) => N.OutVal = N.InVal);
+            }
         }   
 
         public void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)

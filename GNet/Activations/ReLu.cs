@@ -3,11 +3,11 @@
 namespace GNet.Activations
 {
     [Serializable]
-    public class ReLU : IActivation
+    public class Relu : IActivation
     {
         public double Slope { get; }
 
-        public ReLU(double slope = 0.0)
+        public Relu(double slope = 0.0)
         {
             Slope = slope;
         }

@@ -46,7 +46,7 @@ namespace GNet.Utils.Convolutional
 
             PopulateRecursive(new int[shape.Rank], 0);
 
-            return new ImmutableArray<int[]>(indices.ToArray());
+            return ImmutableArray<int[]>.FromRef(indices.ToArray());
 
             void PopulateRecursive(int[] current, int dim)
             {

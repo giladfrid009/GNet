@@ -6,25 +6,21 @@ namespace GNet
     {
         private static void Main()
         {         
-            var datasetGenerator = new Datasets.Generators.EvenOdd(new Shape(4), true);
-            Dataset tDataset = datasetGenerator.Generate(300);
-            Dataset vDataset = datasetGenerator.Generate(300);
+            var datasetGenerator = new Datasets.Generators.EvenOdd(new Shape(10), true);
+            Dataset tDataset = datasetGenerator.Generate(1000);
+            Dataset vDataset = datasetGenerator.Generate(70);
 
             Network net = new Network
             (
-                new Layers.Dense(new Shape(4), new Activations.Identity()),
-                new Layers.Dense(new Shape(4), new Activations.Sigmoid()),
-                new Layers.Dense(new Shape(2), new Activations.Sigmoid())
+                new Layers.Dense(new Shape(10), new Activations.Identity()),
+                new Layers.Dense(new Shape(5), new Activations.Sigmoid()),
+                new Layers.Softmax(new Shape(2))
             );
 
             using (new Logger(net))
             {
-                net.Train(tDataset, new Losses.Binary.CrossEntropy(), new Optimizers.Default(), 1, 10000, 0.01, vDataset, new Metrics.Accuracy());
+                net.Train(tDataset, new Losses.Categorical.CrossEntropy(), new Optimizers.Default(), 1, 10000, 0.01/*, vDataset, new Metrics.Accuracy()*/);
             }
-
-            net.Forward(new ImmutableShapedArray<double>(new Shape(4), () => 1)).ForEach(X => Console.WriteLine(X));
-
-            net.Forward(new ImmutableShapedArray<double>(new Shape(4), () => 0)).ForEach(X => Console.WriteLine(X));
 
             Console.ReadKey();
         }

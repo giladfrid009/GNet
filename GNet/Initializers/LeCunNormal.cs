@@ -5,7 +5,7 @@ using static GNet.Utils.GRandom;
 namespace GNet.Initializers
 {
     [Serializable]
-    public class LeCunNormal : IInitializer
+    public class LecunNormal : IInitializer
     {
         public double Initialize(int nIn, int nOut)
         {

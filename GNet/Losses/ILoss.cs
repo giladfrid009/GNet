@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GNet
+﻿namespace GNet
 {
     public interface ILoss : IMetric
     {

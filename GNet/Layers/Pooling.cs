@@ -55,7 +55,7 @@ namespace GNet.Layers
                 });
             });
 
-            padded.ForEach((N, i) => N.OutSynapses = new ImmutableArray<Synapse>(inConnections[i].ToArray()));
+            padded.ForEach((N, i) => N.OutSynapses = ImmutableArray<Synapse>.FromRef(inConnections[i].ToArray()));
         }
 
         public void Initialize()

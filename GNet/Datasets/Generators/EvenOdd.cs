@@ -9,12 +9,12 @@ namespace GNet.Datasets.Generators
         public Shape TargetShape { get; }
         public bool IsBinary { get; }
 
-        public EvenOdd(Shape inputShape, bool binaryTarget)
+        public EvenOdd(Shape inputShape, bool isBinary)
         {
             InputShape = inputShape;
-            IsBinary = binaryTarget;
+            IsBinary = isBinary;
 
-            TargetShape = binaryTarget ? new Shape(2) : new Shape(1);
+            TargetShape = isBinary ? new Shape(2) : new Shape(1);
         }
 
         public Dataset Generate(int length)
