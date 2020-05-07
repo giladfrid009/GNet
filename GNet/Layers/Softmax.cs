@@ -5,7 +5,7 @@ namespace GNet.Layers
 {
     public class Softmax : ILayer
     {
-        public ImmutableShapedArray<Neuron> Neurons { get; }
+        public ImmutableArray<Neuron> Neurons { get; }
         public Shape Shape { get; }
         public IInitializer WeightInit { get; }
         public IInitializer BiasInit { get; }
@@ -16,7 +16,7 @@ namespace GNet.Layers
             Shape = shape;
             WeightInit = weightInit ?? DefaultParams.WeightInit;
             BiasInit = biasInit ?? DefaultParams.BiasInit;
-            Neurons = new ImmutableShapedArray<Neuron>(shape, () => new Neuron());      
+            Neurons = new ImmutableArray<Neuron>(shape.Volume, () => new Neuron());      
         }
 
         //todo: same as dense layer

@@ -7,8 +7,9 @@ using GNet.Model.Convolutional;
 namespace GNet.Layers
 {
     [Serializable]
-    public class Convolutional : TrainableLayer<CNeuron>
+    public class Convolutional : TrainableLayer
     {
+        public override ImmutableArray<Neuron> Neurons { get; }
         public ImmutableArray<Kernel> Kernels { get; }
         public ImmutableArray<int> Strides { get; }
         public ImmutableArray<int> Paddings { get; }
@@ -17,6 +18,7 @@ namespace GNet.Layers
         public Shape KernelShape { get; }
         public int KernelsNum { get; }
         public double PadVal { get; }
+
 
         public Convolutional(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IActivation activation, IInitializer? weightInit = null, IInitializer? biasInit = null, double padVal = 0.0) 
             : base(outputShape, activation, weightInit, biasInit)
@@ -35,6 +37,8 @@ namespace GNet.Layers
             KernelsNum = outputShape.Dims[0] / inputShape.Dims[0];
 
             Kernels = new ImmutableArray<Kernel>(KernelsNum, () => new Kernel(kernelShape));
+
+            Neurons = new ImmutableArray<Neuron>(outputShape.Volume, () => new CNeuron());
         }
 
         private static void ValidateChannels(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides)
@@ -62,7 +66,7 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(inLayer));
             }
 
-            ImmutableShapedArray<Neuron> padded = Padder.PadShapedArray(inLayer.Neurons, Paddings, () => new Neuron() { OutVal = PadVal });
+            ImmutableShapedArray<Neuron> padded = Padder.PadShapedArray(inLayer.Neurons.ToShape(Shape), Paddings, () => new Neuron() { OutVal = PadVal });
 
             var inConnections = new ImmutableShapedArray<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 

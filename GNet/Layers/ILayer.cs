@@ -4,7 +4,7 @@ namespace GNet
 {
     public interface ILayer
     {
-        ImmutableShapedArray<Neuron> Neurons { get; }
+        ImmutableArray<Neuron> Neurons { get; }
         Shape Shape { get; }
 
         void Connect(ILayer inLayer);

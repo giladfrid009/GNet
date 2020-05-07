@@ -7,7 +7,7 @@ namespace GNet.Layers
     [Serializable]
     public class Dropout : ILayer
     {
-        public ImmutableShapedArray<Neuron> Neurons { get; }
+        public ImmutableArray<Neuron> Neurons { get; }
         public Shape Shape { get; }
         public double DropChance { get; }
 
@@ -22,7 +22,7 @@ namespace GNet.Layers
 
             Shape = shape;
             DropChance = dropChance;
-            Neurons = new ImmutableShapedArray<Neuron>(shape, () => new Neuron());
+            Neurons = new ImmutableArray<Neuron>(shape.Volume, () => new Neuron());
             dropArray = new ImmutableArray<bool>();
         }
 

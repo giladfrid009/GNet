@@ -8,7 +8,7 @@ namespace GNet.Layers
     [Serializable]
     public class Pooling : ILayer
     {
-        public ImmutableShapedArray<Neuron> Neurons { get; }
+        public ImmutableArray<Neuron> Neurons { get; }
         public ImmutableArray<int> Strides { get; }
         public ImmutableArray<int> Paddings { get; }
         public Shape InputShape { get; }
@@ -31,7 +31,7 @@ namespace GNet.Layers
 
             PaddedShape = Padder.PadShape(inputShape, Paddings);
 
-            Neurons = new ImmutableShapedArray<Neuron>(outputShape, () => new Neuron());
+            Neurons = new ImmutableArray<Neuron>(outputShape.Volume, () => new Neuron());
         }
 
         public void Connect(ILayer inLayer)
@@ -41,7 +41,7 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(inLayer));
             }
 
-            ImmutableShapedArray<Neuron> padded = Padder.PadShapedArray(inLayer.Neurons, Paddings, () => new Neuron() { OutVal = PadVal });
+            ImmutableShapedArray<Neuron> padded = Padder.PadShapedArray(inLayer.Neurons.ToShape(Shape), Paddings, () => new Neuron() { OutVal = PadVal });
 
             var inConnections = new ImmutableShapedArray<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 

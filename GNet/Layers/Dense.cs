@@ -4,10 +4,13 @@ using GNet.Model;
 namespace GNet.Layers
 {
     [Serializable]
-    public class Dense : TrainableLayer<Neuron>
+    public class Dense : TrainableLayer
     {
+        public override ImmutableArray<Neuron> Neurons { get; }
+
         public Dense(Shape shape, IActivation activation, IInitializer? weightInit = null, IInitializer? biasInit = null) : base(shape, activation, weightInit, biasInit)
         {
+            Neurons = new ImmutableArray<Neuron>(shape.Volume, () => new Neuron());
         }
 
         public override void Connect(ILayer inLayer)

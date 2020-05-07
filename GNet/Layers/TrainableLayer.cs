@@ -4,9 +4,9 @@ using GNet.Model;
 namespace GNet.Layers
 {
     [Serializable]
-    public abstract class TrainableLayer<TNeuron> : ILayer where TNeuron : Neuron, new()
+    public abstract class TrainableLayer : ILayer
     {      
-        public ImmutableShapedArray<Neuron> Neurons { get; }
+        public abstract ImmutableArray<Neuron> Neurons { get; }
         public Shape Shape { get; }
         public IActivation Activation { get; }
         public IInitializer WeightInit { get; }
@@ -19,7 +19,6 @@ namespace GNet.Layers
             Activation = activation;
             WeightInit = weightInit ?? DefaultParams.WeightInit;
             BiasInit = biasInit ?? DefaultParams.BiasInit;
-            Neurons = new ImmutableShapedArray<Neuron>(shape, new TNeuron());
         }
 
         public void Forward(bool isTraining)
