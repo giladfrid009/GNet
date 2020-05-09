@@ -28,16 +28,11 @@ namespace GNet.Normalizers
 
             Min = Min(minI, minT);
             Max = Max(maxI, maxT);
-
-            if (Min == Max)
-            {
-                Max += double.Epsilon;
-            }
         }
 
         public double Normalize(double X)
         {
-            return (X - Min) / (Max - Min);
+            return Min == Max ? 0.0 : (X - Min) / (Max - Min);
         }
     }
 }

@@ -6,12 +6,15 @@ namespace GNet.Optimizers
     {
         public IDecay Decay { get; }
         public double LearningRate { get; }
-        
+        public double Epsilon { get; }
+
         private double epochLr;
 
-        public AdaGrad(double learningRate = 0.01, IDecay? decay = null)
+        //todo: fix, doesn't work
+        public AdaGrad(double learningRate = 0.01, double epsilon = 1e-8, IDecay? decay = null)
         {
             LearningRate = learningRate;
+            Epsilon = epsilon;
             Decay = decay ?? new Decays.None();
         }
 
@@ -23,7 +26,7 @@ namespace GNet.Optimizers
         public double Optimize(IOptimizable O)
         {
             O.Cache1 += O.Gradient * O.Gradient;
-            return -epochLr * O.Gradient / (Sqrt(O.Cache1) + double.Epsilon);
+            return -epochLr * O.Gradient / (Sqrt(O.Cache1) + Epsilon);
         }
     }
 }

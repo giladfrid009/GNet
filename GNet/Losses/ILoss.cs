@@ -6,7 +6,6 @@
 
         double Derivative(double T, double O);
 
-        //todo: idk if i like it
         double IMetric.Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
             int i = 0;

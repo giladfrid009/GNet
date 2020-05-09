@@ -6,12 +6,12 @@ namespace GNet.Losses.Regression
     {
         public double Evaluate(double T, double O)
         {
-            return O - T * Log(O + double.Epsilon);
+            return O - T * Log(O);
         }
 
         public double Derivative(double T, double O)
         {
-            return 1.0 - T / (O + double.Epsilon);
+            return 1.0 - T / O;
         }
     }
 }

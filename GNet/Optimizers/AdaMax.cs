@@ -8,15 +8,17 @@ namespace GNet.Optimizers
         public double LearningRate { get; }
         public double Beta1 { get; }
         public double Beta2 { get; }
-        
+        public double Epsilon { get; }
+
         private double epochLr;
         private double corrDiv1;
 
-        public AdaMax(double learningRate = 0.002, double beta1 = 0.9, double beta2 = 0.999, IDecay? decay = null)
+        public AdaMax(double learningRate = 0.002, double beta1 = 0.9, double beta2 = 0.999, double epsilon = 1e-8, IDecay? decay = null)
         {
             LearningRate = learningRate;
             Beta1 = beta1;
             Beta2 = beta2;
+            Epsilon = epsilon;
             Decay = decay ?? new Decays.None();
         }
 
@@ -31,7 +33,7 @@ namespace GNet.Optimizers
             O.Cache1 = Beta1 * O.Cache1 + (1.0 - Beta1) * O.Gradient;
             O.Cache2 = Max(Beta2 * O.Cache2, Abs(O.Gradient));
             double corr1 = O.Cache1 / corrDiv1;
-            return -epochLr * corr1 / (O.Cache2 + double.Epsilon);
+            return -epochLr * corr1 / (O.Cache2 + Epsilon);
         }
     }
 }

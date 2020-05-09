@@ -12,12 +12,7 @@ namespace GNet.Utils
             rnd = new Random(seed);
         }
 
-        public static int Next()
-        {
-            return rnd.Next();
-        }
-
-        public static int Next(int maxValue)
+        public static int Next(int maxValue = int.MaxValue)
         {
             return rnd.Next(maxValue);
         }
@@ -27,9 +22,9 @@ namespace GNet.Utils
             return rnd.Next(minValue, maxValue);
         }
 
-        public static double NextDouble()
+        public static double NextDouble(double maxValue = 1.0)
         {
-            return rnd.NextDouble();
+            return maxValue * rnd.NextDouble();
         }
 
         public static double NextDouble(double minValue, double maxValue)
@@ -37,14 +32,9 @@ namespace GNet.Utils
             return rnd.NextDouble() * (maxValue - minValue) + minValue;
         }
 
-        public static double NextDouble(double range)
+        public static double NextNormal(double mean = 0.0, double sd = 1.0)
         {
-            return NextDouble(-range, range);
-        }
-
-        public static double NextNormal()
-        {
-            return Sqrt(-2.0 * Log(1.0 - rnd.NextDouble())) * Sin(2.0 * Math.PI * (1.0 - rnd.NextDouble()));
+            return sd * Sqrt(-2.0 * Log(1.0 - rnd.NextDouble())) * Sin(2.0 * PI * (1.0 - rnd.NextDouble())) + mean;
         }
     }
 }

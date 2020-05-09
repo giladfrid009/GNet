@@ -6,12 +6,12 @@ namespace GNet.Losses.Categorical
     {
         public double Evaluate(double T, double O)
         {
-            return -T * Log(O + double.Epsilon);
+            return -T * Log(O);
         }
 
         public double Derivative(double T, double O)
         {
-            return -T / (O + double.Epsilon);
+            return -T / O;
         }
     }
 }

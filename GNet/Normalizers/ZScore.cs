@@ -41,7 +41,7 @@ namespace GNet.Normalizers
                 var += dataset.Sum(D => D.Targets.Sum(X => (X - Avg) * (X - Avg)));
             }
 
-            SD = Sqrt((var + double.Epsilon) / nElems);
+            SD = Sqrt(var / nElems);
         }
 
         public double Normalize(double X)

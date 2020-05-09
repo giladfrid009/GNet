@@ -4,14 +4,15 @@
     {
         public IDecay Decay { get; }
         public double LearningRate { get; }
-        public double MomentumValue { get; }
+        public double Momentum { get; }
+        public double Epsilon { get; }
 
         private double epochLr;
 
         public NestrovMomentum(double learningRate = 0.01, double momentum = 0.9, IDecay? decay = null)
         {
             LearningRate = learningRate;
-            MomentumValue = momentum;
+            Momentum = momentum;
             Decay = decay ?? new Decays.None();
         }
 
@@ -23,8 +24,8 @@
         public double Optimize(IOptimizable O)
         {
             double oldDelta = O.Cache1;
-            O.Cache1 = -epochLr * O.Gradient + MomentumValue * O.Cache1;
-            return (1.0 + MomentumValue) * O.Cache1 - MomentumValue * oldDelta;
+            O.Cache1 = -epochLr * O.Gradient + Momentum * O.Cache1;
+            return (1.0 + Momentum) * O.Cache1 - Momentum * oldDelta;
         }
     }
 }

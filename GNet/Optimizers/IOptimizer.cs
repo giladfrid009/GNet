@@ -2,6 +2,7 @@
 
 namespace GNet
 {
+    //todo: view old optimizer from github and check the epsilon for each one.
     public interface IOptimizer
     {
         IDecay Decay { get; }
