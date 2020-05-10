@@ -9,7 +9,7 @@ namespace GNet.Initializers
         public double Mean { get; }
         public double SD { get; }
 
-        public Normal(double mean = 0.0, double sd = 1.0)
+        public Normal(double mean = 0.0, double sd = 0.05)
         {
             Mean = mean;
             SD = sd;

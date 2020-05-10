@@ -9,7 +9,7 @@ namespace GNet.Initializers
         public double Min { get; }
         public double Max { get; }
 
-        public Uniform(double min = -1.0, double max = 1.0)
+        public Uniform(double min = -0.05, double max = 0.05)
         {
             Min = min;
             Max = max;
