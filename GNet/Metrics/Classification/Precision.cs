@@ -1,10 +1,10 @@
-﻿namespace GNet.Metrics
+﻿namespace GNet.Metrics.Classification
 {
-    public class Recall : IMetric
+    public class Precision : IMetric
     {
         public double Threshold { get; }
 
-        public Recall(double threshold = 0.5)
+        public Precision(double threshold = 0.5)
         {
             Threshold = threshold;
         }
@@ -18,11 +18,11 @@
             {
                 double O = outputs[i++] >= Threshold ? 1.0 : 0.0;
 
-                if (T == 1.0)
+                if (O >= Threshold)
                 {
                     nElems++;
 
-                    if(O >= Threshold)
+                    if(T == 1.0)
                     {
                         return 1.0;
                     }

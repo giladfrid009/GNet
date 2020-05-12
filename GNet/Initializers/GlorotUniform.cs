@@ -9,7 +9,7 @@ namespace GNet.Initializers
     {
         public double Initialize(int nIn, int nOut)
         {
-            return NextDouble(Sqrt(6.0 / (nIn + nOut)));
+            return NextDouble(0.0, Sqrt(6.0 / (nIn + nOut)));
         }
     }
 }

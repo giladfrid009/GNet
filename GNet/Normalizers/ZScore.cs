@@ -4,7 +4,7 @@ namespace GNet.Normalizers
 {
     public class ZScore : INormalizer
     {
-        public double Avg { get; private set; }
+        public double Mean { get; private set; }
         public double SD { get; private set; }
 
         public void UpdateParams(Dataset dataset, bool inputs, bool targets)
@@ -27,18 +27,18 @@ namespace GNet.Normalizers
                 nElems += dataset.TargetShape.Volume * dataset.Length;
             }
 
-            Avg = (sumI + sumT) / nElems;
+            Mean = (sumI + sumT) / nElems;
 
             double var = 0.0;
 
             if (inputs)
             {
-                var += dataset.Sum(D => D.Inputs.Sum(X => (X - Avg) * (X - Avg)));
+                var += dataset.Sum(D => D.Inputs.Sum(X => (X - Mean) * (X - Mean)));
             }
 
             if (targets)
             {
-                var += dataset.Sum(D => D.Targets.Sum(X => (X - Avg) * (X - Avg)));
+                var += dataset.Sum(D => D.Targets.Sum(X => (X - Mean) * (X - Mean)));
             }
 
             SD = Sqrt(var / nElems);
@@ -46,7 +46,7 @@ namespace GNet.Normalizers
 
         public double Normalize(double X)
         {
-            return (X - Avg) / SD;
+            return (X - Mean) / SD;
         }
     }
 }

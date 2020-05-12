@@ -11,7 +11,6 @@ namespace GNet.Optimizers
 
         private double epochLr;
 
-        //todo: fix, doesnt work
         public AdaDelta(double learningRate = 1.0, double rho = 0.95, double epsilon = 1e-08, IDecay? decay = null)
         {
             LearningRate = learningRate;

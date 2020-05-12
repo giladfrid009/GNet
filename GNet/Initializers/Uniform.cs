@@ -6,18 +6,18 @@ namespace GNet.Initializers
     [Serializable]
     public class Uniform : IInitializer
     {
-        public double Min { get; }
-        public double Max { get; }
+        public double MinVal { get; }
+        public double MaxVal { get; }
 
-        public Uniform(double min = -0.05, double max = 0.05)
+        public Uniform(double minVal = -0.05, double maxVal = 0.05)
         {
-            Min = min;
-            Max = max;
+            MinVal = minVal;
+            MaxVal = maxVal;
         }
 
         public double Initialize(int nIn, int nOut)
         {
-            return NextDouble(Min, Max);
+            return NextDouble(MinVal, MaxVal);
         }
     }
 }

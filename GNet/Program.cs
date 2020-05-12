@@ -20,7 +20,7 @@ namespace GNet
             //todo: some optimizers first lead to even worse results. why?
             using (new Logger(net))
             {
-                net.Train(tDataset, new Losses.Categorical.CrossEntropy(), new Optimizers.AdaGrad(), 1, 10000, 0.01, vDataset, new Metrics.Accuracy());
+                net.Train(tDataset, new Losses.Categorical.CrossEntropy(), new Optimizers.AdaDelta(), 20, 100000, 0.01, vDataset, new Metrics.Classification.Accuracy());
             }
 
             Console.ReadKey();

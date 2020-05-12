@@ -4,12 +4,12 @@
     {
         public double Evaluate(double T, double O)
         {
-            return 0.5 * (T - O) * (T - O);
+            return (T - O) * (T - O);
         }
 
         public double Derivative(double T, double O)
         {
-            return O - T;
+            return 2.0 * (O - T);
         }
     }
 }

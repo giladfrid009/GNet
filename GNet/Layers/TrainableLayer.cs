@@ -25,7 +25,7 @@ namespace GNet.Layers
         {
             Neurons.ForEach((N, i) =>
             {
-                N.InVal = N.InVal = N.Bias + N.InSynapses.Sum(S => S.Weight * S.InNeuron.OutVal);
+                N.InVal = N.Bias + N.InSynapses.Sum(S => S.Weight * S.InNeuron.OutVal);
                 N.OutVal = Activation.Activate(N.InVal);
             });
         }
