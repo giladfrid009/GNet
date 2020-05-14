@@ -6,7 +6,7 @@
         {
             int i = 0;
 
-            double mOuts = outputs.Avarage();
+            double avgT = targets.Avarage();
 
             return targets.Sum(T =>
             {
@@ -14,7 +14,7 @@
 
                 return (T - O) * (T - O);
             })
-            / targets.Sum(T => (T - mOuts) * (T - mOuts));
+            / targets.Sum(T => (T - avgT) * (T - avgT));
         }
     }
 }
