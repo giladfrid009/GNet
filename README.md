@@ -1,4 +1,4 @@
-# GNet
+# GNet : The Friendly NN Library
 
 GNet is user friendly, simply written and easily understood library for neural networks.  
 The goal of this project was to create the simplest neural network library possible without sacrificing functionality.
