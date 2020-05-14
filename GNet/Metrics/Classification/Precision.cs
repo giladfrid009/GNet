@@ -22,14 +22,14 @@
                 {
                     nElems++;
 
-                    if(T == 1.0)
+                    if (T == 1.0)
                     {
                         return 1.0;
                     }
                 }
 
                 return 0.0;
-            }) 
+            })
                 / nElems;
         }
     }

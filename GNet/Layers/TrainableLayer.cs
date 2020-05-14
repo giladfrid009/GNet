@@ -1,11 +1,11 @@
-﻿using System;
-using GNet.Model;
+﻿using GNet.Model;
+using System;
 
 namespace GNet.Layers
 {
     [Serializable]
     public abstract class TrainableLayer : ILayer
-    {      
+    {
         public abstract ImmutableArray<Neuron> Neurons { get; }
         public Shape Shape { get; }
         public IActivation Activation { get; }
@@ -69,7 +69,7 @@ namespace GNet.Layers
 
         public void Update()
         {
-            if(IsTrainable == false)
+            if (IsTrainable == false)
             {
                 return;
             }

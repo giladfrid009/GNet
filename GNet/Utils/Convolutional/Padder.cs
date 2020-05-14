@@ -37,11 +37,11 @@ namespace GNet.Utils.Convolutional
                     throw new ArgumentOutOfRangeException($"{nameof(kernelShape)} {nameof(kernelShape.Dims)} [{i}] is out of range.");
                 }
 
-                if(padChannels == false && i == 0)
+                if (padChannels == false && i == 0)
                 {
                     continue;
                 }
-                
+
                 int doublePad = strides[i] * (outputShape.Dims[i] - 1) - inputShape.Dims[i] + kernelShape.Dims[i];
 
                 if (doublePad < 0 || doublePad % 2 != 0)
@@ -49,7 +49,7 @@ namespace GNet.Utils.Convolutional
                     throw new RankException($"Convolution {nameof(inputShape.Rank)} [{i}] params are invalid.");
                 }
 
-                paddings[i] = doublePad / 2;     
+                paddings[i] = doublePad / 2;
             }
 
             return ImmutableArray<int>.FromRef(paddings);
@@ -67,14 +67,14 @@ namespace GNet.Utils.Convolutional
 
         public static ImmutableShapedArray<T> PadShapedArray<T>(ImmutableShapedArray<T> array, ImmutableArray<int> paddings, Func<T> padVal)
         {
-            if(array.Shape.Rank != paddings.Length)
+            if (array.Shape.Rank != paddings.Length)
             {
                 throw new RankException(nameof(array));
             }
 
             Shape paddedShape = PadShape(array.Shape, paddings);
 
-            T[] internalArray = new T[paddedShape.Volume];
+            var internalArray = new T[paddedShape.Volume];
 
             IndexGen.ByStart(array.Shape, paddings).ForEach((idx, i) => internalArray[paddedShape.FlattenIndices(idx)] = array[i]);
 

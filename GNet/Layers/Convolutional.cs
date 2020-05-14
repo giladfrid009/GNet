@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using GNet.Utils.Convolutional;
-using GNet.Model;
+﻿using GNet.Model;
 using GNet.Model.Convolutional;
+using GNet.Utils.Convolutional;
+using System;
+using System.Collections.Generic;
 
 namespace GNet.Layers
 {
@@ -20,7 +20,7 @@ namespace GNet.Layers
         public double PadVal { get; }
 
 
-        public Convolutional(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IActivation activation, IInitializer? weightInit = null, IInitializer? biasInit = null, double padVal = 0.0) 
+        public Convolutional(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IActivation activation, IInitializer? weightInit = null, IInitializer? biasInit = null, double padVal = 0.0)
             : base(outputShape, activation, weightInit, biasInit)
         {
             ValidateChannels(inputShape, outputShape, kernelShape, strides);

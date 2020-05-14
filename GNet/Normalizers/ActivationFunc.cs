@@ -16,6 +16,6 @@
         public double Normalize(double X)
         {
             return Activation.Activate(X);
-        }        
+        }
     }
 }

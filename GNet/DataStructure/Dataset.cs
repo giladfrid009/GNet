@@ -15,7 +15,7 @@ namespace GNet
 
         public Dataset(ImmutableArray<Data> dataCollection)
         {
-            if(dataCollection.Length == 0)
+            if (dataCollection.Length == 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(dataCollection));
             }
@@ -41,7 +41,7 @@ namespace GNet
 
         public void Normalize(INormalizer normalizer, bool inputs, bool targets)
         {
-            if(!inputs && !targets)
+            if (!inputs && !targets)
             {
                 return;
             }

@@ -1,6 +1,6 @@
-﻿using System;
-using GNet.Model;
+﻿using GNet.Model;
 using GNet.Utils;
+using System;
 
 namespace GNet.Layers
 {
@@ -83,7 +83,7 @@ namespace GNet.Layers
             {
                 Neurons.ForEach((N, i) => N.OutVal = N.InVal);
             }
-        }   
+        }
 
         public void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
@@ -106,7 +106,7 @@ namespace GNet.Layers
 
         public void Update()
         {
-            dropArray = new ImmutableArray<bool>(Shape.Volume, () => GRandom.NextDouble(0, 1) <= DropChance);
+            dropArray = new ImmutableArray<bool>(Shape.Volume, () => GRandom.Uniform(0, 1) <= DropChance);
         }
     }
 }

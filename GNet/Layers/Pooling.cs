@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using GNet.Model;
+﻿using GNet.Model;
 using GNet.Utils.Convolutional;
+using System;
+using System.Collections.Generic;
 
 namespace GNet.Layers
 {
@@ -104,6 +104,6 @@ namespace GNet.Layers
 
         public void Update()
         {
-        }       
+        }
     }
 }

@@ -2,7 +2,7 @@
 {
     public static class DefaultParams
     {
-        public static IInitializer WeightInit { get; set; } 
+        public static IInitializer WeightInit { get; set; }
         public static IInitializer BiasInit { get; set; }
 
         static DefaultParams()

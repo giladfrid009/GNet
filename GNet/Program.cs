@@ -10,7 +10,7 @@ namespace GNet
             Dataset tDataset = datasetGenerator.Generate(100);
             Dataset vDataset = datasetGenerator.Generate(50);
 
-            Network net = new Network
+            var net = new Network
             (
                 new Layers.Dense(new Shape(6), new Activations.Identity()),
                 new Layers.Dense(new Shape(5), new Activations.Sigmoid()),

@@ -13,7 +13,7 @@ namespace GNet.Normalizers
             double sumI = 0.0;
             double sumT = 0.0;
 
-            if(inputs)
+            if (inputs)
             {
                 sumI = dataset.Sum(D => D.Inputs.Sum());
 

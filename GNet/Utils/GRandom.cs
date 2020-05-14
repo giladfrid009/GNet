@@ -5,12 +5,9 @@ namespace GNet.Utils
 {
     public static class GRandom
     {
-        private static Random rnd;
+        private const double Tau = 2.0 * PI;
 
-        static GRandom()
-        {
-            rnd = new Random();
-        }
+        private static Random rnd = new Random();
 
         public static void SetSeed(int seed)
         {
@@ -22,34 +19,43 @@ namespace GNet.Utils
             return rnd.Next();
         }
 
-        public static int Next(int maxValue)
-        {
-            return rnd.Next(maxValue);
-        }
-
         public static int Next(int minValue, int maxValue)
         {
             return rnd.Next(minValue, maxValue);
         }
 
-        public static double NextDouble()
+        public static double Uniform()
         {
             return rnd.NextDouble();
         }
 
-        public static double NextDouble(double minValue, double maxValue)
+        public static double Uniform(double minValue, double maxValue)
         {
             return rnd.NextDouble() * (maxValue - minValue) + minValue;
         }
 
-        public static double NextNormal()
+        public static double Normal()
         {
-            return Sqrt(-2.0 * Log(1.0 - rnd.NextDouble())) * Sin(2.0 * PI * (1.0 - rnd.NextDouble()));
+            return Sqrt(-2.0 * Log(rnd.NextDouble())) * Sin(Tau * rnd.NextDouble());
         }
 
-        public static double NextNormal(double mean, double sd)
+        public static double Normal(double mean, double sd)
         {
-            return sd * NextNormal() + mean;
+            return sd * Normal() + mean;
+        }
+
+        public static double TruncNormal(double mean, double sd, double margin)
+        {
+            if (margin <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(margin));
+            }
+
+            double n = rnd.NextDouble();
+
+            double mVal = Exp((mean - margin) * (margin - mean) / (2.0 * sd * sd * Sin(n * Tau) * Sin(n * Tau)));
+
+            return sd * Sqrt(-2.0 * Log(Uniform(mVal, 1.0))) * Sin(Tau * n) + mean;
         }
     }
 }

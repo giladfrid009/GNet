@@ -24,7 +24,7 @@ namespace GNet.Utils.Convolutional
 
             for (int i = 0; i < shape.Rank; i++)
             {
-                if(start[i] < 0)
+                if (start[i] < 0)
                 {
                     throw new ArgumentOutOfRangeException($"{nameof(start)} [{i}] is out of range.");
                 }

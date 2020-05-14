@@ -11,7 +11,7 @@ namespace GNet.Normalizers
             double maxI = 0.0;
             double maxT = 0.0;
 
-            if(inputs)
+            if (inputs)
             {
                 maxI = dataset.Max(D => D.Inputs.Max(X => Abs(X)));
             }

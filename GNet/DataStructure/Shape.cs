@@ -82,24 +82,24 @@ namespace GNet
 
         public bool Equals(Shape? other)
         {
-            if(other is null)
+            if (other is null)
             {
                 return false;
             }
 
-            if(ReferenceEquals(this, other))
+            if (ReferenceEquals(this, other))
             {
                 return true;
             }
 
-            if(Rank != other.Rank)
+            if (Rank != other.Rank)
             {
                 return false;
             }
 
             for (int i = 0; i < Rank; i++)
             {
-                if(Dims[i] != other.Dims[i])
+                if (Dims[i] != other.Dims[i])
                 {
                     return false;
                 }

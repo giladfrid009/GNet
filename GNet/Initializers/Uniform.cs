@@ -1,5 +1,5 @@
-﻿using System;
-using static GNet.Utils.GRandom;
+﻿using GNet.Utils;
+using System;
 
 namespace GNet.Initializers
 {
@@ -17,7 +17,7 @@ namespace GNet.Initializers
 
         public double Initialize(int nIn, int nOut)
         {
-            return NextDouble(MinVal, MaxVal);
+            return GRandom.Uniform(MinVal, MaxVal);
         }
     }
 }

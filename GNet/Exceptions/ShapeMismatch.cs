@@ -12,6 +12,10 @@ namespace GNet
         public ShapeMismatchException(string? messege) : base(messege)
         {
         }
+
+        public ShapeMismatchException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
     }
-    
+
 }

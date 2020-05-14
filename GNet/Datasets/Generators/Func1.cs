@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GNet.Utils;
+using System;
 
 namespace GNet.Datasets.Generators
 {
@@ -25,7 +26,7 @@ namespace GNet.Datasets.Generators
 
                 while (res == 0)
                 {
-                    num = Utils.GRandom.NextDouble();
+                    num = GRandom.Uniform();
                     res = Func(num);
                 }
 

@@ -33,7 +33,7 @@ namespace GNet
         public Network(params ILayer[] layers) : this(new ImmutableArray<ILayer>(layers))
         {
         }
-       
+
         private void Connect()
         {
             for (int i = 1; i < Length; i++)
@@ -155,7 +155,7 @@ namespace GNet
             optimizer.UpdateParams(epoch);
 
             for (int i = 1; i < Length; i++)
-            {       
+            {
                 Layers[i].Optimize(optimizer);
             }
         }
@@ -163,8 +163,8 @@ namespace GNet
         private void Update()
         {
             for (int i = 1; i < Length; i++)
-            {         
-                Layers[i].Update();             
+            {
+                Layers[i].Update();
             }
         }
 

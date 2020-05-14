@@ -1,5 +1,5 @@
-﻿using System;
-using GNet.Model;
+﻿using GNet.Model;
+using System;
 
 namespace GNet.Layers
 {

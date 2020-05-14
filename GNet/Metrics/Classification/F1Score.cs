@@ -23,7 +23,7 @@
                     return 0.0;
                 }
 
-                if(T == 1.0 && O == 1.0)
+                if (T == 1.0 && O == 1.0)
                 {
                     nElems += 2;
                     return 2.0;
@@ -31,7 +31,7 @@
 
                 nElems++;
                 return 0.0;
-            }) 
+            })
                 / nElems;
         }
     }

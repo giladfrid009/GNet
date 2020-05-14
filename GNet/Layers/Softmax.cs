@@ -7,7 +7,7 @@ namespace GNet.Layers
         public Softmax(Shape shape, IInitializer? weightInit = null, IInitializer? biasInit = null) : base(shape, new Activations.Identity(), weightInit, biasInit)
         {
         }
-        
+
         public override void Input(ImmutableShapedArray<double> values, bool isTraining)
         {
             if (values.Shape != Shape)
