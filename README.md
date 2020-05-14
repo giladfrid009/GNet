@@ -36,14 +36,14 @@ private static void Main()
     using (new Logger(net))
     {
         // Here we train the network. 
-        // We use the tDataset to train it
-        // The loss of out choice is Categorical CrossEntropy
-        // The optimizer we chose is AdaGradWindow
-        // We selected 10 as our batch size
-        // Maximum number of epoches is 1000
-        // The target error is 0.01
-        // We use vDataset to validate and evaluate out network
-        // Accuracy is the metric we chose to use. We can use losses as metrics as well.
+        // - We use the tDataset to train it
+        // - The loss of our choice is Categorical CrossEntropy
+        // - The optimizer we chose is AdaGradWindow
+        // - We selected 10 as our batch size
+        // - Maximum number of epoches is 1000
+        // - The target error is 0.01
+        // - We use vDataset to validate and evaluate out network
+        // - Accuracy is the metric we chose to use. We can use losses as metrics as well.
         net.Train(tDataset, new Losses.Categorical.CrossEntropy(), new Optimizers.AdaGradWindow(), 
           10, 1000, 0.01, vDataset, new Metrics.Classification.Accuracy());
     }
