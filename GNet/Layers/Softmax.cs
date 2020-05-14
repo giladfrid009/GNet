@@ -1,46 +1,14 @@
-﻿using GNet.Model;
-using static System.Math;
+﻿using static System.Math;
 
 namespace GNet.Layers
 {
-    public class Softmax : ILayer
+    public class Softmax : Dense
     {
-        public ImmutableArray<Neuron> Neurons { get; }
-        public Shape Shape { get; }
-        public IInitializer WeightInit { get; }
-        public IInitializer BiasInit { get; }
-        public bool IsTrainable { get; set; } = true;
-
-        public Softmax(Shape shape, IInitializer? weightInit = null, IInitializer? biasInit = null)
+        public Softmax(Shape shape, IInitializer? weightInit = null, IInitializer? biasInit = null) : base(shape, new Activations.Identity(), weightInit, biasInit)
         {
-            Shape = shape;
-            WeightInit = weightInit ?? DefaultParams.WeightInit;
-            BiasInit = biasInit ?? DefaultParams.BiasInit;
-            Neurons = new ImmutableArray<Neuron>(shape.Volume, () => new Neuron());      
         }
-
-        //todo: same as dense layer
-        public void Connect(ILayer inLayer)
-        {
-            Neurons.ForEach(N => N.InSynapses = inLayer.Neurons.Select(inN => new Synapse(inN, N)));
-
-            inLayer.Neurons.ForEach((inN, i) => inN.OutSynapses = Neurons.Select(outN => outN.InSynapses[i]));
-        }
-
-        //todo: same as dense layer
-        public void Initialize()
-        {
-            int inLength = Neurons[0].InSynapses.Length;
-            int outLength = Shape.Volume;
-
-            Neurons.ForEach(N =>
-            {
-                N.Bias = BiasInit.Initialize(inLength, outLength);
-                N.InSynapses.ForEach(S => S.Weight = WeightInit.Initialize(inLength, outLength));
-            });
-        }
-
-        public void Input(ImmutableShapedArray<double> values, bool isTraining)
+        
+        public override void Input(ImmutableShapedArray<double> values, bool isTraining)
         {
             if (values.Shape != Shape)
             {
@@ -59,7 +27,7 @@ namespace GNet.Layers
             Neurons.ForEach(N => N.OutVal /= eSum);
         }
 
-        public void Forward(bool isTraining)
+        public override void Forward(bool isTraining)
         {
             double eSum = 0.0;
 
@@ -73,7 +41,7 @@ namespace GNet.Layers
             Neurons.ForEach(N => N.OutVal /= eSum);
         }
 
-        public void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
+        public override void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
             if (targets.Shape != Shape)
             {
@@ -95,7 +63,7 @@ namespace GNet.Layers
             });
         }
 
-        public void CalcGrads()
+        public override void CalcGrads()
         {
             double gSum = 0.0;
 
@@ -109,42 +77,6 @@ namespace GNet.Layers
             {
                 N.Gradient = N.OutVal * (N.Gradient - gSum);
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.OutVal);
-            });
-        }
-
-        //todo: same as trainable layer
-        public void Optimize(IOptimizer optimizer)
-        {
-            if (IsTrainable == false)
-            {
-                return;
-            }
-
-            Neurons.ForEach(N =>
-            {
-                N.BatchDelta += optimizer.Optimize(N);
-                N.InSynapses.ForEach(S => S.BatchDelta += optimizer.Optimize(S));
-            });
-        }
-
-        //todo: same as trainable layer
-        public void Update()
-        {
-            if (IsTrainable == false)
-            {
-                return;
-            }
-
-            Neurons.ForEach(N =>
-            {
-                N.Bias += N.BatchDelta;
-                N.BatchDelta = 0.0;
-
-                N.InSynapses.ForEach(S =>
-                {
-                    S.Weight += S.BatchDelta;
-                    S.BatchDelta = 0.0;
-                });
             });
         }
     }

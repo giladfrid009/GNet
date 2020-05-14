@@ -21,7 +21,7 @@ namespace GNet.Layers
             BiasInit = biasInit ?? DefaultParams.BiasInit;
         }
 
-        public void Forward(bool isTraining)
+        public virtual void Forward(bool isTraining)
         {
             Neurons.ForEach((N, i) =>
             {
@@ -30,7 +30,7 @@ namespace GNet.Layers
             });
         }
 
-        public void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
+        public virtual void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
             if (targets.Shape != Shape)
             {
@@ -44,7 +44,7 @@ namespace GNet.Layers
             });
         }
 
-        public void CalcGrads()
+        public virtual void CalcGrads()
         {
             Neurons.ForEach((N, i) =>
             {
