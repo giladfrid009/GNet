@@ -62,6 +62,53 @@ namespace GNet
             return Layers[Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
         }
 
+        private void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
+        {
+            Layers[Length - 1].CalcGrads(loss, targets);
+
+            for (int i = Length - 2; i > 0; i--)
+            {
+                Layers[i].CalcGrads();
+            }
+        }
+
+        private void Optimize(IOptimizer optimizer, int epoch)
+        {
+            optimizer.UpdateParams(epoch);
+
+            for (int i = 1; i < Length; i++)
+            {
+                Layers[i].Optimize(optimizer);
+            }
+        }
+
+        private void Update()
+        {
+            for (int i = 1; i < Length; i++)
+            {
+                Layers[i].Update();
+            }
+        }
+
+        private void ResetCache()
+        {
+            Layers.ForEach(L => L.Neurons.ForEach(N =>
+            {
+                N.BatchDelta = 0.0;
+                N.Cache1 = 0.0;
+                N.Cache2 = 0.0;
+                N.Gradient = 0.0;
+
+                N.InSynapses.ForEach(S =>
+                {
+                    S.BatchDelta = 0.0;
+                    S.Cache1 = 0.0;
+                    S.Cache2 = 0.0;
+                    S.Gradient = 0.0;
+                });
+            }));
+        }
+
         public ImmutableShapedArray<double> Forward(ImmutableShapedArray<double> inputs)
         {
             return Forward(inputs, false);
@@ -138,53 +185,6 @@ namespace GNet
         public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int nEpoches, double minError, bool shuffle = true)
         {
             Train(dataset, loss, optimizer, batchSize, nEpoches, minError, dataset, loss, shuffle);
-        }
-
-        private void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
-        {
-            Layers[Length - 1].CalcGrads(loss, targets);
-
-            for (int i = Length - 2; i > 0; i--)
-            {
-                Layers[i].CalcGrads();
-            }
-        }
-
-        private void Optimize(IOptimizer optimizer, int epoch)
-        {
-            optimizer.UpdateParams(epoch);
-
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Optimize(optimizer);
-            }
-        }
-
-        private void Update()
-        {
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Update();
-            }
-        }
-
-        private void ResetCache()
-        {
-            Layers.ForEach(L => L.Neurons.ForEach(N =>
-            {
-                N.BatchDelta = 0.0;
-                N.Cache1 = 0.0;
-                N.Cache2 = 0.0;
-                N.Gradient = 0.0;
-
-                N.InSynapses.ForEach(S =>
-                {
-                    S.BatchDelta = 0.0;
-                    S.Cache1 = 0.0;
-                    S.Cache2 = 0.0;
-                    S.Gradient = 0.0;
-                });
-            }));
         }
     }
 }

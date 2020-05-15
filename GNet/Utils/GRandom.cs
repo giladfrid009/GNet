@@ -53,9 +53,9 @@ namespace GNet.Utils
 
             double n = rnd.NextDouble();
 
-            double mVal = Exp((mean - margin) * (margin - mean) / (2.0 * sd * sd * Sin(n * Tau) * Sin(n * Tau)));
+            double minVal = Exp(-0.5 * Pow((mean - margin) / (sd * Sin(n * Tau)), 2.0));
 
-            return sd * Sqrt(-2.0 * Log(Uniform(mVal, 1.0))) * Sin(Tau * n) + mean;
+            return sd * Sqrt(-2.0 * Log(Uniform(minVal, 1.0))) * Sin(Tau * n) + mean;
         }
     }
 }

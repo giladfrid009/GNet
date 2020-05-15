@@ -43,6 +43,16 @@ namespace GNet
         {
         }
 
+        public static bool operator !=(Shape? left, Shape? right)
+        {
+            return !(left == right);
+        }
+
+        public static bool operator ==(Shape? left, Shape? right)
+        {
+            return left?.Equals(right) ?? ReferenceEquals(left, right);
+        }
+
         public int FlattenIndices(params int[] indices)
         {
             int length = indices.Length;
@@ -68,16 +78,6 @@ namespace GNet
             }
 
             return flat;
-        }
-
-        public static bool operator !=(Shape? left, Shape? right)
-        {
-            return !(left == right);
-        }
-
-        public static bool operator ==(Shape? left, Shape? right)
-        {
-            return left?.Equals(right) ?? ReferenceEquals(left, right);
         }
 
         public bool Equals(Shape? other)

@@ -11,7 +11,6 @@
 
         public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
-
             int i = 0;
 
             return 1.0 - targets.Avarage(T =>

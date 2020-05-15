@@ -1,5 +1,4 @@
-﻿
-namespace GNet.Activations
+﻿namespace GNet.Activations
 {
     public class HardTanh : IActivation
     {

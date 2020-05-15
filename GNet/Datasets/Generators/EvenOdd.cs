@@ -38,18 +38,18 @@ namespace GNet.Datasets.Generators
 
                 bool isEven = zeroCount % 2 == 0;
 
-                ImmutableShapedArray<double> output;
+                double[] outArr;
 
                 if (IsBinary)
                 {
-                    output = new ImmutableShapedArray<double>(isEven ? new double[] { 1.0, 0.0 } : new double[] { 0.0, 1.0 });
+                    outArr = isEven ? new double[] { 1.0, 0.0 } : new double[] { 0.0, 1.0 };
                 }
                 else
                 {
-                    output = new ImmutableShapedArray<double>(isEven ? 1.0 : 0.0);
+                    outArr = isEven ? new double[] { 1.0 } : new double[] { 0.0 };
                 }
 
-                dataCollection[i] = new Data(input, output);
+                dataCollection[i] = new Data(input, ImmutableShapedArray<double>.FromRef(TargetShape, outArr));
             }
 
             return new Dataset(ImmutableArray<Data>.FromRef(dataCollection));

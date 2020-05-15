@@ -19,7 +19,6 @@ namespace GNet.Layers
         public int KernelsNum { get; }
         public double PadVal { get; }
 
-
         public Convolutional(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IActivation activation, IInitializer? weightInit = null, IInitializer? biasInit = null, double padVal = 0.0)
             : base(outputShape, activation, weightInit, biasInit)
         {
