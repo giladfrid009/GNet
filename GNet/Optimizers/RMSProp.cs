@@ -27,7 +27,7 @@ namespace GNet.Optimizers
         public double Optimize(IOptimizable O)
         {
             O.Cache1 = Rho * O.Cache1 + (1.0 - Rho) * O.Gradient * O.Gradient;
-            return -epochLr * O.Gradient / (Sqrt(O.Cache1) + Epsilon);
+            return -epochLr * O.Gradient / Sqrt(O.Cache1 + Epsilon);
         }
     }
 }

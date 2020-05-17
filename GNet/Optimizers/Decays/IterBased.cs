@@ -1,10 +1,10 @@
 ﻿namespace GNet.Optimizers.Decays
 {
-    public class IterationBased : IDecay
+    public class IterBased : IDecay
     {
         public double Decay { get; }
 
-        public IterationBased(double decay)
+        public IterBased(double decay)
         {
             Decay = decay;
         }

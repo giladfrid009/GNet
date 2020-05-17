@@ -34,9 +34,9 @@ namespace GNet.Optimizers
         {
             O.Cache1 = Beta1 * O.Cache1 + (1.0 - Beta1) * O.Gradient;
             O.Cache2 = Beta2 * O.Cache2 + (1.0 - Beta2) * O.Gradient * O.Gradient;
-            double corr1 = O.Cache1 / corrDiv1 + (1.0 - Beta1) * O.Gradient / corrDiv1;
-            double corr2 = O.Cache2 / corrDiv2;
-            return -epochLr * corr1 / (Sqrt(corr2) + Epsilon);
+            double biasCorr1 = O.Cache1 / corrDiv1 + (1.0 - Beta1) * O.Gradient / corrDiv1;
+            double biasCorr2 = O.Cache2 / corrDiv2;
+            return -epochLr * biasCorr1 / Sqrt(biasCorr2 + Epsilon);
         }
     }
 }

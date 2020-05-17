@@ -10,7 +10,7 @@ namespace GNet.Initializers
         public double SD { get; }
         public double Margin { get; }
 
-        public TruncNormal(double mean = 0.0, double sd = 0.05, double margin = 2.0)
+        public TruncNormal(double mean = 0.0, double sd = 0.05, double margin = 0.1)
         {
             Mean = mean;
             SD = sd;

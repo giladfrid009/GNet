@@ -51,11 +51,11 @@ namespace GNet.Utils
                 throw new ArgumentOutOfRangeException(nameof(margin));
             }
 
-            double n = rnd.NextDouble();
+            double rndVal = rnd.NextDouble();
 
-            double minVal = Exp(-0.5 * Pow((mean - margin) / (sd * Sin(n * Tau)), 2.0));
+            double minVal = Exp(-0.5 * Pow((mean - margin) / (sd * Sin(rndVal * Tau)), 2.0));
 
-            return sd * Sqrt(-2.0 * Log(Uniform(minVal, 1.0))) * Sin(Tau * n) + mean;
+            return sd * Sqrt(-2.0 * Log(Uniform(minVal, 1.0))) * Sin(Tau * rndVal) + mean;
         }
     }
 }

@@ -10,7 +10,6 @@ namespace GNet.Optimizers
 
         private double epochLr;
 
-        //todo: fix, doesn't work
         public AdaGrad(double learningRate = 0.01, double epsilon = 1e-8, IDecay? decay = null)
         {
             LearningRate = learningRate;
@@ -26,7 +25,7 @@ namespace GNet.Optimizers
         public double Optimize(IOptimizable O)
         {
             O.Cache1 += O.Gradient * O.Gradient;
-            return -epochLr * O.Gradient / (Sqrt(O.Cache1) + Epsilon);
+            return -epochLr * O.Gradient / Sqrt(O.Cache1 + Epsilon);
         }
     }
 }

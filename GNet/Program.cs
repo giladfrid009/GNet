@@ -1,5 +1,4 @@
-﻿using GNet.Utils;
-using System;
+﻿using System;
 
 namespace GNet
 {
