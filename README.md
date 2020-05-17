@@ -1,3 +1,5 @@
+# GNet : Make ML Easy
+
 <p align="center">
   <img src="https://github.com/giladfrid009/GNet/blob/master/GNet_Logo.png"/>
 </p>
