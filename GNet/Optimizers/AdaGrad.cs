@@ -22,7 +22,7 @@ namespace GNet.Optimizers
             epochLr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
         }
 
-        public double Optimize(IOptimizable O)
+        public double Optimize(TrainableObj O)
         {
             O.Cache1 += O.Gradient * O.Gradient;
             return -epochLr * O.Gradient / Sqrt(O.Cache1 + Epsilon);

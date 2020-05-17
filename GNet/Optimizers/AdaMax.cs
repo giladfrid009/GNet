@@ -28,7 +28,7 @@ namespace GNet.Optimizers
             corrDiv = 1.0 - Pow(Beta1, epoch + 1.0);
         }
 
-        public double Optimize(IOptimizable O)
+        public double Optimize(TrainableObj O)
         {
             O.Cache1 = Beta1 * O.Cache1 + (1.0 - Beta1) * O.Gradient;
             O.Cache2 = Max(Beta2 * O.Cache2, Abs(O.Gradient));

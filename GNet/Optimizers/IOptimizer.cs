@@ -9,6 +9,6 @@ namespace GNet
 
         public void UpdateParams(int epoch);
 
-        double Optimize(IOptimizable obj);
+        double Optimize(TrainableObj obj);
     }
 }

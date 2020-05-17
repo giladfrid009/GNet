@@ -21,7 +21,7 @@
             epochLr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
         }
 
-        public double Optimize(IOptimizable O)
+        public double Optimize(TrainableObj O)
         {
             double oldDelta = O.Cache1;
             O.Cache1 = -epochLr * O.Gradient + Momentum * O.Cache1;

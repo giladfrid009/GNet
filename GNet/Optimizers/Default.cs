@@ -18,7 +18,7 @@
             epochLr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
         }
 
-        public double Optimize(IOptimizable O)
+        public double Optimize(TrainableObj O)
         {
             return -epochLr * O.Gradient;
         }

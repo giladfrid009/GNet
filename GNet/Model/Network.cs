@@ -94,18 +94,9 @@ namespace GNet
         {
             Layers.ForEach(L => L.Neurons.ForEach(N =>
             {
-                N.BatchDelta = 0.0;
-                N.Cache1 = 0.0;
-                N.Cache2 = 0.0;
-                N.Gradient = 0.0;
+                N.ClearCache();
 
-                N.InSynapses.ForEach(S =>
-                {
-                    S.BatchDelta = 0.0;
-                    S.Cache1 = 0.0;
-                    S.Cache2 = 0.0;
-                    S.Gradient = 0.0;
-                });
+                N.InSynapses.ForEach(S => S.ClearCache());
             }));
         }
 

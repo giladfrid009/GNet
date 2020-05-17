@@ -30,7 +30,7 @@ namespace GNet.Optimizers
             corrDiv2 = 1.0 - Pow(Beta2, epoch + 1.0);
         }
 
-        public double Optimize(IOptimizable O)
+        public double Optimize(TrainableObj O)
         {
             O.Cache1 = Beta1 * O.Cache1 + (1.0 - Beta1) * O.Gradient;
             O.Cache2 = Beta2 * O.Cache2 + (1.0 - Beta2) * O.Gradient * O.Gradient;
