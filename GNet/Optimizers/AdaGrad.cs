@@ -4,7 +4,7 @@ namespace GNet.Optimizers
 {
     public class AdaGrad : IOptimizer
     {
-        public IDecay Decay { get; }
+        public IDecay? Decay { get; }
         public double LearningRate { get; }
         public double Epsilon { get; }
 
@@ -14,12 +14,12 @@ namespace GNet.Optimizers
         {
             LearningRate = learningRate;
             Epsilon = epsilon;
-            Decay = decay ?? new Decays.None();
+            Decay = decay;
         }
 
         public void UpdateParams(int epoch)
         {
-            epochLr = Decay.Compute(LearningRate, epoch);
+            epochLr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
         }
 
         public double Optimize(IOptimizable O)

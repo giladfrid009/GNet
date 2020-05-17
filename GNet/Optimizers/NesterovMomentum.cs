@@ -2,7 +2,7 @@
 {
     public class NesterovMomentum : IOptimizer
     {
-        public IDecay Decay { get; }
+        public IDecay? Decay { get; }
         public double LearningRate { get; }
         public double Momentum { get; }
         public double Epsilon { get; }
@@ -13,12 +13,12 @@
         {
             LearningRate = learningRate;
             Momentum = momentum;
-            Decay = decay ?? new Decays.None();
+            Decay = decay;
         }
 
         public void UpdateParams(int epoch)
         {
-            epochLr = Decay.Compute(LearningRate, epoch);
+            epochLr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
         }
 
         public double Optimize(IOptimizable O)

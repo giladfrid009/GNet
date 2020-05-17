@@ -4,7 +4,7 @@ namespace GNet.Optimizers
 {
     public class AdaMax : IOptimizer
     {
-        public IDecay Decay { get; }
+        public IDecay? Decay { get; }
         public double LearningRate { get; }
         public double Beta1 { get; }
         public double Beta2 { get; }
@@ -19,12 +19,12 @@ namespace GNet.Optimizers
             Beta1 = beta1;
             Beta2 = beta2;
             Epsilon = epsilon;
-            Decay = decay ?? new Decays.None();
+            Decay = decay;
         }
 
         public void UpdateParams(int epoch)
         {
-            epochLr = Decay.Compute(LearningRate, epoch);
+            epochLr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
             corrDiv = 1.0 - Pow(Beta1, epoch + 1.0);
         }
 

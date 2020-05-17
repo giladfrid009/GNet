@@ -2,27 +2,27 @@
 {
     public class Momentum : IOptimizer
     {
-        public IDecay Decay { get; }
+        public IDecay? Decay { get; }
         public double LearningRate { get; }
         public double MomentumValue { get; }
 
-        private double EpochLr;
+        private double epochLr;
 
         public Momentum(double learningRate = 0.01, double momentum = 0.9, IDecay? decay = null)
         {
             LearningRate = learningRate;
             MomentumValue = momentum;
-            Decay = decay ?? new Decays.None();
+            Decay = decay;
         }
 
         public void UpdateParams(int epoch)
         {
-            EpochLr = Decay.Compute(LearningRate, epoch);
+            epochLr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
         }
 
         public double Optimize(IOptimizable O)
         {
-            O.Cache1 = -EpochLr * O.Gradient + MomentumValue * O.Cache1;
+            O.Cache1 = -epochLr * O.Gradient + MomentumValue * O.Cache1;
             return O.Cache1;
         }
     }
