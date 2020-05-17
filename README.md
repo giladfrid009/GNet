@@ -66,3 +66,6 @@ private static void Main()
     Console.ReadKey();
 }
 ```
+## License
+This project uses the MIT license.
+See [LICENSE](https://github.com/giladfrid009/GNet/blob/master/LICENSE) for more information.
