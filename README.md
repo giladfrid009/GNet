@@ -1,4 +1,7 @@
-# GNet
+<p align="center">
+  <img src="https://github.com/giladfrid009/GNet/blob/master/GNet_Logo.png"/>
+</p>
+
 GNet is user friendly, simply written and easily understood library for neural networks.  
 The goal of this project was to create the simplest neural network library possible without sacrificing functionality.
 Also, extensibility was taken into the mind, so it's very easy to implement your own additions to this library.
