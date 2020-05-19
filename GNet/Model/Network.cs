@@ -90,12 +90,11 @@ namespace GNet
             }
         }
 
-        private void ResetCache()
+        private void ClearCache()
         {
             Layers.ForEach(L => L.Neurons.ForEach(N =>
             {
                 N.ClearCache();
-
                 N.InSynapses.ForEach(S => S.ClearCache());
             }));
         }
@@ -132,7 +131,7 @@ namespace GNet
                 throw new ShapeMismatchException($"{nameof(valDataset)} {nameof(dataset.TargetShape)}");
             }
 
-            ResetCache();
+            ClearCache();
 
             double valError = Validate(valDataset, metric);
             int epoch;

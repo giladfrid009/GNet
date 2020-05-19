@@ -20,8 +20,8 @@ namespace GNet
 
             using (new Logger(net))
             {
-                net.Train(tDataset, new Losses.Categorical.CrossEntropy(), new Optimizers.AdaGradWindow(), 
-                    10, 1000, 0.01, vDataset, new Metrics.Classification.Accuracy());
+                net.Train(tDataset, new Losses.Regression.MSE(), new Optimizers.AdaGradWindow(), 
+                    1, 1000, 0.01, vDataset, new Metrics.Classification.Accuracy());
             }
 
             Console.ReadKey();

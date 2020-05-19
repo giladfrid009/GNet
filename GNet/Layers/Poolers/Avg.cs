@@ -4,7 +4,7 @@ using System;
 namespace GNet.Layers.Poolers
 {
     [Serializable]
-    public class Avarage : IPooler
+    public class Avg : IPooler
     {
         public ImmutableArray<double> CalcWeights(ImmutableArray<Synapse> inSynapses)
         {
