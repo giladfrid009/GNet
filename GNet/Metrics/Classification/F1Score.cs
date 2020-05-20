@@ -11,12 +11,11 @@
 
         public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
-            int i = 0;
             int nElems = 0;
 
-            return 1.0 - targets.Sum(T =>
+            return 1.0 - targets.Sum(outputs, (T, O) =>
             {
-                double O = outputs[i++] >= Threshold ? 1.0 : 0.0;
+                O = O >= Threshold ? 1.0 : 0.0;
 
                 if (T == 0.0 && O == 0.0)
                 {

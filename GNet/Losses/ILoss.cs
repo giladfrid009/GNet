@@ -8,8 +8,7 @@
 
         double IMetric.Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
-            int i = 0;
-            return targets.Avarage(T => Evaluate(T, outputs[i++]));
+            return targets.Avarage(outputs, (T, O) => Evaluate(T, O));
         }
     }
 }

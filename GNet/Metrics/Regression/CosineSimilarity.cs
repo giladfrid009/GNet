@@ -6,9 +6,7 @@ namespace GNet.Metrics.Regression
     {
         public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
-            int i = 0;
-
-            double dotProd = targets.Sum(T => T * outputs[i++]);
+            double dotProd = targets.Sum(outputs, (T, O) => T * O);
 
             return dotProd / (Sqrt(targets.Sum(T => T * T)) + Sqrt(outputs.Sum(O => O * O)));
         }
