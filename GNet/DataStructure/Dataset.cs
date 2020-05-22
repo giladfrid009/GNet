@@ -9,7 +9,7 @@ namespace GNet
         public Shape TargetShape { get; }
         public int Length { get; }
 
-        public Data this[int index] => dataCollection[index];
+        public Data this[int i] => dataCollection[i];
 
         private ImmutableArray<Data> dataCollection;
 

@@ -4,12 +4,7 @@ namespace GNet.Metrics.Regression
 {
     public class RMSE : IMetric
     {
-        private static readonly IMetric mse;
-
-        static RMSE()
-        {
-            mse = new Losses.Regression.MSE();
-        }
+        private static readonly IMetric mse = new Losses.Regression.MSE();
 
         public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
