@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GNet.Utils.Convolutional
 {
-    public static class IndexGen
+    internal static class IndexGen
     {
         public static ImmutableArray<int[]> Generate(Shape shape, ImmutableArray<int> start, ImmutableArray<int> strides, Shape kernel)
         {
