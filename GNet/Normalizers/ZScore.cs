@@ -16,14 +16,12 @@ namespace GNet.Normalizers
             if (inputs)
             {
                 sumI = dataset.Sum(D => D.Inputs.Sum());
-
                 nElems += dataset.InputShape.Volume * dataset.Length;
             }
 
             if (targets)
             {
                 sumT = dataset.Sum(D => D.Targets.Sum());
-
                 nElems += dataset.TargetShape.Volume * dataset.Length;
             }
 
