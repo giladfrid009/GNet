@@ -17,8 +17,8 @@ namespace GNet.Layers
         {
             Shape = shape;
             Activation = activation;
-            WeightInit = weightInit ?? DefaultParams.WeightInit;
-            BiasInit = biasInit ?? DefaultParams.BiasInit;
+            WeightInit = weightInit ?? Defaults.WeightInit;
+            BiasInit = biasInit ?? Defaults.BiasInit;
         }
 
         public virtual void Forward(bool isTraining)

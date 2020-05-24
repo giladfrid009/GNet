@@ -2,8 +2,7 @@
 
 namespace GNet
 {
-    [Serializable]
-    public class ShapeMismatchException : Exception
+    internal class ShapeMismatchException : Exception
     {
         public ShapeMismatchException() : base()
         {
