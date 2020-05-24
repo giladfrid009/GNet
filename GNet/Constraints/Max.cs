@@ -3,21 +3,21 @@ using static System.Math;
 
 namespace GNet.Constraints
 {
-    public class MaxVal : IConstraint
+    public class Max : IConstraint
     {
-        public double Max { get; }
+        public double MaxVal { get; }
         public double Mul { get; private set; }
 
-        public MaxVal(double max = 2.0)
+        public Max(double maxVal = 2.0)
         {
-            Max = max;
+            MaxVal = maxVal;
         }
 
         public void UpdateParams<T>(ImmutableArray<T> array, Func<T, double> selector)
         {
             double norm = Sqrt(array.Sum(X => selector(X) * selector(X)));
 
-            Mul = Clamp(norm, 0.0, Max) / norm;
+            Mul = Clamp(norm, 0.0, MaxVal) / norm;
         }
 
         public double Constrain(double X)

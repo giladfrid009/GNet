@@ -4,8 +4,8 @@ namespace GNet.Normalizers
 {
     public class MinMax : INormalizer
     {
-        public double Min { get; private set; }
-        public double Max { get; private set; }
+        public double MinVal { get; private set; }
+        public double MaxVal { get; private set; }
 
         public void UpdateParams(Dataset dataset, bool inputs, bool targets)
         {
@@ -26,13 +26,13 @@ namespace GNet.Normalizers
                 maxT = dataset.Max(D => D.Targets.Max());
             }
 
-            Min = Min(minI, minT);
-            Max = Max(maxI, maxT);
+            MinVal = Min(minI, minT);
+            MaxVal = Max(maxI, maxT);
         }
 
         public double Normalize(double X)
         {
-            return Min == Max ? 0.0 : (X - Min) / (Max - Min);
+            return MinVal == MaxVal ? 0.0 : (X - MinVal) / (MaxVal - MinVal);
         }
     }
 }

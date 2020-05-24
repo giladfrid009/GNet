@@ -22,69 +22,69 @@ namespace GNet
         public static double Max<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
         {
             int length = source.Length;
-            double max = selector(source[0]);
+            double maxVal = selector(source[0]);
 
             for (int i = 1; i < length; i++)
             {
                 double val = selector(source[i]);
 
-                if (val > max)
+                if (val > maxVal)
                 {
-                    max = val;
+                    maxVal = val;
                 }
             }
 
-            return max;
+            return maxVal;
         }
 
         public static double Max(this IArray<double> source)
         {
             int length = source.Length;
-            double max = source[0];
+            double maxVal = source[0];
 
             for (int i = 1; i < length; i++)
             {
-                if (source[i] > max)
+                if (source[i] > maxVal)
                 {
-                    max = source[i];
+                    maxVal = source[i];
                 }
             }
 
-            return max;
+            return maxVal;
         }
 
         public static double Min<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
         {
             int length = source.Length;
-            double min = selector(source[0]);
+            double minVal = selector(source[0]);
 
             for (int i = 1; i < length; i++)
             {
                 double val = selector(source[i]);
 
-                if (val < min)
+                if (val < minVal)
                 {
-                    min = val;
+                    minVal = val;
                 }
             }
 
-            return min;
+            return minVal;
         }
 
         public static double Min(this IArray<double> source)
         {
             int length = source.Length;
-            double min = source[0];
+            double minVal = source[0];
 
             for (int i = 1; i < length; i++)
             {
-                if (source[i] < min)
+                if (source[i] < minVal)
                 {
-                    min = source[i];
+                    minVal = source[i];
                 }
             }
 
-            return min;
+            return minVal;
         }
 
         public static double Sum<TSource, TOther>(this IArray<TSource> source, IArray<TOther> other, Func<TSource, TOther, double> selector)

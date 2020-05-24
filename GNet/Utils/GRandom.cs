@@ -19,9 +19,9 @@ namespace GNet.Utils
             return rnd.Next();
         }
 
-        public static int Next(int minValue, int maxValue)
+        public static int Next(int minVal, int maxVal)
         {
-            return rnd.Next(minValue, maxValue);
+            return rnd.Next(minVal, maxVal);
         }
 
         public static double Uniform()
@@ -29,9 +29,9 @@ namespace GNet.Utils
             return rnd.NextDouble();
         }
 
-        public static double Uniform(double minValue, double maxValue)
+        public static double Uniform(double minVal, double maxVal)
         {
-            return rnd.NextDouble() * (maxValue - minValue) + minValue;
+            return rnd.NextDouble() * (maxVal - minVal) + minVal;
         }
 
         public static double Normal()

@@ -4,9 +4,9 @@
     {
         public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
-            double max = outputs.Max();
+            double maxVal = outputs.Max();
 
-            return 1.0 - targets.Avarage(outputs, (T, O) => O == max && T == 1.0 ? 1.0 : 0.0);
+            return 1.0 - targets.Avarage(outputs, (T, O) => O == maxVal && T == 1.0 ? 1.0 : 0.0);
         }
     }
 }

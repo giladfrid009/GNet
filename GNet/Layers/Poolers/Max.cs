@@ -8,9 +8,9 @@ namespace GNet.Layers.Poolers
     {
         public ImmutableArray<double> CalcWeights(ImmutableArray<Synapse> inSynapses)
         {
-            double max = inSynapses.Max(X => X.InNeuron.OutVal);
+            double maxVal = inSynapses.Max(X => X.InNeuron.OutVal);
 
-            return inSynapses.Select(X => X.InNeuron.OutVal == max ? 1.0 : 0.0);
+            return inSynapses.Select(X => X.InNeuron.OutVal == maxVal ? 1.0 : 0.0);
         }
     }
 }
