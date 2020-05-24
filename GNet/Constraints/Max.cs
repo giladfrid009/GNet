@@ -20,7 +20,7 @@ namespace GNet.Constraints
             Mul = Clamp(norm, 0.0, MaxVal) / norm;
         }
 
-        public double Constrain(double X)
+        public double Apply(double X)
         {
             return Mul * X;
         }

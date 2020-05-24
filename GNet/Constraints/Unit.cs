@@ -12,7 +12,7 @@ namespace GNet.Constraints
             Norm = Sqrt(array.Sum(X => selector(X) * selector(X)));
         }
 
-        public double Constrain(double X)
+        public double Apply(double X)
         {
             return X / Norm;
         }

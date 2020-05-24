@@ -8,7 +8,7 @@ namespace GNet.Constraints
         {
         }
 
-        public double Constrain(double X)
+        public double Apply(double X)
         {
             return X < 0.0 ? 0.0 : X;
         }
