@@ -4,7 +4,8 @@ namespace GNet.Layers
 {
     public class Softmax : Dense
     {
-        public Softmax(Shape shape, IInitializer? weightInit = null, IInitializer? biasInit = null) : base(shape, new Activations.Identity(), weightInit, biasInit)
+        public Softmax(Shape shape, IInitializer? weightInit = null, IInitializer? biasInit = null, IConstraint? weightConst = null, IConstraint? biasConst = null)
+            : base(shape, new Activations.Identity(), weightInit, biasInit)
         {
         }
 

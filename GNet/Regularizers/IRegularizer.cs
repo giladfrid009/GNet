@@ -1,6 +1,6 @@
 ﻿namespace GNet
 {
-    //todo: apply
+    //todo: implement
     public interface IRegularizer
     {
         double Evaluate(double X);

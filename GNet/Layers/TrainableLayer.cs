@@ -78,6 +78,10 @@ namespace GNet.Layers
                 return;
             }
 
+            BiasConst.UpdateParams(Neurons, N => N.Bias);
+
+            //todo: how to UpdateParams for all the weights?
+
             Neurons.ForEach(N =>
             {
                 N.Bias += N.BatchDelta;
