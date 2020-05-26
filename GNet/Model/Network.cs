@@ -50,7 +50,7 @@ namespace GNet
             }
         }
 
-        private ImmutableShapedArray<double> Forward(ImmutableShapedArray<double> inputs, bool isTraining)
+        private void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
         {
             Layers[0].Input(inputs, isTraining);
 
@@ -58,8 +58,6 @@ namespace GNet
             {
                 Layers[i].Forward(isTraining);
             }
-
-            return Layers[Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
         }
 
         private void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
@@ -99,14 +97,16 @@ namespace GNet
             }));
         }
 
-        public ImmutableShapedArray<double> Forward(ImmutableShapedArray<double> inputs)
+        public ImmutableShapedArray<double> Predict(ImmutableShapedArray<double> inputs)
         {
-            return Forward(inputs, false);
+            Forward(inputs, false);
+
+            return Layers[Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
         }
 
         public double Validate(Dataset dataset, IMetric metric)
         {
-            return dataset.Avarage(D => metric.Evaluate(D.Targets, Forward(D.Inputs, false)));
+            return dataset.Avarage(D => metric.Evaluate(D.Targets, Predict(D.Inputs)));
         }
 
         public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int nEpoches, double minError, Dataset valDataset, IMetric metric, bool shuffle = true)

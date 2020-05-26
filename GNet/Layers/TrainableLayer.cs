@@ -11,14 +11,18 @@ namespace GNet.Layers
         public IActivation Activation { get; }
         public IInitializer WeightInit { get; }
         public IInitializer BiasInit { get; }
+        public IConstraint WeightConst { get; }
+        public IConstraint BiasConst { get; }
         public bool IsTrainable { get; set; } = true;
 
-        protected TrainableLayer(Shape shape, IActivation activation, IInitializer? weightInit, IInitializer? biasInit)
+        protected TrainableLayer(Shape shape, IActivation activation, IInitializer? weightInit, IInitializer? biasInit, IConstraint? weightConst, IConstraint? biasConst)
         {
             Shape = shape;
             Activation = activation;
             WeightInit = weightInit ?? Defaults.WeightInit;
             BiasInit = biasInit ?? Defaults.BiasInit;
+            WeightConst = weightConst ?? Defaults.WeightConst;
+            BiasConst = biasConst ?? Defaults.BiasConst;
         }
 
         public virtual void Forward(bool isTraining)
@@ -78,11 +82,13 @@ namespace GNet.Layers
             {
                 N.Bias += N.BatchDelta;
                 N.BatchDelta = 0.0;
+                N.Bias = BiasConst.Apply(N.Bias);
 
                 N.InSynapses.ForEach(S =>
                 {
                     S.Weight += S.BatchDelta;
                     S.BatchDelta = 0.0;
+                    S.Weight = WeightConst.Apply(S.Weight);
                 });
             });
         }
