@@ -4,8 +4,7 @@ namespace GNet.Layers
 {
     public class Softmax : Dense
     {
-        public Softmax(Shape shape, IInitializer? weightInit = null, IInitializer? biasInit = null, IConstraint? weightConst = null, IConstraint? biasConst = null)
-            : base(shape, new Activations.Identity(), weightInit, biasInit)
+        public Softmax(Shape shape, IInitializer? weightInit = null, IInitializer? biasInit = null) : base(shape, new Activations.Identity(), weightInit, biasInit)
         {
         }
 
@@ -62,6 +61,8 @@ namespace GNet.Layers
                 N.Gradient = N.OutVal * (N.Gradient - gSum);
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.OutVal);
             });
+
+            ApplyRegularizers();
         }
 
         public override void CalcGrads()
@@ -79,6 +80,8 @@ namespace GNet.Layers
                 N.Gradient = N.OutVal * (N.Gradient - gSum);
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.OutVal);
             });
+
+            ApplyRegularizers();
         }
     }
 }
