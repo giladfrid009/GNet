@@ -11,10 +11,6 @@ namespace GNet.Layers
         public IActivation Activation { get; }
         public IInitializer WeightInit { get; }
         public IInitializer BiasInit { get; }
-        public IRegularizer? WeightReg { get; set; } = Defaults.WeightReg;
-        public IRegularizer? BiasReg { get; set; } = Defaults.BiasReg;
-        public IConstraint? WeightConst { get; set; } = Defaults.WeightConst;
-        public IConstraint? BiasConst { get; set; } = Defaults.BiasConst;
         public bool IsTrainable { get; set; } = true;
 
         protected TrainableLayer(Shape shape, IActivation activation, IInitializer? weightInit, IInitializer? biasInit)
@@ -23,33 +19,6 @@ namespace GNet.Layers
             Activation = activation;
             WeightInit = weightInit ?? Defaults.WeightInit;
             BiasInit = biasInit ?? Defaults.BiasInit;
-        }
-
-        protected void ApplyRegularizers()
-        {
-            if (BiasReg != null)
-            {
-                Neurons.ForEach(N => N.Gradient *= BiasReg.Derivative(N.Bias));
-            }
-
-            if (WeightReg != null)
-            {
-                Neurons.ForEach(N => N.InSynapses.ForEach(S => S.Gradient *= WeightReg.Derivative(S.Weight)));
-            }
-        }
-
-        protected void ApplyConstraints()
-        {
-            //todo: implement
-            if (BiasConst != null)
-            {
-
-            }
-
-            if (WeightConst != null)
-            {
-
-            }
         }
 
         public virtual void Forward(bool isTraining)
@@ -73,8 +42,6 @@ namespace GNet.Layers
                 N.Gradient = Activation.Derivative(N.InVal, N.OutVal) * loss.Derivative(targets[i], N.OutVal);
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.OutVal);
             });
-
-            ApplyRegularizers();
         }
 
         public virtual void CalcGrads()
@@ -84,8 +51,6 @@ namespace GNet.Layers
                 N.Gradient = N.OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient) * Activation.Derivative(N.InVal, N.OutVal);
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.OutVal);
             });
-
-            ApplyRegularizers();
         }
 
         public void Optimize(IOptimizer optimizer)
@@ -120,8 +85,6 @@ namespace GNet.Layers
                     S.BatchDelta = 0.0;
                 });
             });
-
-            ApplyConstraints();
         }
 
         public abstract void Connect(ILayer inLayer);

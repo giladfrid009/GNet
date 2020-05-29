@@ -61,8 +61,6 @@ namespace GNet.Layers
                 N.Gradient = N.OutVal * (N.Gradient - gSum);
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.OutVal);
             });
-
-            ApplyRegularizers();
         }
 
         public override void CalcGrads()
@@ -80,8 +78,6 @@ namespace GNet.Layers
                 N.Gradient = N.OutVal * (N.Gradient - gSum);
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.OutVal);
             });
-
-            ApplyRegularizers();
         }
     }
 }

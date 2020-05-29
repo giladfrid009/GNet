@@ -2,8 +2,6 @@
 {
     public interface IDecay
     {
-        double Decay { get; }
-
-        double Compute(double value, int iteration);
+        double Compute(double X, int T);
     }
 }

@@ -1,17 +1,19 @@
 ﻿namespace GNet.Optimizers.Decays
 {
-    public class IterBased : IDecay
+    public class Sub : IDecay
     {
         public double Rate { get; }
+        public int Interval { get; }
 
-        public IterBased(double rate)
+        public Sub(double rate, int interval)
         {
             Rate = rate;
+            Interval = interval;
         }
 
         public double Compute(double X, int T)
         {
-            return X / (1.0 + Rate * T);
+            return X - Rate * T / Interval;
         }
     }
 }
