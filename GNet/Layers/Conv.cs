@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace GNet.Layers
 {
     [Serializable]
-    public class Convolutional : TrainableLayer
+    public class Conv : TrainableLayer
     {
         public override ImmutableArray<Neuron> Neurons { get; }
         public ImmutableArray<Kernel> Kernels { get; }
@@ -19,7 +19,7 @@ namespace GNet.Layers
         public int KernelsNum { get; }
         public double PadVal { get; }
 
-        public Convolutional(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IActivation activation, 
+        public Conv(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IActivation activation, 
             IInitializer? weightInit = null, IInitializer? biasInit = null, double padVal = 0.0) 
             : base(outputShape, activation, weightInit, biasInit)
         {

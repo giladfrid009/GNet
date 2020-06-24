@@ -7,7 +7,7 @@ namespace GNet.Optimizers.Decays
     {
         public double Power { get; }
 
-        public Random(double power)
+        public Random(double power = 1.0)
         {
             Power = power;
         }
