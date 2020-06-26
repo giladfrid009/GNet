@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GNet.Utils.Convolutional
+namespace GNet.Utils.Conv
 {
     internal static class IndexGen
     {

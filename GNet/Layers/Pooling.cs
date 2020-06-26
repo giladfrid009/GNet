@@ -1,5 +1,5 @@
 ﻿using GNet.Model;
-using GNet.Utils.Convolutional;
+using GNet.Utils.Conv;
 using System;
 using System.Collections.Generic;
 

@@ -1,6 +1,6 @@
 ﻿using GNet.Model;
-using GNet.Model.Convolutional;
-using GNet.Utils.Convolutional;
+using GNet.Model.Conv;
+using GNet.Utils.Conv;
 using System;
 using System.Collections.Generic;
 

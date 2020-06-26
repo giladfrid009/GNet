@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GNet.Model.Convolutional
+namespace GNet.Model.Conv
 {
     [Serializable]
     public class CSynapse : Synapse

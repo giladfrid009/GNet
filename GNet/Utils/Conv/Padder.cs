@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GNet.Utils.Convolutional
+namespace GNet.Utils.Conv
 {
     internal static class Padder
     {
