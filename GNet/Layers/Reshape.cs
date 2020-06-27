@@ -1,7 +1,9 @@
 ﻿using GNet.Model;
+using System;
 
 namespace GNet.Layers
 {
+    [Serializable]
     public class Reshape : ILayer
     {
         public ImmutableArray<Neuron> Neurons { get; }
@@ -13,7 +15,7 @@ namespace GNet.Layers
             Neurons = new ImmutableArray<Neuron>(shape.Volume, () => new Neuron());
         }
 
-        public virtual void Connect(ILayer inLayer)
+        public void Connect(ILayer inLayer)
         {
             if (inLayer.Shape.Volume != Shape.Volume)
             {
@@ -28,13 +30,9 @@ namespace GNet.Layers
             });
         }
 
-        public void Initialize()
+        public virtual void Initialize()
         {
-            Neurons.ForEach(N =>
-            {
-                N.Bias = 0.0;
-                N.InSynapses[0].Weight = 1.0;
-            });
+            Neurons.ForEach(N => N.InSynapses[0].Weight = 1.0);
         }
 
         public virtual void Input(ImmutableShapedArray<double> values, bool isTraining)

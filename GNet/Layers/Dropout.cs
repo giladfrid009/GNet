@@ -7,10 +7,11 @@ namespace GNet.Layers
     public class Dropout : Reshape
     {
         public double DropChance { get; }
+        public bool Spatial { get; }
 
-        private ImmutableArray<bool> dropArray;
+        protected ImmutableArray<bool> dropArray;
 
-        public Dropout(Shape shape, double dropChance = 0.1) : base(shape)
+        public Dropout(Shape shape, double dropChance = 0.1, bool spatial = false) : base(shape)
         {
             if (dropChance < 0 || dropChance > 1)
             {
@@ -18,27 +19,25 @@ namespace GNet.Layers
             }
 
             DropChance = dropChance;
+            Spatial = spatial;
             dropArray = new ImmutableArray<bool>();
         }
 
-        public override void Connect(ILayer inLayer)
+        public override void Initialize()
         {
-            if (inLayer.Shape != Shape)
-            {
-                throw new ShapeMismatchException(nameof(inLayer));
-            }
+            Update();
 
-            base.Connect(inLayer);
+            base.Initialize();
         }
 
         public override void Input(ImmutableShapedArray<double> values, bool isTraining)
         {
-            if (values.Shape != Shape)
+            if (values.Shape.Volume != Shape.Volume)
             {
-                throw new ShapeMismatchException(nameof(values));
+                throw new ShapeMismatchException($"{nameof(values)} shape volume mismatch.");
             }
 
-            if(isTraining)
+            if (isTraining)
             {
                 Neurons.ForEach((N, i) =>
                 {
@@ -85,7 +84,26 @@ namespace GNet.Layers
 
         public override void Update()
         {
-            dropArray = new ImmutableArray<bool>(Shape.Volume, () => GRandom.Uniform(0, 1) <= DropChance);
+            if (Spatial)
+            {
+                int kernelVolume = Shape.Volume / Shape.Dims[0];
+                int i = 0;
+                bool drop = false;
+
+                dropArray = new ImmutableArray<bool>(Shape.Volume, () =>
+                {
+                    if (i++ % kernelVolume == 0)
+                    {
+                        drop = GRandom.Uniform(0, 1) <= DropChance;
+                    }
+
+                    return drop;
+                });
+            }
+            else
+            {
+                dropArray = new ImmutableArray<bool>(Shape.Volume, () => GRandom.Uniform(0, 1) <= DropChance);
+            }
         }
     }
 }
