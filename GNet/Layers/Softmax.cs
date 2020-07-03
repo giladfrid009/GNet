@@ -8,25 +8,6 @@ namespace GNet.Layers
         {
         }
 
-        public override void Input(ImmutableShapedArray<double> values, bool isTraining)
-        {
-            if (values.Shape != Shape)
-            {
-                throw new ShapeMismatchException(nameof(values));
-            }
-
-            double eSum = 0.0;
-
-            Neurons.ForEach((N, i) =>
-            {
-                N.InVal = values[i];
-                N.OutVal = Exp(N.InVal);
-                eSum += N.OutVal;
-            });
-
-            Neurons.ForEach(N => N.OutVal /= eSum);
-        }
-
         public override void Forward(bool isTraining)
         {
             double eSum = 0.0;

@@ -31,19 +31,5 @@ namespace GNet.Layers
                 N.InSynapses.ForEach(S => S.Weight = WeightInit.Initialize(inLength, outLength));
             });
         }
-
-        public override void Input(ImmutableShapedArray<double> values, bool isTraining)
-        {
-            if (values.Shape != Shape)
-            {
-                throw new ShapeMismatchException(nameof(values));
-            }
-
-            Neurons.ForEach((N, i) =>
-            {
-                N.InVal = values[i];
-                N.OutVal = Activation.Activate(N.InVal);
-            });
-        }
     }
 }

@@ -90,7 +90,5 @@ namespace GNet.Layers
         public abstract void Connect(ILayer inLayer);
 
         public abstract void Initialize();
-
-        public abstract void Input(ImmutableShapedArray<double> values, bool isTraining);
     }
 }

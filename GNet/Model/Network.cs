@@ -52,7 +52,7 @@ namespace GNet
 
         private void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
         {
-            Layers[0].Input(inputs, isTraining);
+            Layers[0].Input(inputs);
 
             for (int i = 1; i < Length; i++)
             {

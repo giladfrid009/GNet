@@ -106,10 +106,5 @@ namespace GNet.Layers
                 K.Weights.ForEach(W => W.Value = WeightInit.Initialize(inLength, 1));
             });
         }
-
-        public override void Input(ImmutableShapedArray<double> values, bool isTraining)
-        {
-            throw new NotSupportedException();
-        }
     }
 }

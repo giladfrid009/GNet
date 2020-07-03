@@ -6,22 +6,19 @@ using System.Collections.Generic;
 namespace GNet.Layers
 {
     [Serializable]
-    public class Pooling : ILayer
+    public class Pooling : ConstLayer
     {
-        public ImmutableArray<Neuron> Neurons { get; }
         public ImmutableArray<int> Strides { get; }
         public ImmutableArray<int> Paddings { get; }
         public Shape InputShape { get; }
         public Shape PaddedShape { get; }
         public Shape KernelShape { get; }
-        public Shape Shape { get; }
         public IPooler Pooler { get; }
         public double PadVal { get; }
 
-        public Pooling(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IPooler pooler, double padVal = 0.0)
+        public Pooling(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IPooler pooler, double padVal = 0.0) : base(outputShape)
         {
             InputShape = inputShape;
-            Shape = outputShape;
             KernelShape = kernelShape;
             Strides = strides;
             Pooler = pooler;
@@ -30,11 +27,9 @@ namespace GNet.Layers
             Paddings = Padder.CalcPadding(inputShape, outputShape, kernelShape, strides, true);
 
             PaddedShape = Padder.PadShape(inputShape, Paddings);
-
-            Neurons = new ImmutableArray<Neuron>(outputShape.Volume, () => new Neuron());
         }
 
-        public void Connect(ILayer inLayer)
+        public override void Connect(ILayer inLayer)
         {
             if (inLayer.Shape != InputShape)
             {
@@ -60,16 +55,11 @@ namespace GNet.Layers
             padded.ForEach((N, i) => N.OutSynapses = ImmutableArray<Synapse>.FromRef(inConnections[i].ToArray()));
         }
 
-        public void Initialize()
+        public override void Initialize()
         {
         }
 
-        public void Input(ImmutableShapedArray<double> values, bool isTraining)
-        {
-            throw new NotSupportedException();
-        }
-
-        public void Forward(bool isTraining)
+        public override void Forward(bool isTraining)
         {
             Neurons.ForEach(N =>
             {
@@ -81,29 +71,6 @@ namespace GNet.Layers
 
                 N.OutVal = N.InVal;
             });
-        }
-
-        public void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
-        {
-            if (targets.Shape != Shape)
-            {
-                throw new ShapeMismatchException(nameof(targets));
-            }
-
-            Neurons.ForEach((N, i) => N.Gradient = loss.Derivative(targets[i], N.OutVal));
-        }
-
-        public void CalcGrads()
-        {
-            Neurons.ForEach((N, i) => N.Gradient = N.OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient));
-        }
-
-        public void Optimize(IOptimizer optimizer)
-        {
-        }
-
-        public void Update()
-        {
         }
     }
 }
