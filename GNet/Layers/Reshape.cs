@@ -4,13 +4,13 @@ using System;
 namespace GNet.Layers
 {
     [Serializable]
-    public class Reshape : ConstLayer
+    public class Reshape : LayerConst
     {
         public Reshape(Shape shape) : base(shape)
         {
         }
 
-        public override void Connect(ILayer inLayer)
+        public override void Connect(Layer inLayer)
         {
             if (inLayer.Shape.Volume != Shape.Volume)
             {

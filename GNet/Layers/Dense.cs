@@ -4,7 +4,7 @@ using System;
 namespace GNet.Layers
 {
     [Serializable]
-    public class Dense : TrainableLayer
+    public class Dense : LayerTrain
     {
         public override ImmutableArray<Neuron> Neurons { get; }
 
@@ -13,7 +13,7 @@ namespace GNet.Layers
             Neurons = new ImmutableArray<Neuron>(shape.Volume, () => new Neuron());
         }
 
-        public override void Connect(ILayer inLayer)
+        public override void Connect(Layer inLayer)
         {
             Neurons.ForEach(N => N.InSynapses = inLayer.Neurons.Select(inN => new Synapse(inN, N)));
 

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace GNet.Layers
 {
     [Serializable]
-    public class Conv : TrainableLayer
+    public class Conv : LayerTrain
     {
         public override ImmutableArray<Neuron> Neurons { get; }
         public ImmutableArray<Kernel> Kernels { get; }
@@ -59,7 +59,7 @@ namespace GNet.Layers
             }
         }
 
-        public override void Connect(ILayer inLayer)
+        public override void Connect(Layer inLayer)
         {
             if (inLayer.Shape != InputShape)
             {

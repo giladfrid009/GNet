@@ -14,12 +14,12 @@ namespace GNet
         public event EpochErrorLogger? OnEpoch;
         public event EpochErrorLogger? OnFinish;
 
-        public ImmutableArray<ILayer> Layers { get; }
+        public ImmutableArray<Layer> Layers { get; }
         public Shape InputShape { get; }
         public Shape OutputShape { get; }
         public int Length { get; }
 
-        public Network(ImmutableArray<ILayer> layers)
+        public Network(ImmutableArray<Layer> layers)
         {
             Layers = layers;
             Length = layers.Length;
@@ -30,7 +30,7 @@ namespace GNet
             Initialize();
         }
 
-        public Network(params ILayer[] layers) : this(new ImmutableArray<ILayer>(layers))
+        public Network(params Layer[] layers) : this(new ImmutableArray<Layer>(layers))
         {
         }
 

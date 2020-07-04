@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace GNet.Layers
 {
     [Serializable]
-    public class Pooling : ConstLayer
+    public class Pooling : LayerConst
     {
         public ImmutableArray<int> Strides { get; }
         public ImmutableArray<int> Paddings { get; }
@@ -29,7 +29,7 @@ namespace GNet.Layers
             PaddedShape = Padder.PadShape(inputShape, Paddings);
         }
 
-        public override void Connect(ILayer inLayer)
+        public override void Connect(Layer inLayer)
         {
             if (inLayer.Shape != InputShape)
             {
