@@ -18,14 +18,14 @@ namespace GNet.Utils
             return sw.Elapsed;
         }
 
-        public static TimeSpan BatchTime(Func<INetwork> netCreator, Action<INetwork> netTrainer, int iterations = 1)
+        public static TimeSpan BatchTime(Func<BaseNetwork> netCreator, Action<BaseNetwork> netTrainer, int iterations = 1)
         {
             var sw = new Stopwatch();
             int nBatches = 0;
 
             for (int i = 0; i < iterations; i++)
             {
-                INetwork N = netCreator();
+                BaseNetwork N = netCreator();
 
                 N.OnStart += OnStart;
                 N.OnFinish += OnFinish;

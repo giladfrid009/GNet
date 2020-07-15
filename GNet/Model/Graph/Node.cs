@@ -117,13 +117,7 @@ namespace GNet.CompGraph
             InNodes.ForEach(N => N.CalcGrads());
         }
 
-        public void Optimize(IOptimizer optimizer, int epoch)
-        {
-            optimizer.UpdateParams(epoch);
-            Optimize(optimizer);
-        }
-
-        private void Optimize(IOptimizer optimizer)
+        public void Optimize(IOptimizer optimizer)
         {
             Layers.ForEach(L => L.Optimize(optimizer));
             OutNodes.ForEach(N => N.Optimize(optimizer));

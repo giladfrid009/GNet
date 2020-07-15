@@ -13,9 +13,9 @@ namespace GNet
 
         private readonly List<string> logLines;
 
-        private readonly INetwork network;
+        private readonly BaseNetwork network;
 
-        public Logger(INetwork network)
+        public Logger(BaseNetwork network)
         {
             logLines = new List<string>();
 
