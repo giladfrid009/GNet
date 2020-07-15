@@ -3,14 +3,14 @@
 namespace GNet.Layers
 {
     [Serializable]
-    public abstract class LayerTrain : Layer
+    public abstract class TrainableLayer : Layer
     {
         public IActivation Activation { get; }
         public IInitializer WeightInit { get; }
         public IInitializer BiasInit { get; }
         public bool IsTrainable { get; set; } = true;
 
-        protected LayerTrain(Shape shape, IActivation activation, IInitializer? weightInit, IInitializer? biasInit) : base(shape)
+        protected TrainableLayer(Shape shape, IActivation activation, IInitializer? weightInit, IInitializer? biasInit) : base(shape)
         {
             Activation = activation;
             WeightInit = weightInit ?? Defaults.WeightInit;

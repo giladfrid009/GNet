@@ -49,12 +49,12 @@ namespace GNet.Layers
         {
             if (Spatial)
             {
-                int kernelVolume = Shape.Volume / Shape.Dims[0];
+                int featureVol = Shape.Volume / Shape.Dims[0];
                 bool drop = false;
 
                 Neurons.ForEach((N, i) =>
                 {
-                    if (i % kernelVolume == 0)
+                    if (i % featureVol == 0)
                     {
                         drop = GRandom.Uniform(0, 1) <= DropChance;
                     }

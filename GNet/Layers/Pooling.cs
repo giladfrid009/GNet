@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace GNet.Layers
 {
     [Serializable]
-    public class Pooling : LayerConst
+    public class Pooling : ConstantLayer
     {
         public ImmutableArray<int> Strides { get; }
         public ImmutableArray<int> Paddings { get; }

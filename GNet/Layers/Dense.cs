@@ -4,7 +4,7 @@ using System;
 namespace GNet.Layers
 {
     [Serializable]
-    public class Dense : LayerTrain
+    public class Dense : TrainableLayer
     {
         public override ImmutableArray<Neuron> Neurons { get; }
 

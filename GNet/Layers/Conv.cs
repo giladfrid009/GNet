@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace GNet.Layers
 {
     [Serializable]
-    public class Conv : LayerTrain
+    public class Conv : TrainableLayer
     {
         public override ImmutableArray<Neuron> Neurons { get; }
         public ImmutableArray<Kernel> Kernels { get; }

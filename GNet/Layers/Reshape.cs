@@ -4,7 +4,7 @@ using System;
 namespace GNet.Layers
 {
     [Serializable]
-    public class Reshape : LayerConst
+    public class Reshape : ConstantLayer
     {
         public Reshape(Shape shape) : base(shape)
         {
@@ -20,8 +20,9 @@ namespace GNet.Layers
             Neurons.ForEach((N, i) =>
             {
                 var S = new Synapse(inLayer.Neurons[i], N);
-                N.InSynapses = new ImmutableArray<Synapse>(S);
-                inLayer.Neurons[i].OutSynapses = new ImmutableArray<Synapse>(S);
+                var arr = new ImmutableArray<Synapse>(S);
+                N.InSynapses = arr;
+                inLayer.Neurons[i].OutSynapses = arr;
             });
         }
 

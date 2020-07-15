@@ -1,103 +1,33 @@
 ﻿using System;
 
-namespace GNet
+namespace GNet.CompGraph
 {
     [Serializable]
-    public class Network : INetwork
+    public class Graph : INetwork
     {
         public event BatchLogFunc? OnBatch;
         public event ErrorLogFunc? OnStart;
         public event EpochErrorLogFunc? OnEpoch;
         public event EpochErrorLogFunc? OnFinish;
 
-        public ImmutableArray<Layer> Layers { get; }
+        public Node InputNode { get; }
+        public Node OutputNode { get; }
         public Shape InputShape { get; }
         public Shape OutputShape { get; }
-        public int Length { get; }
 
-        public Network(ImmutableArray<Layer> layers)
+        public Graph(Node inNode, Node outNode)
         {
-            Layers = layers;
-            Length = layers.Length;
-            InputShape = layers[0].Shape;
-            OutputShape = layers[layers.Length - 1].Shape;
-
-            Connect();
-            Initialize();
-        }
-
-        public Network(params Layer[] layers) : this(new ImmutableArray<Layer>(layers))
-        {
-        }
-
-        private void Connect()
-        {
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Connect(Layers[i - 1]);
-            }
-        }
-
-        private void Initialize()
-        {
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Initialize();
-            }
-        }
-
-        private void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
-        {
-            Layers[0].Input(inputs);
-
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Forward(isTraining);
-            }
-        }
-
-        private void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
-        {
-            Layers[Length - 1].CalcGrads(loss, targets);
-
-            for (int i = Length - 2; i > 0; i--)
-            {
-                Layers[i].CalcGrads();
-            }
-        }
-
-        private void Optimize(IOptimizer optimizer, int epoch)
-        {
-            optimizer.UpdateParams(epoch);
-
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Optimize(optimizer);
-            }
-        }
-
-        private void Update()
-        {
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Update();
-            }
-        }
-
-        private void ClearCache()
-        {
-            Layers.ForEach(L => L.Neurons.ForEach(N =>
-            {
-                N.ClearCache();
-                N.InSynapses.ForEach(S => S.ClearCache());
-            }));
+            InputNode = inNode;
+            OutputNode = outNode;
+            InputShape = inNode.InputShape;
+            OutputShape = outNode.OutputShape;
         }
 
         public ImmutableShapedArray<double> Predict(ImmutableShapedArray<double> inputs)
         {
-            Forward(inputs, false);
+            InputNode.Forward(inputs, false);
 
-            return Layers[Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
+            return OutputNode.Layers[OutputNode.Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
         }
 
         public double Validate(Dataset dataset, IMetric metric)
@@ -127,7 +57,7 @@ namespace GNet
                 throw new ShapeMismatchException($"{nameof(valDataset)} {nameof(dataset.TargetShape)}");
             }
 
-            ClearCache();
+            InputNode.ClearCache();
 
             double valError = Validate(valDataset, metric);
             int epoch;
@@ -148,13 +78,13 @@ namespace GNet
 
                 dataset.ForEach((D, index) =>
                 {
-                    Forward(D.Inputs, true);
-                    CalcGrads(loss, D.Targets);
-                    Optimize(optimizer, epoch);
+                    InputNode.Forward(D.Inputs, true);
+                    OutputNode.CalcGrads(loss, D.Targets);
+                    InputNode.Optimize(optimizer, epoch);
 
                     if (index % batchSize == 0)
                     {
-                        Update();
+                        InputNode.Update();
 
                         OnBatch?.Invoke(index / batchSize);
                     }

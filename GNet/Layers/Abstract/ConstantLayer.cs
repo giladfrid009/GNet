@@ -4,11 +4,11 @@ using System;
 namespace GNet.Layers
 {
     [Serializable]
-    public abstract class LayerConst : Layer
+    public abstract class ConstantLayer : Layer
     {
         public override ImmutableArray<Neuron> Neurons { get; }
 
-        protected LayerConst(Shape shape) : base(shape)
+        protected ConstantLayer(Shape shape) : base(shape)
         {
             Neurons = new ImmutableArray<Neuron>(shape.Volume, () => new Neuron());
         }

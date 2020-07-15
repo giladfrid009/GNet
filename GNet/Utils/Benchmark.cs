@@ -5,27 +5,27 @@ namespace GNet.Utils
 {
     public static class Benchmark
     {
-        public static TimeSpan Time(Action action, int iterations = 1)
+        public static TimeSpan Time(Action action, long iterations = 1)
         {
             var sw = new Stopwatch();
             sw.Start();
 
-            for (int i = 0; i < iterations; i++)
+            for (long i = 0; i < iterations; i++)
             {
                 action();
             }
 
-            return sw.Elapsed / iterations;
+            return sw.Elapsed;
         }
 
-        public static TimeSpan BatchTime(Func<Network> netCreator, Action<Network> netTrainer, int iterations = 1)
+        public static TimeSpan BatchTime(Func<INetwork> netCreator, Action<INetwork> netTrainer, int iterations = 1)
         {
             var sw = new Stopwatch();
             int nBatches = 0;
 
             for (int i = 0; i < iterations; i++)
             {
-                Network N = netCreator();
+                INetwork N = netCreator();
 
                 N.OnStart += OnStart;
                 N.OnFinish += OnFinish;
