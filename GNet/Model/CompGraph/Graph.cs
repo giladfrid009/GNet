@@ -3,7 +3,7 @@
 namespace GNet.CompGraph
 {
     [Serializable]
-    public class Graph : BaseNetwork
+    public class Graph : Network
     {        
         public Node InputNode { get; }
         public Node OutputNode { get; }
@@ -12,35 +12,37 @@ namespace GNet.CompGraph
         {
             InputNode = inNode;
             OutputNode = outNode;
+
+            inNode.InitOutNodes();
         }     
 
-        protected sealed override void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
+        protected override void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
         {
             InputNode.Forward(inputs, isTraining);
         }
 
-        protected sealed override void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
+        protected override void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
             OutputNode.CalcGrads(loss, targets);
         }
 
-        protected sealed override void Optimize(IOptimizer optimizer, int epoch)
+        protected override void Optimize(IOptimizer optimizer, int epoch)
         {
             optimizer.UpdateParams(epoch);
             InputNode.Optimize(optimizer);
         }
 
-        protected sealed override void Update()
+        protected override void Update()
         {
             InputNode.Update();
         }
 
-        protected sealed override void ClearCache()
+        protected override void ClearCache()
         {
             InputNode.ClearCache();
         }
 
-        public sealed override ImmutableShapedArray<double> Predict(ImmutableShapedArray<double> inputs)
+        public override ImmutableShapedArray<double> Predict(ImmutableShapedArray<double> inputs)
         {
             InputNode.Forward(inputs, false);
 

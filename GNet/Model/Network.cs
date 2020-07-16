@@ -2,93 +2,110 @@
 
 namespace GNet
 {
+    public delegate void BatchLogFunc(int batch);
+    public delegate void ErrorLogFunc(double error);
+    public delegate void EpochErrorLogFunc(int epoch, double error);
+
     [Serializable]
-    public class Network : BaseNetwork
+    public abstract class Network
     {
-        public ImmutableArray<Layer> Layers { get; }        
-        public int Length { get; }
+        public event BatchLogFunc? OnBatch;
+        public event ErrorLogFunc? OnStart;
+        public event EpochErrorLogFunc? OnEpoch;
+        public event EpochErrorLogFunc? OnFinish;
 
-        public Network(ImmutableArray<Layer> layers) : base(layers[0].Shape, layers[^1].Shape)
+        public Shape InputShape { get; }
+        public Shape OutputShape { get; }
+
+        protected Network(Shape inShape, Shape outShape)
         {
-            Layers = layers;
-            Length = layers.Length;            
-
-            Connect();
-            Initialize();
+            InputShape = inShape;
+            OutputShape = outShape;
         }
 
-        public Network(params Layer[] layers) : this(new ImmutableArray<Layer>(layers))
+        protected abstract void Forward(ImmutableShapedArray<double> inputs, bool isTraining);
+
+        protected abstract void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets);
+
+        protected abstract void Optimize(IOptimizer optimizer, int epoch);
+
+        protected abstract void Update();
+
+        protected abstract void ClearCache();
+
+        public abstract ImmutableShapedArray<double> Predict(ImmutableShapedArray<double> inputs);
+
+        public double Validate(Dataset dataset, IMetric metric)
         {
+            return dataset.Avarage(D => metric.Evaluate(D.Targets, Predict(D.Inputs)));
         }
 
-        private void Connect()
+        public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int nEpoches, double minError, Dataset valDataset, IMetric metric, bool shuffle = true)
         {
-            for (int i = 1; i < Length; i++)
+            if (dataset.InputShape != InputShape)
             {
-                Layers[i].Connect(Layers[i - 1]);
+                throw new ShapeMismatchException($"{nameof(dataset)} {nameof(dataset.InputShape)}");
             }
-        }
 
-        private void Initialize()
-        {
-            for (int i = 1; i < Length; i++)
+            if (dataset.TargetShape != OutputShape)
             {
-                Layers[i].Initialize();
+                throw new ShapeMismatchException($"{nameof(dataset)} {nameof(dataset.TargetShape)}");
             }
-        }
 
-        protected sealed override void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
-        {
-            Layers[0].Input(inputs);
-
-            for (int i = 1; i < Length; i++)
+            if (valDataset.InputShape != InputShape)
             {
-                Layers[i].Forward(isTraining);
+                throw new ShapeMismatchException($"{nameof(valDataset)} {nameof(dataset.InputShape)}");
             }
-        }
 
-        protected sealed override void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
-        {
-            Layers[Length - 1].CalcGrads(loss, targets);
-
-            for (int i = Length - 2; i > 0; i--)
+            if (valDataset.TargetShape != OutputShape)
             {
-                Layers[i].CalcGrads();
+                throw new ShapeMismatchException($"{nameof(valDataset)} {nameof(dataset.TargetShape)}");
             }
-        }
 
-        protected sealed override void Optimize(IOptimizer optimizer, int epoch)
-        {
-            optimizer.UpdateParams(epoch);
+            ClearCache();
 
-            for (int i = 1; i < Length; i++)
+            double valError = Validate(valDataset, metric);
+            int epoch;
+
+            OnStart?.Invoke(valError);
+
+            for (epoch = 0; epoch < nEpoches; epoch++)
             {
-                Layers[i].Optimize(optimizer);
+                if (valError <= minError)
+                {
+                    break;
+                }
+
+                if (shuffle)
+                {
+                    dataset.Shuffle();
+                }
+
+                dataset.ForEach((D, index) =>
+                {
+                    Forward(D.Inputs, true);
+                    CalcGrads(loss, D.Targets);
+                    Optimize(optimizer, epoch);
+
+                    if (index % batchSize == 0)
+                    {
+                        Update();
+
+                        OnBatch?.Invoke(index / batchSize);
+                    }
+                });
+
+                valError = Validate(valDataset, metric);
+
+                OnEpoch?.Invoke(epoch, valError);
             }
+
+            OnFinish?.Invoke(epoch, valError);
         }
 
-        protected sealed override void Update()
+        public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int nEpoches, double minError, bool shuffle = true)
         {
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Update();
-            }
-        }
-
-        protected sealed override void ClearCache()
-        {
-            Layers.ForEach(L => L.Neurons.ForEach(N =>
-            {
-                N.ClearCache();
-                N.InSynapses.ForEach(S => S.ClearCache());
-            }));
-        }
-
-        public sealed override ImmutableShapedArray<double> Predict(ImmutableShapedArray<double> inputs)
-        {
-            Forward(inputs, false);
-
-            return Layers[Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
+            Train(dataset, loss, optimizer, batchSize, nEpoches, minError, dataset, loss, shuffle);
         }
     }
 }

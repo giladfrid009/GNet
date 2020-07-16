@@ -4,7 +4,7 @@ namespace GNet.Layers
 {
     //todo: implement layers
     [Serializable]
-    public abstract class MergeLayer : ConstantLayer
+    public abstract class MergeLayer : Layer
     {
         protected MergeLayer(Shape shape) : base(shape)
         {

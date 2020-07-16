@@ -20,16 +20,16 @@ namespace GNet
 
             var graph = new Graph(n, n);
 
-            var net = new Network
-            (
-                new Layers.Dense(new Shape(2, 5), new Activations.Identity()),
-                new Layers.Dense(new Shape(10), new Activations.Sigmoid(), new Initializers.TruncNormal()),
-                new Layers.Softmax(new Shape(2))
-            );
+            //var net = new Sequential
+            //(
+            //    new Layers.Dense(new Shape(2, 5), new Activations.Identity()),
+            //    new Layers.Dense(new Shape(10), new Activations.Sigmoid(), new Initializers.TruncNormal()),
+            //    new Layers.Softmax(new Shape(2))
+            //);
 
-            using (new Logger(net))
+            using (new Logger(graph))
             {
-                net.Train(tDataset, new Losses.Regression.MSE(), new Optimizers.AdaGradWindow(),
+                graph.Train(tDataset, new Losses.Regression.MSE(), new Optimizers.AdaGradWindow(),
                     1, 1000, 0.01, vDataset, new Metrics.Classification.Accuracy());
             }
 

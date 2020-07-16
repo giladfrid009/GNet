@@ -4,7 +4,7 @@ using System.IO;
 
 namespace GNet
 {
-    public class Logger : IDisposable
+    public sealed class Logger : IDisposable
     {
         public string DateTimeFormat { get; set; } = "HH:mm:ss.ff";
         public bool LogEpoches { get; set; } = true;
@@ -13,9 +13,9 @@ namespace GNet
 
         private readonly List<string> logLines;
 
-        private readonly BaseNetwork network;
+        private readonly Network network;
 
-        public Logger(BaseNetwork network)
+        public Logger(Network network)
         {
             logLines = new List<string>();
 

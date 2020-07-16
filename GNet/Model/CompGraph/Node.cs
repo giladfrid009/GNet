@@ -1,18 +1,21 @@
 ﻿using GNet.Layers;
 using System;
+using System.Collections.Generic;
 
-//todo: implement connecting
 namespace GNet.CompGraph
 {
+    //todo: is node a right name?
     [Serializable]
     public class Node
     {
         public ImmutableArray<Node> InNodes { get; }
-        public ImmutableArray<Node> OutNodes { get; set; }
+        public ImmutableArray<Node> OutNodes { get; private set; }
         public ImmutableArray<Layer> Layers { get; }
         public Shape InputShape { get; }
         public Shape OutputShape { get; }
         public int Length { get; }
+
+        private readonly List<Node> outNodesList;
 
         public Node(ImmutableArray<Layer> layers)
         {
@@ -22,6 +25,7 @@ namespace GNet.CompGraph
             Length = layers.Length;
             InputShape = layers[0].Shape;
             OutputShape = layers[layers.Length - 1].Shape;
+            outNodesList = new List<Node>();
 
             Connect();
             Initialize(false);
@@ -44,23 +48,23 @@ namespace GNet.CompGraph
             Length = layers.Length;
             InputShape = layers[0].Shape;
             OutputShape = layers[layers.Length - 1].Shape;
+            outNodesList = new List<Node>();
+
+            inNodes.ForEach(N => N.outNodesList.Add(this));
 
             Connect(inNodes);
             Initialize(true);
-        }
-
-        private void Connect()
-        {
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Connect(Layers[i - 1]);
-            }
         }
 
         private void Connect(ImmutableArray<Node> inNodes)
         {
             ((MergeLayer)Layers[0]).Connect(inNodes.Select(N => N.Layers[N.Length - 1]));
 
+            Connect();
+        }
+
+        private void Connect()
+        {
             for (int i = 1; i < Length; i++)
             {
                 Layers[i].Connect(Layers[i - 1]);
@@ -75,6 +79,14 @@ namespace GNet.CompGraph
             {
                 Layers[i].Initialize();
             }
+        }
+
+        public void InitOutNodes()
+        {
+            OutNodes = ImmutableArray<Node>.FromRef(outNodesList.ToArray());
+            outNodesList.Clear();
+
+            OutNodes.ForEach(N => N.InitOutNodes());
         }
 
         public void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
@@ -119,13 +131,21 @@ namespace GNet.CompGraph
 
         public void Optimize(IOptimizer optimizer)
         {
-            Layers.ForEach(L => L.Optimize(optimizer));
+            for (int i = 1; i < Length; i++)
+            {
+                Layers[i].Optimize(optimizer);
+            }
+
             OutNodes.ForEach(N => N.Optimize(optimizer));
         }
 
         public void Update()
         {
-            Layers.ForEach(L => L.Update());
+            for (int i = 1; i < Length; i++)
+            {
+                Layers[i].Update();
+            }
+
             OutNodes.ForEach(N => N.Update());
         }
 
