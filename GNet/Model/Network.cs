@@ -91,7 +91,7 @@ namespace GNet
                 {
                     Forward(D.Inputs, true);
                     CalcGrads(loss, D.Targets);
-                    optimizer.UpdateParams(epoch);
+                    optimizer.UpdateEpoch(epoch);
                     Optimize(optimizer);
 
                     if (index % batchSize == 0)

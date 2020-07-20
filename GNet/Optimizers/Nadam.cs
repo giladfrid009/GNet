@@ -23,7 +23,7 @@ namespace GNet.Optimizers
             Decay = decay;
         }
 
-        public void UpdateParams(int epoch)
+        public void UpdateEpoch(int epoch)
         {
             epochLr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
             corrDiv1 = 1.0 - Pow(Beta1, epoch + 1.0);

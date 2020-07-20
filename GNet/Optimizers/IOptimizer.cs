@@ -6,7 +6,7 @@ namespace GNet
     {
         IDecay? Decay { get; }
 
-        public void UpdateParams(int epoch);
+        public void UpdateEpoch(int epoch);
 
         double Optimize(TrainableObj obj);
     }

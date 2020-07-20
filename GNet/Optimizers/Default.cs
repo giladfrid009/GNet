@@ -13,7 +13,7 @@
             Decay = decay;
         }
 
-        public void UpdateParams(int epoch)
+        public void UpdateEpoch(int epoch)
         {
             epochLr = Decay?.Compute(LearningRate, epoch) ?? LearningRate;
         }

@@ -15,6 +15,8 @@ namespace GNet.CompGraph
         public Shape OutputShape { get; }
         public int Length { get; }
 
+        private bool hasProcessed = false;
+
         [NonSerialized]
         private readonly List<Node> outNodesList;
 
@@ -86,8 +88,23 @@ namespace GNet.CompGraph
             }
         }
 
+        public void ResetProcessed()
+        {
+            if(!hasProcessed)
+                return;
+
+            hasProcessed = false;
+
+            OutNodes.ForEach(N => N.ResetProcessed());
+        }
+
         public void InitOutNodes()
         {
+            if (hasProcessed)
+                return;
+
+            hasProcessed = true;  
+
             OutNodes = ImmutableArray<Node>.FromRef(outNodesList.ToArray());
             outNodesList.Clear();
 
@@ -96,6 +113,11 @@ namespace GNet.CompGraph
 
         public void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
         {
+            if (hasProcessed)
+                return;
+
+            hasProcessed = true;
+
             Layers[0].Input(inputs);
 
             for (int i = 1; i < Length; i++)
@@ -108,7 +130,10 @@ namespace GNet.CompGraph
 
         private void Forward(bool isTraining)
         {
-            //todo: we need to make sure that all inNodes has fully forwarded, only then continue
+            if (hasProcessed)
+                return;
+
+            hasProcessed = true;
 
             Layers.ForEach(L => L.Forward(isTraining));
             OutNodes.ForEach(N => N.Forward(isTraining));
@@ -116,6 +141,11 @@ namespace GNet.CompGraph
 
         public void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
+            if (hasProcessed)
+                return;
+
+            hasProcessed = true;
+
             Layers[Length - 1].CalcGrads(loss, targets);
 
             for (int i = Length - 2; i >= 0; i--)
@@ -128,7 +158,11 @@ namespace GNet.CompGraph
 
         private void CalcGrads()
         {
-            //todo: we need to make sure that all outNodes has fully calced grads, only then continue
+            if (hasProcessed)
+                return;
+
+            hasProcessed = true;
+            
             for (int i = Length - 1; i >= 0; i--)
             {
                 Layers[i].CalcGrads();
@@ -139,6 +173,11 @@ namespace GNet.CompGraph
 
         public void Optimize(IOptimizer optimizer)
         {
+            if (hasProcessed)
+                return;
+
+            hasProcessed = true;
+
             for (int i = 1; i < Length; i++)
             {
                 Layers[i].Optimize(optimizer);
@@ -149,6 +188,11 @@ namespace GNet.CompGraph
 
         public void Update()
         {
+            if (hasProcessed)
+                return;
+
+            hasProcessed = true;
+
             for (int i = 1; i < Length; i++)
             {
                 Layers[i].Update();
@@ -159,6 +203,11 @@ namespace GNet.CompGraph
 
         public void ClearCache()
         {
+            if (hasProcessed)
+                return;
+
+            hasProcessed = true;
+
             Layers.ForEach(L => L.Neurons.ForEach(N =>
             {
                 N.ClearCache();
