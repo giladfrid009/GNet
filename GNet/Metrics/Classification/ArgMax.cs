@@ -6,7 +6,7 @@
         {
             double maxVal = outputs.Max();
 
-            return 1.0 - targets.Avarage(outputs, (T, O) => O == maxVal && T == 1.0 ? 1.0 : 0.0);
+            return 1.0 - targets.Average(outputs, (T, O) => O == maxVal && T == 1.0 ? 1.0 : 0.0);
         }
     }
 }

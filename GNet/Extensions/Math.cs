@@ -4,17 +4,17 @@ namespace GNet
 {
     public static class MathExtensions
     {
-        public static double Avarage<TSource, TOther>(this IArray<TSource> source, IArray<TOther> other, Func<TSource, TOther, double> selector)
+        public static double Average<TSource, TOther>(this IArray<TSource> source, IArray<TOther> other, Func<TSource, TOther, double> selector)
         {
             return Sum(source, other, selector) / source.Length;
         }
 
-        public static double Avarage<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
+        public static double Average<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
         {
             return Sum(source, selector) / source.Length;
         }       
 
-        public static double Avarage(this IArray<double> source)
+        public static double Average(this IArray<double> source)
         {
             return Sum(source) / source.Length;
         }

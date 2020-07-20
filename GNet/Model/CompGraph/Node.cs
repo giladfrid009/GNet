@@ -24,7 +24,7 @@ namespace GNet.CompGraph
             Layers = layers;    
             Length = layers.Length;
             InputShape = layers[0].Shape;
-            OutputShape = layers[layers.Length - 1].Shape;
+            OutputShape = layers[^1].Shape;
             outNodesList = new List<Node>();
 
             Connect();
@@ -47,7 +47,7 @@ namespace GNet.CompGraph
             Layers = layers;
             Length = layers.Length;
             InputShape = layers[0].Shape;
-            OutputShape = layers[layers.Length - 1].Shape;
+            OutputShape = layers[^1].Shape;
             outNodesList = new List<Node>();
 
             inNodes.ForEach(N => N.outNodesList.Add(this));
@@ -56,9 +56,13 @@ namespace GNet.CompGraph
             Initialize(true);
         }
 
+        public Node(ImmutableArray<Node> inNodes, params Layer[] layers) : this(inNodes, new ImmutableArray<Layer>(layers))
+        {
+        }
+
         private void Connect(ImmutableArray<Node> inNodes)
         {
-            ((MergeLayer)Layers[0]).Connect(inNodes.Select(N => N.Layers[N.Length - 1]));
+            ((MergeLayer)Layers[0]).Connect(inNodes.Select(N => N.Layers[^1]));
 
             Connect();
         }
@@ -103,6 +107,8 @@ namespace GNet.CompGraph
 
         private void Forward(bool isTraining)
         {
+            //todo: we need to make sure that all inNodes has fully forwarded, only then continue
+
             Layers.ForEach(L => L.Forward(isTraining));
             OutNodes.ForEach(N => N.Forward(isTraining));
         }
@@ -111,7 +117,7 @@ namespace GNet.CompGraph
         {
             Layers[Length - 1].CalcGrads(loss, targets);
 
-            for (int i = Length - 2; i > 0; i--)
+            for (int i = Length - 2; i >= 0; i--)
             {
                 Layers[i].CalcGrads();
             }
@@ -121,6 +127,7 @@ namespace GNet.CompGraph
 
         private void CalcGrads()
         {
+            //todo: we need to make sure that all outNodes has fully calced grads, only then continue
             for (int i = Length - 1; i >= 0; i--)
             {
                 Layers[i].CalcGrads();

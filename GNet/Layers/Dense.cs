@@ -15,7 +15,7 @@ namespace GNet.Layers
 
         public override void Connect(Layer inLayer)
         {
-            Neurons.ForEach(N => N.InSynapses = inLayer.Neurons.Select(inN => new Synapse(inN, N)));
+            Neurons.ForEach(outN => outN.InSynapses = inLayer.Neurons.Select(inN => new Synapse(inN, outN)));
 
             inLayer.Neurons.ForEach((inN, i) => inN.OutSynapses = Neurons.Select(outN => outN.InSynapses[i]));
         }

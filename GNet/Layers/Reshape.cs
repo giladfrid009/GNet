@@ -17,12 +17,13 @@ namespace GNet.Layers
                 throw new ShapeMismatchException($"{nameof(inLayer)} shape volume mismatch.");
             }
 
-            Neurons.ForEach((N, i) =>
+            Neurons.ForEach((outN, i) =>
             {
-                var S = new Synapse(inLayer.Neurons[i], N);
+                Neuron inN = inLayer.Neurons[i];
+                var S = new Synapse(inN, outN);
                 var arr = new ImmutableArray<Synapse>(S);
-                N.InSynapses = arr;
-                inLayer.Neurons[i].OutSynapses = arr;
+                outN.InSynapses = arr;
+                inN.OutSynapses = arr;
             });
         }
 

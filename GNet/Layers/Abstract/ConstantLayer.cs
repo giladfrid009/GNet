@@ -2,7 +2,10 @@
 using System;
 
 namespace GNet.Layers
-{
+{   
+    /// <summary>
+    /// Base class for a non trainable layer without activation function.
+    /// </summary>
     [Serializable]
     public abstract class ConstantLayer : Layer
     {

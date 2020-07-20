@@ -76,13 +76,13 @@ namespace GNet.Layers
 
                 IndexGen.ByStrides(PaddedShape, Strides, KernelShape).ForEach((idxKernel, j) =>
                 {
-                    var N = (CNeuron)Neurons[offset + j];
+                    var outN = (CNeuron)Neurons[offset + j];
 
-                    N.KernelBias = kernel.Bias;
+                    outN.KernelBias = kernel.Bias;
 
-                    N.InSynapses = IndexGen.ByStart(KernelShape, ImmutableArray<int>.FromRef(idxKernel)).Select((idx, k) =>
+                    outN.InSynapses = IndexGen.ByStart(KernelShape, ImmutableArray<int>.FromRef(idxKernel)).Select((idx, k) =>
                     {
-                        var S = new CSynapse(padded[idx], N)
+                        var S = new CSynapse(padded[idx], outN)
                         {
                             KernelWeight = kernel.Weights[k]
                         };

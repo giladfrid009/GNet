@@ -42,11 +42,11 @@ namespace GNet.Layers
 
             IndexGen.ByStrides(PaddedShape, Strides, KernelShape).ForEach((idxKernel, i) =>
             {
-                Neuron N = Neurons[i];
+                Neuron outN = Neurons[i];
 
-                N.InSynapses = IndexGen.ByStart(KernelShape, ImmutableArray<int>.FromRef(idxKernel)).Select((idx, j) =>
+                outN.InSynapses = IndexGen.ByStart(KernelShape, ImmutableArray<int>.FromRef(idxKernel)).Select((idx, j) =>
                 {
-                    var S = new Synapse(padded[idx], N);
+                    var S = new Synapse(padded[idx], outN);
                     inConnections[idx].Add(S);
                     return S;
                 });
