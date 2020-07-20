@@ -192,14 +192,6 @@ namespace GNet.CompGraph
             if (hasProcessed)
                 return;
 
-            InNodes.ForEach(N =>
-            {
-                if (N.hasProcessed == false)
-                {
-                    return;
-                }
-            });
-
             hasProcessed = true;
 
             for (int i = 1; i < Length; i++)
@@ -214,14 +206,6 @@ namespace GNet.CompGraph
         {
             if (hasProcessed)
                 return;
-
-            InNodes.ForEach(N =>
-            {
-                if (N.hasProcessed == false)
-                {
-                    return;
-                }
-            });
 
             hasProcessed = true;
 
