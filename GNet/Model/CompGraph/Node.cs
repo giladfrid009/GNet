@@ -90,7 +90,7 @@ namespace GNet.CompGraph
 
         public void ResetProcessed()
         {
-            if(!hasProcessed)
+            if(hasProcessed == false)
                 return;
 
             hasProcessed = false;
@@ -133,6 +133,14 @@ namespace GNet.CompGraph
             if (hasProcessed)
                 return;
 
+            InNodes.ForEach(N =>
+            {
+                if (N.hasProcessed == false)
+                {
+                    return;
+                }
+            });
+
             hasProcessed = true;
 
             Layers.ForEach(L => L.Forward(isTraining));
@@ -161,6 +169,14 @@ namespace GNet.CompGraph
             if (hasProcessed)
                 return;
 
+            OutNodes.ForEach(N =>
+            {
+                if (N.hasProcessed == false)
+                {
+                    return;
+                }
+            });
+
             hasProcessed = true;
             
             for (int i = Length - 1; i >= 0; i--)
@@ -176,6 +192,14 @@ namespace GNet.CompGraph
             if (hasProcessed)
                 return;
 
+            InNodes.ForEach(N =>
+            {
+                if (N.hasProcessed == false)
+                {
+                    return;
+                }
+            });
+
             hasProcessed = true;
 
             for (int i = 1; i < Length; i++)
@@ -190,6 +214,14 @@ namespace GNet.CompGraph
         {
             if (hasProcessed)
                 return;
+
+            InNodes.ForEach(N =>
+            {
+                if (N.hasProcessed == false)
+                {
+                    return;
+                }
+            });
 
             hasProcessed = true;
 
