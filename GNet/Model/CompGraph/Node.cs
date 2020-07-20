@@ -15,6 +15,7 @@ namespace GNet.CompGraph
         public Shape OutputShape { get; }
         public int Length { get; }
 
+        [NonSerialized]
         private readonly List<Node> outNodesList;
 
         public Node(ImmutableArray<Layer> layers)

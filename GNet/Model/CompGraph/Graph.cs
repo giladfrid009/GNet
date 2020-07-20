@@ -26,9 +26,8 @@ namespace GNet.CompGraph
             OutputNode.CalcGrads(loss, targets);
         }
 
-        protected override void Optimize(IOptimizer optimizer, int epoch)
+        protected override void Optimize(IOptimizer optimizer)
         {
-            optimizer.UpdateParams(epoch);
             InputNode.Optimize(optimizer);
         }
 
@@ -42,10 +41,8 @@ namespace GNet.CompGraph
             InputNode.ClearCache();
         }
 
-        public override ImmutableShapedArray<double> Predict(ImmutableShapedArray<double> inputs)
+        protected override ImmutableShapedArray<double> GetOutput()
         {
-            InputNode.Forward(inputs, false);
-
             return OutputNode.Layers[OutputNode.Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
         }
     }

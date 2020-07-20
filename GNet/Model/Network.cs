@@ -27,13 +27,19 @@ namespace GNet
 
         protected abstract void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets);
 
-        protected abstract void Optimize(IOptimizer optimizer, int epoch);
+        protected abstract void Optimize(IOptimizer optimizer);
 
         protected abstract void Update();
 
         protected abstract void ClearCache();
 
-        public abstract ImmutableShapedArray<double> Predict(ImmutableShapedArray<double> inputs);
+        protected abstract ImmutableShapedArray<double> GetOutput();
+
+        public ImmutableShapedArray<double> Predict(ImmutableShapedArray<double> inputs)
+        {
+            Forward(inputs, false);
+            return GetOutput();
+        }
 
         public double Validate(Dataset dataset, IMetric metric)
         {
@@ -85,7 +91,8 @@ namespace GNet
                 {
                     Forward(D.Inputs, true);
                     CalcGrads(loss, D.Targets);
-                    Optimize(optimizer, epoch);
+                    optimizer.UpdateParams(epoch);
+                    Optimize(optimizer);
 
                     if (index % batchSize == 0)
                     {

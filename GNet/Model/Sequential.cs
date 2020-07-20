@@ -57,10 +57,8 @@ namespace GNet
             }
         }
 
-        protected override void Optimize(IOptimizer optimizer, int epoch)
+        protected override void Optimize(IOptimizer optimizer)
         {
-            optimizer.UpdateParams(epoch);
-
             for (int i = 1; i < Length; i++)
             {
                 Layers[i].Optimize(optimizer);
@@ -84,10 +82,8 @@ namespace GNet
             }));
         }
 
-        public override ImmutableShapedArray<double> Predict(ImmutableShapedArray<double> inputs)
+        protected override ImmutableShapedArray<double> GetOutput()
         {
-            Forward(inputs, false);
-
             return Layers[Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
         }
     }
