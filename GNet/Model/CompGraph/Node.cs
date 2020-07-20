@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace GNet.CompGraph
 {
-    //todo: is node a right name?
     [Serializable]
     public class Node
     {
