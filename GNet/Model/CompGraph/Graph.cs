@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace GNet.CompGraph
+namespace GNet.ComputaionGraph
 {
     [Serializable]
     public class Graph : Network
     {        
-        public Node InputNode { get; }
-        public Node OutputNode { get; }
+        public Pipeline InputNode { get; }
+        public Pipeline OutputNode { get; }
 
-        public Graph(Node inNode, Node outNode) : base(inNode.InputShape, outNode.OutputShape)
+        public Graph(Pipeline inNode, Pipeline outNode) : base(inNode.InputShape, outNode.OutputShape)
         {
             InputNode = inNode;
             OutputNode = outNode;

@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace GNet.CompGraph
+namespace GNet.ComputaionGraph
 {
     [Serializable]
-    public class Node
+    public class Pipeline
     {
-        public ImmutableArray<Node> InNodes { get; }
-        public ImmutableArray<Node> OutNodes { get; private set; }
+        public ImmutableArray<Pipeline> InNodes { get; }
+        public ImmutableArray<Pipeline> OutNodes { get; private set; }
         public ImmutableArray<Layer> Layers { get; }
         public Shape InputShape { get; }
         public Shape OutputShape { get; }
@@ -17,27 +17,27 @@ namespace GNet.CompGraph
         private bool hasProcessed = false;
 
         [NonSerialized]
-        private readonly List<Node> outNodesList;
+        private readonly List<Pipeline> outNodesList;
 
-        public Node(ImmutableArray<Layer> layers)
+        public Pipeline(ImmutableArray<Layer> layers)
         {
-            InNodes = new ImmutableArray<Node>();
-            OutNodes = new ImmutableArray<Node>();
+            InNodes = new ImmutableArray<Pipeline>();
+            OutNodes = new ImmutableArray<Pipeline>();
             Layers = layers;    
             Length = layers.Length;
             InputShape = layers[0].Shape;
             OutputShape = layers[^1].Shape;
-            outNodesList = new List<Node>();
+            outNodesList = new List<Pipeline>();
 
             Connect();
             Initialize(false);
         }
 
-        public Node(params Layer[] layers) : this(new ImmutableArray<Layer>(layers))
+        public Pipeline(params Layer[] layers) : this(new ImmutableArray<Layer>(layers))
         {
         }
 
-        public Node(ImmutableArray<Node> inNodes, ImmutableArray<Layer> layers)
+        public Pipeline(ImmutableArray<Pipeline> inNodes, ImmutableArray<Layer> layers)
         {
             if((layers[0] is MergeLayer) == false)
             {
@@ -45,12 +45,12 @@ namespace GNet.CompGraph
             }
 
             InNodes = inNodes;
-            OutNodes = new ImmutableArray<Node>();
+            OutNodes = new ImmutableArray<Pipeline>();
             Layers = layers;
             Length = layers.Length;
             InputShape = layers[0].Shape;
             OutputShape = layers[^1].Shape;
-            outNodesList = new List<Node>();
+            outNodesList = new List<Pipeline>();
 
             inNodes.ForEach(N => N.outNodesList.Add(this));
 
@@ -58,11 +58,11 @@ namespace GNet.CompGraph
             Initialize(true);
         }
 
-        public Node(ImmutableArray<Node> inNodes, params Layer[] layers) : this(inNodes, new ImmutableArray<Layer>(layers))
+        public Pipeline(ImmutableArray<Pipeline> inNodes, params Layer[] layers) : this(inNodes, new ImmutableArray<Layer>(layers))
         {
         }
 
-        private void Connect(ImmutableArray<Node> inNodes)
+        private void Connect(ImmutableArray<Pipeline> inNodes)
         {
             ((MergeLayer)Layers[0]).Connect(inNodes.Select(N => N.Layers[^1]));
 
@@ -104,7 +104,7 @@ namespace GNet.CompGraph
 
             hasProcessed = true;  
 
-            OutNodes = ImmutableArray<Node>.FromRef(outNodesList.ToArray());
+            OutNodes = ImmutableArray<Pipeline>.FromRef(outNodesList.ToArray());
             outNodesList.Clear();
 
             OutNodes.ForEach(N => N.InitOutNodes());
