@@ -19,29 +19,11 @@ namespace GNet.ComputaionGraph
         [NonSerialized]
         private readonly List<Pipeline> outPipesList;
 
-        public Pipeline(ImmutableArray<Layer> layers)
-        {
-            InPipes = new ImmutableArray<Pipeline>();
-            OutPipes = new ImmutableArray<Pipeline>();
-            Layers = layers;    
-            Length = layers.Length;
-            InputShape = layers[0].Shape;
-            OutputShape = layers[^1].Shape;
-            outPipesList = new List<Pipeline>();
-
-            Connect();
-            Initialize(false);
-        }
-
-        public Pipeline(params Layer[] layers) : this(new ImmutableArray<Layer>(layers))
-        {
-        }
-
         public Pipeline(ImmutableArray<Pipeline> inPipes, ImmutableArray<Layer> layers)
         {
-            if((layers[0] is MergeLayer) == false)
+            if (inPipes.Length > 0 && layers[0] is MergeLayer == false)
             {
-                throw new ArgumentException($"nameof{layers}[0] is not of type {nameof(MergeLayer)}");
+                throw new ArgumentException($"{nameof(layers)}[0] is not of type {nameof(MergeLayer)}");
             }
 
             InPipes = inPipes;
@@ -54,32 +36,38 @@ namespace GNet.ComputaionGraph
 
             inPipes.ForEach(P => P.outPipesList.Add(this));
 
-            Connect(inPipes);
-            Initialize(true);
+            Connect();
+            Initialize();
         }
 
         public Pipeline(ImmutableArray<Pipeline> inPipes, params Layer[] layers) : this(inPipes, new ImmutableArray<Layer>(layers))
         {
         }
 
-        private void Connect(ImmutableArray<Pipeline> inPipes)
+        public Pipeline(ImmutableArray<Layer> layers) : this(new ImmutableArray<Pipeline>(), layers)
         {
-            ((MergeLayer)Layers[0]).Connect(inPipes.Select(P => P.Layers[^1]));
+        }
 
-            Connect();
+        public Pipeline(params Layer[] layers) : this(new ImmutableArray<Pipeline>(), layers)
+        {
         }
 
         private void Connect()
         {
+            if(InPipes.Length > 0)
+            {
+                ((MergeLayer)Layers[0]).Connect(InPipes.Select(P => P.Layers[^1]));
+            }
+
             for (int i = 1; i < Length; i++)
             {
                 Layers[i].Connect(Layers[i - 1]);
             }
         }
 
-        private void Initialize(bool initFirst)
+        private void Initialize()
         {
-            int i = initFirst ? 0 : 1;
+            int i = InPipes.Length > 0 ? 0 : 1;
 
             for (; i < Length; i++)
             {
@@ -90,7 +78,9 @@ namespace GNet.ComputaionGraph
         public void ResetProcessed()
         {
             if(hasProcessed == false)
+            {
                 return;
+            }
 
             hasProcessed = false;
 
@@ -100,7 +90,9 @@ namespace GNet.ComputaionGraph
         public void InitOutNodes()
         {
             if (hasProcessed)
+            {
                 return;
+            }
 
             hasProcessed = true;  
 
@@ -113,7 +105,9 @@ namespace GNet.ComputaionGraph
         public void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
         {
             if (hasProcessed)
+            {
                 return;
+            }
 
             hasProcessed = true;
 
@@ -130,7 +124,9 @@ namespace GNet.ComputaionGraph
         private void Forward(bool isTraining)
         {
             if (hasProcessed)
+            {
                 return;
+            }
 
             InPipes.ForEach(P =>
             {
@@ -149,7 +145,9 @@ namespace GNet.ComputaionGraph
         public void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
             if (hasProcessed)
+            {
                 return;
+            }
 
             hasProcessed = true;
 
@@ -166,7 +164,9 @@ namespace GNet.ComputaionGraph
         private void CalcGrads()
         {
             if (hasProcessed)
+            {
                 return;
+            }
 
             OutPipes.ForEach(P =>
             {
@@ -189,7 +189,9 @@ namespace GNet.ComputaionGraph
         public void Optimize(IOptimizer optimizer)
         {
             if (hasProcessed)
+            {
                 return;
+            }
 
             hasProcessed = true;
 
@@ -204,7 +206,9 @@ namespace GNet.ComputaionGraph
         public void Update()
         {
             if (hasProcessed)
+            {
                 return;
+            }
 
             hasProcessed = true;
 
@@ -219,7 +223,9 @@ namespace GNet.ComputaionGraph
         public void ClearCache()
         {
             if (hasProcessed)
+            {
                 return;
+            }
 
             hasProcessed = true;
 
