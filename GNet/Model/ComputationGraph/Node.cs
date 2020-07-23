@@ -47,11 +47,38 @@ namespace GNet.ComputaionGraph
         {
         }
 
+        public void Interconnect()
+        {
+            if (hasProcessed)
+            {
+                return;
+            }
+
+            hasProcessed = true;        
+
+            OutNodes = ImmutableArray<Node>.FromRef(listOutNodes.ToArray());
+            listOutNodes.Clear();       
+
+            OutNodes.ForEach(N => N.Interconnect());
+        }
+
+        public void ResetProcessed()
+        {
+            if (hasProcessed == false)
+            {
+                return;
+            }
+
+            hasProcessed = false;
+
+            OutNodes.ForEach(N => N.ResetProcessed());
+        }
+
         private void Connect()
         {
-            if(InNodes.Length > 0)
+            if (InNodes.Length > 0)
             {
-                if (Layers[0] is MergeLayer == false)
+                if ((Layers[0] is MergeLayer) == false)
                 {
                     throw new ArgumentException($"{nameof(Layers)}[0] is not of type {nameof(MergeLayer)}");
                 }
@@ -73,34 +100,7 @@ namespace GNet.ComputaionGraph
             {
                 Layers[i].Initialize();
             }
-        }
-
-        public void ResetProcessed()
-        {
-            if(hasProcessed == false)
-            {
-                return;
-            }
-
-            hasProcessed = false;
-
-            OutNodes.ForEach(N => N.ResetProcessed());
-        }
-
-        public void InitOutNodes()
-        {
-            if (hasProcessed)
-            {
-                return;
-            }
-
-            hasProcessed = true;  
-
-            OutNodes = ImmutableArray<Node>.FromRef(listOutNodes.ToArray());
-            listOutNodes.Clear();
-
-            OutNodes.ForEach(N => N.InitOutNodes());
-        }
+        }      
 
         public void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
         {
@@ -236,6 +236,6 @@ namespace GNet.ComputaionGraph
             }));
 
             OutNodes.ForEach(N => N.ClearCache());
-        }        
+        }
     }
 }

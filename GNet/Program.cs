@@ -17,10 +17,11 @@ namespace GNet
                 new Layers.Dense(new Shape(10), new Activations.Sigmoid(), new Initializers.TruncNormal())
             );
 
-            Node n2 = new Node(
-                new ImmutableArray<Node>(n1),     
+            Node n2 = new Node
+            (
+                new ImmutableArray<Node>(n1),
                 new Layers.Concat(new Shape(10)),
-                new Layers.Softmax(new Shape(2))             
+                new Layers.Softmax(new Shape(2))
             );
 
             var graph = new Graph(n1, n2);

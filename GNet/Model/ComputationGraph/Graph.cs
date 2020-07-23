@@ -13,8 +13,7 @@ namespace GNet.ComputaionGraph
             InputNode = inNode;
             OutputNode = outNode;
 
-            inNode.ResetProcessed();
-            inNode.InitOutNodes();
+            inNode.Interconnect();
         }
 
         protected override void Forward(ImmutableShapedArray<double> inputs, bool isTraining)

@@ -13,7 +13,7 @@ namespace GNet.Layers
 
         public sealed override void Connect(Layer inLayer)
         {
-            throw new NotSupportedException();
+            Connect(new ImmutableArray<Layer>(inLayer));
         }
     }
 }
