@@ -5,51 +5,51 @@ namespace GNet.ComputaionGraph
     [Serializable]
     public class Graph : Network
     {        
-        public Pipeline InputPipe { get; }
-        public Pipeline OutputPipe { get; }
+        public Node InputNode { get; }
+        public Node OutputNode { get; }
 
-        public Graph(Pipeline inPipe, Pipeline outPipe) : base(inPipe.InputShape, outPipe.OutputShape)
+        public Graph(Node inNode, Node outNode) : base(inNode.InputShape, outNode.OutputShape)
         {
-            InputPipe = inPipe;
-            OutputPipe = outPipe;
+            InputNode = inNode;
+            OutputNode = outNode;
 
-            inPipe.ResetProcessed();
-            inPipe.InitOutNodes();
+            inNode.ResetProcessed();
+            inNode.InitOutNodes();
         }
 
         protected override void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
         {
-            InputPipe.ResetProcessed();
-            InputPipe.Forward(inputs, isTraining);
+            InputNode.ResetProcessed();
+            InputNode.Forward(inputs, isTraining);
         }
 
         protected override void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
-            InputPipe.ResetProcessed();
-            OutputPipe.CalcGrads(loss, targets);
+            InputNode.ResetProcessed();
+            OutputNode.CalcGrads(loss, targets);
         }
 
         protected override void Optimize(IOptimizer optimizer)
         {
-            InputPipe.ResetProcessed();
-            InputPipe.Optimize(optimizer);
+            InputNode.ResetProcessed();
+            InputNode.Optimize(optimizer);
         }
 
         protected override void Update()
         {
-            InputPipe.ResetProcessed();
-            InputPipe.Update();
+            InputNode.ResetProcessed();
+            InputNode.Update();
         }
 
         protected override void ClearCache()
         {
-            InputPipe.ResetProcessed();
-            InputPipe.ClearCache();
+            InputNode.ResetProcessed();
+            InputNode.ClearCache();
         }
 
         protected override ImmutableShapedArray<double> GetOutput()
         {
-            return OutputPipe.Layers[OutputPipe.Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
+            return OutputNode.Layers[OutputNode.Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
         }
     }
 }

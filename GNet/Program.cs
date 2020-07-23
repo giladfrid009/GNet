@@ -12,18 +12,18 @@ namespace GNet
             Dataset tDataset = datasetGenerator.Generate(5000);
             Dataset vDataset = datasetGenerator.Generate(100);
 
-            Pipeline p1 = new Pipeline(
+            Node n1 = new Node(
                 new Layers.Dense(new Shape(2, 5), new Activations.Identity()),
                 new Layers.Dense(new Shape(10), new Activations.Sigmoid(), new Initializers.TruncNormal())
             );
 
-            Pipeline p2 = new Pipeline(
-                new ImmutableArray<Pipeline>(p1),     
+            Node n2 = new Node(
+                new ImmutableArray<Node>(n1),     
                 new Layers.Concat(new Shape(10)),
                 new Layers.Softmax(new Shape(2))             
             );
 
-            var graph = new Graph(p1, p2);
+            var graph = new Graph(n1, n2);
 
             //var net = new Sequential
             //(
