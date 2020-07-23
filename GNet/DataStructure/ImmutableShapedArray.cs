@@ -19,6 +19,10 @@ namespace GNet
             Shape = shape;
         }
 
+        public ImmutableShapedArray() : this(new Shape(0), Array.Empty<T>(), true)
+        {
+        }
+
         public ImmutableShapedArray(params T[] elements) : this(new Shape(elements.Length), elements, false)
         {
         }

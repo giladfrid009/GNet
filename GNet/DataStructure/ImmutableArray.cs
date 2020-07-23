@@ -9,7 +9,7 @@ namespace GNet
 
         public T this[int i] => internalArray[i];
 
-        private readonly T[] internalArray;
+        private readonly T[] internalArray;        
 
         protected ImmutableArray(T[] array, bool asRef = false)
         {
@@ -25,6 +25,10 @@ namespace GNet
 
                 Array.Copy(array, 0, internalArray, 0, Length);
             }
+        }
+
+        public ImmutableArray() : this(Array.Empty<T>(), true)
+        {           
         }
 
         public ImmutableArray(params T[] elements) : this(elements, false)

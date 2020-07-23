@@ -21,11 +21,6 @@ namespace GNet.ComputaionGraph
 
         public Node(ImmutableArray<Node> inNodes, ImmutableArray<Layer> layers)
         {
-            if (inNodes.Length > 0 && layers[0] is MergeLayer == false)
-            {
-                throw new ArgumentException($"{nameof(layers)}[0] is not of type {nameof(MergeLayer)}");
-            }
-
             InNodes = inNodes;
             OutNodes = new ImmutableArray<Node>();
             Layers = layers;
@@ -56,7 +51,14 @@ namespace GNet.ComputaionGraph
         {
             if(InNodes.Length > 0)
             {
-                ((MergeLayer)Layers[0]).Connect(InNodes.Select(P => P.Layers[^1]));
+                if (Layers[0] is MergeLayer)
+                {
+                    ((MergeLayer)Layers[0]).Connect(InNodes.Select(P => P.Layers[^1]));
+                }
+                else
+                {
+                    throw new ArgumentException($"{nameof(Layers)}[0] is not of type {nameof(MergeLayer)}");
+                }
             }
 
             for (int i = 1; i < Length; i++)
