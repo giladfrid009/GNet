@@ -5,37 +5,23 @@ using System.Collections.Generic;
 namespace GNet.ComputaionGraph
 {
     [Serializable]
-    public class Node
+    public class Node : Sequential
     {
         public ImmutableArray<Node> InNodes { get; }
         public ImmutableArray<Node> OutNodes { get; private set; }
-        public ImmutableArray<Layer> Layers { get; }
-        public Shape InputShape { get; }
-        public Shape OutputShape { get; }
-        public int Length { get; }
 
         private bool hasProcessed = false;
 
         [NonSerialized]
         private readonly List<Node> listOutNodes;
 
-        public Node(ImmutableArray<Node> inNodes, ImmutableArray<Layer> layers, bool initLayers = true)
+        public Node(ImmutableArray<Node> inNodes, ImmutableArray<Layer> layers, bool initLayers = true) : base(layers, initLayers)
         {
             InNodes = inNodes;
             OutNodes = new ImmutableArray<Node>();
-            Layers = layers;
-            Length = layers.Length;
-            InputShape = layers[0].Shape;
-            OutputShape = layers[^1].Shape;
             listOutNodes = new List<Node>();
 
             inNodes.ForEach(N => N.listOutNodes.Add(this));
-
-            if (initLayers)
-            {
-                Connect();
-                Initialize();
-            }
         }
 
         public Node(ImmutableArray<Node> inNodes, params Layer[] layers) : this(inNodes, new ImmutableArray<Layer>(layers))
@@ -87,25 +73,9 @@ namespace GNet.ComputaionGraph
             hasProcessed = false;
 
             OutNodes.ForEach(N => N.ResetProcessed());
-        }
+        }   
 
-        private void Connect()
-        {
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Connect(Layers[i - 1]);
-            }
-        }
-
-        private void Initialize()
-        {
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Initialize();
-            }
-        }      
-
-        public void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
+        public new void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
         {
             if (hasProcessed)
             {
@@ -114,12 +84,7 @@ namespace GNet.ComputaionGraph
 
             hasProcessed = true;
 
-            Layers[0].Input(inputs);
-
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Forward(isTraining);
-            }
+            base.Forward(inputs, isTraining);
 
             OutNodes.ForEach(N => N.Forward(isTraining));
         }
@@ -145,7 +110,7 @@ namespace GNet.ComputaionGraph
             OutNodes.ForEach(N => N.Forward(isTraining));
         }
 
-        public void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
+        public new void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
             if (hasProcessed)
             {
@@ -154,12 +119,9 @@ namespace GNet.ComputaionGraph
 
             hasProcessed = true;
 
-            Layers[Length - 1].CalcGrads(loss, targets);
+            base.CalcGrads(loss, targets);
 
-            for (int i = Length - 2; i >= 0; i--)
-            {
-                Layers[i].CalcGrads();
-            }
+            Layers[0].CalcGrads();
 
             InNodes.ForEach(N => N.CalcGrads());
         }
@@ -189,7 +151,7 @@ namespace GNet.ComputaionGraph
             InNodes.ForEach(N => N.CalcGrads());
         }
 
-        public void Optimize(IOptimizer optimizer)
+        public new void Optimize(IOptimizer optimizer)
         {
             if (hasProcessed)
             {
@@ -198,15 +160,12 @@ namespace GNet.ComputaionGraph
 
             hasProcessed = true;
 
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Optimize(optimizer);
-            }
+            base.Optimize(optimizer);
 
             OutNodes.ForEach(N => N.Optimize(optimizer));
         }
 
-        public void Update()
+        public new void Update()
         {
             if (hasProcessed)
             {
@@ -215,15 +174,12 @@ namespace GNet.ComputaionGraph
 
             hasProcessed = true;
 
-            for (int i = 1; i < Length; i++)
-            {
-                Layers[i].Update();
-            }
+            base.Update();
 
             OutNodes.ForEach(N => N.Update());
         }
 
-        public void ClearCache()
+        public new void ClearCache()
         {
             if (hasProcessed)
             {
@@ -232,11 +188,7 @@ namespace GNet.ComputaionGraph
 
             hasProcessed = true;
 
-            Layers.ForEach(L => L.Neurons.ForEach(N =>
-            {
-                N.ClearCache();
-                N.InSynapses.ForEach(S => S.ClearCache());
-            }));
+            base.ClearCache();
 
             OutNodes.ForEach(N => N.ClearCache());
         }
