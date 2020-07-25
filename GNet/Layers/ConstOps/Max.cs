@@ -1,11 +1,13 @@
 ﻿using GNet.Model;
 using System;
 
-namespace GNet.Layers.Poolers
+namespace GNet.Layers.ConstOps
 {
     [Serializable]
-    public class Max : IPooler
+    public class Max : IConstOp
     {
+        public bool RequiresUpdate { get; } = true;
+
         public ImmutableArray<double> CalcWeights(ImmutableArray<Synapse> inSynapses)
         {
             double maxVal = inSynapses.Max(X => X.InNeuron.OutVal);

@@ -2,8 +2,10 @@
 
 namespace GNet.Layers
 {
-    public interface IPooler
+    public interface IConstOp
     {
+        bool RequiresUpdate { get; }
+
         ImmutableArray<double> CalcWeights(ImmutableArray<Synapse> inSynapses);
     }
 }

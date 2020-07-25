@@ -19,7 +19,7 @@ namespace GNet.ComputaionGraph
         [NonSerialized]
         private readonly List<Node> listOutNodes;
 
-        public Node(ImmutableArray<Node> inNodes, ImmutableArray<Layer> layers)
+        public Node(ImmutableArray<Node> inNodes, ImmutableArray<Layer> layers, bool initLayers = true)
         {
             InNodes = inNodes;
             OutNodes = new ImmutableArray<Node>();
@@ -31,19 +31,22 @@ namespace GNet.ComputaionGraph
 
             inNodes.ForEach(N => N.listOutNodes.Add(this));
 
-            Connect();
-            Initialize();
+            if (initLayers)
+            {
+                Connect();
+                Initialize();
+            }
         }
 
         public Node(ImmutableArray<Node> inNodes, params Layer[] layers) : this(inNodes, new ImmutableArray<Layer>(layers))
         {
         }
 
-        public Node(ImmutableArray<Layer> layers) : this(new ImmutableArray<Node>(), layers)
+        public Node(ImmutableArray<Layer> layers, bool initLayers = true) : this(new ImmutableArray<Node>(), layers, initLayers)
         {
         }
 
-        public Node(params Layer[] layers) : this(new ImmutableArray<Node>(), layers)
+        public Node(params Layer[] layers) : this(new ImmutableArray<Node>(), new ImmutableArray<Layer>(layers))
         {
         }
 
@@ -54,7 +57,19 @@ namespace GNet.ComputaionGraph
                 return;
             }
 
-            hasProcessed = true;        
+            hasProcessed = true;
+
+            if (InNodes.Length > 0)
+            {
+                if ((Layers[0] is MergeLayer) == false)
+                {
+                    throw new ArgumentException($"{nameof(Layers)}[0] is not of type {nameof(MergeLayer)}");
+                }
+
+                ((MergeLayer)Layers[0]).Connect(InNodes.Select(N => N.Layers[^1]));
+
+                Layers[0].Initialize();
+            }
 
             OutNodes = ImmutableArray<Node>.FromRef(listOutNodes.ToArray());
             listOutNodes.Clear();       
@@ -76,16 +91,6 @@ namespace GNet.ComputaionGraph
 
         private void Connect()
         {
-            if (InNodes.Length > 0)
-            {
-                if ((Layers[0] is MergeLayer) == false)
-                {
-                    throw new ArgumentException($"{nameof(Layers)}[0] is not of type {nameof(MergeLayer)}");
-                }
-
-                ((MergeLayer)Layers[0]).Connect(InNodes.Select(N => N.Layers[^1]));
-            }
-
             for (int i = 1; i < Length; i++)
             {
                 Layers[i].Connect(Layers[i - 1]);
@@ -94,9 +99,7 @@ namespace GNet.ComputaionGraph
 
         private void Initialize()
         {
-            int i = InNodes.Length > 0 ? 0 : 1;
-
-            for (; i < Length; i++)
+            for (int i = 1; i < Length; i++)
             {
                 Layers[i].Initialize();
             }

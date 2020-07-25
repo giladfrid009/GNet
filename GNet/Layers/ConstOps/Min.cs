@@ -1,11 +1,13 @@
 ﻿using GNet.Model;
 using System;
 
-namespace GNet.Layers.Poolers
+namespace GNet.Layers.ConstOps
 {
     [Serializable]
-    public class Min : IPooler
+    public class Min : IConstOp
     {
+        public bool RequiresUpdate { get; } = true;
+
         public ImmutableArray<double> CalcWeights(ImmutableArray<Synapse> inSynapses)
         {
             double minVal = inSynapses.Min(X => X.InNeuron.OutVal);

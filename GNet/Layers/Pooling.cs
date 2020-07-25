@@ -13,15 +13,15 @@ namespace GNet.Layers
         public Shape InputShape { get; }
         public Shape PaddedShape { get; }
         public Shape KernelShape { get; }
-        public IPooler Pooler { get; }
+        public IConstOp PoolOp { get; }
         public double PadVal { get; }
 
-        public Pooling(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IPooler pooler, double padVal = 0.0) : base(outputShape)
+        public Pooling(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IConstOp poolOp, double padVal = 0.0) : base(outputShape)
         {
             InputShape = inputShape;
             KernelShape = kernelShape;
             Strides = strides;
-            Pooler = pooler;
+            PoolOp = poolOp;
             PadVal = padVal;
 
             Paddings = Padder.CalcPadding(inputShape, outputShape, kernelShape, strides, true);
@@ -57,19 +57,33 @@ namespace GNet.Layers
 
         public override void Initialize()
         {
+            if (PoolOp.RequiresUpdate == false)
+            {
+                InitWeights();
+            }
         }
 
         public override void Forward(bool isTraining)
         {
+            if (PoolOp.RequiresUpdate)
+            {
+                InitWeights();
+            }
+
             Neurons.ForEach(N =>
             {
-                ImmutableArray<double> inWeights = Pooler.CalcWeights(N.InSynapses);
+                N.InVal = N.InSynapses.Sum(S => S.Weight * S.InNeuron.OutVal);
+                N.OutVal = N.InVal;
+            });
+        }
+
+        private void InitWeights()
+        {
+            Neurons.ForEach(N =>
+            {
+                ImmutableArray<double> inWeights = PoolOp.CalcWeights(N.InSynapses);
 
                 N.InSynapses.ForEach((S, i) => S.Weight = inWeights[i]);
-
-                N.InVal = N.InSynapses.Sum(S => S.Weight * S.InNeuron.OutVal);
-
-                N.OutVal = N.InVal;
             });
         }
     }
