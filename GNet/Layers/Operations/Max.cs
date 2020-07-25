@@ -1,18 +1,18 @@
 ﻿using GNet.Model;
 using System;
 
-namespace GNet.Layers.ConstOps
+namespace GNet.Layers.Operations
 {
     [Serializable]
-    public class Min : IConstOp
+    public class Max : IOperation
     {
         public bool RequiresUpdate { get; } = true;
 
         public ImmutableArray<double> CalcWeights(ImmutableArray<Synapse> inSynapses)
         {
-            double minVal = inSynapses.Min(X => X.InNeuron.OutVal);
+            double maxVal = inSynapses.Max(X => X.InNeuron.OutVal);
 
-            return inSynapses.Select(X => X.InNeuron.OutVal == minVal ? 1.0 : 0.0);
+            return inSynapses.Select(X => X.InNeuron.OutVal == maxVal ? 1.0 : 0.0);
         }
     }
 }

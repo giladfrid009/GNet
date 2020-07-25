@@ -4,9 +4,9 @@ namespace GNet.Layers
 {
     public class Converge : MergeLayer
     {
-        public IConstOp MergeOp { get; }
+        public IOperation MergeOp { get; }
 
-        public Converge(Shape shape, IConstOp mergeOp) : base(shape)
+        public Converge(Shape shape, IOperation mergeOp) : base(shape)
         {
             MergeOp = mergeOp;
         }

@@ -2,7 +2,7 @@
 
 namespace GNet.Layers
 {
-    public interface IConstOp
+    public interface IOperation
     {
         bool RequiresUpdate { get; }
 
