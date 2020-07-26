@@ -1,7 +1,9 @@
 ﻿using GNet.Model;
+using System;
 
 namespace GNet.Layers
 {
+    [Serializable]
     public class Concat : MergeLayer
     {
         public Concat(Shape shape) : base(shape)

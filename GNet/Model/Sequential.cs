@@ -8,19 +8,16 @@ namespace GNet
         public ImmutableArray<Layer> Layers { get; }        
         public int Length { get; }
 
-        public Sequential(ImmutableArray<Layer> layers, bool initLayers = true) : base(layers[0].Shape, layers[^1].Shape)
+        public Sequential(ImmutableArray<Layer> layers) : base(layers[0].Shape, layers[^1].Shape)
         {
             Layers = layers;
             Length = layers.Length;
 
-            if (initLayers)
-            {
-                Connect();
-                Initialize();
-            }
+            Connect();
+            Initialize();            
         }
 
-        public Sequential(params Layer[] layers) : this(new ImmutableArray<Layer>(layers), true)
+        public Sequential(params Layer[] layers) : this(new ImmutableArray<Layer>(layers))
         {
         }
 

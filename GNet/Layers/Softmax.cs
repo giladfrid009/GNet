@@ -1,7 +1,9 @@
-﻿using static System.Math;
+﻿using System;
+using static System.Math;
 
 namespace GNet.Layers
 {
+    [Serializable]
     public class Softmax : Dense
     {
         public Softmax(Shape shape, IInitializer? weightInit = null, IInitializer? biasInit = null) : base(shape, new Activations.Identity(), weightInit, biasInit)

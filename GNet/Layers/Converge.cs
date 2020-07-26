@@ -1,7 +1,9 @@
 ﻿using GNet.Model;
+using System;
 
 namespace GNet.Layers
 {
+    [Serializable]
     public class Converge : MergeLayer
     {
         public IOperation MergeOp { get; }

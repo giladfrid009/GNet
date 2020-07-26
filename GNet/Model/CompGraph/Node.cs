@@ -2,20 +2,22 @@
 using System;
 using System.Collections.Generic;
 
-namespace GNet.ComputaionGraph
+namespace GNet.CompGraph
 {
     [Serializable]
     public class Node : Sequential
     {
+        private enum Ops { None, Connect, Forward, CalcGrads, Optimize, Update, ClearCache }
+
         public ImmutableArray<Node> InNodes { get; }
         public ImmutableArray<Node> OutNodes { get; private set; }
 
-        private bool hasProcessed = false;
+        private Ops lastOp = Ops.None;
 
         [NonSerialized]
         private readonly List<Node> listOutNodes;
 
-        public Node(ImmutableArray<Node> inNodes, ImmutableArray<Layer> layers, bool initLayers = true) : base(layers, initLayers)
+        public Node(ImmutableArray<Node> inNodes, ImmutableArray<Layer> layers) : base(layers)
         {
             InNodes = inNodes;
             OutNodes = new ImmutableArray<Node>();
@@ -28,7 +30,7 @@ namespace GNet.ComputaionGraph
         {
         }
 
-        public Node(ImmutableArray<Layer> layers, bool initLayers = true) : this(new ImmutableArray<Node>(), layers, initLayers)
+        public Node(ImmutableArray<Layer> layers) : this(new ImmutableArray<Node>(), layers)
         {
         }
 
@@ -36,14 +38,26 @@ namespace GNet.ComputaionGraph
         {
         }
 
-        public void Interconnect()
+        private void ResetOps()
         {
-            if (hasProcessed)
+            if(lastOp == Ops.None)
             {
                 return;
             }
 
-            hasProcessed = true;
+            lastOp = Ops.None;
+
+            OutNodes.ForEach(N => N.ResetOps());
+        }
+
+        public void Connect()
+        {
+            if (lastOp == Ops.Connect)
+            {
+                return;
+            }
+
+            lastOp = Ops.Connect;
 
             if (InNodes.Length > 0)
             {
@@ -60,29 +74,14 @@ namespace GNet.ComputaionGraph
             OutNodes = ImmutableArray<Node>.FromRef(listOutNodes.ToArray());
             listOutNodes.Clear();       
 
-            OutNodes.ForEach(N => N.Interconnect());
+            OutNodes.ForEach(N => N.Connect());
         }
-
-        public void ResetProcessed()
-        {
-            if (hasProcessed == false)
-            {
-                return;
-            }
-
-            hasProcessed = false;
-
-            OutNodes.ForEach(N => N.ResetProcessed());
-        }   
 
         public new void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
         {
-            if (hasProcessed)
-            {
-                return;
-            }
+            ResetOps();
 
-            hasProcessed = true;
+            lastOp = Ops.Forward;
 
             base.Forward(inputs, isTraining);
 
@@ -91,20 +90,20 @@ namespace GNet.ComputaionGraph
 
         private void Forward(bool isTraining)
         {
-            if (hasProcessed)
+            if (lastOp == Ops.Forward)
             {
                 return;
             }
 
             InNodes.ForEach(N =>
             {
-                if (N.hasProcessed == false)
+                if (N.lastOp != Ops.Forward)
                 {
                     return;
                 }
             });
 
-            hasProcessed = true;
+            lastOp = Ops.Forward;
 
             Layers.ForEach(L => L.Forward(isTraining));
             OutNodes.ForEach(N => N.Forward(isTraining));
@@ -112,12 +111,7 @@ namespace GNet.ComputaionGraph
 
         public new void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
-            if (hasProcessed)
-            {
-                return;
-            }
-
-            hasProcessed = true;
+            lastOp = Ops.CalcGrads;
 
             base.CalcGrads(loss, targets);
 
@@ -128,21 +122,21 @@ namespace GNet.ComputaionGraph
 
         private void CalcGrads()
         {
-            if (hasProcessed)
+            if (lastOp == Ops.CalcGrads)
             {
                 return;
             }
 
             OutNodes.ForEach(N =>
             {
-                if (N.hasProcessed == false)
+                if (N.lastOp != Ops.CalcGrads)
                 {
                     return;
                 }
             });
 
-            hasProcessed = true;
-            
+            lastOp = Ops.CalcGrads;
+
             for (int i = Length - 1; i >= 0; i--)
             {
                 Layers[i].CalcGrads();
@@ -153,12 +147,12 @@ namespace GNet.ComputaionGraph
 
         public new void Optimize(IOptimizer optimizer)
         {
-            if (hasProcessed)
+            if (lastOp == Ops.Optimize)
             {
                 return;
             }
 
-            hasProcessed = true;
+            lastOp = Ops.Optimize;
 
             base.Optimize(optimizer);
 
@@ -167,12 +161,12 @@ namespace GNet.ComputaionGraph
 
         public new void Update()
         {
-            if (hasProcessed)
+            if (lastOp == Ops.Update)
             {
                 return;
             }
 
-            hasProcessed = true;
+            lastOp = Ops.Update;
 
             base.Update();
 
@@ -181,12 +175,12 @@ namespace GNet.ComputaionGraph
 
         public new void ClearCache()
         {
-            if (hasProcessed)
+            if (lastOp == Ops.ClearCache)
             {
                 return;
             }
 
-            hasProcessed = true;
+            lastOp = Ops.ClearCache;
 
             base.ClearCache();
 

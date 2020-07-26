@@ -1,5 +1,5 @@
 ﻿using System;
-using GNet.ComputaionGraph;
+using GNet.CompGraph;
 
 namespace GNet
 {
