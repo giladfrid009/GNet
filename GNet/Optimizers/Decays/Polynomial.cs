@@ -17,7 +17,7 @@ namespace GNet.Optimizers.Decays
 
         public double Compute(double X, int T)
         {
-            if(T > MaxIter)
+            if (T > MaxIter)
             {
                 return Dest;
             }

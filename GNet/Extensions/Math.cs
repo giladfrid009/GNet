@@ -12,7 +12,7 @@ namespace GNet
         public static double Average<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
         {
             return Sum(source, selector) / source.Length;
-        }       
+        }
 
         public static double Average(this IArray<double> source)
         {
@@ -91,7 +91,7 @@ namespace GNet
         {
             int length = source.Length;
 
-            if(other.Length != length)
+            if (other.Length != length)
             {
                 throw new ArgumentOutOfRangeException(nameof(other));
             }

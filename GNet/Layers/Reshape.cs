@@ -39,6 +39,6 @@ namespace GNet.Layers
                 N.InVal = N.InSynapses[0].InNeuron.OutVal;
                 N.OutVal = N.InVal;
             });
-        }        
+        }
     }
 }

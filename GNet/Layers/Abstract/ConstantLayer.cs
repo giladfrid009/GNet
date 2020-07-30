@@ -2,7 +2,7 @@
 using System;
 
 namespace GNet.Layers
-{   
+{
     /// <summary>
     /// Base class for a non trainable layer without activation function.
     /// </summary>
@@ -16,7 +16,7 @@ namespace GNet.Layers
             Neurons = new ImmutableArray<Neuron>(shape.Volume, () => new Neuron());
         }
 
-        public override sealed void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
+        public sealed override void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
             if (targets.Shape != Shape)
             {
@@ -26,12 +26,12 @@ namespace GNet.Layers
             Neurons.ForEach((N, i) => N.Gradient = loss.Derivative(targets[i], N.OutVal));
         }
 
-        public override sealed void CalcGrads()
+        public sealed override void CalcGrads()
         {
             Neurons.ForEach((N, i) => N.Gradient = N.OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient));
         }
 
-        public override sealed void Optimize(IOptimizer optimizer)
+        public sealed override void Optimize(IOptimizer optimizer)
         {
         }
 

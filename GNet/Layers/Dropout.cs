@@ -30,7 +30,7 @@ namespace GNet.Layers
 
         public override void Forward(bool isTraining)
         {
-            if(isTraining)
+            if (isTraining)
             {
                 Neurons.ForEach((N, i) =>
                 {

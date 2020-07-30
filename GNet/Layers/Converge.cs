@@ -30,7 +30,7 @@ namespace GNet.Layers
 
         public override void Initialize()
         {
-            if(MergeOp.RequiresUpdate == false)
+            if (MergeOp.RequiresUpdate == false)
             {
                 InitWeights();
             }

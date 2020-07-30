@@ -2,7 +2,7 @@
 
 namespace GNet
 {
-    internal class ShapeMismatchException : Exception
+    public class ShapeMismatchException : Exception
     {
         public ShapeMismatchException() : base()
         {

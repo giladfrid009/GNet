@@ -40,7 +40,7 @@ namespace GNet.CompGraph
 
         private void ResetOps()
         {
-            if(lastOp == Ops.None)
+            if (lastOp == Ops.None)
             {
                 return;
             }
@@ -72,7 +72,7 @@ namespace GNet.CompGraph
             }
 
             OutNodes = ImmutableArray<Node>.FromRef(listOutNodes.ToArray());
-            listOutNodes.Clear();       
+            listOutNodes.Clear();
 
             OutNodes.ForEach(N => N.Connect());
         }

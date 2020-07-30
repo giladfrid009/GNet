@@ -5,7 +5,7 @@ namespace GNet
     [Serializable]
     public class Sequential : Network
     {
-        public ImmutableArray<Layer> Layers { get; }        
+        public ImmutableArray<Layer> Layers { get; }
         public int Length { get; }
 
         public Sequential(ImmutableArray<Layer> layers) : base(layers[0].Shape, layers[^1].Shape)
@@ -14,7 +14,7 @@ namespace GNet
             Length = layers.Length;
 
             Connect();
-            Initialize();            
+            Initialize();
         }
 
         public Sequential(params Layer[] layers) : this(new ImmutableArray<Layer>(layers))

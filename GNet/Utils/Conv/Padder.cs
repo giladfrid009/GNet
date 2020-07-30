@@ -2,7 +2,7 @@
 
 namespace GNet.Utils.Conv
 {
-    internal static class Padder
+    public static class Padder
     {
         public static ImmutableArray<int> CalcPadding(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, bool padChannels)
         {

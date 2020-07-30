@@ -1,5 +1,5 @@
-﻿using System;
-using GNet.CompGraph;
+﻿using GNet.CompGraph;
+using System;
 
 namespace GNet
 {
@@ -12,12 +12,12 @@ namespace GNet
             Dataset tDataset = datasetGenerator.Generate(5000);
             Dataset vDataset = datasetGenerator.Generate(100);
 
-            Node n1 = new Node(
+            var n1 = new Node(
                 new Layers.Dense(new Shape(2, 5), new Activations.Identity()),
                 new Layers.Dense(new Shape(10), new Activations.Sigmoid(), new Initializers.TruncNormal())
             );
 
-            Node n2 = new Node
+            var n2 = new Node
             (
                 new ImmutableArray<Node>(n1),
                 new Layers.Concat(new Shape(10)),

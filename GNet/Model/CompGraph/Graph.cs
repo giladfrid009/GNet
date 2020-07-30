@@ -4,7 +4,7 @@ namespace GNet.CompGraph
 {
     [Serializable]
     public class Graph : Network
-    {        
+    {
         public Node InputNode { get; }
         public Node OutputNode { get; }
 

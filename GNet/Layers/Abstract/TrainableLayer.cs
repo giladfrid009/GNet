@@ -17,7 +17,7 @@ namespace GNet.Layers
             BiasInit = biasInit ?? Defaults.BiasInit;
         }
 
-        public override sealed void Optimize(IOptimizer optimizer)
+        public sealed override void Optimize(IOptimizer optimizer)
         {
             if (IsTrainable == false)
             {
@@ -31,7 +31,7 @@ namespace GNet.Layers
             });
         }
 
-        public override sealed void Update()
+        public sealed override void Update()
         {
             if (IsTrainable == false)
             {
@@ -81,6 +81,6 @@ namespace GNet.Layers
                 N.Gradient = N.OutSynapses.Sum(S => S.Weight * S.OutNeuron.Gradient) * Activation.Derivative(N.InVal, N.OutVal);
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.OutVal);
             });
-        }        
+        }
     }
 }

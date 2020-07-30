@@ -12,7 +12,7 @@ namespace GNet.Layers
 
         public override void Connect(ImmutableArray<Layer> inLayers)
         {
-            if(inLayers.Sum(L => L.Shape.Volume) != Shape.Volume)
+            if (inLayers.Sum(L => L.Shape.Volume) != Shape.Volume)
             {
                 throw new ShapeMismatchException($"{nameof(inLayers)} shapes volume mismatch.");
             }

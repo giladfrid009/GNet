@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GNet.Utils.Conv
 {
-    internal static class IndexGen
+    public static class IndexGen
     {
         public static ImmutableArray<int[]> Generate(Shape shape, ImmutableArray<int> start, ImmutableArray<int> strides, Shape kernel)
         {

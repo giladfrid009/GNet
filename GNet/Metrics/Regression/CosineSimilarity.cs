@@ -2,7 +2,7 @@
 
 namespace GNet.Metrics.Regression
 {
-    class CosineSimilarity : IMetric
+    public class CosineSimilarity : IMetric
     {
         public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
         {
