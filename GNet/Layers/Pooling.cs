@@ -29,6 +29,16 @@ namespace GNet.Layers
             PaddedShape = Padder.PadShape(inputShape, Paddings);
         }
 
+        private void InitWeights()
+        {
+            Neurons.ForEach(N =>
+            {
+                ImmutableArray<double> inWeights = PoolOp.CalcWeights(N.InSynapses);
+
+                N.InSynapses.ForEach((S, i) => S.Weight = inWeights[i]);
+            });
+        }
+
         public override void Connect(Layer inLayer)
         {
             if (inLayer.Shape != InputShape)
@@ -74,16 +84,6 @@ namespace GNet.Layers
             {
                 N.InVal = N.InSynapses.Sum(S => S.Weight * S.InNeuron.OutVal);
                 N.OutVal = N.InVal;
-            });
-        }
-
-        private void InitWeights()
-        {
-            Neurons.ForEach(N =>
-            {
-                ImmutableArray<double> inWeights = PoolOp.CalcWeights(N.InSynapses);
-
-                N.InSynapses.ForEach((S, i) => S.Weight = inWeights[i]);
             });
         }
     }

@@ -13,6 +13,16 @@ namespace GNet.Layers
             MergeOp = mergeOp;
         }
 
+        private void InitWeights()
+        {
+            Neurons.ForEach(N =>
+            {
+                ImmutableArray<double> inWeights = MergeOp.CalcWeights(N.InSynapses);
+
+                N.InSynapses.ForEach((S, i) => S.Weight = inWeights[i]);
+            });
+        }
+
         public override void Connect(ImmutableArray<Layer> inLayers)
         {
             inLayers.ForEach((L, i) =>
@@ -47,16 +57,6 @@ namespace GNet.Layers
             {
                 N.InVal = N.InSynapses.Sum(S => S.Weight * S.InNeuron.OutVal);
                 N.OutVal = N.InVal;
-            });
-        }
-
-        private void InitWeights()
-        {
-            Neurons.ForEach(N =>
-            {
-                ImmutableArray<double> inWeights = MergeOp.CalcWeights(N.InSynapses);
-
-                N.InSynapses.ForEach((S, i) => S.Weight = inWeights[i]);
             });
         }
     }

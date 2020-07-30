@@ -12,10 +12,10 @@ namespace GNet.CompGraph
         public ImmutableArray<Node> InNodes { get; }
         public ImmutableArray<Node> OutNodes { get; private set; }
 
-        private Ops lastOp = Ops.None;
-
         [NonSerialized]
         private readonly List<Node> listOutNodes;
+
+        private Ops lastOp = Ops.None;
 
         public Node(ImmutableArray<Node> inNodes, ImmutableArray<Layer> layers) : base(layers)
         {
@@ -48,6 +48,52 @@ namespace GNet.CompGraph
             lastOp = Ops.None;
 
             OutNodes.ForEach(N => N.ResetOps());
+        }
+
+        private void Forward(bool isTraining)
+        {
+            if (lastOp == Ops.Forward)
+            {
+                return;
+            }
+
+            InNodes.ForEach(N =>
+            {
+                if (N.lastOp != Ops.Forward)
+                {
+                    return;
+                }
+            });
+
+            lastOp = Ops.Forward;
+
+            Layers.ForEach(L => L.Forward(isTraining));
+            OutNodes.ForEach(N => N.Forward(isTraining));
+        }
+
+        private void CalcGrads()
+        {
+            if (lastOp == Ops.CalcGrads)
+            {
+                return;
+            }
+
+            OutNodes.ForEach(N =>
+            {
+                if (N.lastOp != Ops.CalcGrads)
+                {
+                    return;
+                }
+            });
+
+            lastOp = Ops.CalcGrads;
+
+            for (int i = Length - 1; i >= 0; i--)
+            {
+                Layers[i].CalcGrads();
+            }
+
+            InNodes.ForEach(N => N.CalcGrads());
         }
 
         public void Connect()
@@ -88,27 +134,6 @@ namespace GNet.CompGraph
             OutNodes.ForEach(N => N.Forward(isTraining));
         }
 
-        private void Forward(bool isTraining)
-        {
-            if (lastOp == Ops.Forward)
-            {
-                return;
-            }
-
-            InNodes.ForEach(N =>
-            {
-                if (N.lastOp != Ops.Forward)
-                {
-                    return;
-                }
-            });
-
-            lastOp = Ops.Forward;
-
-            Layers.ForEach(L => L.Forward(isTraining));
-            OutNodes.ForEach(N => N.Forward(isTraining));
-        }
-
         public new void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
             lastOp = Ops.CalcGrads;
@@ -116,31 +141,6 @@ namespace GNet.CompGraph
             base.CalcGrads(loss, targets);
 
             Layers[0].CalcGrads();
-
-            InNodes.ForEach(N => N.CalcGrads());
-        }
-
-        private void CalcGrads()
-        {
-            if (lastOp == Ops.CalcGrads)
-            {
-                return;
-            }
-
-            OutNodes.ForEach(N =>
-            {
-                if (N.lastOp != Ops.CalcGrads)
-                {
-                    return;
-                }
-            });
-
-            lastOp = Ops.CalcGrads;
-
-            for (int i = Length - 1; i >= 0; i--)
-            {
-                Layers[i].CalcGrads();
-            }
 
             InNodes.ForEach(N => N.CalcGrads());
         }
