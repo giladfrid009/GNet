@@ -17,9 +17,7 @@ namespace GNet.Datasets.Generators
 
         public Dataset Generate(int length)
         {
-            var dataCollection = new Data[length];
-
-            for (int i = 0; i < length; i++)
+            return new Dataset(new ImmutableArray<Data>(length, () =>
             {
                 double n1 = 0.0;
                 double n2 = 0.0;
@@ -32,10 +30,8 @@ namespace GNet.Datasets.Generators
                     res = Func(n1, n2);
                 }
 
-                dataCollection[i] = new Data(new ImmutableShapedArray<double>(n1, n2), new ImmutableShapedArray<double>(res));
-            }
-
-            return new Dataset(ImmutableArray<Data>.FromRef(dataCollection));
+                return new Data(new ImmutableShapedArray<double>(n1, n2), new ImmutableShapedArray<double>(res));
+            }));
         }
     }
 }
