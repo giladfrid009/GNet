@@ -4,12 +4,12 @@ namespace GNet
 {
     public static class MathExtensions
     {
-        public static double Average<TSource, TOther>(this IArray<TSource> source, IArray<TOther> other, Func<TSource, TOther, double> selector)
+        public static double Average<T, TOther>(this IArray<T> source, IArray<TOther> other, Func<T, TOther, double> selector)
         {
             return Sum(source, other, selector) / source.Length;
         }
 
-        public static double Average<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
+        public static double Average<T>(this IArray<T> source, Func<T, double> selector)
         {
             return Sum(source, selector) / source.Length;
         }
@@ -19,7 +19,7 @@ namespace GNet
             return Sum(source) / source.Length;
         }
 
-        public static double Max<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
+        public static double Max<T>(this IArray<T> source, Func<T, double> selector)
         {
             int length = source.Length;
             double maxVal = selector(source[0]);
@@ -53,7 +53,7 @@ namespace GNet
             return maxVal;
         }
 
-        public static double Min<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
+        public static double Min<T>(this IArray<T> source, Func<T, double> selector)
         {
             int length = source.Length;
             double minVal = selector(source[0]);
@@ -87,7 +87,7 @@ namespace GNet
             return minVal;
         }
 
-        public static double Sum<TSource, TOther>(this IArray<TSource> source, IArray<TOther> other, Func<TSource, TOther, double> selector)
+        public static double Sum<T, TOther>(this IArray<T> source, IArray<TOther> other, Func<T, TOther, double> selector)
         {
             int length = source.Length;
 
@@ -106,7 +106,7 @@ namespace GNet
             return sum;
         }
 
-        public static double Sum<TSource>(this IArray<TSource> source, Func<TSource, double> selector)
+        public static double Sum<T>(this IArray<T> source, Func<T, double> selector)
         {
             int length = source.Length;
             double sum = 0.0;
