@@ -9,7 +9,7 @@ namespace GNet.Model.Conv
         public SharedVal<double> Bias { get; }
         public Shape Shape { get; }
 
-        public Kernel(Shape shape)
+        public Kernel(in Shape shape)
         {
             Shape = shape;
 

@@ -8,7 +8,7 @@ namespace GNet.Layers
     {
         public override ImmutableArray<Neuron> Neurons { get; }
 
-        public Dense(Shape shape, IActivation activation, IInitializer? weightInit = null, IInitializer? biasInit = null) : base(shape, activation, weightInit, biasInit)
+        public Dense(in Shape shape, IActivation activation, IInitializer? weightInit = null, IInitializer? biasInit = null) : base(shape, activation, weightInit, biasInit)
         {
             Neurons = new ImmutableArray<Neuron>(shape.Volume, () => new Neuron());
         }

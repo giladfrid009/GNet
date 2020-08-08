@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GNet.Model;
+using System;
 
 namespace GNet.Layers
 {
@@ -10,7 +11,7 @@ namespace GNet.Layers
         public IInitializer BiasInit { get; }
         public bool IsTrainable { get; set; } = true;
 
-        protected TrainableLayer(Shape shape, IActivation activation, IInitializer? weightInit, IInitializer? biasInit) : base(shape)
+        protected TrainableLayer(in Shape shape, IActivation activation, IInitializer? weightInit, IInitializer? biasInit) : base(shape)
         {
             Activation = activation;
             WeightInit = weightInit ?? Defaults.WeightInit;
@@ -60,18 +61,19 @@ namespace GNet.Layers
             });
         }
 
-        public override void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
+        public override void CalcGrads(ILoss loss, in ImmutableShapedArray<double> targets)
         {
             if (targets.Shape != Shape)
             {
                 throw new ShapeMismatchException(nameof(targets));
             }
 
-            Neurons.ForEach((N, i) =>
+            for (int i = 0; i < Neurons.Length; i++)
             {
+                Neuron N = Neurons[i];
                 N.Gradient = Activation.Derivative(N.InVal, N.OutVal) * loss.Derivative(targets[i], N.OutVal);
                 N.InSynapses.ForEach(S => S.Gradient = N.Gradient * S.InNeuron.OutVal);
-            });
+            }
         }
 
         public override void CalcGrads()

@@ -8,7 +8,7 @@ namespace GNet
         public ImmutableArray<Layer> Layers { get; }
         public int Length { get; }
 
-        public Sequential(ImmutableArray<Layer> layers) : base(layers[0].Shape, layers[^1].Shape)
+        public Sequential(in ImmutableArray<Layer> layers) : base(layers[0].Shape, layers[^1].Shape)
         {
             Layers = layers;
             Length = layers.Length;
@@ -37,7 +37,7 @@ namespace GNet
             }
         }
 
-        protected override void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
+        protected override void Forward(in ImmutableShapedArray<double> inputs, bool isTraining)
         {
             Layers[0].Input(inputs);
 
@@ -47,7 +47,7 @@ namespace GNet
             }
         }
 
-        protected override void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
+        protected override void CalcGrads(ILoss loss, in ImmutableShapedArray<double> targets)
         {
             Layers[Length - 1].CalcGrads(loss, targets);
 

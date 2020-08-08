@@ -6,7 +6,7 @@ namespace GNet.Layers
     [Serializable]
     public class Reshape : ConstantLayer
     {
-        public Reshape(Shape shape) : base(shape)
+        public Reshape(in Shape shape) : base(shape)
         {
         }
 

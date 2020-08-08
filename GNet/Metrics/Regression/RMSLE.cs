@@ -6,7 +6,7 @@ namespace GNet.Metrics.Regression
     {
         private static readonly IMetric msle = new Losses.Regression.MSLE();
 
-        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(in ImmutableArray<double> targets, in ImmutableArray<double> outputs)
         {
             return Sqrt(msle.Evaluate(targets, outputs));
         }

@@ -75,12 +75,12 @@ namespace GNet.Utils.Conv
             }
         }
 
-        public static ImmutableArray<int[]> ByStrides(Shape shape, ImmutableArray<int> strides, Shape kernel)
+        public static ImmutableArray<int[]> ByStrides(in Shape shape, in ImmutableArray<int> strides, in Shape kernel)
         {
             return Generate(shape, new ImmutableArray<int>(shape.Rank, () => 0), strides, kernel);
         }
 
-        public static ImmutableArray<int[]> ByStart(Shape shape, ImmutableArray<int> start)
+        public static ImmutableArray<int[]> ByStart(in Shape shape, in ImmutableArray<int> start)
         {
             return Generate(shape, start, new ImmutableArray<int>(shape.Rank, () => 1), new Shape(new ImmutableArray<int>(shape.Rank, () => 1)));
         }

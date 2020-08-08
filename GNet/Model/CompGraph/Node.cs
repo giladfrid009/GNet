@@ -17,7 +17,7 @@ namespace GNet.CompGraph
 
         private Ops lastOp = Ops.None;
 
-        public Node(ImmutableArray<Node> inNodes, ImmutableArray<Layer> layers) : base(layers)
+        public Node(in ImmutableArray<Node> inNodes, in ImmutableArray<Layer> layers) : base(layers)
         {
             InNodes = inNodes;
             OutNodes = new ImmutableArray<Node>();
@@ -26,11 +26,11 @@ namespace GNet.CompGraph
             inNodes.ForEach(N => N.listOutNodes.Add(this));
         }
 
-        public Node(ImmutableArray<Node> inNodes, params Layer[] layers) : this(inNodes, new ImmutableArray<Layer>(layers))
+        public Node(in ImmutableArray<Node> inNodes, params Layer[] layers) : this(inNodes, new ImmutableArray<Layer>(layers))
         {
         }
 
-        public Node(ImmutableArray<Layer> layers) : this(new ImmutableArray<Node>(), layers)
+        public Node(in ImmutableArray<Layer> layers) : this(new ImmutableArray<Node>(), layers)
         {
         }
 
@@ -123,7 +123,7 @@ namespace GNet.CompGraph
             OutNodes.ForEach(N => N.Connect());
         }
 
-        public new void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
+        public new void Forward(in ImmutableShapedArray<double> inputs, bool isTraining)
         {
             ResetOps();
 
@@ -134,7 +134,7 @@ namespace GNet.CompGraph
             OutNodes.ForEach(N => N.Forward(isTraining));
         }
 
-        public new void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
+        public new void CalcGrads(ILoss loss, in ImmutableShapedArray<double> targets)
         {
             lastOp = Ops.CalcGrads;
 

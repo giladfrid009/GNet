@@ -16,12 +16,12 @@ namespace GNet.CompGraph
             inNode.Connect();
         }
 
-        protected override void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
+        protected override void Forward(in ImmutableShapedArray<double> inputs, bool isTraining)
         {
             InputNode.Forward(inputs, isTraining);
         }
 
-        protected override void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
+        protected override void CalcGrads(ILoss loss, in ImmutableShapedArray<double> targets)
         {
             OutputNode.CalcGrads(loss, targets);
         }

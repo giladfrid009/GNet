@@ -8,7 +8,7 @@ namespace GNet.Layers.Operations
     {
         public bool RequiresUpdate { get; } = false;
 
-        public ImmutableArray<double> CalcWeights(ImmutableArray<Synapse> inSynapses)
+        public ImmutableArray<double> CalcWeights(in ImmutableArray<Synapse> inSynapses)
         {
             return inSynapses.Select(X => 1.0);
         }

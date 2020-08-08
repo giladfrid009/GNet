@@ -8,7 +8,7 @@ namespace GNet.Layers.Operations
     {
         public bool RequiresUpdate { get; } = true;
 
-        public ImmutableArray<double> CalcWeights(ImmutableArray<Synapse> inSynapses)
+        public ImmutableArray<double> CalcWeights(in ImmutableArray<Synapse> inSynapses)
         {
             double maxVal = inSynapses.Max(X => X.InNeuron.OutVal);
 

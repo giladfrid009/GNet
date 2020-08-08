@@ -9,7 +9,7 @@
             Threshold = threshold;
         }
 
-        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(in ImmutableArray<double> targets, in ImmutableArray<double> outputs)
         {
             int nElems = 0;
 

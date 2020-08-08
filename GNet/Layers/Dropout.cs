@@ -10,7 +10,7 @@ namespace GNet.Layers
         public double DropChance { get; }
         public bool Spatial { get; }
 
-        public Dropout(Shape shape, double dropChance = 0.1, bool spatial = false) : base(shape)
+        public Dropout(in Shape shape, double dropChance = 0.1, bool spatial = false) : base(shape)
         {
             if (dropChance < 0 || dropChance > 1)
             {

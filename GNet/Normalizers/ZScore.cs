@@ -15,13 +15,13 @@ namespace GNet.Normalizers
 
             if (inputs)
             {
-                sumI = dataset.Sum(D => D.Inputs.Sum());
+                sumI = dataset.DataCollection.Sum(D => D.Inputs.Sum());
                 nElems += dataset.InputShape.Volume * dataset.Length;
             }
 
             if (targets)
             {
-                sumT = dataset.Sum(D => D.Targets.Sum());
+                sumT = dataset.DataCollection.Sum(D => D.Targets.Sum());
                 nElems += dataset.TargetShape.Volume * dataset.Length;
             }
 
@@ -31,12 +31,12 @@ namespace GNet.Normalizers
 
             if (inputs)
             {
-                var += dataset.Sum(D => D.Inputs.Sum(X => (X - Mean) * (X - Mean)));
+                var += dataset.DataCollection.Sum(D => D.Inputs.Sum(X => (X - Mean) * (X - Mean)));
             }
 
             if (targets)
             {
-                var += dataset.Sum(D => D.Targets.Sum(X => (X - Mean) * (X - Mean)));
+                var += dataset.DataCollection.Sum(D => D.Targets.Sum(X => (X - Mean) * (X - Mean)));
             }
 
             SD = Sqrt(var / nElems);

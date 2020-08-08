@@ -16,7 +16,7 @@ namespace GNet.Layers
         public IOperation PoolOp { get; }
         public double PadVal { get; }
 
-        public Pooling(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IOperation poolOp, double padVal = 0.0) : base(outputShape)
+        public Pooling(in Shape inputShape, in Shape outputShape, in Shape kernelShape, in ImmutableArray<int> strides, IOperation poolOp, double padVal = 0.0) : base(outputShape)
         {
             InputShape = inputShape;
             KernelShape = kernelShape;
