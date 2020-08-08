@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GNet
 {
@@ -55,24 +56,21 @@ namespace GNet
 
         public bool Equals(ImmutableArray<T> other)
         {
-            if (Length != other.Length)
-            {
-                return false;
-            }
-
             if (ReferenceEquals(internalArray, other.internalArray))
             {
                 return true;
             }
 
+            if (Length != other.Length)
+            {
+                return false;
+            }         
+
+            var comparer = EqualityComparer<T>.Default;
+
             for (int i = 0; i < Length; i++)
             {
-                if(internalArray[i] == null && other.internalArray == null)
-                {
-                    return false;
-                }
-
-                if(internalArray[i]!.Equals(other.internalArray[i]) == false)
+                if (comparer.Equals(internalArray[i], other.internalArray[i]) == false)
                 {
                     return false;
                 }
