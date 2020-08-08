@@ -24,17 +24,11 @@ namespace GNet.Datasets.Generators
             {
                 var input = new ImmutableShapedArray<double>(InputShape, () => GRandom.Uniform() < 0.5 ? 0.0 : 1.0);
 
-                int zeroCount = 0;
+                int oneCount = 0;
 
-                input.ForEach(X =>
-                {
-                    if (X == 0)
-                    {
-                        zeroCount++;
-                    }
-                });
+                input.ForEach(X => oneCount += X == 1.0 ? 1 : 0);
 
-                bool isEven = zeroCount % 2 == 0;
+                bool isEven = oneCount % 2 == 0;
 
                 double[] outArr;
 

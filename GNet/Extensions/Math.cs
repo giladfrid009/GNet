@@ -21,10 +21,9 @@ namespace GNet
 
         public static double Max<T>(this IArray<T> source, Func<T, double> selector)
         {
-            int length = source.Length;
             double maxVal = selector(source[0]);
 
-            for (int i = 1; i < length; i++)
+            for (int i = 1; i < source.Length; i++)
             {
                 double val = selector(source[i]);
 
@@ -39,10 +38,9 @@ namespace GNet
 
         public static double Max(this IArray<double> source)
         {
-            int length = source.Length;
             double maxVal = source[0];
 
-            for (int i = 1; i < length; i++)
+            for (int i = 1; i < source.Length; i++)
             {
                 if (source[i] > maxVal)
                 {
@@ -55,10 +53,9 @@ namespace GNet
 
         public static double Min<T>(this IArray<T> source, Func<T, double> selector)
         {
-            int length = source.Length;
             double minVal = selector(source[0]);
 
-            for (int i = 1; i < length; i++)
+            for (int i = 1; i < source.Length; i++)
             {
                 double val = selector(source[i]);
 
@@ -73,10 +70,9 @@ namespace GNet
 
         public static double Min(this IArray<double> source)
         {
-            int length = source.Length;
             double minVal = source[0];
 
-            for (int i = 1; i < length; i++)
+            for (int i = 1; i < source.Length; i++)
             {
                 if (source[i] < minVal)
                 {
@@ -89,16 +85,14 @@ namespace GNet
 
         public static double Sum<T, TOther>(this IArray<T> source, IArray<TOther> other, Func<T, TOther, double> selector)
         {
-            int length = source.Length;
-
-            if (other.Length != length)
+            if (other.Length != source.Length)
             {
                 throw new ArgumentOutOfRangeException(nameof(other));
             }
 
             double sum = 0.0;
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < source.Length; i++)
             {
                 sum += selector(source[i], other[i]);
             }
@@ -108,10 +102,9 @@ namespace GNet
 
         public static double Sum<T>(this IArray<T> source, Func<T, double> selector)
         {
-            int length = source.Length;
             double sum = 0.0;
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < source.Length; i++)
             {
                 sum += selector(source[i]);
             }
@@ -121,10 +114,9 @@ namespace GNet
 
         public static double Sum(this IArray<double> source)
         {
-            int length = source.Length;
             double sum = 0.0;
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < source.Length; i++)
             {
                 sum += source[i];
             }

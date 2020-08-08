@@ -55,14 +55,12 @@ namespace GNet
 
         public int FlattenIndices(params int[] indices)
         {
-            int length = indices.Length;
-
-            if (length != Rank)
+            if (indices.Length != Rank)
             {
                 throw new RankException(nameof(indices));
             }
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < indices.Length; i++)
             {
                 if (indices[i] < 0 || indices[i] > Dims[i] - 1)
                 {

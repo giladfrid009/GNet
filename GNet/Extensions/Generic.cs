@@ -6,10 +6,9 @@ namespace GNet
     {
         public static ImmutableArray<TRes> Select<T, TRes>(this ImmutableArray<T> source, Func<T, int, TRes> selector)
         {
-            int length = source.Length;
-            var selected = new TRes[length];
+            var selected = new TRes[source.Length];
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < source.Length; i++)
             {
                 selected[i] = selector(source[i], i);
             }
@@ -24,9 +23,7 @@ namespace GNet
 
         public static void ForEach<T>(this IArray<T> source, Action<T, int> action)
         {
-            int length = source.Length;
-
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < source.Length; i++)
             {
                 action(source[i], i);
             }
