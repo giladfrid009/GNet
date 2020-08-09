@@ -3,14 +3,17 @@
 namespace GNet
 {
     [Serializable]
-    public class Dataset
+    public class Dataset : IArray<Data>
     {
-        public ImmutableArray<Data> DataCollection { get; private set; }
         public Shape InputShape { get; }
         public Shape TargetShape { get; }
         public int Length { get; }
 
-        public Dataset(in ImmutableArray<Data> dataCollection)
+        public Data this[int i] => dataCollection[i];
+
+        private ImmutableArray<Data> dataCollection;
+
+        public Dataset(ImmutableArray<Data> dataCollection)
         {
             if (dataCollection.Length == 0)
             {
@@ -28,7 +31,7 @@ namespace GNet
                 }
             });
 
-            DataCollection = dataCollection;
+            this.dataCollection = dataCollection;
             Length = dataCollection.Length;
         }
 
@@ -45,14 +48,14 @@ namespace GNet
 
             normalizer.UpdateParams(this, inputs, targets);
 
-            DataCollection = DataCollection.Select(D => new Data(
-                inputs ? D.Inputs.Select(X => normalizer.Normalize(X)) : D.Inputs,
-                targets ? D.Targets.Select(X => normalizer.Normalize(X)) : D.Targets));
+            dataCollection = dataCollection.Select(D => new Data(
+                inputs ? D.Inputs.Select(X => normalizer.Normalize(X)).ToShape(InputShape) : D.Inputs,
+                targets ? D.Targets.Select(X => normalizer.Normalize(X)).ToShape(TargetShape) : D.Targets));
         }
 
         public void Shuffle()
         {
-            Data[] shuffled = DataCollection.ToMutable();
+            Data[] shuffled = dataCollection.ToMutable();
 
             for (int i = 0; i < Length; i++)
             {
@@ -62,7 +65,7 @@ namespace GNet
                 shuffled[iRnd] = temp;
             }
 
-            DataCollection = ImmutableArray<Data>.FromRef(shuffled);
+            dataCollection = ImmutableArray<Data>.FromRef(shuffled);
         }
     }
 }

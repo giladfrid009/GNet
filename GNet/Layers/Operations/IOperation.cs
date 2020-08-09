@@ -6,6 +6,6 @@ namespace GNet.Layers
     {
         bool RequiresUpdate { get; }
 
-        ImmutableArray<double> CalcWeights(in ImmutableArray<Synapse> inSynapses);
+        ImmutableArray<double> CalcWeights(ImmutableArray<Synapse> inSynapses);
     }
 }

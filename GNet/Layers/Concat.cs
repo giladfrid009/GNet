@@ -6,11 +6,11 @@ namespace GNet.Layers
     [Serializable]
     public class Concat : MergeLayer
     {
-        public Concat(in Shape shape) : base(shape)
+        public Concat(Shape shape) : base(shape)
         {
         }
 
-        public override void Connect(in ImmutableArray<Layer> inLayers)
+        public override void Connect(ImmutableArray<Layer> inLayers)
         {
             if (inLayers.Sum(L => L.Shape.Volume) != Shape.Volume)
             {

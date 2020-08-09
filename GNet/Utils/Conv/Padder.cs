@@ -4,7 +4,7 @@ namespace GNet.Utils.Conv
 {
     public static class Padder
     {
-        public static ImmutableArray<int> CalcPadding(in Shape inputShape, in Shape outputShape, in Shape kernelShape, in ImmutableArray<int> strides, bool padChannels)
+        public static ImmutableArray<int> CalcPadding(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, bool padChannels)
         {
             int length = inputShape.Rank;
 
@@ -55,7 +55,7 @@ namespace GNet.Utils.Conv
             return ImmutableArray<int>.FromRef(paddings);
         }
 
-        public static Shape PadShape(in Shape shape, ImmutableArray<int> paddings)
+        public static Shape PadShape(Shape shape, ImmutableArray<int> paddings)
         {
             if (shape.Rank != paddings.Length)
             {
@@ -65,7 +65,7 @@ namespace GNet.Utils.Conv
             return new Shape(shape.Dims.Select((D, i) => D + 2 * paddings[i]));
         }
 
-        public static ImmutableShapedArray<T> PadShapedArray<T>(in ImmutableShapedArray<T> array, in ImmutableArray<int> paddings, Func<T> padVal)
+        public static ImmutableShapedArray<T> PadShapedArray<T>(ImmutableShapedArray<T> array, ImmutableArray<int> paddings, Func<T> padVal)
         {
             if (array.Shape.Rank != paddings.Length)
             {
@@ -76,12 +76,7 @@ namespace GNet.Utils.Conv
 
             var internalArray = new T[paddedShape.Volume];
 
-            var indices = IndexGen.ByStart(array.Shape, paddings);
-
-            for (int i = 0; i < indices.Length; i++)
-            {
-                internalArray[paddedShape.FlattenIndices(indices[i])] = array[i];
-            }
+            IndexGen.ByStart(array.Shape, paddings).ForEach((idx, i) => internalArray[paddedShape.FlattenIndices(idx)] = array[i]);
 
             for (int i = 0; i < internalArray.Length; i++)
             {

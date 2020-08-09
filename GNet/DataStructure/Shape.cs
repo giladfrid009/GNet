@@ -3,13 +3,20 @@
 namespace GNet
 {
     [Serializable]
-    public readonly struct Shape : IEquatable<Shape>
+    public class Shape : IEquatable<Shape>
     {
         public ImmutableArray<int> Dims { get; }
         public int Rank { get; }
         public int Volume { get; }
 
-        public Shape(in ImmutableArray<int> dims)
+        public Shape()
+        {
+            Dims = new ImmutableArray<int>();
+            Rank = 0;
+            Volume = 0;
+        }
+
+        public Shape(ImmutableArray<int> dims)
         {
             int length = dims.Length;
 
@@ -36,14 +43,14 @@ namespace GNet
         {
         }
 
-        public static bool operator !=(in Shape left, in Shape right)
+        public static bool operator !=(Shape? left, Shape? right)
         {
             return !(left == right);
         }
 
-        public static bool operator ==(in Shape left, in Shape right)
+        public static bool operator ==(Shape? left, Shape? right)
         {
-            return left.Equals(right);
+            return left?.Equals(right) ?? ReferenceEquals(left, right);
         }
 
         public int FlattenIndices(params int[] indices)
@@ -71,8 +78,18 @@ namespace GNet
             return flat;
         }
 
-        public bool Equals(Shape other)
+        public bool Equals(Shape? other)
         {
+            if (other is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
             if (Rank != other.Rank)
             {
                 return false;
@@ -91,7 +108,7 @@ namespace GNet
 
         public override bool Equals(object? obj)
         {
-            return (obj is Shape shape) && Equals(shape);
+            return Equals(obj as Shape);
         }
 
         public override int GetHashCode()

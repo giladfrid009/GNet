@@ -19,7 +19,7 @@ namespace GNet.Layers
         public int KernelsNum { get; }
         public double PadVal { get; }
 
-        public Convolutional(in Shape inputShape, in Shape outputShape, in Shape kernelShape, in ImmutableArray<int> strides, IActivation activation,
+        public Convolutional(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IActivation activation,
             IInitializer? weightInit = null, IInitializer? biasInit = null, double padVal = 0.0)
             : base(outputShape, activation, weightInit, biasInit)
         {
@@ -36,12 +36,12 @@ namespace GNet.Layers
 
             KernelsNum = outputShape.Dims[0] / inputShape.Dims[0];
 
-            Kernels = new ImmutableArray<Kernel>(KernelsNum, () => new Kernel(KernelShape));
+            Kernels = new ImmutableArray<Kernel>(KernelsNum, () => new Kernel(kernelShape));
 
             Neurons = new ImmutableArray<Neuron>(outputShape.Volume, () => new CNeuron());
         }
 
-        private static void ValidateChannels(in Shape inputShape, in Shape outputShape, in Shape kernelShape, in ImmutableArray<int> strides)
+        private static void ValidateChannels(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides)
         {
             if (strides[0] != 1)
             {

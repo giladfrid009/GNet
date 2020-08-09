@@ -11,23 +11,19 @@ namespace GNet.Layers
     {
         public override ImmutableArray<Neuron> Neurons { get; }
 
-        protected ConstantLayer(in Shape shape) : base(shape)
+        protected ConstantLayer(Shape shape) : base(shape)
         {
             Neurons = new ImmutableArray<Neuron>(shape.Volume, () => new Neuron());
         }
 
-        public sealed override void CalcGrads(ILoss loss, in ImmutableShapedArray<double> targets)
+        public sealed override void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
             if (targets.Shape != Shape)
             {
                 throw new ShapeMismatchException(nameof(targets));
             }
 
-            for (int i = 0; i < Neurons.Length; i++)
-            {
-                Neuron N = Neurons[i];
-                N.Gradient = loss.Derivative(targets[i], N.OutVal);
-            }
+            Neurons.ForEach((N, i) => N.Gradient = loss.Derivative(targets[i], N.OutVal));
         }
 
         public sealed override void CalcGrads()

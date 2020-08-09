@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace GNet
 {
     [Serializable]
-    public readonly struct ImmutableArray<T> : IEquatable<ImmutableArray<T>>
+    public class ImmutableArray<T> : IArray<T>
     {
         public int Length { get; }
 
@@ -12,7 +11,7 @@ namespace GNet
 
         private readonly T[] internalArray;
 
-        private ImmutableArray(T[] array, bool asRef = false)
+        protected ImmutableArray(T[] array, bool asRef = false)
         {
             Length = array.Length;
 
@@ -26,6 +25,10 @@ namespace GNet
 
                 Array.Copy(array, 0, internalArray, 0, Length);
             }
+        }
+
+        public ImmutableArray() : this(Array.Empty<T>(), true)
+        {
         }
 
         public ImmutableArray(params T[] elements) : this(elements, false)
@@ -44,51 +47,6 @@ namespace GNet
             }
         }
 
-        public static bool operator !=(in ImmutableArray<T> left, in ImmutableArray<T> right)
-        {
-            return !(left == right);
-        }
-
-        public static bool operator ==(in ImmutableArray<T> left, in ImmutableArray<T> right)
-        {
-            return left.Equals(right);
-        }
-
-        public bool Equals(ImmutableArray<T> other)
-        {
-            if (ReferenceEquals(internalArray, other.internalArray))
-            {
-                return true;
-            }
-
-            if (Length != other.Length)
-            {
-                return false;
-            }         
-
-            var comparer = EqualityComparer<T>.Default;
-
-            for (int i = 0; i < Length; i++)
-            {
-                if (comparer.Equals(internalArray[i], other.internalArray[i]) == false)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return (obj is ImmutableArray<T> immArr) && Equals(immArr);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(internalArray, Length);
-        }
-
         public static ImmutableArray<T> FromRef(params T[] array)
         {
             return new ImmutableArray<T>(array, true);
@@ -103,7 +61,7 @@ namespace GNet
             return array;
         }
 
-        public ImmutableShapedArray<T> ToShape(in Shape shape)
+        public ImmutableShapedArray<T> ToShape(Shape shape)
         {
             return ImmutableShapedArray<T>.FromRef(shape, internalArray);
         }

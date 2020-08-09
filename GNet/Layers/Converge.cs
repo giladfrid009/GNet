@@ -8,7 +8,7 @@ namespace GNet.Layers
     {
         public IOperation MergeOp { get; }
 
-        public Converge(in Shape shape, IOperation mergeOp) : base(shape)
+        public Converge(Shape shape, IOperation mergeOp) : base(shape)
         {
             MergeOp = mergeOp;
         }
@@ -23,7 +23,7 @@ namespace GNet.Layers
             });
         }
 
-        public override void Connect(in ImmutableArray<Layer> inLayers)
+        public override void Connect(ImmutableArray<Layer> inLayers)
         {
             inLayers.ForEach((L, i) =>
             {
@@ -33,11 +33,7 @@ namespace GNet.Layers
                 }
             });
 
-            for (int i = 0; i < Neurons.Length; i++)
-            {
-                Neuron outN = Neurons[i];
-                outN.InSynapses = inLayers.Select(inL => new Synapse(inL.Neurons[i], outN));
-            }
+            Neurons.ForEach((outN, i) => outN.InSynapses = inLayers.Select(inL => new Synapse(inL.Neurons[i], outN)));
 
             inLayers.ForEach(inL => inL.Neurons.ForEach((inN, i) => inN.OutSynapses = new ImmutableArray<Synapse>(new Synapse(inN, Neurons[i]))));
         }

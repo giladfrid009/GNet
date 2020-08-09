@@ -9,22 +9,19 @@ namespace GNet
         public Shape Shape { get; }
         public abstract ImmutableArray<Neuron> Neurons { get; }
 
-        protected Layer(in Shape shape)
+        protected Layer(Shape shape)
         {
             Shape = shape;
         }
 
-        public void Input(in ImmutableShapedArray<double> values)
+        public void Input(ImmutableShapedArray<double> values)
         {
             if (values.Shape != Shape)
             {
                 throw new ShapeMismatchException(nameof(values));
             }
 
-            for (int i = 0; i < values.Length; i++)
-            {
-                Neurons[i].OutVal = values[i];
-            }
+            Neurons.ForEach((N, i) => N.OutVal = values[i]);
         }
 
         public abstract void Connect(Layer inLayer);
@@ -33,7 +30,7 @@ namespace GNet
 
         public abstract void Forward(bool isTraining);
 
-        public abstract void CalcGrads(ILoss loss, in ImmutableShapedArray<double> targets);
+        public abstract void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets);
 
         public abstract void CalcGrads();
 

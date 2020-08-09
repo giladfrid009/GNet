@@ -1,5 +1,4 @@
-﻿using GNet.Model;
-using System;
+﻿using System;
 using static System.Math;
 
 namespace GNet.Layers
@@ -7,7 +6,7 @@ namespace GNet.Layers
     [Serializable]
     public class Softmax : Dense
     {
-        public Softmax(in Shape shape, IInitializer? weightInit = null, IInitializer? biasInit = null) : base(shape, new Activations.Identity(), weightInit, biasInit)
+        public Softmax(Shape shape, IInitializer? weightInit = null, IInitializer? biasInit = null) : base(shape, new Activations.Identity(), weightInit, biasInit)
         {
         }
 
@@ -25,7 +24,7 @@ namespace GNet.Layers
             Neurons.ForEach(N => N.OutVal /= eSum);
         }
 
-        public override void CalcGrads(ILoss loss, in ImmutableShapedArray<double> targets)
+        public override void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
         {
             if (targets.Shape != Shape)
             {
@@ -34,12 +33,11 @@ namespace GNet.Layers
 
             double gSum = 0.0;
 
-            for (int i = 0; i < Neurons.Length; i++)
+            Neurons.ForEach((N, i) =>
             {
-                Neuron N = Neurons[i];
                 N.Gradient = loss.Derivative(targets[i], N.OutVal);
                 gSum += N.Gradient * N.OutVal;
-            }
+            });
 
             Neurons.ForEach(N =>
             {

@@ -17,15 +17,15 @@ namespace GNet
         public Shape InputShape { get; }
         public Shape OutputShape { get; }
 
-        protected Network(in Shape inShape, in Shape outShape)
+        protected Network(Shape inShape, Shape outShape)
         {
             InputShape = inShape;
             OutputShape = outShape;
         }
 
-        protected abstract void Forward(in ImmutableShapedArray<double> inputs, bool isTraining);
+        protected abstract void Forward(ImmutableShapedArray<double> inputs, bool isTraining);
 
-        protected abstract void CalcGrads(ILoss loss, in ImmutableShapedArray<double> targets);
+        protected abstract void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets);
 
         protected abstract void Optimize(IOptimizer optimizer);
 
@@ -35,7 +35,7 @@ namespace GNet
 
         protected abstract ImmutableShapedArray<double> GetOutput();
 
-        public ImmutableShapedArray<double> Predict(in ImmutableShapedArray<double> inputs)
+        public ImmutableShapedArray<double> Predict(ImmutableShapedArray<double> inputs)
         {
             Forward(inputs, false);
             return GetOutput();
@@ -43,7 +43,7 @@ namespace GNet
 
         public double Validate(Dataset dataset, IMetric metric)
         {
-            return dataset.DataCollection.Average(D => metric.Evaluate(D.Targets, Predict(D.Inputs)));
+            return dataset.Average(D => metric.Evaluate(D.Targets, Predict(D.Inputs)));
         }
 
         public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int nEpoches, double minError, Dataset valDataset, IMetric metric, bool shuffle = true)
@@ -87,7 +87,7 @@ namespace GNet
                     dataset.Shuffle();
                 }
 
-                dataset.DataCollection.ForEach((D, index) =>
+                dataset.ForEach((D, index) =>
                 {
                     Forward(D.Inputs, true);
                     CalcGrads(loss, D.Targets);
