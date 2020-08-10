@@ -33,6 +33,11 @@ namespace GNet
         {            
         }
 
+        public new static Dataset FromRef(params Data[] array)
+        {
+            return new Dataset(array, true);
+        }
+
         public void Normalize(INormalizer normalizer, bool inputs, bool targets)
         {
             if (!inputs && !targets)
@@ -61,11 +66,6 @@ namespace GNet
                 InternalArray[i] = InternalArray[iRnd];
                 InternalArray[iRnd] = temp;
             }
-        }
-
-        public new static Dataset FromRef(params Data[] array)
-        {
-            return new Dataset(array, true);
         }
     }
 }
