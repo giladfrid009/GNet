@@ -3,27 +3,21 @@
 namespace GNet
 {
     [Serializable]
-    public class Array<T> : IArray<T>
+    public class Array<T> : BaseArray<T>
     {
-        public int Length { get; }
+        protected override T[] InternalArray { get; }
 
-        public T this[int i] => internalArray[i];
-
-        private readonly T[] internalArray;
-
-        protected Array(T[] array, bool asRef = false)
+        protected Array(T[] array, bool asRef = false) : base(array.Length)
         {
-            Length = array.Length;
-
             if (asRef)
             {
-                internalArray = array;
+                InternalArray = array;
             }
             else
             {
-                internalArray = new T[Length];
+                InternalArray = new T[Length];
 
-                Array.Copy(array, 0, internalArray, 0, Length);
+                Array.Copy(array, 0, InternalArray, 0, Length);
             }
         }
 
@@ -35,15 +29,13 @@ namespace GNet
         {
         }
 
-        public Array(int length, Func<T> element)
+        public Array(int length, Func<T> element) : base(length)
         {
-            Length = length;
-
-            internalArray = new T[Length];
+            InternalArray = new T[Length];
 
             for (int i = 0; i < Length; i++)
             {
-                internalArray[i] = element();
+                InternalArray[i] = element();
             }
         }
 
@@ -56,14 +48,14 @@ namespace GNet
         {
             var array = new T[Length];
 
-            Array.Copy(internalArray, 0, array, 0, Length);
+            Array.Copy(InternalArray, 0, array, 0, Length);
 
             return array;
         }
 
         public ShapedArray<T> ToShape(Shape shape)
         {
-            return ShapedArray<T>.FromRef(shape, internalArray);
+            return ShapedArray<T>.FromRef(shape, InternalArray);
         }
     }
 }

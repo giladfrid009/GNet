@@ -20,7 +20,9 @@ namespace GNet.Datasets.Generators
 
         public Dataset Generate(int length)
         {
-            return new Dataset(new Array<Data>(length, () =>
+            Data[] dataArray = new Data[length];
+
+            for (int i = 0; i < length; i++)
             {
                 var input = new ShapedArray<double>(InputShape, () => GRandom.Uniform() < 0.5 ? 0.0 : 1.0);
 
@@ -41,8 +43,10 @@ namespace GNet.Datasets.Generators
                     outArr = isEven ? new double[] { 1.0 } : new double[] { 0.0 };
                 }
 
-                return new Data(input, ShapedArray<double>.FromRef(TargetShape, outArr));
-            }));
+                dataArray[i] = new Data(input, ShapedArray<double>.FromRef(TargetShape, outArr));
+            }
+
+            return Dataset.FromRef(dataArray);
         }
     }
 }

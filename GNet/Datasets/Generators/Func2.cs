@@ -17,7 +17,9 @@ namespace GNet.Datasets.Generators
 
         public Dataset Generate(int length)
         {
-            return new Dataset(new Array<Data>(length, () =>
+            Data[] dataArray = new Data[length];
+
+            for (int i = 0; i < length; i++)
             {
                 double n1 = 0.0;
                 double n2 = 0.0;
@@ -30,8 +32,10 @@ namespace GNet.Datasets.Generators
                     res = Func(n1, n2);
                 }
 
-                return new Data(new ShapedArray<double>(n1, n2), new ShapedArray<double>(res));
-            }));
+                dataArray[i] = new Data(new ShapedArray<double>(n1, n2), new ShapedArray<double>(res));
+            }
+
+            return Dataset.FromRef(dataArray);
         }
     }
 }

@@ -17,12 +17,16 @@ namespace GNet.Datasets.Generators
 
         public Dataset Generate(int length)
         {
-            return new Dataset(new Array<Data>(length, () =>
+            Data[] dataArray = new Data[length];
+
+            for (int i = 0; i < length; i++)
             {
                 var arr = new ShapedArray<double>(InputShape, () => GRandom.Uniform() < 0.5 ? 0.0 : 1.0);
 
-                return new Data(arr, arr);
-            }));
+                dataArray[i] = new Data(arr, arr);
+            }
+
+            return Dataset.FromRef(dataArray);
         }
     }
 }

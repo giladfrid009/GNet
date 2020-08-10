@@ -4,22 +4,22 @@ namespace GNet
 {
     public static class MathExtensions
     {
-        public static double Average<T, TOther>(this IArray<T> source, IArray<TOther> other, Func<T, TOther, double> selector)
+        public static double Average<T>(this BaseArray<T> source, BaseArray<T> other, Func<T, T, double> selector)
         {
             return Sum(source, other, selector) / source.Length;
         }
 
-        public static double Average<T>(this IArray<T> source, Func<T, double> selector)
+        public static double Average<T>(this BaseArray<T> source, Func<T, double> selector)
         {
             return Sum(source, selector) / source.Length;
         }
 
-        public static double Average(this IArray<double> source)
+        public static double Average(this BaseArray<double> source)
         {
             return Sum(source) / source.Length;
         }
 
-        public static double Max<T>(this IArray<T> source, Func<T, double> selector)
+        public static double Max<T>(this BaseArray<T> source, Func<T, double> selector)
         {
             double maxVal = selector(source[0]);
 
@@ -36,7 +36,7 @@ namespace GNet
             return maxVal;
         }
 
-        public static double Max(this IArray<double> source)
+        public static double Max(this BaseArray<double> source)
         {
             double maxVal = source[0];
 
@@ -51,7 +51,7 @@ namespace GNet
             return maxVal;
         }
 
-        public static double Min<T>(this IArray<T> source, Func<T, double> selector)
+        public static double Min<T>(this BaseArray<T> source, Func<T, double> selector)
         {
             double minVal = selector(source[0]);
 
@@ -68,7 +68,7 @@ namespace GNet
             return minVal;
         }
 
-        public static double Min(this IArray<double> source)
+        public static double Min(this BaseArray<double> source)
         {
             double minVal = source[0];
 
@@ -83,7 +83,7 @@ namespace GNet
             return minVal;
         }
 
-        public static double Sum<T, TOther>(this IArray<T> source, IArray<TOther> other, Func<T, TOther, double> selector)
+        public static double Sum<T>(this BaseArray<T> source, BaseArray<T> other, Func<T, T, double> selector)
         {
             if (other.Length != source.Length)
             {
@@ -100,7 +100,7 @@ namespace GNet
             return sum;
         }
 
-        public static double Sum<T>(this IArray<T> source, Func<T, double> selector)
+        public static double Sum<T>(this BaseArray<T> source, Func<T, double> selector)
         {
             double sum = 0.0;
 
@@ -112,7 +112,7 @@ namespace GNet
             return sum;
         }
 
-        public static double Sum(this IArray<double> source)
+        public static double Sum(this BaseArray<double> source)
         {
             double sum = 0.0;
 

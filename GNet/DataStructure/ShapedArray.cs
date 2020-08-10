@@ -18,7 +18,7 @@ namespace GNet
             Shape = shape;
         }
 
-        public ShapedArray() : this(new Shape(0), Array.Empty<T>(), true)
+        public ShapedArray() : this(new Shape(), Array.Empty<T>(), true)
         {
         }
 

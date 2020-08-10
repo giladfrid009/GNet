@@ -3,40 +3,34 @@
 namespace GNet
 {
     [Serializable]
-    public class Dataset : IArray<Data>
+    public class Dataset : Array<Data>
     {
         public Shape InputShape { get; }
         public Shape TargetShape { get; }
-        public int Length { get; }
 
-        public Data this[int i] => dataCollection[i];
-
-        private Array<Data> dataCollection;
-
-        public Dataset(Array<Data> dataCollection)
+        protected Dataset(Data[] array, bool asRef = false) : base(array, asRef)
         {
-            if (dataCollection.Length == 0)
+            if (array.Length == 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(dataCollection));
+                throw new ArgumentOutOfRangeException(nameof(array));
             }
 
-            InputShape = dataCollection[0].InputShape;
-            TargetShape = dataCollection[0].TargetShape;
+            InputShape = array[0].InputShape;
+            TargetShape = array[0].TargetShape;
 
-            dataCollection.ForEach((D, i) =>
+            for (int i = 1; i < array.Length; i++)
             {
+                Data D = array[i];
+
                 if (D.InputShape != InputShape || D.TargetShape != TargetShape)
                 {
-                    throw new ShapeMismatchException($"{nameof(dataCollection)} [{i}] mismatch.");
+                    throw new ShapeMismatchException($"{nameof(array)} [{i}] mismatch.");
                 }
-            });
-
-            this.dataCollection = dataCollection;
-            Length = dataCollection.Length;
+            }
         }
 
-        public Dataset(params Data[] dataCollection) : this(new Array<Data>(dataCollection))
-        {
+        public Dataset(params Data[] array) : this(array, false)
+        {            
         }
 
         public void Normalize(INormalizer normalizer, bool inputs, bool targets)
@@ -48,24 +42,30 @@ namespace GNet
 
             normalizer.UpdateParams(this, inputs, targets);
 
-            dataCollection = dataCollection.Select(D => new Data(
+            for (int i = 0; i < Length; i++)
+            {
+                Data D = InternalArray[i];
+
+                InternalArray[i] = new Data(
                 inputs ? D.Inputs.Select(X => normalizer.Normalize(X)).ToShape(InputShape) : D.Inputs,
-                targets ? D.Targets.Select(X => normalizer.Normalize(X)).ToShape(TargetShape) : D.Targets));
+                targets ? D.Targets.Select(X => normalizer.Normalize(X)).ToShape(TargetShape) : D.Targets);
+            }
         }
 
         public void Shuffle()
         {
-            Data[] shuffled = dataCollection.ToMutable();
-
             for (int i = 0; i < Length; i++)
             {
                 int iRnd = Utils.GRandom.Next(i, Length);
-                Data temp = shuffled[i];
-                shuffled[i] = shuffled[iRnd];
-                shuffled[iRnd] = temp;
+                Data temp = InternalArray[i];
+                InternalArray[i] = InternalArray[iRnd];
+                InternalArray[iRnd] = temp;
             }
+        }
 
-            dataCollection = Array<Data>.FromRef(shuffled);
+        public new static Dataset FromRef(params Data[] array)
+        {
+            return new Dataset(array, true);
         }
     }
 }

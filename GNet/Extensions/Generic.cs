@@ -21,7 +21,7 @@ namespace GNet
             return Select(source, (X, i) => selector(X));
         }
 
-        public static void ForEach<T>(this IArray<T> source, Action<T, int> action)
+        public static void ForEach<T>(this BaseArray<T> source, Action<T, int> action)
         {
             for (int i = 0; i < source.Length; i++)
             {
@@ -29,7 +29,7 @@ namespace GNet
             }
         }
 
-        public static void ForEach<T>(this IArray<T> source, Action<T> action)
+        public static void ForEach<T>(this BaseArray<T> source, Action<T> action)
         {
             ForEach(source, (X, i) => action(X));
         }
