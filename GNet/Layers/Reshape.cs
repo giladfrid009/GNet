@@ -21,7 +21,7 @@ namespace GNet.Layers
             {
                 Neuron inN = inLayer.Neurons[i];
                 var S = new Synapse(inN, outN);
-                var arr = new ImmutableArray<Synapse>(S);
+                var arr = new Array<Synapse>(S);
                 outN.InSynapses = arr;
                 inN.OutSynapses = arr;
             });

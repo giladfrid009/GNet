@@ -8,15 +8,15 @@ namespace GNet.Layers
     [Serializable]
     public class Pooling : ConstantLayer
     {
-        public ImmutableArray<int> Strides { get; }
-        public ImmutableArray<int> Paddings { get; }
+        public Array<int> Strides { get; }
+        public Array<int> Paddings { get; }
         public Shape InputShape { get; }
         public Shape PaddedShape { get; }
         public Shape KernelShape { get; }
         public IOperation PoolOp { get; }
         public double PadVal { get; }
 
-        public Pooling(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, IOperation poolOp, double padVal = 0.0) : base(outputShape)
+        public Pooling(Shape inputShape, Shape outputShape, Shape kernelShape, Array<int> strides, IOperation poolOp, double padVal = 0.0) : base(outputShape)
         {
             InputShape = inputShape;
             KernelShape = kernelShape;
@@ -33,7 +33,7 @@ namespace GNet.Layers
         {
             Neurons.ForEach(N =>
             {
-                ImmutableArray<double> inWeights = PoolOp.CalcWeights(N.InSynapses);
+                Array<double> inWeights = PoolOp.CalcWeights(N.InSynapses);
 
                 N.InSynapses.ForEach((S, i) => S.Weight = inWeights[i]);
             });
@@ -46,15 +46,15 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(inLayer));
             }
 
-            ImmutableShapedArray<Neuron> padded = Padder.PadShapedArray(inLayer.Neurons.ToShape(Shape), Paddings, () => new Neuron() { OutVal = PadVal });
+            ShapedArray<Neuron> padded = Padder.PadShapedArray(inLayer.Neurons.ToShape(Shape), Paddings, () => new Neuron() { OutVal = PadVal });
 
-            var inConnections = new ImmutableShapedArray<List<Synapse>>(PaddedShape, () => new List<Synapse>());
+            var inConnections = new ShapedArray<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 
             IndexGen.ByStrides(PaddedShape, Strides, KernelShape).ForEach((idxKernel, i) =>
             {
                 Neuron outN = Neurons[i];
 
-                outN.InSynapses = IndexGen.ByStart(KernelShape, ImmutableArray<int>.FromRef(idxKernel)).Select((idx, j) =>
+                outN.InSynapses = IndexGen.ByStart(KernelShape, Array<int>.FromRef(idxKernel)).Select((idx, j) =>
                 {
                     var S = new Synapse(padded[idx], outN);
                     inConnections[idx].Add(S);
@@ -62,7 +62,7 @@ namespace GNet.Layers
                 });
             });
 
-            padded.ForEach((N, i) => N.OutSynapses = ImmutableArray<Synapse>.FromRef(inConnections[i].ToArray()));
+            padded.ForEach((N, i) => N.OutSynapses = Array<Synapse>.FromRef(inConnections[i].ToArray()));
         }
 
         public override void Initialize()

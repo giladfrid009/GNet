@@ -3,7 +3,7 @@
 namespace GNet
 {
     [Serializable]
-    public class ImmutableArray<T> : IArray<T>
+    public class Array<T> : IArray<T>
     {
         public int Length { get; }
 
@@ -11,7 +11,7 @@ namespace GNet
 
         private readonly T[] internalArray;
 
-        protected ImmutableArray(T[] array, bool asRef = false)
+        protected Array(T[] array, bool asRef = false)
         {
             Length = array.Length;
 
@@ -27,15 +27,15 @@ namespace GNet
             }
         }
 
-        public ImmutableArray() : this(Array.Empty<T>(), true)
+        public Array() : this(Array.Empty<T>(), true)
         {
         }
 
-        public ImmutableArray(params T[] elements) : this(elements, false)
+        public Array(params T[] elements) : this(elements, false)
         {
         }
 
-        public ImmutableArray(int length, Func<T> element)
+        public Array(int length, Func<T> element)
         {
             Length = length;
 
@@ -47,9 +47,9 @@ namespace GNet
             }
         }
 
-        public static ImmutableArray<T> FromRef(params T[] array)
+        public static Array<T> FromRef(params T[] array)
         {
-            return new ImmutableArray<T>(array, true);
+            return new Array<T>(array, true);
         }
 
         public T[] ToMutable()
@@ -61,9 +61,9 @@ namespace GNet
             return array;
         }
 
-        public ImmutableShapedArray<T> ToShape(Shape shape)
+        public ShapedArray<T> ToShape(Shape shape)
         {
-            return ImmutableShapedArray<T>.FromRef(shape, internalArray);
+            return ShapedArray<T>.FromRef(shape, internalArray);
         }
     }
 }

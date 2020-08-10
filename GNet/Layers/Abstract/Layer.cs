@@ -7,14 +7,14 @@ namespace GNet
     public abstract class Layer
     {
         public Shape Shape { get; }
-        public abstract ImmutableArray<Neuron> Neurons { get; }
+        public abstract Array<Neuron> Neurons { get; }
 
         protected Layer(Shape shape)
         {
             Shape = shape;
         }
 
-        public void Input(ImmutableShapedArray<double> values)
+        public void Input(ShapedArray<double> values)
         {
             if (values.Shape != Shape)
             {
@@ -30,7 +30,7 @@ namespace GNet
 
         public abstract void Forward(bool isTraining);
 
-        public abstract void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets);
+        public abstract void CalcGrads(ILoss loss, ShapedArray<double> targets);
 
         public abstract void CalcGrads();
 

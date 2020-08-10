@@ -4,7 +4,7 @@ namespace GNet.Metrics.Regression
 {
     public class CosineSimilarity : IMetric
     {
-        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(Array<double> targets, Array<double> outputs)
         {
             double dotProd = targets.Sum(outputs, (T, O) => T * O);
 

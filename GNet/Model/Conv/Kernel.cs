@@ -5,7 +5,7 @@ namespace GNet.Model.Conv
     [Serializable]
     public class Kernel
     {
-        public ImmutableArray<SharedVal<double>> Weights { get; }
+        public Array<SharedVal<double>> Weights { get; }
         public SharedVal<double> Bias { get; }
         public Shape Shape { get; }
 
@@ -14,7 +14,7 @@ namespace GNet.Model.Conv
             Shape = shape;
 
             Bias = new SharedVal<double>();
-            Weights = new ImmutableArray<SharedVal<double>>(shape.Volume, () => new SharedVal<double>());
+            Weights = new Array<SharedVal<double>>(shape.Volume, () => new SharedVal<double>());
         }
     }
 }

@@ -23,9 +23,9 @@ namespace GNet
             OutputShape = outShape;
         }
 
-        protected abstract void Forward(ImmutableShapedArray<double> inputs, bool isTraining);
+        protected abstract void Forward(ShapedArray<double> inputs, bool isTraining);
 
-        protected abstract void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets);
+        protected abstract void CalcGrads(ILoss loss, ShapedArray<double> targets);
 
         protected abstract void Optimize(IOptimizer optimizer);
 
@@ -33,9 +33,9 @@ namespace GNet
 
         protected abstract void ClearCache();
 
-        protected abstract ImmutableShapedArray<double> GetOutput();
+        protected abstract ShapedArray<double> GetOutput();
 
-        public ImmutableShapedArray<double> Predict(ImmutableShapedArray<double> inputs)
+        public ShapedArray<double> Predict(ShapedArray<double> inputs)
         {
             Forward(inputs, false);
             return GetOutput();

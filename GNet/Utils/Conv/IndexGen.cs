@@ -5,7 +5,7 @@ namespace GNet.Utils.Conv
 {
     public static class IndexGen
     {
-        public static ImmutableArray<int[]> Generate(Shape shape, ImmutableArray<int> start, ImmutableArray<int> strides, Shape kernel)
+        public static Array<int[]> Generate(Shape shape, Array<int> start, Array<int> strides, Shape kernel)
         {
             if (shape.Rank != strides.Length)
             {
@@ -46,7 +46,7 @@ namespace GNet.Utils.Conv
 
             PopulateRecursive(new int[shape.Rank], 0);
 
-            return ImmutableArray<int[]>.FromRef(indices.ToArray());
+            return Array<int[]>.FromRef(indices.ToArray());
 
             void PopulateRecursive(int[] current, int dim)
             {
@@ -75,14 +75,14 @@ namespace GNet.Utils.Conv
             }
         }
 
-        public static ImmutableArray<int[]> ByStrides(Shape shape, ImmutableArray<int> strides, Shape kernel)
+        public static Array<int[]> ByStrides(Shape shape, Array<int> strides, Shape kernel)
         {
-            return Generate(shape, new ImmutableArray<int>(shape.Rank, () => 0), strides, kernel);
+            return Generate(shape, new Array<int>(shape.Rank, () => 0), strides, kernel);
         }
 
-        public static ImmutableArray<int[]> ByStart(Shape shape, ImmutableArray<int> start)
+        public static Array<int[]> ByStart(Shape shape, Array<int> start)
         {
-            return Generate(shape, start, new ImmutableArray<int>(shape.Rank, () => 1), new Shape(new ImmutableArray<int>(shape.Rank, () => 1)));
+            return Generate(shape, start, new Array<int>(shape.Rank, () => 1), new Shape(new Array<int>(shape.Rank, () => 1)));
         }
     }
 }

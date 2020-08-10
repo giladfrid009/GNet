@@ -2,7 +2,7 @@
 {
     public class ArgMax : IMetric
     {
-        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(Array<double> targets, Array<double> outputs)
         {
             double maxVal = outputs.Max();
 

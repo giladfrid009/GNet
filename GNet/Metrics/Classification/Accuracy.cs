@@ -9,7 +9,7 @@
             Threshold = threshold;
         }
 
-        public double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        public double Evaluate(Array<double> targets, Array<double> outputs)
         {
             return 1.0 - targets.Average(outputs, (T, O) =>
             {

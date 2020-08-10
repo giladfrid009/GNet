@@ -9,11 +9,11 @@ namespace GNet.Layers
         {
         }
 
-        public abstract void Connect(ImmutableArray<Layer> inLayers);
+        public abstract void Connect(Array<Layer> inLayers);
 
         public sealed override void Connect(Layer inLayer)
         {
-            Connect(new ImmutableArray<Layer>(inLayer));
+            Connect(new Array<Layer>(inLayer));
         }
     }
 }

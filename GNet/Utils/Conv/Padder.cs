@@ -4,7 +4,7 @@ namespace GNet.Utils.Conv
 {
     public static class Padder
     {
-        public static ImmutableArray<int> CalcPadding(Shape inputShape, Shape outputShape, Shape kernelShape, ImmutableArray<int> strides, bool padChannels)
+        public static Array<int> CalcPadding(Shape inputShape, Shape outputShape, Shape kernelShape, Array<int> strides, bool padChannels)
         {
             int length = inputShape.Rank;
 
@@ -52,10 +52,10 @@ namespace GNet.Utils.Conv
                 paddings[i] = doublePad / 2;
             }
 
-            return ImmutableArray<int>.FromRef(paddings);
+            return Array<int>.FromRef(paddings);
         }
 
-        public static Shape PadShape(Shape shape, ImmutableArray<int> paddings)
+        public static Shape PadShape(Shape shape, Array<int> paddings)
         {
             if (shape.Rank != paddings.Length)
             {
@@ -65,7 +65,7 @@ namespace GNet.Utils.Conv
             return new Shape(shape.Dims.Select((D, i) => D + 2 * paddings[i]));
         }
 
-        public static ImmutableShapedArray<T> PadShapedArray<T>(ImmutableShapedArray<T> array, ImmutableArray<int> paddings, Func<T> padVal)
+        public static ShapedArray<T> PadShapedArray<T>(ShapedArray<T> array, Array<int> paddings, Func<T> padVal)
         {
             if (array.Shape.Rank != paddings.Length)
             {
@@ -83,7 +83,7 @@ namespace GNet.Utils.Conv
                 internalArray[i] ??= padVal();
             }
 
-            return ImmutableShapedArray<T>.FromRef(paddedShape, internalArray);
+            return ShapedArray<T>.FromRef(paddedShape, internalArray);
         }
     }
 }

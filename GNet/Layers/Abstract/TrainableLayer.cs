@@ -60,7 +60,7 @@ namespace GNet.Layers
             });
         }
 
-        public override void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
+        public override void CalcGrads(ILoss loss, ShapedArray<double> targets)
         {
             if (targets.Shape != Shape)
             {

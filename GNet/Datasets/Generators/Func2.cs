@@ -17,7 +17,7 @@ namespace GNet.Datasets.Generators
 
         public Dataset Generate(int length)
         {
-            return new Dataset(new ImmutableArray<Data>(length, () =>
+            return new Dataset(new Array<Data>(length, () =>
             {
                 double n1 = 0.0;
                 double n2 = 0.0;
@@ -30,7 +30,7 @@ namespace GNet.Datasets.Generators
                     res = Func(n1, n2);
                 }
 
-                return new Data(new ImmutableShapedArray<double>(n1, n2), new ImmutableShapedArray<double>(res));
+                return new Data(new ShapedArray<double>(n1, n2), new ShapedArray<double>(res));
             }));
         }
     }

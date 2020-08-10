@@ -6,7 +6,7 @@
 
         double Derivative(double T, double O);
 
-        double IMetric.Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs)
+        double IMetric.Evaluate(Array<double> targets, Array<double> outputs)
         {
             return targets.Average(outputs, (T, O) => Evaluate(T, O));
         }

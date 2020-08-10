@@ -1,6 +1,6 @@
 ﻿namespace GNet
 {
-    public interface IArray<out T>
+    public interface IArray<T>
     {
         int Length { get; }
         T this[int i] { get; }

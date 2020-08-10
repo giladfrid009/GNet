@@ -9,14 +9,14 @@ namespace GNet.Layers
     [Serializable]
     public abstract class ConstantLayer : Layer
     {
-        public override ImmutableArray<Neuron> Neurons { get; }
+        public override Array<Neuron> Neurons { get; }
 
         protected ConstantLayer(Shape shape) : base(shape)
         {
-            Neurons = new ImmutableArray<Neuron>(shape.Volume, () => new Neuron());
+            Neurons = new Array<Neuron>(shape.Volume, () => new Neuron());
         }
 
-        public sealed override void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
+        public sealed override void CalcGrads(ILoss loss, ShapedArray<double> targets)
         {
             if (targets.Shape != Shape)
             {

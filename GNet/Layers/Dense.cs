@@ -6,11 +6,11 @@ namespace GNet.Layers
     [Serializable]
     public class Dense : TrainableLayer
     {
-        public override ImmutableArray<Neuron> Neurons { get; }
+        public override Array<Neuron> Neurons { get; }
 
         public Dense(Shape shape, IActivation activation, IInitializer? weightInit = null, IInitializer? biasInit = null) : base(shape, activation, weightInit, biasInit)
         {
-            Neurons = new ImmutableArray<Neuron>(shape.Volume, () => new Neuron());
+            Neurons = new Array<Neuron>(shape.Volume, () => new Neuron());
         }
 
         public override void Connect(Layer inLayer)

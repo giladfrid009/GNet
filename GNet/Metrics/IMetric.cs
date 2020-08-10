@@ -2,6 +2,6 @@
 {
     public interface IMetric
     {
-        double Evaluate(ImmutableArray<double> targets, ImmutableArray<double> outputs);
+        double Evaluate(Array<double> targets, Array<double> outputs);
     }
 }

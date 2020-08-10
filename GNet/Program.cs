@@ -19,7 +19,7 @@ namespace GNet
 
             var n2 = new Node
             (
-                new ImmutableArray<Node>(n1),
+                new Array<Node>(n1),
                 new Layers.Concat(new Shape(10)),
                 new Layers.Softmax(new Shape(2))
             );

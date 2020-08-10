@@ -5,16 +5,16 @@ namespace GNet.Model
     [Serializable]
     public class Neuron : TrainableObj
     {
-        public ImmutableArray<Synapse> InSynapses { get; set; }
-        public ImmutableArray<Synapse> OutSynapses { get; set; }
+        public Array<Synapse> InSynapses { get; set; }
+        public Array<Synapse> OutSynapses { get; set; }
         public virtual double Bias { get; set; }
         public double InVal { get; set; }
         public double OutVal { get; set; }
 
         public Neuron()
         {
-            InSynapses = new ImmutableArray<Synapse>();
-            OutSynapses = new ImmutableArray<Synapse>();
+            InSynapses = new Array<Synapse>();
+            OutSynapses = new Array<Synapse>();
         }
     }
 }

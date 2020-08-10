@@ -17,9 +17,9 @@ namespace GNet.Datasets.Generators
 
         public Dataset Generate(int length)
         {
-            return new Dataset(new ImmutableArray<Data>(length, () =>
+            return new Dataset(new Array<Data>(length, () =>
             {
-                var arr = new ImmutableShapedArray<double>(InputShape, () => GRandom.Uniform() < 0.5 ? 0.0 : 1.0);
+                var arr = new ShapedArray<double>(InputShape, () => GRandom.Uniform() < 0.5 ? 0.0 : 1.0);
 
                 return new Data(arr, arr);
             }));

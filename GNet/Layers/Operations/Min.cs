@@ -8,7 +8,7 @@ namespace GNet.Layers.Operations
     {
         public bool RequiresUpdate { get; } = true;
 
-        public ImmutableArray<double> CalcWeights(ImmutableArray<Synapse> inSynapses)
+        public Array<double> CalcWeights(Array<Synapse> inSynapses)
         {
             double minVal = inSynapses.Min(X => X.InNeuron.OutVal);
 

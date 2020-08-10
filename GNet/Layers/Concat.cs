@@ -10,7 +10,7 @@ namespace GNet.Layers
         {
         }
 
-        public override void Connect(ImmutableArray<Layer> inLayers)
+        public override void Connect(Array<Layer> inLayers)
         {
             if (inLayers.Sum(L => L.Shape.Volume) != Shape.Volume)
             {
@@ -24,7 +24,7 @@ namespace GNet.Layers
                 {
                     Neuron outN = Neurons[i];
                     var S = new Synapse(inN, outN);
-                    var arr = new ImmutableArray<Synapse>(S);
+                    var arr = new Array<Synapse>(S);
                     inN.OutSynapses = arr;
                     outN.InSynapses = arr;
                     i++;

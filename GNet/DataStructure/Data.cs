@@ -5,12 +5,12 @@ namespace GNet
     [Serializable]
     public class Data
     {
-        public ImmutableShapedArray<double> Inputs { get; }
-        public ImmutableShapedArray<double> Targets { get; }
+        public ShapedArray<double> Inputs { get; }
+        public ShapedArray<double> Targets { get; }
         public Shape InputShape { get; }
         public Shape TargetShape { get; }
 
-        public Data(ImmutableShapedArray<double> inputs, ImmutableShapedArray<double> targets)
+        public Data(ShapedArray<double> inputs, ShapedArray<double> targets)
         {
             Inputs = inputs;
             Targets = targets;

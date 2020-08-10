@@ -5,10 +5,10 @@ namespace GNet
     [Serializable]
     public class Sequential : Network
     {
-        public ImmutableArray<Layer> Layers { get; }
+        public Array<Layer> Layers { get; }
         public int Length { get; }
 
-        public Sequential(ImmutableArray<Layer> layers) : base(layers[0].Shape, layers[^1].Shape)
+        public Sequential(Array<Layer> layers) : base(layers[0].Shape, layers[^1].Shape)
         {
             Layers = layers;
             Length = layers.Length;
@@ -17,7 +17,7 @@ namespace GNet
             Initialize();
         }
 
-        public Sequential(params Layer[] layers) : this(new ImmutableArray<Layer>(layers))
+        public Sequential(params Layer[] layers) : this(new Array<Layer>(layers))
         {
         }
 
@@ -37,7 +37,7 @@ namespace GNet
             }
         }
 
-        protected override void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
+        protected override void Forward(ShapedArray<double> inputs, bool isTraining)
         {
             Layers[0].Input(inputs);
 
@@ -47,7 +47,7 @@ namespace GNet
             }
         }
 
-        protected override void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
+        protected override void CalcGrads(ILoss loss, ShapedArray<double> targets)
         {
             Layers[Length - 1].CalcGrads(loss, targets);
 
@@ -82,7 +82,7 @@ namespace GNet
             }));
         }
 
-        protected override ImmutableShapedArray<double> GetOutput()
+        protected override ShapedArray<double> GetOutput()
         {
             return Layers[Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
         }

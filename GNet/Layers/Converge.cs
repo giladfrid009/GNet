@@ -17,13 +17,13 @@ namespace GNet.Layers
         {
             Neurons.ForEach(N =>
             {
-                ImmutableArray<double> inWeights = MergeOp.CalcWeights(N.InSynapses);
+                Array<double> inWeights = MergeOp.CalcWeights(N.InSynapses);
 
                 N.InSynapses.ForEach((S, i) => S.Weight = inWeights[i]);
             });
         }
 
-        public override void Connect(ImmutableArray<Layer> inLayers)
+        public override void Connect(Array<Layer> inLayers)
         {
             inLayers.ForEach((L, i) =>
             {
@@ -35,7 +35,7 @@ namespace GNet.Layers
 
             Neurons.ForEach((outN, i) => outN.InSynapses = inLayers.Select(inL => new Synapse(inL.Neurons[i], outN)));
 
-            inLayers.ForEach(inL => inL.Neurons.ForEach((inN, i) => inN.OutSynapses = new ImmutableArray<Synapse>(new Synapse(inN, Neurons[i]))));
+            inLayers.ForEach(inL => inL.Neurons.ForEach((inN, i) => inN.OutSynapses = new Array<Synapse>(new Synapse(inN, Neurons[i]))));
         }
 
         public override void Initialize()

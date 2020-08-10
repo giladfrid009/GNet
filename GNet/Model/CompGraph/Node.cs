@@ -9,32 +9,32 @@ namespace GNet.CompGraph
     {
         private enum Ops { None, Connect, Forward, CalcGrads, Optimize, Update, ClearCache }
 
-        public ImmutableArray<Node> InNodes { get; }
-        public ImmutableArray<Node> OutNodes { get; private set; }
+        public Array<Node> InNodes { get; }
+        public Array<Node> OutNodes { get; private set; }
 
         [NonSerialized]
         private readonly List<Node> listOutNodes;
 
         private Ops lastOp = Ops.None;
 
-        public Node(ImmutableArray<Node> inNodes, ImmutableArray<Layer> layers) : base(layers)
+        public Node(Array<Node> inNodes, Array<Layer> layers) : base(layers)
         {
             InNodes = inNodes;
-            OutNodes = new ImmutableArray<Node>();
+            OutNodes = new Array<Node>();
             listOutNodes = new List<Node>();
 
             inNodes.ForEach(N => N.listOutNodes.Add(this));
         }
 
-        public Node(ImmutableArray<Node> inNodes, params Layer[] layers) : this(inNodes, new ImmutableArray<Layer>(layers))
+        public Node(Array<Node> inNodes, params Layer[] layers) : this(inNodes, new Array<Layer>(layers))
         {
         }
 
-        public Node(ImmutableArray<Layer> layers) : this(new ImmutableArray<Node>(), layers)
+        public Node(Array<Layer> layers) : this(new Array<Node>(), layers)
         {
         }
 
-        public Node(params Layer[] layers) : this(new ImmutableArray<Node>(), new ImmutableArray<Layer>(layers))
+        public Node(params Layer[] layers) : this(new Array<Node>(), new Array<Layer>(layers))
         {
         }
 
@@ -117,13 +117,13 @@ namespace GNet.CompGraph
                 Layers[0].Initialize();
             }
 
-            OutNodes = ImmutableArray<Node>.FromRef(listOutNodes.ToArray());
+            OutNodes = Array<Node>.FromRef(listOutNodes.ToArray());
             listOutNodes.Clear();
 
             OutNodes.ForEach(N => N.Connect());
         }
 
-        public new void Forward(ImmutableShapedArray<double> inputs, bool isTraining)
+        public new void Forward(ShapedArray<double> inputs, bool isTraining)
         {
             ResetOps();
 
@@ -134,7 +134,7 @@ namespace GNet.CompGraph
             OutNodes.ForEach(N => N.Forward(isTraining));
         }
 
-        public new void CalcGrads(ILoss loss, ImmutableShapedArray<double> targets)
+        public new void CalcGrads(ILoss loss, ShapedArray<double> targets)
         {
             lastOp = Ops.CalcGrads;
 
