@@ -1,4 +1,5 @@
 ﻿using GNet.CompGraph;
+using GNet.Utils;
 using System;
 
 namespace GNet
@@ -12,32 +13,29 @@ namespace GNet
             Dataset tDataset = datasetGenerator.Generate(5000);
             Dataset vDataset = datasetGenerator.Generate(100);
 
-            var n1 = new Node(
-                new Layers.Dense(new Shape(2, 5), new Activations.Identity()),
-                new Layers.Dense(new Shape(10), new Activations.Sigmoid(), new Initializers.TruncNormal())
-            );
-
-            var n2 = new Node
-            (
-                new Array<Node>(n1),
-                new Layers.Concat(new Shape(10)),
-                new Layers.Softmax(new Shape(2))
-            );
-
-            var graph = new Graph(n1, n2);
-
-            //var net = new Sequential
-            //(
-            //    new Layers.Dense(new Shape(2, 5), new Activations.Identity()),
-            //    new Layers.Dense(new Shape(10), new Activations.Sigmoid(), new Initializers.TruncNormal()),
-            //    new Layers.Softmax(new Shape(2))
-            //);
-
-            using (new Logger(graph))
+            Console.WriteLine(Benchmark.BatchTime(() =>
             {
-                graph.Train(tDataset, new Losses.Regression.MSE(), new Optimizers.AdaGradWindow(),
-                    1, 1000, 0.01, vDataset, new Metrics.Classification.Accuracy());
-            }
+                var n1 = new Node
+                (
+                    new Layers.Dense(new Shape(2, 5), new Activations.Identity()),
+                    new Layers.Dense(new Shape(10), new Activations.Sigmoid(), new Initializers.TruncNormal())
+                );
+
+                var n2 = new Node
+                (
+                    new Array<Node>(n1),
+                    new Layers.Concat(new Shape(10)),
+                    new Layers.Softmax(new Shape(2))
+                );
+
+                return new Graph(n1, n2);
+            },
+            N =>
+            {
+                N.Train(tDataset, new Losses.Regression.MSE(), new Optimizers.AdaGradWindow(),
+                    1, 100, 0.0, vDataset, new Metrics.Classification.Accuracy());
+            },
+            5));
 
             Console.ReadKey();
         }

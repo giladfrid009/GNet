@@ -6,7 +6,7 @@ namespace GNet
     [Serializable]
     public class VArray : Array<double>
     {
-        static readonly int VStride = Vector<double>.Count;
+        private static readonly int vStride = Vector<double>.Count;
 
         protected VArray(double[] vals, bool asRef = false) : base(vals, asRef)
         {            
@@ -35,7 +35,7 @@ namespace GNet
             var selected = new double[Length];
             int i;
 
-            for (i = 0; i <= Length - VStride; i += VStride)
+            for (i = 0; i <= Length - vStride; i += vStride)
             {
                 var vCur = vSelector(new Vector<double>(internalArray, i), i);
                 vCur.CopyTo(selected, i);
@@ -55,13 +55,13 @@ namespace GNet
             double min = double.MaxValue;
             int i;
 
-            for (i = 0; i <= Length - VStride; i += VStride)
+            for (i = 0; i <= Length - vStride; i += vStride)
             {
                 var vCur = new Vector<double>(internalArray, i);
                 vMin = Vector.Min(vMin, vCur);
             }
 
-            for (var j = 0; j < VStride; ++j)
+            for (var j = 0; j < vStride; ++j)
             {
                 min = Math.Min(min, vMin[j]);
             }
@@ -80,13 +80,13 @@ namespace GNet
             double min = double.MaxValue;
             int i;
 
-            for (i = 0; i <= Length - VStride; i += VStride)
+            for (i = 0; i <= Length - vStride; i += vStride)
             {
                 var vCur = vSelector(new Vector<double>(internalArray, i));
                 vMin = Vector.Min(vMin, vCur);
             }
 
-            for (var j = 0; j < VStride; ++j)
+            for (var j = 0; j < vStride; ++j)
             {
                 min = Math.Min(min, vMin[j]);
             }
@@ -105,13 +105,13 @@ namespace GNet
             double max = double.MinValue;
             int i;
 
-            for (i = 0; i <= Length - VStride; i += VStride)
+            for (i = 0; i <= Length - vStride; i += vStride)
             {
                 var vec = new Vector<double>(internalArray, i);
                 vMax = Vector.Max(vMax, vec);
             }
 
-            for (var j = 0; j < VStride; ++j)
+            for (var j = 0; j < vStride; ++j)
             {
                 max = Math.Max(max, vMax[j]);
             }
@@ -130,13 +130,13 @@ namespace GNet
             double max = double.MinValue;
             int i;
 
-            for (i = 0; i <= Length - VStride; i += VStride)
+            for (i = 0; i <= Length - vStride; i += vStride)
             {
                 var vCur = vSelector(new Vector<double>(internalArray, i));
                 vMax = Vector.Max(vMax, vCur);
             }
 
-            for (var j = 0; j < VStride; ++j)
+            for (var j = 0; j < vStride; ++j)
             {
                 max = Math.Max(max, vMax[j]);
             }
@@ -155,7 +155,7 @@ namespace GNet
             double sum;
             int i;
 
-            for (i = 0; i <= Length - VStride; i += VStride)
+            for (i = 0; i <= Length - vStride; i += vStride)
             {
                 vSum += new Vector<double>(internalArray, i);
             }
@@ -176,7 +176,7 @@ namespace GNet
             double sum;
             int i;
 
-            for (i = 0; i <= Length - VStride; i += VStride)
+            for (i = 0; i <= Length - vStride; i += vStride)
             {
                 vSum += vSelector(new Vector<double>(internalArray, i));
             }
@@ -202,7 +202,7 @@ namespace GNet
             double sum;
             int i;
 
-            for (i = 0; i <= Length - VStride; i += VStride)
+            for (i = 0; i <= Length - vStride; i += vStride)
             {
                 vSum += vSelector(new Vector<double>(internalArray, i), new Vector<double>(other.internalArray, i));
             }
