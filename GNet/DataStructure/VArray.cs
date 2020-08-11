@@ -37,13 +37,13 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                var vCur = vSelector(new Vector<double>(InternalArray, i), i);
+                var vCur = vSelector(new Vector<double>(internalArray, i), i);
                 vCur.CopyTo(selected, i);
             }
 
             for (; i < Length; ++i)
             {
-                selected[i] = selector(InternalArray[i], i);
+                selected[i] = selector(internalArray[i], i);
             }
 
             return FromRef(selected);
@@ -57,7 +57,7 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                var vCur = new Vector<double>(InternalArray, i);
+                var vCur = new Vector<double>(internalArray, i);
                 vMin = Vector.Min(vMin, vCur);
             }
 
@@ -68,7 +68,7 @@ namespace GNet
 
             for (; i < Length; ++i)
             {
-                min = Math.Min(min, InternalArray[i]);
+                min = Math.Min(min, internalArray[i]);
             }
 
             return min;
@@ -82,7 +82,7 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                var vCur = vSelector(new Vector<double>(InternalArray, i));
+                var vCur = vSelector(new Vector<double>(internalArray, i));
                 vMin = Vector.Min(vMin, vCur);
             }
 
@@ -93,7 +93,7 @@ namespace GNet
 
             for (; i < Length; ++i)
             {
-                min = Math.Min(min, selector(InternalArray[i]));
+                min = Math.Min(min, selector(internalArray[i]));
             }
 
             return min;
@@ -107,7 +107,7 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                var vec = new Vector<double>(InternalArray, i);
+                var vec = new Vector<double>(internalArray, i);
                 vMax = Vector.Max(vMax, vec);
             }
 
@@ -118,7 +118,7 @@ namespace GNet
 
             for (; i < Length; ++i)
             {
-                max = Math.Max(max, InternalArray[i]);
+                max = Math.Max(max, internalArray[i]);
             }
 
             return max;
@@ -132,7 +132,7 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                var vCur = vSelector(new Vector<double>(InternalArray, i));
+                var vCur = vSelector(new Vector<double>(internalArray, i));
                 vMax = Vector.Max(vMax, vCur);
             }
 
@@ -143,7 +143,7 @@ namespace GNet
 
             for (; i < Length; ++i)
             {
-                max = Math.Max(max, selector(InternalArray[i]));
+                max = Math.Max(max, selector(internalArray[i]));
             }
 
             return max;
@@ -157,14 +157,14 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                vSum += new Vector<double>(InternalArray, i);
+                vSum += new Vector<double>(internalArray, i);
             }
 
             sum = Vector.Dot(vSum, Vector<double>.One);
 
             for (; i < Length; i++)
             {
-                sum += InternalArray[i];
+                sum += internalArray[i];
             }
 
             return sum;
@@ -178,14 +178,14 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                vSum += vSelector(new Vector<double>(InternalArray, i));
+                vSum += vSelector(new Vector<double>(internalArray, i));
             }
 
             sum = Vector.Dot(vSum, Vector<double>.One);
 
             for (; i < Length; i++)
             {
-                sum += selector(InternalArray[i]);
+                sum += selector(internalArray[i]);
             }
 
             return sum;
@@ -204,14 +204,14 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                vSum += vSelector(new Vector<double>(InternalArray, i), new Vector<double>(other.InternalArray, i));
+                vSum += vSelector(new Vector<double>(internalArray, i), new Vector<double>(other.internalArray, i));
             }
 
             sum = Vector.Dot(vSum, Vector<double>.One);
 
             for (; i < Length; i++)
             {
-                sum += selector(InternalArray[i], other.InternalArray[i]);
+                sum += selector(internalArray[i], other.internalArray[i]);
             }
 
             return sum;

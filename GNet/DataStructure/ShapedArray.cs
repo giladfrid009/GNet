@@ -6,7 +6,7 @@ namespace GNet
     public class ShapedArray<T> : Array<T>
     {
         public Shape Shape { get; }
-        public T this[int[] idxs] => base[Shape.FlattenIndices(idxs)];
+        public T this[int[] idxs] => internalArray[Shape.FlattenIndices(idxs)];
 
         protected ShapedArray(Shape shape, T[] array, bool asRef = false) : base(array, asRef)
         {
@@ -16,10 +16,6 @@ namespace GNet
             }
 
             Shape = shape;
-        }
-
-        public ShapedArray() : this(new Shape(), Array.Empty<T>(), true)
-        {
         }
 
         public ShapedArray(params T[] elements) : this(new Shape(elements.Length), elements, false)
@@ -38,11 +34,6 @@ namespace GNet
         public static ShapedArray<T> FromRef(Shape shape, params T[] array)
         {
             return new ShapedArray<T>(shape, array, true);
-        }
-
-        public Array<T> Flatten()
-        {
-            return this;
         }
     }
 }
