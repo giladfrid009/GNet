@@ -9,11 +9,7 @@ namespace GNet
         static readonly int VStride = Vector<double>.Count;
 
         protected VArray(double[] vals, bool asRef = false) : base(vals, asRef)
-        {
-            if (Length == 0)
-            {
-                throw new ArgumentException($"{nameof(vals)} must be at least of length 1.");
-            }
+        {            
         }
 
         public VArray(params double[] vals) : this(vals, false)
@@ -21,11 +17,7 @@ namespace GNet
         }
 
         public VArray(int length, Func<double> element) : base(length, element)
-        {
-            if(length < 1)
-            {
-                throw new ArgumentException($"{nameof(length)} must be at least 1.");
-            }
+        {           
         }
 
         public static new VArray FromRef(params double[] array)
@@ -41,7 +33,6 @@ namespace GNet
         public VArray Select(Func<Vector<double>, int, Vector<double>> vSelector, Func<double, int, double> selector)
         {
             var selected = new double[Length];
-
             int i;
 
             for (i = 0; i <= Length - VStride; i += VStride)
@@ -111,7 +102,7 @@ namespace GNet
         public double Max()
         {
             var vMax = new Vector<double>(double.MinValue);
-            double max = InternalArray[0];
+            double max = double.MinValue;
             int i;
 
             for (i = 0; i <= Length - VStride; i += VStride)

@@ -59,20 +59,6 @@ namespace GNet
             }
 
             return Array<TRes>.FromRef(selected);
-        }       
-
-        public T[] ToMutable()
-        {
-            var array = new T[Length];
-
-            Array.Copy(InternalArray, 0, array, 0, Length);
-
-            return array;
-        }
-
-        public ShapedArray<T> ToShape(Shape shape)
-        {
-            return ShapedArray<T>.FromRef(shape, InternalArray);
-        }
+        }              
     }
 }

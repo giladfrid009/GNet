@@ -23,6 +23,11 @@ namespace GNet
             }
         }
 
+        public ShapedArray<T> ToShape(Shape shape)
+        {
+            return ShapedArray<T>.FromRef(shape, InternalArray);
+        }
+
         public void ForEach(Action<T> action)
         {
             ForEach((X, i) => action(X));
@@ -30,36 +35,26 @@ namespace GNet
 
         public double Min(Func<T, double> selector)
         {
-            double minVal = selector(InternalArray[0]);
+            double min = double.MaxValue;
 
-            for (int i = 1; i < Length; i++)
+            for (int i = 0; i < Length; i++)
             {
-                double val = selector(InternalArray[i]);
-
-                if (val < minVal)
-                {
-                    minVal = val;
-                }
+                min = Math.Min(min, selector(InternalArray[i]));
             }
 
-            return minVal;
+            return min;
         }
 
         public double Max(Func<T, double> selector)
         {
-            double maxVal = selector(InternalArray[0]);
+            double max = double.MinValue;
 
-            for (int i = 1; i < Length; i++)
+            for (int i = 0; i < Length; i++)
             {
-                double val = selector(InternalArray[i]);
-
-                if (val > maxVal)
-                {
-                    maxVal = val;
-                }
+                max = Math.Max(max, selector(InternalArray[i]));
             }
 
-            return maxVal;
+            return max;
         }
 
         public double Sum(Func<T, double> selector)
