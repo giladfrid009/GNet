@@ -51,9 +51,11 @@ namespace GNet
             {
                 Data D = InternalArray[i];
 
-                InternalArray[i] = new Data(
-                inputs ? D.Inputs.Select(X => normalizer.Normalize(X)).ToShape(InputShape) : D.Inputs,
-                targets ? D.Targets.Select(X => normalizer.Normalize(X)).ToShape(TargetShape) : D.Targets);
+                InternalArray[i] = new Data
+                (
+                    inputs ? D.Inputs.Select(X => normalizer.Normalize(X)).ToShape(InputShape) : D.Inputs,
+                    targets ? D.Targets.Select(X => normalizer.Normalize(X)).ToShape(TargetShape) : D.Targets
+                );
             }
         }
 

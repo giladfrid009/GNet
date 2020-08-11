@@ -44,6 +44,11 @@ namespace GNet
             return new Array<T>(array, true);
         }
 
+        public Array<TRes> Select<TRes>(Func<T, TRes> selector)
+        {
+            return Select((X, i) => selector(X));
+        }
+
         public Array<TRes> Select<TRes>(Func<T, int, TRes> selector)
         {
             var selected = new TRes[Length];
@@ -54,13 +59,7 @@ namespace GNet
             }
 
             return Array<TRes>.FromRef(selected);
-        }
-
-        public Array<TRes> Select<TRes>(Func<T, TRes> selector)
-        {
-            return Select((X, i) => selector(X));
-        }
-
+        }       
 
         public T[] ToMutable()
         {

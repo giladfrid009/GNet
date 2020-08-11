@@ -60,7 +60,19 @@ namespace GNet
             }
 
             return maxVal;
-        }       
+        }
+
+        public double Sum(Func<T, double> selector)
+        {
+            double sum = 0.0;
+
+            for (int i = 0; i < Length; i++)
+            {
+                sum += selector(InternalArray[i]);
+            }
+
+            return sum;
+        }
 
         public double Sum(BaseArray<T> other, Func<T, T, double> selector)
         {
@@ -78,27 +90,15 @@ namespace GNet
 
             return sum;
         }
-
-        public double Sum(Func<T, double> selector)
+     
+        public double Average(Func<T, double> selector)
         {
-            double sum = 0.0;
-
-            for (int i = 0; i < Length; i++)
-            {
-                sum += selector(InternalArray[i]);
-            }
-
-            return sum;
+            return Sum(selector) / Length;
         }
 
         public double Average(BaseArray<T> other, Func<T, T, double> selector)
         {
             return Sum(other, selector) / Length;
-        }
-
-        public double Average(Func<T, double> selector)
-        {
-            return Sum(selector) / Length;
         }
     }
 }
