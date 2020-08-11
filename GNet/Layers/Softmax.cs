@@ -26,11 +26,6 @@ namespace GNet.Layers
 
         public override void CalcGrads(ILoss loss, ShapedArray<double> targets)
         {
-            if (targets.Shape != Shape)
-            {
-                throw new ShapeMismatchException(nameof(targets));
-            }
-
             double gSum = 0.0;
 
             Neurons.ForEach((N, i) =>

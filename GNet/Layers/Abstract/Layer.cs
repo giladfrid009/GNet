@@ -16,11 +16,6 @@ namespace GNet
 
         public void Input(ShapedArray<double> values)
         {
-            if (values.Shape != Shape)
-            {
-                throw new ShapeMismatchException(nameof(values));
-            }
-
             Neurons.ForEach((N, i) => N.OutVal = values[i]);
         }
 

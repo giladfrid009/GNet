@@ -62,11 +62,6 @@ namespace GNet.Layers
 
         public override void CalcGrads(ILoss loss, ShapedArray<double> targets)
         {
-            if (targets.Shape != Shape)
-            {
-                throw new ShapeMismatchException(nameof(targets));
-            }
-
             Neurons.ForEach((N, i) =>
             {
                 N.Gradient = Activation.Derivative(N.InVal, N.OutVal) * loss.Derivative(targets[i], N.OutVal);
