@@ -9,16 +9,14 @@ namespace GNet
         public int Rank { get; }
         public int Volume { get; }
 
-        public Shape()
-        {
-            Dims = new Array<int>();
-            Rank = 0;
-            Volume = 0;
-        }
-
         public Shape(Array<int> dims)
         {
             int length = dims.Length;
+
+            if (length == 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(dims));
+            }
 
             for (int i = 0; i < length; i++)
             {
@@ -30,7 +28,6 @@ namespace GNet
 
             Dims = dims;
             Rank = length;
-
             Volume = 1;
 
             for (int i = 0; i < length; i++)
@@ -113,7 +110,7 @@ namespace GNet
 
         public override int GetHashCode()
         {
-            return Dims.GetHashCode() + Volume * 17;
+            return HashCode.Combine(Dims, Volume * 17);
         }
     }
 }

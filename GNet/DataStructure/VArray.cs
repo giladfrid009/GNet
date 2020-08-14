@@ -4,7 +4,7 @@ using System.Numerics;
 namespace GNet
 {
     [Serializable]
-    public class VArray : Array<double>
+    public class VArray : Array<double>, IEquatable<VArray>
     {
         private static readonly int vStride = Vector<double>.Count;
 
@@ -230,6 +230,54 @@ namespace GNet
         public double Average(VArray other, Func<Vector<double>, Vector<double>, Vector<double>> vSelector, Func<double, double, double> selector)
         {
             return Sum(other, vSelector, selector) / Length;
+        }
+
+        public bool Equals(VArray? other)
+        {
+            if (other is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            if (Length != other.Length)
+            {
+                return false;
+            }
+
+            int i;
+
+            for (i = 0; i < Length - vStride; i+= vStride)
+            {
+                if (new Vector<double>(internalArray, i) != new Vector<double>(other.internalArray, i))
+                {
+                    return false;
+                }
+            }
+
+            for (; i < Length; i++)
+            {
+                if (internalArray[i] != other.internalArray[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as VArray);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(internalArray, Length);
         }
     }
 }
