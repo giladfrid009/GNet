@@ -5,8 +5,9 @@ namespace GNet
     [Serializable]
     public class Array<T>
     {
-        public int Length { get; }
+        public static Array<T> Empty { get; } = new Array<T>(Array.Empty<T>(), true);
 
+        public int Length { get; }
         public T this[int i] => internalArray[i];
 
         protected readonly T[] internalArray;

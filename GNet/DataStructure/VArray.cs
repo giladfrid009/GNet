@@ -1,43 +1,67 @@
 ﻿using System;
 using System.Numerics;
+using GNet.DataStructure.NumericOps;
 
 namespace GNet
 {
     [Serializable]
-    public class VArray : Array<double>, IEquatable<VArray>
+    public class VArray<T> : Array<T> where T : unmanaged
     {
-        private static readonly int vStride = Vector<double>.Count;
+        protected static INumericOps<T> Ops { get; }
+        protected static int VecStride { get; }
 
-        protected VArray(double[] vals, bool asRef = false) : base(vals, asRef)
-        {            
+        static VArray()
+        {
+            if(typeof(T) == typeof(int))
+            {
+                Ops = (INumericOps<T>)new IntOps();
+            }
+            else if (typeof(T) == typeof(float))
+            {
+                Ops = (INumericOps<T>)new FloatOps();
+            }
+            else if (typeof(T) == typeof(double))
+            {
+                Ops = (INumericOps<T>)new DoubleOps();
+            }
+            else
+            {
+                throw new NotSupportedException(typeof(T).Name);
+            }
+
+            VecStride = Vector<T>.Count;
         }
 
-        public VArray(params double[] vals) : this(vals, false)
+        protected VArray(T[] vals, bool asRef = false) : base(vals, asRef)
         {
         }
 
-        public VArray(int length, Func<double> element) : base(length, element)
-        {           
-        }
-
-        public static new VArray FromRef(params double[] array)
+        public VArray(params T[] vals) : this(vals, false)
         {
-            return new VArray(array, true);
         }
 
-        public VArray Select(Func<Vector<double>, Vector<double>> vSelector, Func<double, double> selector)
+        public VArray(int length, Func<T> element) : base(length, element)
+        {
+        }
+
+        public static new VArray<T> FromRef(params T[] array)
+        {
+            return new VArray<T>(array, true);
+        }
+
+        public VArray<T> Select(Func<Vector<T>, Vector<T>> vSelector, Func<T, T> selector)
         {
             return Select((X, i) => vSelector(X), (X, i) => selector(X));
         }
 
-        public VArray Select(Func<Vector<double>, int, Vector<double>> vSelector, Func<double, int, double> selector)
+        public VArray<T> Select(Func<Vector<T>, int, Vector<T>> vSelector, Func<T, int, T> selector)
         {
-            var selected = new double[Length];
+            var selected = new T[Length];
             int i;
 
-            for (i = 0; i <= Length - vStride; i += vStride)
+            for (i = 0; i <= Length - VecStride; i += VecStride)
             {
-                var vCur = vSelector(new Vector<double>(internalArray, i), i);
+                var vCur = vSelector(new Vector<T>(internalArray, i), i);
                 vCur.CopyTo(selected, i);
             }
 
@@ -49,190 +73,190 @@ namespace GNet
             return FromRef(selected);
         }
 
-        public double Min()
+        public T Min()
         {
-            var vMin = new Vector<double>(double.MaxValue);
-            double min = double.MaxValue;
+            var vMin = new Vector<T>(Ops.MaxValue);
+            T min = Ops.MaxValue;
             int i;
 
-            for (i = 0; i <= Length - vStride; i += vStride)
+            for (i = 0; i <= Length - VecStride; i += VecStride)
             {
-                var vCur = new Vector<double>(internalArray, i);
+                var vCur = new Vector<T>(internalArray, i);
                 vMin = Vector.Min(vMin, vCur);
             }
 
-            for (var j = 0; j < vStride; ++j)
+            for (var j = 0; j < VecStride; ++j)
             {
-                min = Math.Min(min, vMin[j]);
+                min = Ops.Min(min, vMin[j]);
             }
 
             for (; i < Length; ++i)
             {
-                min = Math.Min(min, internalArray[i]);
+                min = Ops.Min(min, internalArray[i]);
             }
 
             return min;
         }
 
-        public double Min(Func<Vector<double>, Vector<double>> vSelector, Func<double, double> selector)
+        public T Min(Func<Vector<T>, Vector<T>> vSelector, Func<T, T> selector)
         {
-            var vMin = new Vector<double>(double.MaxValue);
-            double min = double.MaxValue;
+            var vMin = new Vector<T>(Ops.MaxValue);
+            T min = Ops.MaxValue;
             int i;
 
-            for (i = 0; i <= Length - vStride; i += vStride)
+            for (i = 0; i <= Length - VecStride; i += VecStride)
             {
-                var vCur = vSelector(new Vector<double>(internalArray, i));
+                var vCur = vSelector(new Vector<T>(internalArray, i));
                 vMin = Vector.Min(vMin, vCur);
             }
 
-            for (var j = 0; j < vStride; ++j)
+            for (var j = 0; j < VecStride; ++j)
             {
-                min = Math.Min(min, vMin[j]);
+                min = Ops.Min(min, vMin[j]);
             }
 
             for (; i < Length; ++i)
             {
-                min = Math.Min(min, selector(internalArray[i]));
+                min = Ops.Min(min, selector(internalArray[i]));
             }
 
             return min;
         }
 
-        public double Max()
+        public T Max()
         {
-            var vMax = new Vector<double>(double.MinValue);
-            double max = double.MinValue;
+            var vMax = new Vector<T>(Ops.MinValue);
+            T max = Ops.MinValue;
             int i;
 
-            for (i = 0; i <= Length - vStride; i += vStride)
+            for (i = 0; i <= Length - VecStride; i += VecStride)
             {
-                var vec = new Vector<double>(internalArray, i);
+                var vec = new Vector<T>(internalArray, i);
                 vMax = Vector.Max(vMax, vec);
             }
 
-            for (var j = 0; j < vStride; ++j)
+            for (var j = 0; j < VecStride; ++j)
             {
-                max = Math.Max(max, vMax[j]);
+                max = Ops.Max(max, vMax[j]);
             }
 
             for (; i < Length; ++i)
             {
-                max = Math.Max(max, internalArray[i]);
+                max = Ops.Max(max, internalArray[i]);
             }
 
             return max;
         }
 
-        public double Max(Func<Vector<double>, Vector<double>> vSelector, Func<double, double> selector)
+        public T Max(Func<Vector<T>, Vector<T>> vSelector, Func<T, T> selector)
         {
-            var vMax = new Vector<double>(double.MinValue);
-            double max = double.MinValue;
+            var vMax = new Vector<T>(Ops.MinValue);
+            T max = Ops.MinValue;
             int i;
 
-            for (i = 0; i <= Length - vStride; i += vStride)
+            for (i = 0; i <= Length - VecStride; i += VecStride)
             {
-                var vCur = vSelector(new Vector<double>(internalArray, i));
+                var vCur = vSelector(new Vector<T>(internalArray, i));
                 vMax = Vector.Max(vMax, vCur);
             }
 
-            for (var j = 0; j < vStride; ++j)
+            for (var j = 0; j < VecStride; ++j)
             {
-                max = Math.Max(max, vMax[j]);
+                max = Ops.Max(max, vMax[j]);
             }
 
             for (; i < Length; ++i)
             {
-                max = Math.Max(max, selector(internalArray[i]));
+                max = Ops.Max(max, selector(internalArray[i]));
             }
 
             return max;
         }
 
-        public double Sum()
+        public T Sum()
         {
-            var vSum = Vector<double>.Zero;
-            double sum;
+            var vSum = Vector<T>.Zero;
+            T sum;
             int i;
 
-            for (i = 0; i <= Length - vStride; i += vStride)
+            for (i = 0; i <= Length - VecStride; i += VecStride)
             {
-                vSum += new Vector<double>(internalArray, i);
+                vSum += new Vector<T>(internalArray, i);
             }
 
-            sum = Vector.Dot(vSum, Vector<double>.One);
+            sum = Vector.Dot(vSum, Vector<T>.One);
 
             for (; i < Length; i++)
             {
-                sum += internalArray[i];
-            }
-
-            return sum;
-        }     
-
-        public double Sum(Func<Vector<double>, Vector<double>> vSelector, Func<double, double> selector)
-        {
-            var vSum = Vector<double>.Zero;
-            double sum;
-            int i;
-
-            for (i = 0; i <= Length - vStride; i += vStride)
-            {
-                vSum += vSelector(new Vector<double>(internalArray, i));
-            }
-
-            sum = Vector.Dot(vSum, Vector<double>.One);
-
-            for (; i < Length; i++)
-            {
-                sum += selector(internalArray[i]);
+                sum = Ops.Add(sum, internalArray[i]);
             }
 
             return sum;
         }
 
-        public double Sum(VArray other, Func<Vector<double>, Vector<double>, Vector<double>> vSelector, Func<double, double, double> selector)
+        public T Sum(Func<Vector<T>, Vector<T>> vSelector, Func<T, T> selector)
+        {
+            var vSum = Vector<T>.Zero;
+            T sum;
+            int i;
+
+            for (i = 0; i <= Length - VecStride; i += VecStride)
+            {
+                vSum += vSelector(new Vector<T>(internalArray, i));
+            }
+
+            sum = Vector.Dot(vSum, Vector<T>.One);
+
+            for (; i < Length; i++)
+            {
+                sum = Ops.Add(sum, selector(internalArray[i]));
+            }
+
+            return sum;
+        }
+
+        public T Sum(VArray<T> other, Func<Vector<T>, Vector<T>, Vector<T>> vSelector, Func<T, T, T> selector)
         {
             if (other.Length != Length)
             {
                 throw new ArgumentOutOfRangeException(nameof(other));
             }
 
-            var vSum = Vector<double>.Zero;
-            double sum;
+            var vSum = Vector<T>.Zero;
+            T sum;
             int i;
 
-            for (i = 0; i <= Length - vStride; i += vStride)
+            for (i = 0; i <= Length - VecStride; i += VecStride)
             {
-                vSum += vSelector(new Vector<double>(internalArray, i), new Vector<double>(other.internalArray, i));
+                vSum += vSelector(new Vector<T>(internalArray, i), new Vector<T>(other.internalArray, i));
             }
 
-            sum = Vector.Dot(vSum, Vector<double>.One);
+            sum = Vector.Dot(vSum, Vector<T>.One);
 
             for (; i < Length; i++)
             {
-                sum += selector(internalArray[i], other.internalArray[i]);
+                sum = Ops.Add(sum, selector(internalArray[i], other.internalArray[i]));
             }
 
             return sum;
         }
 
-        public double Average()
+        public T Average()
         {
-            return Sum() / Length;
-        }       
-
-        public double Average(Func<Vector<double>, Vector<double>> vSelector, Func<double, double> selector)
-        {
-            return Sum(vSelector, selector) / Length;
+            return Ops.Div(Sum(), Ops.From(Length));
         }
 
-        public double Average(VArray other, Func<Vector<double>, Vector<double>, Vector<double>> vSelector, Func<double, double, double> selector)
+        public T Average(Func<Vector<T>, Vector<T>> vSelector, Func<T, T> selector)
         {
-            return Sum(other, vSelector, selector) / Length;
+            return Ops.Div(Sum(vSelector, selector), Ops.From(Length));
         }
 
-        public bool Equals(VArray? other)
+        public T Average(VArray<T> other, Func<Vector<T>, Vector<T>, Vector<T>> vSelector, Func<T, T, T> selector)
+        {
+            return Ops.Div(Sum(other, vSelector, selector), Ops.From(Length));
+        }
+
+        public bool Equals(VArray<T>? other)
         {
             if (other is null)
             {
@@ -251,9 +275,9 @@ namespace GNet
 
             int i;
 
-            for (i = 0; i < Length - vStride; i+= vStride)
+            for (i = 0; i < Length - VecStride; i += VecStride)
             {
-                if (new Vector<double>(internalArray, i) != new Vector<double>(other.internalArray, i))
+                if (new Vector<T>(internalArray, i) != new Vector<T>(other.internalArray, i))
                 {
                     return false;
                 }
@@ -261,7 +285,7 @@ namespace GNet
 
             for (; i < Length; i++)
             {
-                if (internalArray[i] != other.internalArray[i])
+                if (Ops.Equals(internalArray[i], other.internalArray[i]) == false)
                 {
                     return false;
                 }
@@ -272,12 +296,12 @@ namespace GNet
 
         public override bool Equals(object? obj)
         {
-            return Equals(obj as VArray);
+            return Equals(obj as VArray<T>);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(internalArray, Length);
+            return HashCode.Combine(internalArray, Length, VecStride);
         }
     }
 }

@@ -5,6 +5,8 @@ namespace GNet
     [Serializable]
     public class Shape : IEquatable<Shape>
     {
+        public static Shape Empty { get; } = new Shape(0);
+
         public Array<int> Dims { get; }
         public int Rank { get; }
         public int Volume { get; }
