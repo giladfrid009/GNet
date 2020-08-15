@@ -7,26 +7,31 @@ namespace GNet
     [Serializable]
     public class VArray<T> : Array<T> where T : unmanaged
     {
-        protected static INumOps<T> Ops { get; }
+        protected static NumOps<T> Ops { get; }
         protected static int VecStride { get; }
 
         static VArray()
         {
             if(typeof(T) == typeof(int))
             {
-                Ops = (INumOps<T>)new IntOps();
+                Ops = (new IntOps() as NumOps<T>)!;
             }
             else if (typeof(T) == typeof(float))
             {
-                Ops = (INumOps<T>)new FloatOps();
+                Ops = (new FloatOps() as NumOps<T>)!;
             }
             else if (typeof(T) == typeof(double))
             {
-                Ops = (INumOps<T>)new DoubleOps();
+                Ops = (new DoubleOps() as NumOps<T>)!;
             }
             else
             {
                 throw new NotSupportedException(typeof(T).Name);
+            }
+
+            if (Ops == null)
+            {
+                throw new NotSupportedException();
             }
 
             VecStride = Vector<T>.Count;

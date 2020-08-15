@@ -3,29 +3,18 @@
 namespace GNet.Containers.NumOps
 {
     [Serializable]
-    public class DoubleOps : INumOps<double>
+    public class DoubleOps : NumOps<double>
     {
-        public double MinValue { get; } = double.MinValue;
-        public double MaxValue { get; } = double.MaxValue;
+        public override double MinValue { get; } = double.MinValue;
+        public override double MaxValue { get; } = double.MaxValue;
 
-        public double Add(double left, double right) => left + right;
-        public double Sub(double left, double right) => left - right;
-        public double Mul(double left, double right) => left * right;
-        public double Div(double left, double right) => left / right;
+        public override double Add(double left, double right) => left + right;
+        public override double Sub(double left, double right) => left - right;
+        public override double Mul(double left, double right) => left * right;
+        public override double Div(double left, double right) => left / right;
 
-        public double Min(double left, double right) => left < right ? left : right;
-        public double Max(double left, double right) => left > right ? left : right;
-
-        public bool Equals(double left, double right) => left == right;
-
-        public TOther To<TOther>(double value) where TOther : unmanaged
-        {
-            return (TOther)(object)value;
-        }
-
-        public double From<TOther>(TOther value) where TOther : unmanaged
-        {
-            return (double)(object)value;
-        }
+        public override bool Equals(double left, double right) => left == right;
+        public override bool Smaller(double left, double right) => left < right;
+        public override bool Greater(double left, double right) => left > right;
     }
 }
