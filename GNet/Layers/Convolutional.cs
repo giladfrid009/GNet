@@ -11,15 +11,15 @@ namespace GNet.Layers
     {
         public override Array<Neuron> Neurons { get; }
         public Array<Kernel> Kernels { get; }
-        public Array<int> Strides { get; }
-        public Array<int> Paddings { get; }
+        public VArray<int> Strides { get; }
+        public VArray<int> Paddings { get; }
         public Shape InputShape { get; }
         public Shape PaddedShape { get; }
         public Shape KernelShape { get; }
         public int KernelsNum { get; }
         public double PadVal { get; }
 
-        public Convolutional(Shape inputShape, Shape outputShape, Shape kernelShape, Array<int> strides, IActivation activation,
+        public Convolutional(Shape inputShape, Shape outputShape, Shape kernelShape, VArray<int> strides, IActivation activation,
             IInitializer? weightInit = null, IInitializer? biasInit = null, double padVal = 0.0)
             : base(outputShape, activation, weightInit, biasInit)
         {
@@ -32,7 +32,7 @@ namespace GNet.Layers
 
             Paddings = Padder.CalcPadding(inputShape, outputShape, kernelShape, strides, false);
 
-            PaddedShape = Padder.PadShape(inputShape, Paddings);
+            PaddedShape = inputShape.Pad(Paddings);
 
             KernelsNum = outputShape.Dims[0] / inputShape.Dims[0];
 
@@ -41,7 +41,7 @@ namespace GNet.Layers
             Neurons = new Array<Neuron>(outputShape.Volume, () => new CNeuron());
         }
 
-        private static void ValidateChannels(Shape inputShape, Shape outputShape, Shape kernelShape, Array<int> strides)
+        private static void ValidateChannels(Shape inputShape, Shape outputShape, Shape kernelShape, VArray<int> strides)
         {
             if (strides[0] != 1)
             {
@@ -80,7 +80,7 @@ namespace GNet.Layers
 
                     outN.KernelBias = kernel.Bias;
 
-                    outN.InSynapses = IndexGen.ByStart(KernelShape, Array<int>.FromRef(idxKernel)).Select((idx, k) =>
+                    outN.InSynapses = IndexGen.ByStart(KernelShape, VArray<int>.FromRef(idxKernel)).Select((idx, k) =>
                     {
                         var S = new CSynapse(padded[idx], outN)
                         {

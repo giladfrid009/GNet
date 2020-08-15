@@ -4,7 +4,7 @@ namespace GNet.Utils.Conv
 {
     public static class Padder
     {
-        public static Array<int> CalcPadding(Shape inputShape, Shape outputShape, Shape kernelShape, Array<int> strides, bool padChannels)
+        public static VArray<int> CalcPadding(Shape inputShape, Shape outputShape, Shape kernelShape, VArray<int> strides, bool padChannels)
         {
             int length = inputShape.Rank;
 
@@ -52,27 +52,17 @@ namespace GNet.Utils.Conv
                 paddings[i] = doublePad / 2;
             }
 
-            return Array<int>.FromRef(paddings);
+            return VArray<int>.FromRef(paddings);
         }
 
-        public static Shape PadShape(Shape shape, Array<int> paddings)
-        {
-            if (shape.Rank != paddings.Length)
-            {
-                throw new RankException(nameof(shape));
-            }
-
-            return new Shape(shape.Dims.Select((D, i) => D + 2 * paddings[i]));
-        }
-
-        public static ShapedArray<T> PadShapedArray<T>(ShapedArray<T> array, Array<int> paddings, Func<T> padVal)
+        public static ShapedArray<T> PadShapedArray<T>(ShapedArray<T> array, VArray<int> paddings, Func<T> padVal)
         {
             if (array.Shape.Rank != paddings.Length)
             {
                 throw new RankException(nameof(array));
             }
 
-            Shape paddedShape = PadShape(array.Shape, paddings);
+            Shape paddedShape = array.Shape.Pad(paddings);
 
             var internalArray = new T[paddedShape.Volume];
 

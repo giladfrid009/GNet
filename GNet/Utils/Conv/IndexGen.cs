@@ -5,7 +5,7 @@ namespace GNet.Utils.Conv
 {
     public static class IndexGen
     {
-        public static Array<int[]> Generate(Shape shape, Array<int> start, Array<int> strides, Shape kernel)
+        public static Array<int[]> Generate(Shape shape, VArray<int> start, VArray<int> strides, Shape kernel)
         {
             if (shape.Rank != strides.Length)
             {
@@ -75,14 +75,14 @@ namespace GNet.Utils.Conv
             }
         }
 
-        public static Array<int[]> ByStrides(Shape shape, Array<int> strides, Shape kernel)
+        public static Array<int[]> ByStrides(Shape shape, VArray<int> strides, Shape kernel)
         {
-            return Generate(shape, new Array<int>(shape.Rank, () => 0), strides, kernel);
+            return Generate(shape, new VArray<int>(shape.Rank, () => 0), strides, kernel);
         }
 
-        public static Array<int[]> ByStart(Shape shape, Array<int> start)
+        public static Array<int[]> ByStart(Shape shape, VArray<int> start)
         {
-            return Generate(shape, start, new Array<int>(shape.Rank, () => 1), new Shape(new Array<int>(shape.Rank, () => 1)));
+            return Generate(shape, start, new VArray<int>(shape.Rank, () => 1), new Shape(new VArray<int>(shape.Rank, () => 1)));
         }
     }
 }

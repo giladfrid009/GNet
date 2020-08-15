@@ -7,11 +7,11 @@ namespace GNet
     {
         public static Shape Empty { get; } = new Shape(0);
 
-        public Array<int> Dims { get; }
+        public VArray<int> Dims { get; }
         public int Rank { get; }
         public int Volume { get; }
 
-        public Shape(Array<int> dims)
+        public Shape(VArray<int> dims)
         {
             int length = dims.Length;
 
@@ -38,7 +38,7 @@ namespace GNet
             }
         }
 
-        public Shape(params int[] dimensions) : this(new Array<int>(dimensions))
+        public Shape(params int[] dimensions) : this(new VArray<int>(dimensions))
         {
         }
 
@@ -77,6 +77,11 @@ namespace GNet
             return flat;
         }
 
+        public Shape Pad(VArray<int> paddings)
+        {
+            return new Shape(Dims.Select(paddings, (D, P) => D + 2 * P, (D, P) => D + 2 * P));
+        }
+
         public bool Equals(Shape? other)
         {
             if (other is null)
@@ -94,15 +99,7 @@ namespace GNet
                 return false;
             }
 
-            for (int i = 0; i < Rank; i++)
-            {
-                if (Dims[i] != other.Dims[i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return Dims.Equals(other.Dims);
         }
 
         public override bool Equals(object? obj)

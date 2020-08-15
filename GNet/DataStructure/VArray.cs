@@ -1,28 +1,28 @@
 ﻿using System;
 using System.Numerics;
-using GNet.DataStructure.NumericOps;
+using GNet.DataStructure.NumOps;
 
 namespace GNet
 {
     [Serializable]
     public class VArray<T> : Array<T> where T : unmanaged
     {
-        protected static INumericOps<T> Ops { get; }
+        protected static INumOps<T> Ops { get; }
         protected static int VecStride { get; }
 
         static VArray()
         {
             if(typeof(T) == typeof(int))
             {
-                Ops = (INumericOps<T>)new IntOps();
+                Ops = (INumOps<T>)new IntOps();
             }
             else if (typeof(T) == typeof(float))
             {
-                Ops = (INumericOps<T>)new FloatOps();
+                Ops = (INumOps<T>)new FloatOps();
             }
             else if (typeof(T) == typeof(double))
             {
-                Ops = (INumericOps<T>)new DoubleOps();
+                Ops = (INumOps<T>)new DoubleOps();
             }
             else
             {
@@ -51,23 +51,42 @@ namespace GNet
 
         public VArray<T> Select(Func<Vector<T>, Vector<T>> vSelector, Func<T, T> selector)
         {
-            return Select((X, i) => vSelector(X), (X, i) => selector(X));
-        }
-
-        public VArray<T> Select(Func<Vector<T>, int, Vector<T>> vSelector, Func<T, int, T> selector)
-        {
             var selected = new T[Length];
             int i;
 
             for (i = 0; i <= Length - VecStride; i += VecStride)
             {
-                var vCur = vSelector(new Vector<T>(internalArray, i), i);
+                var vCur = vSelector(new Vector<T>(internalArray, i));
                 vCur.CopyTo(selected, i);
             }
 
             for (; i < Length; ++i)
             {
-                selected[i] = selector(internalArray[i], i);
+                selected[i] = selector(internalArray[i]);
+            }
+
+            return FromRef(selected);
+        }
+
+        public VArray<T> Select(VArray<T> other, Func<Vector<T>, Vector<T>, Vector<T>> vSelector, Func<T, T, T> selector)
+        {
+            if(other.Length != Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(other));
+            }
+
+            var selected = new T[Length];
+            int i;
+
+            for (i = 0; i <= Length - VecStride; i += VecStride)
+            {
+                var vCur = vSelector(new Vector<T>(internalArray, i), new Vector<T>(other.internalArray, i));
+                vCur.CopyTo(selected, i);
+            }
+
+            for (; i < Length; ++i)
+            {
+                selected[i] = selector(internalArray[i], other.internalArray[i]);
             }
 
             return FromRef(selected);
