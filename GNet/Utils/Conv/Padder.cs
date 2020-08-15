@@ -55,7 +55,7 @@ namespace GNet.Utils.Conv
             return VArray<int>.FromRef(paddings);
         }
 
-        public static ShapedArray<T> PadShapedArray<T>(ShapedArray<T> array, VArray<int> paddings, Func<T> padVal)
+        public static ShapedArray<T> PadArray<T>(ShapedArray<T> array, VArray<int> paddings, Func<T> padVal)
         {
             if (array.Shape.Rank != paddings.Length)
             {

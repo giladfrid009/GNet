@@ -72,7 +72,7 @@ namespace GNet
         {
             if(other.Length != Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(other));
+                throw new RankException(nameof(other));
             }
 
             var selected = new T[Length];
@@ -238,7 +238,7 @@ namespace GNet
         {
             if (other.Length != Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(other));
+                throw new RankException(nameof(other));
             }
 
             var vSum = Vector<T>.Zero;

@@ -123,7 +123,7 @@ namespace GNet
         {
             if (other.Length != Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(other));
+                throw new RankException(nameof(other));
             }
 
             double sum = 0.0;

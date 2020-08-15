@@ -12,7 +12,7 @@ namespace GNet
         {
             if (array.Length == 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(array));
+                throw new RankException(nameof(array));
             }
 
             InputShape = array[0].InputShape;

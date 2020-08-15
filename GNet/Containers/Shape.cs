@@ -17,7 +17,7 @@ namespace GNet
 
             if (length == 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(dims));
+                throw new RankException(nameof(dims));
             }
 
             for (int i = 0; i < length; i++)
