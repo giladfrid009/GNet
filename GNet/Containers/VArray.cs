@@ -8,33 +8,21 @@ namespace GNet
     public class VArray<T> : Array<T> where T : unmanaged
     {
         protected static NumOps<T> Ops { get; }
-        protected static int VecStride { get; }
+        protected static int VStride { get; }
 
         static VArray()
         {
-            if(typeof(T) == typeof(int))
+            object? obj = Type.GetTypeCode(typeof(T)) switch
             {
-                Ops = (new IntOps() as NumOps<T>)!;
-            }
-            else if (typeof(T) == typeof(float))
-            {
-                Ops = (new FloatOps() as NumOps<T>)!;
-            }
-            else if (typeof(T) == typeof(double))
-            {
-                Ops = (new DoubleOps() as NumOps<T>)!;
-            }
-            else
-            {
-                throw new NotSupportedException(typeof(T).Name);
-            }
+                TypeCode.Int32 => new IntOps(),
+                TypeCode.Single => new FloatOps(),
+                TypeCode.Double => new DoubleOps(),
+                _ => null
+            };
 
-            if (Ops == null)
-            {
-                throw new NotSupportedException();
-            }
+            Ops = obj as NumOps<T> ?? throw new NotSupportedException(typeof(T).Name);
 
-            VecStride = Vector<T>.Count;
+            VStride = Vector<T>.Count;
         }
 
         protected VArray(T[] vals, bool asRef = false) : base(vals, asRef)
@@ -59,7 +47,7 @@ namespace GNet
             var selected = new T[Length];
             int i;
 
-            for (i = 0; i <= Length - VecStride; i += VecStride)
+            for (i = 0; i <= Length - VStride; i += VStride)
             {
                 var vCur = vSelector(new Vector<T>(internalArray, i));
                 vCur.CopyTo(selected, i);
@@ -83,7 +71,7 @@ namespace GNet
             var selected = new T[Length];
             int i;
 
-            for (i = 0; i <= Length - VecStride; i += VecStride)
+            for (i = 0; i <= Length - VStride; i += VStride)
             {
                 var vCur = vSelector(new Vector<T>(internalArray, i), new Vector<T>(other.internalArray, i));
                 vCur.CopyTo(selected, i);
@@ -103,13 +91,12 @@ namespace GNet
             T min = Ops.MaxValue;
             int i;
 
-            for (i = 0; i <= Length - VecStride; i += VecStride)
+            for (i = 0; i <= Length - VStride; i += VStride)
             {
-                var vCur = new Vector<T>(internalArray, i);
-                vMin = Vector.Min(vMin, vCur);
+                vMin = Vector.Min(vMin, new Vector<T>(internalArray, i));
             }
 
-            for (var j = 0; j < VecStride; ++j)
+            for (var j = 0; j < VStride; ++j)
             {
                 min = Ops.Min(min, vMin[j]);
             }
@@ -128,13 +115,12 @@ namespace GNet
             T min = Ops.MaxValue;
             int i;
 
-            for (i = 0; i <= Length - VecStride; i += VecStride)
+            for (i = 0; i <= Length - VStride; i += VStride)
             {
-                var vCur = vSelector(new Vector<T>(internalArray, i));
-                vMin = Vector.Min(vMin, vCur);
+                vMin = Vector.Min(vMin, vSelector(new Vector<T>(internalArray, i)));
             }
 
-            for (var j = 0; j < VecStride; ++j)
+            for (var j = 0; j < VStride; ++j)
             {
                 min = Ops.Min(min, vMin[j]);
             }
@@ -153,13 +139,12 @@ namespace GNet
             T max = Ops.MinValue;
             int i;
 
-            for (i = 0; i <= Length - VecStride; i += VecStride)
+            for (i = 0; i <= Length - VStride; i += VStride)
             {
-                var vec = new Vector<T>(internalArray, i);
-                vMax = Vector.Max(vMax, vec);
+                vMax = Vector.Max(vMax, new Vector<T>(internalArray, i));
             }
 
-            for (var j = 0; j < VecStride; ++j)
+            for (var j = 0; j < VStride; ++j)
             {
                 max = Ops.Max(max, vMax[j]);
             }
@@ -178,13 +163,12 @@ namespace GNet
             T max = Ops.MinValue;
             int i;
 
-            for (i = 0; i <= Length - VecStride; i += VecStride)
+            for (i = 0; i <= Length - VStride; i += VStride)
             {
-                var vCur = vSelector(new Vector<T>(internalArray, i));
-                vMax = Vector.Max(vMax, vCur);
+                vMax = Vector.Max(vMax, vSelector(new Vector<T>(internalArray, i)));
             }
 
-            for (var j = 0; j < VecStride; ++j)
+            for (var j = 0; j < VStride; ++j)
             {
                 max = Ops.Max(max, vMax[j]);
             }
@@ -203,7 +187,7 @@ namespace GNet
             T sum;
             int i;
 
-            for (i = 0; i <= Length - VecStride; i += VecStride)
+            for (i = 0; i <= Length - VStride; i += VStride)
             {
                 vSum += new Vector<T>(internalArray, i);
             }
@@ -224,7 +208,7 @@ namespace GNet
             T sum;
             int i;
 
-            for (i = 0; i <= Length - VecStride; i += VecStride)
+            for (i = 0; i <= Length - VStride; i += VStride)
             {
                 vSum += vSelector(new Vector<T>(internalArray, i));
             }
@@ -250,7 +234,7 @@ namespace GNet
             T sum;
             int i;
 
-            for (i = 0; i <= Length - VecStride; i += VecStride)
+            for (i = 0; i <= Length - VStride; i += VStride)
             {
                 vSum += vSelector(new Vector<T>(internalArray, i), new Vector<T>(other.internalArray, i));
             }
@@ -280,6 +264,100 @@ namespace GNet
             return Ops.Div(Sum(other, vSelector, selector), Ops.From(Length));
         }
 
+        public bool SmallerThan(T value)
+        {
+            var vVal = new Vector<T>(value);
+            int i;
+
+            for (i = 0; i <= Length - VStride; i += VStride)
+            {
+                if (Vector.GreaterThanOrEqualAll(new Vector<T>(internalArray, i), vVal))
+                {
+                    return false;
+                }
+            }
+
+            for (; i < Length; i++)
+            {
+                if (Ops.BiggerEqual(internalArray[i], value))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool SmallerThan(VArray<T> other)
+        {
+            int i;
+
+            for (i = 0; i <= Length - VStride; i += VStride)
+            {
+                if (Vector.GreaterThanOrEqualAll(new Vector<T>(internalArray, i), new Vector<T>(other.internalArray, i)))
+                {
+                    return false;
+                }
+            }
+
+            for (; i < Length; i++)
+            {
+                if (Ops.BiggerEqual(internalArray[i], other.internalArray[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool BiggerThan(T value)
+        {
+            var vVal = new Vector<T>(value);
+            int i;
+
+            for (i = 0; i <= Length - VStride; i += VStride)
+            {
+                if (Vector.LessThanOrEqualAll(new Vector<T>(internalArray, i), vVal))
+                {
+                    return false;
+                }
+            }
+
+            for (; i < Length; i++)
+            {
+                if (Ops.SmallerEqual(internalArray[i], value))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool BiggerThan(VArray<T> other)
+        {
+            int i;
+
+            for (i = 0; i <= Length - VStride; i += VStride)
+            {
+                if (Vector.LessThanOrEqualAll(new Vector<T>(internalArray, i), new Vector<T>(other.internalArray, i)))
+                {
+                    return false;
+                }
+            }
+
+            for (; i < Length; i++)
+            {
+                if (Ops.SmallerEqual(internalArray[i], other.internalArray[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public bool Equals(VArray<T>? other)
         {
             if (other is null)
@@ -299,7 +377,7 @@ namespace GNet
 
             int i;
 
-            for (i = 0; i < Length - VecStride; i += VecStride)
+            for (i = 0; i < Length - VStride; i += VStride)
             {
                 if (new Vector<T>(internalArray, i) != new Vector<T>(other.internalArray, i))
                 {
@@ -325,7 +403,7 @@ namespace GNet
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(internalArray, Length, VecStride);
+            return HashCode.Combine(internalArray, Length, VStride);
         }
     }
 }

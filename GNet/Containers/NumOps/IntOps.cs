@@ -15,6 +15,6 @@ namespace GNet.Containers.NumOps
 
         public override bool Equals(int left, int right) => left == right;
         public override bool Smaller(int left, int right) => left < right;
-        public override bool Greater(int left, int right) => left > right;
+        public override bool Bigger(int left, int right) => left > right;
     }
 }
