@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Numerics;
-using GNet.DataStructure.NumOps;
+using GNet.Containers.NumOps;
 
 namespace GNet
 {

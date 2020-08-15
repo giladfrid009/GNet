@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GNet.DataStructure.NumOps
+namespace GNet.Containers.NumOps
 {
     [Serializable]
     public class IntOps : INumOps<int>
