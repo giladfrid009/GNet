@@ -60,7 +60,7 @@ namespace GNet.Layers
             });
         }
 
-        public override void CalcGrads(ILoss loss, ShapedArray<double> targets)
+        public override void CalcGrads(ILoss loss, Array<double> targets)
         {
             Neurons.ForEach((N, i) =>
             {

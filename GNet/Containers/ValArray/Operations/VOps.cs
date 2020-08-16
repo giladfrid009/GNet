@@ -10,8 +10,8 @@ namespace GNet.Containers.ValArray
 
         public abstract T Add(T left, T right);
         public abstract T Sub(T left, T right);
+        public abstract T Mul(T left, T right);
         public abstract T Div(T left, T right);
-        public abstract T Mul(T left, T right);       
 
         public abstract bool Equals(T left, T right);
         public abstract bool Smaller(T left, T right);

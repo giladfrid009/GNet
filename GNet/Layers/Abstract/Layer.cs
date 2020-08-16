@@ -14,7 +14,7 @@ namespace GNet
             Shape = shape;
         }
 
-        public void Input(ShapedArray<double> values)
+        public void Input(Array<double> values)
         {
             Neurons.ForEach((N, i) => N.OutVal = values[i]);
         }
@@ -25,7 +25,7 @@ namespace GNet
 
         public abstract void Forward(bool isTraining);
 
-        public abstract void CalcGrads(ILoss loss, ShapedArray<double> targets);
+        public abstract void CalcGrads(ILoss loss, Array<double> targets);
 
         public abstract void CalcGrads();
 

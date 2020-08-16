@@ -25,12 +25,16 @@ namespace GNet
 
             VStride = Vector<T>.Count;
         }
-
+        
         protected VArray(T[] vals, bool asRef = false) : base(vals, asRef)
         {
         }
 
         public VArray(params T[] vals) : this(vals, false)
+        {
+        }
+
+        public VArray(Array<T> array) : base(array)
         {
         }
 
@@ -50,13 +54,13 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                var vCur = vSelector(new Vector<T>(internalArray, i));
+                var vCur = vSelector(new Vector<T>(InternalArray, i));
                 vCur.CopyTo(selected, i);
             }
 
             for (; i < Length; ++i)
             {
-                selected[i] = selector(internalArray[i]);
+                selected[i] = selector(InternalArray[i]);
             }
 
             return FromRef(selected);
@@ -74,13 +78,13 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                var vCur = vSelector(new Vector<T>(internalArray, i), new Vector<T>(other.internalArray, i));
+                var vCur = vSelector(new Vector<T>(InternalArray, i), new Vector<T>(other.InternalArray, i));
                 vCur.CopyTo(selected, i);
             }
 
             for (; i < Length; ++i)
             {
-                selected[i] = selector(internalArray[i], other.internalArray[i]);
+                selected[i] = selector(InternalArray[i], other.InternalArray[i]);
             }
 
             return FromRef(selected);
@@ -94,7 +98,7 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                vMin = Vector.Min(vMin, new Vector<T>(internalArray, i));
+                vMin = Vector.Min(vMin, new Vector<T>(InternalArray, i));
             }
 
             for (var j = 0; j < VStride; ++j)
@@ -104,7 +108,7 @@ namespace GNet
 
             for (; i < Length; ++i)
             {
-                min = Ops.Min(min, internalArray[i]);
+                min = Ops.Min(min, InternalArray[i]);
             }
 
             return min;
@@ -118,7 +122,7 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                vMin = Vector.Min(vMin, vSelector(new Vector<T>(internalArray, i)));
+                vMin = Vector.Min(vMin, vSelector(new Vector<T>(InternalArray, i)));
             }
 
             for (var j = 0; j < VStride; ++j)
@@ -128,7 +132,7 @@ namespace GNet
 
             for (; i < Length; ++i)
             {
-                min = Ops.Min(min, selector(internalArray[i]));
+                min = Ops.Min(min, selector(InternalArray[i]));
             }
 
             return min;
@@ -142,7 +146,7 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                vMax = Vector.Max(vMax, new Vector<T>(internalArray, i));
+                vMax = Vector.Max(vMax, new Vector<T>(InternalArray, i));
             }
 
             for (var j = 0; j < VStride; ++j)
@@ -152,7 +156,7 @@ namespace GNet
 
             for (; i < Length; ++i)
             {
-                max = Ops.Max(max, internalArray[i]);
+                max = Ops.Max(max, InternalArray[i]);
             }
 
             return max;
@@ -166,7 +170,7 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                vMax = Vector.Max(vMax, vSelector(new Vector<T>(internalArray, i)));
+                vMax = Vector.Max(vMax, vSelector(new Vector<T>(InternalArray, i)));
             }
 
             for (var j = 0; j < VStride; ++j)
@@ -176,7 +180,7 @@ namespace GNet
 
             for (; i < Length; ++i)
             {
-                max = Ops.Max(max, selector(internalArray[i]));
+                max = Ops.Max(max, selector(InternalArray[i]));
             }
 
             return max;
@@ -190,14 +194,14 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                vSum += new Vector<T>(internalArray, i);
+                vSum += new Vector<T>(InternalArray, i);
             }
 
             sum = Vector.Dot(vSum, Vector<T>.One);
 
             for (; i < Length; i++)
             {
-                sum = Ops.Add(sum, internalArray[i]);
+                sum = Ops.Add(sum, InternalArray[i]);
             }
 
             return sum;
@@ -211,14 +215,14 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                vSum += vSelector(new Vector<T>(internalArray, i));
+                vSum += vSelector(new Vector<T>(InternalArray, i));
             }
 
             sum = Vector.Dot(vSum, Vector<T>.One);
 
             for (; i < Length; i++)
             {
-                sum = Ops.Add(sum, selector(internalArray[i]));
+                sum = Ops.Add(sum, selector(InternalArray[i]));
             }
 
             return sum;
@@ -237,14 +241,14 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                vSum += vSelector(new Vector<T>(internalArray, i), new Vector<T>(other.internalArray, i));
+                vSum += vSelector(new Vector<T>(InternalArray, i), new Vector<T>(other.InternalArray, i));
             }
 
             sum = Vector.Dot(vSum, Vector<T>.One);
 
             for (; i < Length; i++)
             {
-                sum = Ops.Add(sum, selector(internalArray[i], other.internalArray[i]));
+                sum = Ops.Add(sum, selector(InternalArray[i], other.InternalArray[i]));
             }
 
             return sum;

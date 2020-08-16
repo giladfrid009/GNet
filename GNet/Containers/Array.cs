@@ -6,11 +6,16 @@ namespace GNet
     public class Array<T>
     {
         public static Array<T> Empty { get; } = new Array<T>(Array.Empty<T>(), true);
-
+        
+        protected T[] InternalArray { get; }
         public int Length { get; }
-        public T this[int i] => internalArray[i];
+        public T this[int i] => InternalArray[i];
 
-        protected readonly T[] internalArray;
+        protected Array(Array<T> array)
+        {
+            Length = array.Length;
+            InternalArray = array.InternalArray;
+        }
 
         protected Array(T[] array, bool asRef = false)
         {
@@ -18,13 +23,13 @@ namespace GNet
 
             if (asRef)
             {
-                internalArray = array;
+                InternalArray = array;
             }
             else
             {
-                internalArray = new T[Length];
+                InternalArray = new T[Length];
 
-                Array.Copy(array, 0, internalArray, 0, Length);
+                Array.Copy(array, 0, InternalArray, 0, Length);
             }
         }
 
@@ -35,11 +40,11 @@ namespace GNet
         public Array(int length, Func<T> element)
         {
             Length = length;
-            internalArray = new T[length];
+            InternalArray = new T[length];
 
             for (int i = 0; i < length; i++)
             {
-                internalArray[i] = element();
+                InternalArray[i] = element();
             }
         }
 
@@ -50,7 +55,7 @@ namespace GNet
 
         public ShapedArray<T> ToShape(Shape shape)
         {
-            return ShapedArray<T>.FromRef(shape, internalArray);
+            return ShapedArray<T>.FromRef(shape, InternalArray);
         }
 
         public void ForEach(Action<T> action)
@@ -62,7 +67,7 @@ namespace GNet
         {
             for (int i = 0; i < Length; i++)
             {
-                action(internalArray[i], i);
+                action(InternalArray[i], i);
             }
         }
 
@@ -77,7 +82,7 @@ namespace GNet
 
             for (int i = 0; i < Length; i++)
             {
-                selected[i] = selector(internalArray[i], i);
+                selected[i] = selector(InternalArray[i], i);
             }
 
             return Array<TRes>.FromRef(selected);
@@ -89,7 +94,7 @@ namespace GNet
 
             for (int i = 0; i < Length; i++)
             {
-                min = Math.Min(min, selector(internalArray[i]));
+                min = Math.Min(min, selector(InternalArray[i]));
             }
 
             return min;
@@ -101,7 +106,7 @@ namespace GNet
 
             for (int i = 0; i < Length; i++)
             {
-                max = Math.Max(max, selector(internalArray[i]));
+                max = Math.Max(max, selector(InternalArray[i]));
             }
 
             return max;
@@ -113,7 +118,7 @@ namespace GNet
 
             for (int i = 0; i < Length; i++)
             {
-                sum += selector(internalArray[i]);
+                sum += selector(InternalArray[i]);
             }
 
             return sum;
@@ -130,7 +135,7 @@ namespace GNet
 
             for (int i = 0; i < Length; i++)
             {
-                sum += selector(internalArray[i], other[i]);
+                sum += selector(InternalArray[i], other[i]);
             }
 
             return sum;

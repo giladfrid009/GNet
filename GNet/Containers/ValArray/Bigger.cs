@@ -21,7 +21,7 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                if (Vector.LessThanOrEqualAll(new Vector<T>(internalArray, i), vVal))
+                if (Vector.LessThanOrEqualAll(new Vector<T>(InternalArray, i), vVal))
                 {
                     return false;
                 }
@@ -29,7 +29,7 @@ namespace GNet
 
             for (; i < Length; i++)
             {
-                if (Ops.SmallerEqual(internalArray[i], value))
+                if (Ops.SmallerEqual(InternalArray[i], value))
                 {
                     return false;
                 }
@@ -44,7 +44,7 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                if (Vector.LessThanOrEqualAll(new Vector<T>(internalArray, i), new Vector<T>(other.internalArray, i)))
+                if (Vector.LessThanOrEqualAll(new Vector<T>(InternalArray, i), new Vector<T>(other.InternalArray, i)))
                 {
                     return false;
                 }
@@ -52,7 +52,7 @@ namespace GNet
 
             for (; i < Length; i++)
             {
-                if (Ops.SmallerEqual(internalArray[i], other.internalArray[i]))
+                if (Ops.SmallerEqual(InternalArray[i], other.InternalArray[i]))
                 {
                     return false;
                 }

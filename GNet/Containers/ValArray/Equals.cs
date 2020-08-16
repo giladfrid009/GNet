@@ -36,7 +36,7 @@ namespace GNet
 
             for (i = 0; i < Length - VStride; i += VStride)
             {
-                if (new Vector<T>(internalArray, i) != new Vector<T>(other.internalArray, i))
+                if (new Vector<T>(InternalArray, i) != new Vector<T>(other.InternalArray, i))
                 {
                     return false;
                 }
@@ -44,7 +44,7 @@ namespace GNet
 
             for (; i < Length; i++)
             {
-                if (Ops.Equals(internalArray[i], other.internalArray[i]) == false)
+                if (Ops.Equals(InternalArray[i], other.InternalArray[i]) == false)
                 {
                     return false;
                 }
@@ -60,7 +60,7 @@ namespace GNet
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(internalArray, Length, VStride);
+            return HashCode.Combine(InternalArray, Length, VStride);
         }
     }
 }

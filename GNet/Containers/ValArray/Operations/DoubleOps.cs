@@ -6,7 +6,7 @@ namespace GNet.Containers.ValArray.Operations
     public class DoubleOps : VOps<double>
     {
         public override double MinValue { get; } = double.MinValue;
-        public override double MaxValue { get; } = double.MaxValue;
+        public override double MaxValue { get; } = double.MaxValue;     
 
         public override double Add(double left, double right) => left + right;
         public override double Sub(double left, double right) => left - right;

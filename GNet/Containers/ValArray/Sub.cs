@@ -23,13 +23,13 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                var vCur = new Vector<T>(internalArray, i) - vVal;
+                var vCur = new Vector<T>(InternalArray, i) - vVal;
                 vCur.CopyTo(selected, i);
             }
 
             for (; i < Length; ++i)
             {
-                selected[i] = Ops.Sub(internalArray[i], value);
+                selected[i] = Ops.Sub(InternalArray[i], value);
             }
 
             return FromRef(selected);
@@ -47,13 +47,13 @@ namespace GNet
 
             for (i = 0; i <= Length - VStride; i += VStride)
             {
-                var vCur = new Vector<T>(internalArray, i) - new Vector<T>(other.internalArray, i);
+                var vCur = new Vector<T>(InternalArray, i) - new Vector<T>(other.InternalArray, i);
                 vCur.CopyTo(selected, i);
             }
 
             for (; i < Length; ++i)
             {
-                selected[i] = Ops.Sub(internalArray[i], other.internalArray[i]);
+                selected[i] = Ops.Sub(InternalArray[i], other.InternalArray[i]);
             }
 
             return FromRef(selected);
