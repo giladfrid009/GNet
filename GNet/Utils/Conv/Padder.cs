@@ -23,20 +23,20 @@ namespace GNet.Utils.Conv
                 throw new RankException(nameof(strides));
             }
 
+            if (strides < 1)
+            {
+                throw new ArgumentOutOfRangeException($"{nameof(strides)} must be >= 1.");
+            }
+
+            if (inputShape.Dims < kernelShape.Dims)
+            {
+                throw new ArgumentOutOfRangeException($"{nameof(kernelShape)} {nameof(kernelShape.Dims)} is out of range.");
+            }
+
             int[] paddings = new int[length];
 
             for (int i = 0; i < length; i++)
             {
-                if (strides[i] < 1)
-                {
-                    throw new ArgumentOutOfRangeException($"{nameof(strides)} [{i}] is out of range.");
-                }
-
-                if (inputShape.Dims[i] < kernelShape.Dims[i])
-                {
-                    throw new ArgumentOutOfRangeException($"{nameof(kernelShape)} {nameof(kernelShape.Dims)} [{i}] is out of range.");
-                }
-
                 if (padChannels == false && i == 0)
                 {
                     continue;

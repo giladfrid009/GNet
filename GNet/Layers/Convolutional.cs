@@ -41,7 +41,7 @@ namespace GNet.Layers
             Neurons = new Array<Neuron>(outputShape.Volume, () => new CNeuron());
         }
 
-        private static void ValidateChannels(Shape inputShape, Shape outputShape, Shape kernelShape, VArray<int> strides)
+        private static void ValidateChannels(Shape inputShape, Shape outputShape, Shape kernelShape, Array<int> strides)
         {
             if (strides[0] != 1)
             {

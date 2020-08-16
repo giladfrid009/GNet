@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace GNet.Containers.NumOps
+namespace GNet.Containers.ValArray.Operations
 {
     [Serializable]
-    public class FloatOps : NumOps<float>
+    public class FloatOps : VOps<float>
     {
         public override float MinValue { get; } = float.MinValue;
         public override float MaxValue { get; } = float.MaxValue;

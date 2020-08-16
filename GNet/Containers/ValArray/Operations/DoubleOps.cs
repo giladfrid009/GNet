@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace GNet.Containers.NumOps
+namespace GNet.Containers.ValArray.Operations
 {
     [Serializable]
-    public class DoubleOps : NumOps<double>
+    public class DoubleOps : VOps<double>
     {
         public override double MinValue { get; } = double.MinValue;
         public override double MaxValue { get; } = double.MaxValue;

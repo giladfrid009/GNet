@@ -22,22 +22,19 @@ namespace GNet.Utils.Conv
                 throw new RankException(nameof(kernel));
             }
 
-            for (int i = 0; i < shape.Rank; i++)
+            if (start < 0)
             {
-                if (start[i] < 0)
-                {
-                    throw new ArgumentOutOfRangeException($"{nameof(start)} [{i}] is out of range.");
-                }
+                throw new ArgumentOutOfRangeException($"{nameof(start)} must be >= 0.");
+            }
 
-                if (strides[i] < 1)
-                {
-                    throw new ArgumentOutOfRangeException($"{nameof(strides)} [{i}] is out of range.");
-                }
+            if (strides < 1)
+            {
+                throw new ArgumentOutOfRangeException($"{nameof(strides)} must be >= 1.");
+            }
 
-                if (kernel.Dims[i] > shape.Dims[i])
-                {
-                    throw new ArgumentOutOfRangeException($"{nameof(kernel)} {nameof(kernel.Dims)} [{i}] is out of range.");
-                }
+            if (kernel.Dims < shape.Dims)
+            {
+                throw new ArgumentOutOfRangeException($"{nameof(kernel)} can't be bigger than {nameof(shape)}.");
             }
 
             int lastIndex = shape.Rank - 1;

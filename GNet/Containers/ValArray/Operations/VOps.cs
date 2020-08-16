@@ -1,6 +1,9 @@
-﻿namespace GNet
+﻿using System;
+
+namespace GNet.Containers.ValArray
 {
-    public abstract class NumOps<T> where T : unmanaged
+    [Serializable]
+    public abstract class VOps<T> where T : unmanaged
     {
         public abstract T MinValue { get; }
         public abstract T MaxValue { get; }

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Numerics;
-using GNet.Containers.NumOps;
+using GNet.Containers.ValArray;
+using GNet.Containers.ValArray.Operations;
 
 namespace GNet
 {
     [Serializable]
-    public class VArray<T> : Array<T> where T : unmanaged
+    public partial class VArray<T> : Array<T> where T : unmanaged
     {
-        protected static NumOps<T> Ops { get; }
+        protected static VOps<T> Ops { get; }
         protected static int VStride { get; }
 
         static VArray()
@@ -20,7 +21,7 @@ namespace GNet
                 _ => null
             };
 
-            Ops = obj as NumOps<T> ?? throw new NotSupportedException(typeof(T).Name);
+            Ops = obj as VOps<T> ?? throw new NotSupportedException(typeof(T).Name);
 
             VStride = Vector<T>.Count;
         }
@@ -35,7 +36,7 @@ namespace GNet
 
         public VArray(int length, Func<T> element) : base(length, element)
         {
-        }
+        }        
 
         public static new VArray<T> FromRef(params T[] array)
         {
@@ -262,148 +263,6 @@ namespace GNet
         public T Average(VArray<T> other, Func<Vector<T>, Vector<T>, Vector<T>> vSelector, Func<T, T, T> selector)
         {
             return Ops.Div(Sum(other, vSelector, selector), Ops.From(Length));
-        }
-
-        public bool SmallerThan(T value)
-        {
-            var vVal = new Vector<T>(value);
-            int i;
-
-            for (i = 0; i <= Length - VStride; i += VStride)
-            {
-                if (Vector.GreaterThanOrEqualAll(new Vector<T>(internalArray, i), vVal))
-                {
-                    return false;
-                }
-            }
-
-            for (; i < Length; i++)
-            {
-                if (Ops.BiggerEqual(internalArray[i], value))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public bool SmallerThan(VArray<T> other)
-        {
-            int i;
-
-            for (i = 0; i <= Length - VStride; i += VStride)
-            {
-                if (Vector.GreaterThanOrEqualAll(new Vector<T>(internalArray, i), new Vector<T>(other.internalArray, i)))
-                {
-                    return false;
-                }
-            }
-
-            for (; i < Length; i++)
-            {
-                if (Ops.BiggerEqual(internalArray[i], other.internalArray[i]))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public bool BiggerThan(T value)
-        {
-            var vVal = new Vector<T>(value);
-            int i;
-
-            for (i = 0; i <= Length - VStride; i += VStride)
-            {
-                if (Vector.LessThanOrEqualAll(new Vector<T>(internalArray, i), vVal))
-                {
-                    return false;
-                }
-            }
-
-            for (; i < Length; i++)
-            {
-                if (Ops.SmallerEqual(internalArray[i], value))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public bool BiggerThan(VArray<T> other)
-        {
-            int i;
-
-            for (i = 0; i <= Length - VStride; i += VStride)
-            {
-                if (Vector.LessThanOrEqualAll(new Vector<T>(internalArray, i), new Vector<T>(other.internalArray, i)))
-                {
-                    return false;
-                }
-            }
-
-            for (; i < Length; i++)
-            {
-                if (Ops.SmallerEqual(internalArray[i], other.internalArray[i]))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public bool Equals(VArray<T>? other)
-        {
-            if (other is null)
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
-
-            if (Length != other.Length)
-            {
-                return false;
-            }
-
-            int i;
-
-            for (i = 0; i < Length - VStride; i += VStride)
-            {
-                if (new Vector<T>(internalArray, i) != new Vector<T>(other.internalArray, i))
-                {
-                    return false;
-                }
-            }
-
-            for (; i < Length; i++)
-            {
-                if (Ops.Equals(internalArray[i], other.internalArray[i]) == false)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return Equals(obj as VArray<T>);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(internalArray, Length, VStride);
         }
     }
 }

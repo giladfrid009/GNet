@@ -8,7 +8,7 @@ namespace GNet
     {
         private static void Main()
         {
-            var datasetGenerator = new Datasets.Generators.EvenOdd(new Shape(2, 5), true);
+           var datasetGenerator = new Datasets.Generators.EvenOdd(new Shape(2, 5), true);
 
             Dataset tDataset = datasetGenerator.Generate(5000);
             Dataset vDataset = datasetGenerator.Generate(100);
@@ -38,6 +38,6 @@ namespace GNet
             5));
 
             Console.ReadKey();
-        }
+        }        
     }
 }
