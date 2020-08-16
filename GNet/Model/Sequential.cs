@@ -37,7 +37,7 @@ namespace GNet
             }
         }
 
-        protected override void Forward(ShapedArray<double> inputs, bool isTraining)
+        protected override void Forward(Tensor<double> inputs, bool isTraining)
         {
             Layers[0].Input(inputs);
 
@@ -47,7 +47,7 @@ namespace GNet
             }
         }
 
-        protected override void CalcGrads(ILoss loss, ShapedArray<double> targets)
+        protected override void CalcGrads(ILoss loss, Tensor<double> targets)
         {
             Layers[Length - 1].CalcGrads(loss, targets);
 
@@ -82,9 +82,9 @@ namespace GNet
             }));
         }
 
-        protected override ShapedArray<double> GetOutput()
+        protected override Tensor<double> GetOutput()
         {
-            return Layers[Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
+            return Layers[Length - 1].Neurons.Select(N => N.OutVal).ToTensor(OutputShape);
         }
     }
 }

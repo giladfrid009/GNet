@@ -23,9 +23,9 @@ namespace GNet
             OutputShape = outShape;
         }
 
-        protected abstract void Forward(ShapedArray<double> inputs, bool isTraining);
+        protected abstract void Forward(Tensor<double> inputs, bool isTraining);
 
-        protected abstract void CalcGrads(ILoss loss, ShapedArray<double> targets);
+        protected abstract void CalcGrads(ILoss loss, Tensor<double> targets);
 
         protected abstract void Optimize(IOptimizer optimizer);
 
@@ -33,9 +33,9 @@ namespace GNet
 
         protected abstract void ClearCache();
 
-        protected abstract ShapedArray<double> GetOutput();
+        protected abstract Tensor<double> GetOutput();
 
-        public ShapedArray<double> Predict(ShapedArray<double> inputs)
+        public Tensor<double> Predict(Tensor<double> inputs)
         {
             if(inputs.Shape != InputShape)
             {
