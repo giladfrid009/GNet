@@ -5,11 +5,11 @@ namespace GNet.Metrics.Regression
 {
     public class CosineSimilarity : IMetric
     {
-        public double Evaluate(Array<double> targets, Array<double> outputs)
+        public double Evaluate(NArray<double> targets, NArray<double> outputs)
         {
-            double dotProd = targets.Sum(outputs, (T, O) => T * O);
+            double dotProd = targets.Dot(outputs);
 
-            return dotProd / (Sqrt(targets.Sum(T => T * T)) + Sqrt(outputs.Sum(O => O * O)));
+            return dotProd / (Sqrt(targets.Sum(T => T * T, T => T * T)) + Sqrt(outputs.Sum(O => O * O, O => O * O)));
         }
     }
 }

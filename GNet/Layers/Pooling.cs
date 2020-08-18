@@ -34,7 +34,7 @@ namespace GNet.Layers
         {
             Neurons.ForEach(N =>
             {
-                Array<double> inWeights = PoolOp.CalcWeights(N.InSynapses);
+                NArray<double> inWeights = PoolOp.CalcWeights(N.InSynapses);
 
                 N.InSynapses.ForEach((S, i) => S.Weight = inWeights[i]);
             });

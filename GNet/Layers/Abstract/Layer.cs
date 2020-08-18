@@ -4,6 +4,9 @@ using System;
 
 namespace GNet
 {
+    /// <summary>
+    /// Base layer class.
+    /// </summary>
     [Serializable]
     public abstract class Layer
     {
@@ -15,7 +18,7 @@ namespace GNet
             Shape = shape;
         }
 
-        public void Input(Array<double> values)
+        public void Input(NArray<double> values)
         {
             Neurons.ForEach((N, i) => N.OutVal = values[i]);
         }
@@ -26,7 +29,7 @@ namespace GNet
 
         public abstract void Forward(bool isTraining);
 
-        public abstract void CalcGrads(ILoss loss, Array<double> targets);
+        public abstract void CalcGrads(ILoss loss, NArray<double> targets);
 
         public abstract void CalcGrads();
 

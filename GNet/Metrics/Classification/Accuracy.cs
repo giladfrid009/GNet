@@ -11,14 +11,13 @@ namespace GNet.Metrics.Classification
             Threshold = threshold;
         }
 
-        public double Evaluate(Array<double> targets, Array<double> outputs)
+        public double Evaluate(NArray<double> targets, NArray<double> outputs)
         {
-            return 1.0 - targets.Sum(outputs, (T, O) =>
+            return 1.0 - targets.Average(outputs, (T, O) =>
             {
                 O = O >= Threshold ? 1.0 : 0.0;
                 return T == O ? 1.0 : 0.0;
-            })
-                / targets.Length;
+            });
         }
     }
 }

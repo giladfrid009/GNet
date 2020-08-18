@@ -3,6 +3,9 @@ using System;
 
 namespace GNet.Layers
 {
+    /// <summary>
+    /// Base class for trainable layer with activation function.
+    /// </summary>
     [Serializable]
     public abstract class TrainableLayer : Layer
     {
@@ -61,7 +64,7 @@ namespace GNet.Layers
             });
         }
 
-        public override void CalcGrads(ILoss loss, Array<double> targets)
+        public override void CalcGrads(ILoss loss, NArray<double> targets)
         {
             Neurons.ForEach((N, i) =>
             {

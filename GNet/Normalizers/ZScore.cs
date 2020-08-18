@@ -1,4 +1,5 @@
-﻿using static System.Math;
+﻿using System.Numerics;
+using static System.Math;
 
 namespace GNet.Normalizers
 {
@@ -26,17 +27,18 @@ namespace GNet.Normalizers
             }
 
             Mean = (sumI + sumT) / nElems;
+            var vMean = new Vector<double>(Mean);
 
             double var = 0.0;
 
             if (inputs)
             {
-                var += dataset.Sum(D => D.Inputs.Sum(X => (X - Mean) * (X - Mean)));
+                var += dataset.Sum(D => D.Inputs.Sum(X => (X - vMean) * (X - vMean), X => (X - Mean) * (X - Mean)));
             }
 
             if (targets)
             {
-                var += dataset.Sum(D => D.Targets.Sum(X => (X - Mean) * (X - Mean)));
+                var += dataset.Sum(D => D.Targets.Sum(X => (X - vMean) * (X - vMean), X => (X - Mean) * (X - Mean)));
             }
 
             SD = Sqrt(var / nElems);

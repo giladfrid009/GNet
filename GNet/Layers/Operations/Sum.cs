@@ -9,9 +9,9 @@ namespace GNet.Layers.Operations
     {
         public bool RequiresUpdate { get; } = false;
 
-        public Array<double> CalcWeights(Array<Synapse> inSynapses)
+        public NArray<double> CalcWeights(Array<Synapse> inSynapses)
         {
-            return inSynapses.Select(X => 1.0);
+            return new NArray<double>(inSynapses.Length, () => 1);
         }
     }
 }

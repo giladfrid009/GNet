@@ -7,7 +7,6 @@ namespace GNet
 {
     public class Program
     {
-        //todo: integrate NCollections library
         private static void Main()
         {
             var datasetGenerator = new Datasets.Generators.EvenOdd(new Shape(2, 5), true);

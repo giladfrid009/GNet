@@ -49,7 +49,7 @@ namespace GNet
 
         public double Validate(Dataset dataset, IMetric metric)
         {
-            return dataset.Sum(D => metric.Evaluate(D.Targets, Predict(D.Inputs))) / dataset.Length;
+            return dataset.Average(D => metric.Evaluate(D.Targets, Predict(D.Inputs)));
         }
 
         public void Train(Dataset dataset, ILoss loss, IOptimizer optimizer, int batchSize, int nEpoches, double minError, Dataset valDataset, IMetric metric, bool shuffle = true)

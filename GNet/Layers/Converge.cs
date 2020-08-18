@@ -18,7 +18,7 @@ namespace GNet.Layers
         {
             Neurons.ForEach(N =>
             {
-                Array<double> inWeights = MergeOp.CalcWeights(N.InSynapses);
+                NArray<double> inWeights = MergeOp.CalcWeights(N.InSynapses);
 
                 N.InSynapses.ForEach((S, i) => S.Weight = inWeights[i]);
             });

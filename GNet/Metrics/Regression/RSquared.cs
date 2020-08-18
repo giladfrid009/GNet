@@ -1,14 +1,20 @@
 ﻿using NCollections;
+using System.Numerics;
 
 namespace GNet.Metrics.Regression
 {
     public class RSquared : IMetric
     {
-        public double Evaluate(Array<double> targets, Array<double> outputs)
+        public double Evaluate(NArray<double> targets, NArray<double> outputs)
         {
-            double avgT = targets.Sum(X => X) / targets.Length;
+            double avgT = targets.Average();
+            var vAvgT = new Vector<double>(avgT);
 
-            return targets.Sum(outputs, (T, O) => (T - O) * (T - O)) / targets.Sum(T => (T - avgT) * (T - avgT));
+            double up = targets.Sum(outputs, (T, O) => (T - O) * (T - O), (T, O) => (T - O) * (T - O));
+            
+            double dn = targets.Sum(T => (T - vAvgT) * (T - vAvgT), T => (T - avgT) * (T - avgT));
+
+            return up / dn;
         }
     }
 }

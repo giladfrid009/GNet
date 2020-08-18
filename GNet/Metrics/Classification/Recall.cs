@@ -11,7 +11,7 @@ namespace GNet.Metrics.Classification
             Threshold = threshold;
         }
 
-        public double Evaluate(Array<double> targets, Array<double> outputs)
+        public double Evaluate(NArray<double> targets, NArray<double> outputs)
         {
             int nElems = 0;
 

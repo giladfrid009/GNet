@@ -7,7 +7,7 @@ namespace GNet.Metrics.Regression
     {
         private static readonly IMetric msle = new Losses.Regression.MSLE();
 
-        public double Evaluate(Array<double> targets, Array<double> outputs)
+        public double Evaluate(NArray<double> targets, NArray<double> outputs)
         {
             return Sqrt(msle.Evaluate(targets, outputs));
         }

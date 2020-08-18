@@ -8,9 +8,9 @@ namespace GNet
 
         double Derivative(double T, double O);
 
-        double IMetric.Evaluate(Array<double> targets, Array<double> outputs)
+        double IMetric.Evaluate(NArray<double> targets, NArray<double> outputs)
         {
-            return targets.Sum(outputs, (T, O) => Evaluate(T, O)) / targets.Length;
+            return targets.Average(outputs, (T, O) => Evaluate(T, O));
         }
     }
 }

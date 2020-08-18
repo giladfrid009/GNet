@@ -9,11 +9,11 @@ namespace GNet.Layers.Operations
     {
         public bool RequiresUpdate { get; } = true;
 
-        public Array<double> CalcWeights(Array<Synapse> inSynapses)
+        public NArray<double> CalcWeights(Array<Synapse> inSynapses)
         {
             double maxVal = inSynapses.Max(X => X.InNeuron.OutVal);
 
-            return inSynapses.Select(X => X.InNeuron.OutVal == maxVal ? 1.0 : 0.0);
+            return inSynapses.Select(X => X.InNeuron.OutVal == maxVal ? 1.0 : 0.0).ToNArray();
         }
     }
 }

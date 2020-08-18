@@ -7,7 +7,10 @@ namespace GNet
     {
         public static void ForEach<T>(this Array<T> array, Action<T> action)
         {
-            ForEach(array, (X, i) => action(X));
+            for (int i = 0; i < array.Length; i++)
+            {
+                action(array[i]);
+            }
         }
 
         public static void ForEach<T>(this Array<T> array, Action<T, int> action)
@@ -20,7 +23,14 @@ namespace GNet
 
         public static Array<U> Select<T, U>(this Array<T> array, Func<T, U> selector)
         {
-            return Select(array, (X, i) => selector(X));
+            var selected = new U[array.Length];
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                selected[i] = selector(array[i]);
+            }
+
+            return Array<U>.FromRef(selected);
         }
 
         public static Array<U> Select<T, U>(this Array<T> array, Func<T, int, U> selector)
@@ -86,6 +96,17 @@ namespace GNet
             }
 
             return sum;
+        }
+
+        public static double Average<T>(this Array<T> array, Func<T, double> selector)
+        {
+            return Sum(array, selector) / array.Length;
+        }
+
+        public static double Average<T>(this Array<T> array, Array<T> other, Func<T, T, double> selector)
+        {
+            return Sum(array, other, selector) / array.Length;
+
         }
 
         public static ShapedArray<T> Reshape<T>(this Array<T> array, Shape shape)
