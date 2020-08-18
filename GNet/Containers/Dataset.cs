@@ -1,5 +1,5 @@
-﻿using System;
-using NCollections;
+﻿using NCollections;
+using System;
 
 namespace GNet
 {
@@ -31,7 +31,7 @@ namespace GNet
         }
 
         public Dataset(params Data[] array) : this(array, false)
-        {            
+        {
         }
 
         public new static Dataset FromRef(params Data[] array)
@@ -54,7 +54,7 @@ namespace GNet
 
                 InternalArray[i] = new Data
                 (
-                    inputs ?  D.Inputs.Select(X => normalizer.Normalize(X)).ToTensor(InputShape) : D.Inputs,
+                    inputs ? D.Inputs.Select(X => normalizer.Normalize(X)).ToTensor(InputShape) : D.Inputs,
                     targets ? D.Targets.Select(X => normalizer.Normalize(X)).ToTensor(TargetShape) : D.Targets
                 );
             }

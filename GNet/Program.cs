@@ -1,7 +1,7 @@
 ﻿using GNet.CompGraph;
 using GNet.Utils;
-using System;
 using NCollections;
+using System;
 
 namespace GNet
 {
@@ -10,7 +10,7 @@ namespace GNet
         //todo: integrate NCollections library
         private static void Main()
         {
-           var datasetGenerator = new Datasets.Generators.EvenOdd(new Shape(2, 5), true);
+            var datasetGenerator = new Datasets.Generators.EvenOdd(new Shape(2, 5), true);
 
             Dataset tDataset = datasetGenerator.Generate(5000);
             Dataset vDataset = datasetGenerator.Generate(100);
@@ -40,6 +40,6 @@ namespace GNet
             10));
 
             Console.ReadKey();
-        }        
+        }
     }
 }

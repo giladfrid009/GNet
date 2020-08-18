@@ -1,9 +1,9 @@
 ﻿using GNet.Model;
 using GNet.Model.Conv;
 using GNet.Utils.Conv;
+using NCollections;
 using System;
 using System.Collections.Generic;
-using NCollections;
 
 namespace GNet.Layers
 {

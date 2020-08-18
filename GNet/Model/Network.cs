@@ -1,5 +1,5 @@
-﻿using System;
-using NCollections;
+﻿using NCollections;
+using System;
 
 namespace GNet
 {
@@ -38,7 +38,7 @@ namespace GNet
 
         public Tensor<double> Predict(Tensor<double> inputs)
         {
-            if(inputs.Shape != InputShape)
+            if (inputs.Shape != InputShape)
             {
                 throw new ShapeMismatchException(nameof(inputs));
             }

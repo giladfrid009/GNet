@@ -1,6 +1,6 @@
-﻿using System;
+﻿using NCollections;
+using System;
 using System.Collections.Generic;
-using NCollections;
 
 namespace GNet.Utils.Conv
 {
