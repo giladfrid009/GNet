@@ -18,21 +18,21 @@ namespace GNet
             }
         }
 
-        public static Array<TRes> Select<T, TRes>(this Array<T> array, Func<T, TRes> selector)
+        public static Array<U> Select<T, U>(this Array<T> array, Func<T, U> selector)
         {
             return Select(array, (X, i) => selector(X));
         }
 
-        public static Array<TRes> Select<T, TRes>(this Array<T> array, Func<T, int, TRes> selector)
+        public static Array<U> Select<T, U>(this Array<T> array, Func<T, int, U> selector)
         {
-            var selected = new TRes[array.Length];
+            var selected = new U[array.Length];
 
             for (int i = 0; i < array.Length; i++)
             {
                 selected[i] = selector(array[i], i);
             }
 
-            return Array<TRes>.FromRef(selected);
+            return Array<U>.FromRef(selected);
         }
 
         public static double Min<T>(this Array<T> array, Func<T, double> selector)
