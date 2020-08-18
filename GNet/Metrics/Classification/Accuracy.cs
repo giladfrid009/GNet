@@ -1,4 +1,6 @@
-﻿namespace GNet.Metrics.Classification
+﻿using NCollections;
+
+namespace GNet.Metrics.Classification
 {
     public class Accuracy : IMetric
     {
@@ -11,11 +13,12 @@
 
         public double Evaluate(Array<double> targets, Array<double> outputs)
         {
-            return 1.0 - targets.Average(outputs, (T, O) =>
+            return 1.0 - targets.Sum(outputs, (T, O) =>
             {
                 O = O >= Threshold ? 1.0 : 0.0;
                 return T == O ? 1.0 : 0.0;
-            });
+            }) 
+                / targets.Length;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GNet.Utils;
+using NCollections;
 using System;
 
 namespace GNet.Datasets.Generators

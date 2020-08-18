@@ -1,4 +1,6 @@
-﻿namespace GNet.Datasets
+﻿using NCollections;
+
+namespace GNet.Datasets
 {
     public static class LogicGates
     {

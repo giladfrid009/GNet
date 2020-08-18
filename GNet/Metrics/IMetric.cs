@@ -1,4 +1,6 @@
-﻿namespace GNet
+﻿using NCollections;
+
+namespace GNet
 {
     public interface IMetric
     {

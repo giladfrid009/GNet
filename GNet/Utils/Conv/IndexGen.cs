@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using NCollections;
 
 namespace GNet.Utils.Conv
 {
     public static class IndexGen
     {
-        public static Array<int[]> Generate(Shape shape, VArray<int> start, VArray<int> strides, Shape kernel)
+        public static Array<int[]> Generate(Shape shape, NArray<int> start, NArray<int> strides, Shape kernel)
         {
             if (shape.Rank != strides.Length)
             {
@@ -72,14 +73,14 @@ namespace GNet.Utils.Conv
             }
         }
 
-        public static Array<int[]> ByStrides(Shape shape, VArray<int> strides, Shape kernel)
+        public static Array<int[]> ByStrides(Shape shape, NArray<int> strides, Shape kernel)
         {
-            return Generate(shape, new VArray<int>(shape.Rank, () => 0), strides, kernel);
+            return Generate(shape, new NArray<int>(shape.Rank, () => 0), strides, kernel);
         }
 
-        public static Array<int[]> ByStart(Shape shape, VArray<int> start)
+        public static Array<int[]> ByStart(Shape shape, NArray<int> start)
         {
-            return Generate(shape, start, new VArray<int>(shape.Rank, () => 1), new Shape(new VArray<int>(shape.Rank, () => 1)));
+            return Generate(shape, start, new NArray<int>(shape.Rank, () => 1), new Shape(new NArray<int>(shape.Rank, () => 1)));
         }
     }
 }

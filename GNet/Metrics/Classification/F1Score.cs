@@ -1,4 +1,6 @@
-﻿namespace GNet.Metrics.Classification
+﻿using NCollections;
+
+namespace GNet.Metrics.Classification
 {
     public class F1Score : IMetric
     {

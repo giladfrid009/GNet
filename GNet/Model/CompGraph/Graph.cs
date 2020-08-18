@@ -1,4 +1,5 @@
 ﻿using System;
+using NCollections;
 
 namespace GNet.CompGraph
 {

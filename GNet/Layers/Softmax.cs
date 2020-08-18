@@ -1,4 +1,5 @@
 ﻿using System;
+using NCollections;
 using static System.Math;
 
 namespace GNet.Layers

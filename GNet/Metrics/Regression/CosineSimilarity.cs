@@ -1,4 +1,5 @@
-﻿using static System.Math;
+﻿using NCollections;
+using static System.Math;
 
 namespace GNet.Metrics.Regression
 {

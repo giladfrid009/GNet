@@ -1,4 +1,6 @@
-﻿namespace GNet.Metrics.Classification
+﻿using NCollections;
+
+namespace GNet.Metrics.Classification
 {
     public class ArgMax : IMetric
     {
@@ -6,7 +8,7 @@
         {
             double maxVal = outputs.Max(X => X);
 
-            return 1.0 - targets.Average(outputs, (T, O) => O == maxVal && T == 1.0 ? 1.0 : 0.0);
+            return 1.0 - targets.Sum(outputs, (T, O) => O == maxVal && T == 1.0 ? 1.0 : 0.0) / targets.Length;
         }
     }
 }

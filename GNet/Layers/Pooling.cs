@@ -2,21 +2,22 @@
 using GNet.Utils.Conv;
 using System;
 using System.Collections.Generic;
+using NCollections;
 
 namespace GNet.Layers
 {
     [Serializable]
     public class Pooling : ConstantLayer
     {
-        public VArray<int> Strides { get; }
-        public VArray<int> Paddings { get; }
+        public NArray<int> Strides { get; }
+        public NArray<int> Paddings { get; }
         public Shape InputShape { get; }
         public Shape PaddedShape { get; }
         public Shape KernelShape { get; }
         public IOperation PoolOp { get; }
         public double PadVal { get; }
 
-        public Pooling(Shape inputShape, Shape outputShape, Shape kernelShape, VArray<int> strides, IOperation poolOp, double padVal = 0.0) : base(outputShape)
+        public Pooling(Shape inputShape, Shape outputShape, Shape kernelShape, NArray<int> strides, IOperation poolOp, double padVal = 0.0) : base(outputShape)
         {
             InputShape = inputShape;
             KernelShape = kernelShape;
@@ -26,7 +27,7 @@ namespace GNet.Layers
 
             Paddings = Padder.CalcPadding(inputShape, outputShape, kernelShape, strides, true);
 
-            PaddedShape = inputShape.Pad(Paddings);
+            PaddedShape = Padder.PadShape(inputShape, Paddings);
         }
 
         private void InitWeights()
@@ -54,7 +55,7 @@ namespace GNet.Layers
             {
                 Neuron outN = Neurons[i];
 
-                outN.InSynapses = IndexGen.ByStart(KernelShape, VArray<int>.FromRef(idxKernel)).Select((idx, j) =>
+                outN.InSynapses = IndexGen.ByStart(KernelShape, NArray<int>.FromRef(idxKernel)).Select((idx, j) =>
                 {
                     var S = new Synapse(padded[idx], outN);
                     inConnections[idx].Add(S);
