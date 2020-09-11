@@ -1,4 +1,5 @@
-﻿using static System.Math;
+﻿using System.Numerics;
+using static System.Math;
 
 namespace GNet.Normalizers
 {
@@ -15,13 +16,13 @@ namespace GNet.Normalizers
 
             if (inputs)
             {
-                sumI = dataset.Sum(D => D.Inputs.Sum(X => X));
+                sumI = dataset.Sum(D => D.Inputs.Sum());
                 nElems += dataset.InputShape.Volume * dataset.Length;
             }
 
             if (targets)
             {
-                sumT = dataset.Sum(D => D.Targets.Sum(X => X));
+                sumT = dataset.Sum(D => D.Targets.Sum());
                 nElems += dataset.TargetShape.Volume * dataset.Length;
             }
 

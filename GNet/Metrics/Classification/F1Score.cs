@@ -1,4 +1,6 @@
-﻿namespace GNet.Metrics.Classification
+﻿using NCollections;
+
+namespace GNet.Metrics.Classification
 {
     public class F1Score : IMetric
     {
@@ -9,7 +11,7 @@
             Threshold = threshold;
         }
 
-        public double Evaluate(Array<double> targets, Array<double> outputs)
+        public double Evaluate(NArray<double> targets, NArray<double> outputs)
         {
             int nElems = 0;
 

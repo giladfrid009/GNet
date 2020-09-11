@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NCollections;
+using System;
 
 namespace GNet.Model
 {

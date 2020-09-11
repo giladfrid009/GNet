@@ -1,4 +1,5 @@
 ﻿using GNet.Utils;
+using NCollections;
 using System;
 
 namespace GNet.Datasets.Generators
@@ -24,7 +25,7 @@ namespace GNet.Datasets.Generators
 
             for (int i = 0; i < length; i++)
             {
-                var input = new ShapedArray<double>(InputShape, () => GRandom.Uniform() < 0.5 ? 0.0 : 1.0);
+                var input = new Tensor<double>(InputShape, () => GRandom.Uniform() < 0.5 ? 0.0 : 1.0);
 
                 int oneCount = 0;
 
@@ -43,7 +44,7 @@ namespace GNet.Datasets.Generators
                     outArr = isEven ? new double[] { 1.0 } : new double[] { 0.0 };
                 }
 
-                dataArray[i] = new Data(input, ShapedArray<double>.FromRef(TargetShape, outArr));
+                dataArray[i] = new Data(input, Tensor<double>.FromRef(TargetShape, outArr));
             }
 
             return Dataset.FromRef(dataArray);

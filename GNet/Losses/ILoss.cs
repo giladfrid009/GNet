@@ -1,4 +1,6 @@
-﻿namespace GNet
+﻿using NCollections;
+
+namespace GNet
 {
     public interface ILoss : IMetric
     {
@@ -6,7 +8,7 @@
 
         double Derivative(double T, double O);
 
-        double IMetric.Evaluate(Array<double> targets, Array<double> outputs)
+        double IMetric.Evaluate(NArray<double> targets, NArray<double> outputs)
         {
             return targets.Average(outputs, (T, O) => Evaluate(T, O));
         }

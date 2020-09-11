@@ -1,4 +1,5 @@
 ﻿using GNet.Model;
+using NCollections;
 using System;
 
 namespace GNet.Layers.Operations
@@ -8,11 +9,10 @@ namespace GNet.Layers.Operations
     {
         public bool RequiresUpdate { get; } = false;
 
-        public Array<double> CalcWeights(Array<Synapse> inSynapses)
+        public NArray<double> CalcWeights(Array<Synapse> inSynapses)
         {
             int nIn = inSynapses.Length;
-
-            return inSynapses.Select(X => 1.0 / nIn);
+            return new NArray<double>(nIn, () => 1.0 / nIn);
         }
     }
 }

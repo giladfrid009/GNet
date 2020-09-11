@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NCollections;
+using System;
 
 namespace GNet
 {
@@ -6,7 +7,7 @@ namespace GNet
     public class ShapedArray<T> : Array<T>
     {
         public Shape Shape { get; }
-        public T this[int[] idxs] => internalArray[Shape.FlattenIndices(idxs)];
+        public T this[int[] idxs] => InternalArray[Shape.FlattenIndices(idxs)];
 
         protected ShapedArray(Shape shape, T[] array, bool asRef = false) : base(array, asRef)
         {

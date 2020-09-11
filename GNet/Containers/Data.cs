@@ -1,16 +1,17 @@
-﻿using System;
+﻿using NCollections;
+using System;
 
 namespace GNet
 {
     [Serializable]
     public class Data
     {
-        public ShapedArray<double> Inputs { get; }
-        public ShapedArray<double> Targets { get; }
+        public Tensor<double> Inputs { get; }
+        public Tensor<double> Targets { get; }
         public Shape InputShape { get; }
         public Shape TargetShape { get; }
 
-        public Data(ShapedArray<double> inputs, ShapedArray<double> targets)
+        public Data(Tensor<double> inputs, Tensor<double> targets)
         {
             Inputs = inputs;
             Targets = targets;

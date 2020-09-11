@@ -3,7 +3,7 @@
 namespace GNet
 {
     [Serializable]
-    public class SharedVal<T> where T : struct
+    public class SharedVal<T> where T : unmanaged
     {
         public T Value { get; set; }
 

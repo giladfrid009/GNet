@@ -1,5 +1,6 @@
 ﻿using GNet.Model;
 using GNet.Utils;
+using NCollections;
 using System;
 
 namespace GNet.Layers

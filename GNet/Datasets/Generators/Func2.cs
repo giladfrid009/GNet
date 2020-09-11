@@ -1,4 +1,5 @@
 ﻿using GNet.Utils;
+using NCollections;
 using System;
 
 namespace GNet.Datasets.Generators
@@ -32,7 +33,7 @@ namespace GNet.Datasets.Generators
                     res = Func(n1, n2);
                 }
 
-                dataArray[i] = new Data(new ShapedArray<double>(n1, n2), new ShapedArray<double>(res));
+                dataArray[i] = new Data(new Tensor<double>(n1, n2), new Tensor<double>(res));
             }
 
             return Dataset.FromRef(dataArray);
