@@ -1,5 +1,4 @@
-﻿using NCollections;
-using System;
+﻿using System;
 
 namespace GNet.Layers
 {

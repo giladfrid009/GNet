@@ -1,5 +1,4 @@
-﻿using NCollections;
-using static System.Math;
+﻿using static System.Math;
 
 namespace GNet.Metrics.Regression
 {
@@ -7,7 +6,7 @@ namespace GNet.Metrics.Regression
     {
         private static readonly IMetric mse = new Losses.Regression.MSE();
 
-        public double Evaluate(NArray<double> targets, NArray<double> outputs)
+        public double Evaluate(Array<double> targets, Array<double> outputs)
         {
             return Sqrt(mse.Evaluate(targets, outputs));
         }

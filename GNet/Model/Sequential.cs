@@ -1,5 +1,4 @@
-﻿using NCollections;
-using System;
+﻿using System;
 
 namespace GNet
 {
@@ -38,7 +37,7 @@ namespace GNet
             }
         }
 
-        protected override void Forward(Tensor<double> inputs, bool isTraining)
+        protected override void Forward(ShapedArray<double> inputs, bool isTraining)
         {
             Layers[0].Input(inputs);
 
@@ -48,7 +47,7 @@ namespace GNet
             }
         }
 
-        protected override void CalcGrads(ILoss loss, Tensor<double> targets)
+        protected override void CalcGrads(ILoss loss, ShapedArray<double> targets)
         {
             Layers[Length - 1].CalcGrads(loss, targets);
 
@@ -83,9 +82,9 @@ namespace GNet
             }));
         }
 
-        protected override Tensor<double> GetOutput()
+        protected override ShapedArray<double> GetOutput()
         {
-            return Layers[Length - 1].Neurons.Select(N => N.OutVal).ToTensor(OutputShape);
+            return Layers[Length - 1].Neurons.Select(N => N.OutVal).ToShape(OutputShape);
         }
     }
 }

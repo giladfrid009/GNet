@@ -27,11 +27,13 @@ namespace GNet
 
             var graph = new Graph(n1, n2);
 
-            graph.Train(tDataset, new Losses.Regression.MSE(), new Optimizers.AdaGradWindow(),
-                  1, 100, 0.0, vDataset, new Metrics.Classification.Accuracy());
-           
+            using (Logger log = new Logger(graph))
+            {
+                graph.Train(tDataset, new Losses.Regression.MSE(), new Optimizers.AdaGradWindow(),
+                      1, 100, 0.0, vDataset, new Metrics.Classification.Accuracy());
+            }        
 
-            Console.ReadKey();
+            Console.ReadLine();
         }        
     }
 }

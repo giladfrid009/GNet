@@ -16,14 +16,14 @@ namespace GNet.Normalizers
 
             if (inputs)
             {
-                minI = dataset.Min(D => D.Inputs.Min());
-                maxI = dataset.Max(D => D.Inputs.Max());
+                minI = dataset.Min(D => D.Inputs.Min(X => X));
+                maxI = dataset.Max(D => D.Inputs.Max(X => X));
             }
 
             if (targets)
             {
-                minT = dataset.Min(D => D.Targets.Min());
-                maxT = dataset.Max(D => D.Targets.Max());
+                minT = dataset.Min(D => D.Targets.Min(X => X));
+                maxT = dataset.Max(D => D.Targets.Max(X => X));
             }
 
             MinVal = Min(minI, minT);

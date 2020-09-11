@@ -14,12 +14,12 @@ namespace GNet.Normalizers
 
             if (inputs)
             {
-                maxI = dataset.Max(D => D.Inputs.Max(X => Vector.Abs(X), X => Abs(X)));
+                maxI = dataset.Max(D => D.Inputs.Max(X => Abs(X)));
             }
 
             if (targets)
             {
-                maxT = dataset.Max(D => D.Targets.Max(X => Vector.Abs(X), X => Abs(X)));
+                maxT = dataset.Max(D => D.Targets.Max(X => Abs(X)));
             }
 
             Scale = (int)Log10(Max(maxI, maxT)) + 1;

@@ -1,5 +1,4 @@
 ﻿using GNet.Layers;
-using NCollections;
 using System;
 using System.Collections.Generic;
 
@@ -124,7 +123,7 @@ namespace GNet.CompGraph
             OutNodes.ForEach(N => N.Connect());
         }
 
-        public new void Forward(Tensor<double> inputs, bool isTraining)
+        public new void Forward(ShapedArray<double> inputs, bool isTraining)
         {
             ResetOps();
 
@@ -135,7 +134,7 @@ namespace GNet.CompGraph
             OutNodes.ForEach(N => N.Forward(isTraining));
         }
 
-        public new void CalcGrads(ILoss loss, Tensor<double> targets)
+        public new void CalcGrads(ILoss loss, ShapedArray<double> targets)
         {
             lastOp = Ops.CalcGrads;
 

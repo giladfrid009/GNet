@@ -1,5 +1,4 @@
-﻿using NCollections;
-using System;
+﻿using System;
 
 namespace GNet
 {
@@ -24,9 +23,9 @@ namespace GNet
             OutputShape = outShape;
         }
 
-        protected abstract void Forward(Tensor<double> inputs, bool isTraining);
+        protected abstract void Forward(ShapedArray<double> inputs, bool isTraining);
 
-        protected abstract void CalcGrads(ILoss loss, Tensor<double> targets);
+        protected abstract void CalcGrads(ILoss loss, ShapedArray<double> targets);
 
         protected abstract void Optimize(IOptimizer optimizer);
 
@@ -34,9 +33,9 @@ namespace GNet
 
         protected abstract void ClearCache();
 
-        protected abstract Tensor<double> GetOutput();
+        protected abstract ShapedArray<double> GetOutput();
 
-        public Tensor<double> Predict(Tensor<double> inputs)
+        public ShapedArray<double> Predict(ShapedArray<double> inputs)
         {
             if (inputs.Shape != InputShape)
             {

@@ -1,5 +1,4 @@
 ﻿using GNet.Utils;
-using NCollections;
 using System;
 
 namespace GNet.Datasets.Generators
@@ -22,7 +21,7 @@ namespace GNet.Datasets.Generators
 
             for (int i = 0; i < length; i++)
             {
-                var arr = new Tensor<double>(InputShape, () => GRandom.Uniform() < 0.5 ? 0.0 : 1.0);
+                var arr = new ShapedArray<double>(InputShape, () => GRandom.Uniform() < 0.5 ? 0.0 : 1.0);
 
                 dataArray[i] = new Data(arr, arr);
             }

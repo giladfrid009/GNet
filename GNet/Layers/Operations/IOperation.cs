@@ -1,5 +1,4 @@
 ﻿using GNet.Model;
-using NCollections;
 
 namespace GNet.Layers
 {
@@ -7,6 +6,6 @@ namespace GNet.Layers
     {
         bool RequiresUpdate { get; }
 
-        NArray<double> CalcWeights(Array<Synapse> inSynapses);
+        Array<double> CalcWeights(Array<Synapse> inSynapses);
     }
 }

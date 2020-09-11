@@ -1,6 +1,4 @@
-﻿using NCollections;
-
-namespace GNet.Datasets
+﻿namespace GNet.Datasets
 {
     public interface IDatasetGenerator
     {
