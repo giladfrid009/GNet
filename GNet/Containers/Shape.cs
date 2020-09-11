@@ -5,20 +5,20 @@ namespace GNet
     [Serializable]
     public class Shape : IEquatable<Shape>
     {
+        public static Shape Empty { get; } = new Shape(0);
+
         public Array<int> Dims { get; }
         public int Rank { get; }
         public int Volume { get; }
 
-        public Shape()
-        {
-            Dims = new Array<int>();
-            Rank = 0;
-            Volume = 0;
-        }
-
         public Shape(Array<int> dims)
         {
             int length = dims.Length;
+
+            if (length == 0)
+            {
+                throw new RankException(nameof(dims));
+            }
 
             for (int i = 0; i < length; i++)
             {
@@ -30,7 +30,6 @@ namespace GNet
 
             Dims = dims;
             Rank = length;
-
             Volume = 1;
 
             for (int i = 0; i < length; i++)
@@ -78,6 +77,11 @@ namespace GNet
             return flat;
         }
 
+        public Shape Pad(Array<int> paddings)
+        {
+            return new Shape(Dims.Select((D, i) => D + 2 * paddings[i]));
+        }
+
         public bool Equals(Shape? other)
         {
             if (other is null)
@@ -95,7 +99,7 @@ namespace GNet
                 return false;
             }
 
-            for (int i = 0; i < Rank; i++)
+            for (int i = 0; i < Dims.Length; i++)
             {
                 if (Dims[i] != other.Dims[i])
                 {
@@ -113,7 +117,7 @@ namespace GNet
 
         public override int GetHashCode()
         {
-            return Dims.GetHashCode() + Volume * 17;
+            return HashCode.Combine(Dims, Volume * 17);
         }
     }
 }

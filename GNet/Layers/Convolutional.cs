@@ -32,7 +32,7 @@ namespace GNet.Layers
 
             Paddings = Padder.CalcPadding(inputShape, outputShape, kernelShape, strides, false);
 
-            PaddedShape = Padder.PadShape(inputShape, Paddings);
+            PaddedShape = inputShape.Pad(Paddings);
 
             KernelsNum = outputShape.Dims[0] / inputShape.Dims[0];
 
@@ -66,11 +66,11 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(inLayer));
             }
 
-            ShapedArray<Neuron> padded = Padder.PadShapedArray(inLayer.Neurons.ToShape(Shape), Paddings, () => new Neuron() { OutVal = PadVal });
+            ShapedArray<Neuron> padded = Padder.PadArray(inLayer.Neurons.ToShape(Shape), Paddings, () => new Neuron() { OutVal = PadVal });
 
             var inConnections = new ShapedArray<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 
-            Kernels.ForEach((kernel, i) =>
+            Kernels.ForEach((Action<Kernel, int>)((kernel, i) =>
             {
                 int offset = i * Shape.Volume / KernelsNum;
 
@@ -91,7 +91,7 @@ namespace GNet.Layers
                         return (Synapse)S;
                     });
                 });
-            });
+            }));
 
             padded.ForEach((N, i) => N.OutSynapses = Array<Synapse>.FromRef(inConnections[i].ToArray()));
         }

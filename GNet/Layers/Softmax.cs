@@ -24,7 +24,7 @@ namespace GNet.Layers
             Neurons.ForEach(N => N.OutVal /= eSum);
         }
 
-        public override void CalcGrads(ILoss loss, ShapedArray<double> targets)
+        public override void CalcGrads(ILoss loss, Array<double> targets)
         {
             double gSum = 0.0;
 

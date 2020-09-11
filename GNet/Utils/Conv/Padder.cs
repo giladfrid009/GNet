@@ -23,20 +23,23 @@ namespace GNet.Utils.Conv
                 throw new RankException(nameof(strides));
             }
 
-            int[] paddings = new int[length];
-
             for (int i = 0; i < length; i++)
             {
                 if (strides[i] < 1)
                 {
-                    throw new ArgumentOutOfRangeException($"{nameof(strides)} [{i}] is out of range.");
+                    throw new ArgumentOutOfRangeException($"{nameof(strides)} must be >= 1.");
                 }
 
                 if (inputShape.Dims[i] < kernelShape.Dims[i])
                 {
-                    throw new ArgumentOutOfRangeException($"{nameof(kernelShape)} {nameof(kernelShape.Dims)} [{i}] is out of range.");
+                    throw new ArgumentOutOfRangeException($"{nameof(kernelShape)} {nameof(kernelShape.Dims)} is out of range.");
                 }
+            }
+           
+            int[] paddings = new int[length];
 
+            for (int i = 0; i < length; i++)
+            {
                 if (padChannels == false && i == 0)
                 {
                     continue;
@@ -55,24 +58,14 @@ namespace GNet.Utils.Conv
             return Array<int>.FromRef(paddings);
         }
 
-        public static Shape PadShape(Shape shape, Array<int> paddings)
-        {
-            if (shape.Rank != paddings.Length)
-            {
-                throw new RankException(nameof(shape));
-            }
-
-            return new Shape(shape.Dims.Select((D, i) => D + 2 * paddings[i]));
-        }
-
-        public static ShapedArray<T> PadShapedArray<T>(ShapedArray<T> array, Array<int> paddings, Func<T> padVal)
+        public static ShapedArray<T> PadArray<T>(ShapedArray<T> array, Array<int> paddings, Func<T> padVal)
         {
             if (array.Shape.Rank != paddings.Length)
             {
                 throw new RankException(nameof(array));
             }
 
-            Shape paddedShape = PadShape(array.Shape, paddings);
+            Shape paddedShape = array.Shape.Pad(paddings);
 
             var internalArray = new T[paddedShape.Volume];
 

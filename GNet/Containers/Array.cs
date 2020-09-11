@@ -5,11 +5,18 @@ namespace GNet
     [Serializable]
     public class Array<T>
     {
-        public int Length { get; }
+        public static Array<T> Empty { get; } = new Array<T>(Array.Empty<T>(), true);
 
+        public int Length { get; }
         public T this[int i] => internalArray[i];
 
         protected readonly T[] internalArray;
+
+        protected Array(Array<T> array)
+        {
+            Length = array.Length;
+            internalArray = array.internalArray;
+        }
 
         protected Array(T[] array, bool asRef = false)
         {
@@ -54,7 +61,10 @@ namespace GNet
 
         public void ForEach(Action<T> action)
         {
-            ForEach((X, i) => action(X));
+            for (int i = 0; i < Length; i++)
+            {
+                action(internalArray[i]);
+            }
         }
 
         public void ForEach(Action<T, int> action)
@@ -67,7 +77,14 @@ namespace GNet
 
         public Array<TRes> Select<TRes>(Func<T, TRes> selector)
         {
-            return Select((X, i) => selector(X));
+            var selected = new TRes[Length];
+
+            for (int i = 0; i < Length; i++)
+            {
+                selected[i] = selector(internalArray[i]);
+            }
+
+            return Array<TRes>.FromRef(selected);
         }
 
         public Array<TRes> Select<TRes>(Func<T, int, TRes> selector)
@@ -122,7 +139,7 @@ namespace GNet
         {
             if (other.Length != Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(other));
+                throw new RankException(nameof(other));
             }
 
             double sum = 0.0;

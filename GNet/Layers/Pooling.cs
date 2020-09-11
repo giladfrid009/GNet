@@ -26,7 +26,7 @@ namespace GNet.Layers
 
             Paddings = Padder.CalcPadding(inputShape, outputShape, kernelShape, strides, true);
 
-            PaddedShape = Padder.PadShape(inputShape, Paddings);
+            PaddedShape = inputShape.Pad(Paddings);
         }
 
         private void InitWeights()
@@ -46,13 +46,13 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(inLayer));
             }
 
-            ShapedArray<Neuron> padded = Padder.PadShapedArray(inLayer.Neurons.ToShape(Shape), Paddings, () => new Neuron() { OutVal = PadVal });
+            ShapedArray<Neuron> padded = Padder.PadArray(inLayer.Neurons.ToShape(Shape), Paddings, () => new Neuron() { OutVal = PadVal });
 
             var inConnections = new ShapedArray<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 
             IndexGen.ByStrides(PaddedShape, Strides, KernelShape).ForEach((idxKernel, i) =>
             {
-                Neuron outN = Neurons[i];
+                Neuron outN = base.Neurons[i];
 
                 outN.InSynapses = IndexGen.ByStart(KernelShape, Array<int>.FromRef(idxKernel)).Select((idx, j) =>
                 {
