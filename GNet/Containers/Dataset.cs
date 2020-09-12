@@ -33,7 +33,7 @@ namespace GNet
         {
         }
 
-        public new static Dataset FromRef(params Data[] array)
+        public static new Dataset FromRef(params Data[] array)
         {
             return new Dataset(array, true);
         }

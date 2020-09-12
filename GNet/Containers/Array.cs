@@ -97,7 +97,7 @@ namespace GNet
             }
 
             return Array<TRes>.FromRef(selected);
-        }              
+        }
 
         public double Min(Func<T, double> selector)
         {

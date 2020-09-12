@@ -35,7 +35,7 @@ namespace GNet.Utils.Conv
                     throw new ArgumentOutOfRangeException($"{nameof(kernelShape)} {nameof(kernelShape.Dims)} is out of range.");
                 }
             }
-           
+
             int[] paddings = new int[length];
 
             for (int i = 0; i < length; i++)

@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using static System.Math;
+﻿using static System.Math;
 
 namespace GNet.Normalizers
 {

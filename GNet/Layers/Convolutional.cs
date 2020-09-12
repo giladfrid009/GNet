@@ -70,7 +70,7 @@ namespace GNet.Layers
 
             var inConnections = new ShapedArray<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 
-            Kernels.ForEach((Action<Kernel, int>)((kernel, i) =>
+            Kernels.ForEach((kernel, i) =>
             {
                 int offset = i * Shape.Volume / KernelsNum;
 
@@ -91,7 +91,7 @@ namespace GNet.Layers
                         return (Synapse)S;
                     });
                 });
-            }));
+            });
 
             padded.ForEach((N, i) => N.OutSynapses = Array<Synapse>.FromRef(inConnections[i].ToArray()));
         }
