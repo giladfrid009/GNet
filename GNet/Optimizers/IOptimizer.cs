@@ -2,7 +2,6 @@
 
 namespace GNet
 {
-    //todo: test optimizers
     public interface IOptimizer
     {
         IDecay? Decay { get; }

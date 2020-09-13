@@ -13,14 +13,15 @@ namespace GNet
 
         public Shape(Array<int> dims)
         {
-            int length = dims.Length;
-
-            if (length == 0)
+            if (dims.Length == 0)
             {
-                throw new RankException(nameof(dims));
+                Dims = Array<int>.Empty;
+                Rank = 0;
+                Volume = 0;
+                return;
             }
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < dims.Length; i++)
             {
                 if (dims[i] < 1)
                 {
@@ -29,10 +30,10 @@ namespace GNet
             }
 
             Dims = dims;
-            Rank = length;
+            Rank = dims.Length;
             Volume = 1;
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < dims.Length; i++)
             {
                 Volume *= dims[i];
             }
