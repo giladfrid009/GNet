@@ -7,20 +7,21 @@ namespace GNet
     {
         public static Shape Empty { get; } = new Shape(0);
 
-        public VArray<int> Dims { get; }
+        public Array<int> Dims { get; }
         public int Rank { get; }
         public int Volume { get; }
 
-        public Shape(VArray<int> dims)
+        public Shape(Array<int> dims)
         {
-            int length = dims.Length;
-
-            if (length == 0)
+            if (dims.Length == 0)
             {
-                throw new RankException(nameof(dims));
+                Dims = Array<int>.Empty;
+                Rank = 0;
+                Volume = 0;
+                return;
             }
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < dims.Length; i++)
             {
                 if (dims[i] < 1)
                 {
@@ -29,16 +30,16 @@ namespace GNet
             }
 
             Dims = dims;
-            Rank = length;
+            Rank = dims.Length;
             Volume = 1;
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < dims.Length; i++)
             {
                 Volume *= dims[i];
             }
         }
 
-        public Shape(params int[] dimensions) : this(new VArray<int>(dimensions))
+        public Shape(params int[] dimensions) : this(new Array<int>(dimensions))
         {
         }
 
@@ -77,9 +78,9 @@ namespace GNet
             return flat;
         }
 
-        public Shape Pad(VArray<int> paddings)
+        public Shape Pad(Array<int> paddings)
         {
-            return new Shape(Dims.Select(paddings, (D, P) => D + 2 * P, (D, P) => D + 2 * P));
+            return new Shape(Dims.Select((D, i) => D + 2 * paddings[i]));
         }
 
         public bool Equals(Shape? other)
@@ -99,7 +100,15 @@ namespace GNet
                 return false;
             }
 
-            return Dims.Equals(other.Dims);
+            for (int i = 0; i < Dims.Length; i++)
+            {
+                if (Dims[i] != other.Dims[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public override bool Equals(object? obj)

@@ -11,8 +11,7 @@ namespace GNet.Layers.Operations
         public Array<double> CalcWeights(Array<Synapse> inSynapses)
         {
             int nIn = inSynapses.Length;
-
-            return inSynapses.Select(X => 1.0 / nIn);
+            return new Array<double>(nIn, () => 1.0 / nIn);
         }
     }
 }

@@ -30,10 +30,10 @@ namespace GNet
         }
 
         public Dataset(params Data[] array) : this(array, false)
-        {            
+        {
         }
 
-        public new static Dataset FromRef(params Data[] array)
+        public static new Dataset FromRef(params Data[] array)
         {
             return new Dataset(array, true);
         }
@@ -49,9 +49,9 @@ namespace GNet
 
             for (int i = 0; i < Length; i++)
             {
-                Data D = InternalArray[i];
+                Data D = internalArray[i];
 
-                InternalArray[i] = new Data
+                internalArray[i] = new Data
                 (
                     inputs ? D.Inputs.Select(X => normalizer.Normalize(X)).ToShape(InputShape) : D.Inputs,
                     targets ? D.Targets.Select(X => normalizer.Normalize(X)).ToShape(TargetShape) : D.Targets
@@ -64,9 +64,9 @@ namespace GNet
             for (int i = 0; i < Length; i++)
             {
                 int iRnd = Utils.GRandom.Next(i, Length);
-                Data temp = InternalArray[i];
-                InternalArray[i] = InternalArray[iRnd];
-                InternalArray[iRnd] = temp;
+                Data temp = internalArray[i];
+                internalArray[i] = internalArray[iRnd];
+                internalArray[iRnd] = temp;
             }
         }
     }

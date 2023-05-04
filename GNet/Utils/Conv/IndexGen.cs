@@ -5,7 +5,7 @@ namespace GNet.Utils.Conv
 {
     public static class IndexGen
     {
-        public static Array<int[]> Generate(Shape shape, VArray<int> start, VArray<int> strides, Shape kernel)
+        public static Array<int[]> Generate(Shape shape, Array<int> start, Array<int> strides, Shape kernel)
         {
             if (shape.Rank != strides.Length)
             {
@@ -22,19 +22,22 @@ namespace GNet.Utils.Conv
                 throw new RankException(nameof(kernel));
             }
 
-            if (start < 0)
+            for (int i = 0; i < shape.Rank; i++)
             {
-                throw new ArgumentOutOfRangeException($"{nameof(start)} must be >= 0.");
-            }
+                if (start[i] < 0)
+                {
+                    throw new ArgumentOutOfRangeException($"{nameof(start)} must be >= 0.");
+                }
 
-            if (strides < 1)
-            {
-                throw new ArgumentOutOfRangeException($"{nameof(strides)} must be >= 1.");
-            }
+                if (strides[i] < 1)
+                {
+                    throw new ArgumentOutOfRangeException($"{nameof(strides)} must be >= 1.");
+                }
 
-            if (kernel.Dims < shape.Dims)
-            {
-                throw new ArgumentOutOfRangeException($"{nameof(kernel)} can't be bigger than {nameof(shape)}.");
+                if (kernel.Dims[i] < shape.Dims[i])
+                {
+                    throw new ArgumentOutOfRangeException($"{nameof(kernel)} can't be bigger than {nameof(shape)}.");
+                }
             }
 
             int lastIndex = shape.Rank - 1;
@@ -72,14 +75,14 @@ namespace GNet.Utils.Conv
             }
         }
 
-        public static Array<int[]> ByStrides(Shape shape, VArray<int> strides, Shape kernel)
+        public static Array<int[]> ByStrides(Shape shape, Array<int> strides, Shape kernel)
         {
-            return Generate(shape, new VArray<int>(shape.Rank, () => 0), strides, kernel);
+            return Generate(shape, new Array<int>(shape.Rank, () => 0), strides, kernel);
         }
 
-        public static Array<int[]> ByStart(Shape shape, VArray<int> start)
+        public static Array<int[]> ByStart(Shape shape, Array<int> start)
         {
-            return Generate(shape, start, new VArray<int>(shape.Rank, () => 1), new Shape(new VArray<int>(shape.Rank, () => 1)));
+            return Generate(shape, start, new Array<int>(shape.Rank, () => 1), new Shape(new Array<int>(shape.Rank, () => 1)));
         }
     }
 }

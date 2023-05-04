@@ -4,7 +4,7 @@ namespace GNet.Utils.Conv
 {
     public static class Padder
     {
-        public static VArray<int> CalcPadding(Shape inputShape, Shape outputShape, Shape kernelShape, VArray<int> strides, bool padChannels)
+        public static Array<int> CalcPadding(Shape inputShape, Shape outputShape, Shape kernelShape, Array<int> strides, bool padChannels)
         {
             int length = inputShape.Rank;
 
@@ -23,14 +23,17 @@ namespace GNet.Utils.Conv
                 throw new RankException(nameof(strides));
             }
 
-            if (strides < 1)
+            for (int i = 0; i < length; i++)
             {
-                throw new ArgumentOutOfRangeException($"{nameof(strides)} must be >= 1.");
-            }
+                if (strides[i] < 1)
+                {
+                    throw new ArgumentOutOfRangeException($"{nameof(strides)} must be >= 1.");
+                }
 
-            if (inputShape.Dims < kernelShape.Dims)
-            {
-                throw new ArgumentOutOfRangeException($"{nameof(kernelShape)} {nameof(kernelShape.Dims)} is out of range.");
+                if (inputShape.Dims[i] < kernelShape.Dims[i])
+                {
+                    throw new ArgumentOutOfRangeException($"{nameof(kernelShape)} {nameof(kernelShape.Dims)} is out of range.");
+                }
             }
 
             int[] paddings = new int[length];
@@ -52,10 +55,10 @@ namespace GNet.Utils.Conv
                 paddings[i] = doublePad / 2;
             }
 
-            return VArray<int>.FromRef(paddings);
+            return Array<int>.FromRef(paddings);
         }
 
-        public static ShapedArray<T> PadArray<T>(ShapedArray<T> array, VArray<int> paddings, Func<T> padVal)
+        public static ShapedArray<T> PadArray<T>(ShapedArray<T> array, Array<int> paddings, Func<T> padVal)
         {
             if (array.Shape.Rank != paddings.Length)
             {

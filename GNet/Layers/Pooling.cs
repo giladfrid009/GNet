@@ -8,15 +8,15 @@ namespace GNet.Layers
     [Serializable]
     public class Pooling : ConstantLayer
     {
-        public VArray<int> Strides { get; }
-        public VArray<int> Paddings { get; }
+        public Array<int> Strides { get; }
+        public Array<int> Paddings { get; }
         public Shape InputShape { get; }
         public Shape PaddedShape { get; }
         public Shape KernelShape { get; }
         public IOperation PoolOp { get; }
         public double PadVal { get; }
 
-        public Pooling(Shape inputShape, Shape outputShape, Shape kernelShape, VArray<int> strides, IOperation poolOp, double padVal = 0.0) : base(outputShape)
+        public Pooling(Shape inputShape, Shape outputShape, Shape kernelShape, Array<int> strides, IOperation poolOp, double padVal = 0.0) : base(outputShape)
         {
             InputShape = inputShape;
             KernelShape = kernelShape;
@@ -52,9 +52,9 @@ namespace GNet.Layers
 
             IndexGen.ByStrides(PaddedShape, Strides, KernelShape).ForEach((idxKernel, i) =>
             {
-                Neuron outN = Neurons[i];
+                Neuron outN = base.Neurons[i];
 
-                outN.InSynapses = IndexGen.ByStart(KernelShape, VArray<int>.FromRef(idxKernel)).Select((idx, j) =>
+                outN.InSynapses = IndexGen.ByStart(KernelShape, Array<int>.FromRef(idxKernel)).Select((idx, j) =>
                 {
                     var S = new Synapse(padded[idx], outN);
                     inConnections[idx].Add(S);

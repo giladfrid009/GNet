@@ -6,15 +6,16 @@ namespace GNet
     public class Array<T>
     {
         public static Array<T> Empty { get; } = new Array<T>(Array.Empty<T>(), true);
-        
-        protected T[] InternalArray { get; }
+
         public int Length { get; }
-        public T this[int i] => InternalArray[i];
+        public T this[int i] => internalArray[i];
+
+        protected readonly T[] internalArray;
 
         protected Array(Array<T> array)
         {
             Length = array.Length;
-            InternalArray = array.InternalArray;
+            internalArray = array.internalArray;
         }
 
         protected Array(T[] array, bool asRef = false)
@@ -23,13 +24,13 @@ namespace GNet
 
             if (asRef)
             {
-                InternalArray = array;
+                internalArray = array;
             }
             else
             {
-                InternalArray = new T[Length];
+                internalArray = new T[Length];
 
-                Array.Copy(array, 0, InternalArray, 0, Length);
+                Array.Copy(array, 0, internalArray, 0, Length);
             }
         }
 
@@ -40,11 +41,11 @@ namespace GNet
         public Array(int length, Func<T> element)
         {
             Length = length;
-            InternalArray = new T[length];
+            internalArray = new T[length];
 
             for (int i = 0; i < length; i++)
             {
-                InternalArray[i] = element();
+                internalArray[i] = element();
             }
         }
 
@@ -55,25 +56,35 @@ namespace GNet
 
         public ShapedArray<T> ToShape(Shape shape)
         {
-            return ShapedArray<T>.FromRef(shape, InternalArray);
+            return ShapedArray<T>.FromRef(shape, internalArray);
         }
 
         public void ForEach(Action<T> action)
         {
-            ForEach((X, i) => action(X));
+            for (int i = 0; i < Length; i++)
+            {
+                action(internalArray[i]);
+            }
         }
 
         public void ForEach(Action<T, int> action)
         {
             for (int i = 0; i < Length; i++)
             {
-                action(InternalArray[i], i);
+                action(internalArray[i], i);
             }
         }
 
         public Array<TRes> Select<TRes>(Func<T, TRes> selector)
         {
-            return Select((X, i) => selector(X));
+            var selected = new TRes[Length];
+
+            for (int i = 0; i < Length; i++)
+            {
+                selected[i] = selector(internalArray[i]);
+            }
+
+            return Array<TRes>.FromRef(selected);
         }
 
         public Array<TRes> Select<TRes>(Func<T, int, TRes> selector)
@@ -82,11 +93,11 @@ namespace GNet
 
             for (int i = 0; i < Length; i++)
             {
-                selected[i] = selector(InternalArray[i], i);
+                selected[i] = selector(internalArray[i], i);
             }
 
             return Array<TRes>.FromRef(selected);
-        }              
+        }
 
         public double Min(Func<T, double> selector)
         {
@@ -94,7 +105,7 @@ namespace GNet
 
             for (int i = 0; i < Length; i++)
             {
-                min = Math.Min(min, selector(InternalArray[i]));
+                min = Math.Min(min, selector(internalArray[i]));
             }
 
             return min;
@@ -106,7 +117,7 @@ namespace GNet
 
             for (int i = 0; i < Length; i++)
             {
-                max = Math.Max(max, selector(InternalArray[i]));
+                max = Math.Max(max, selector(internalArray[i]));
             }
 
             return max;
@@ -118,7 +129,7 @@ namespace GNet
 
             for (int i = 0; i < Length; i++)
             {
-                sum += selector(InternalArray[i]);
+                sum += selector(internalArray[i]);
             }
 
             return sum;
@@ -135,7 +146,7 @@ namespace GNet
 
             for (int i = 0; i < Length; i++)
             {
-                sum += selector(InternalArray[i], other[i]);
+                sum += selector(internalArray[i], other[i]);
             }
 
             return sum;

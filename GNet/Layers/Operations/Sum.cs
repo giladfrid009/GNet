@@ -10,7 +10,7 @@ namespace GNet.Layers.Operations
 
         public Array<double> CalcWeights(Array<Synapse> inSynapses)
         {
-            return inSynapses.Select(X => 1.0);
+            return new Array<double>(inSynapses.Length, () => 1);
         }
     }
 }

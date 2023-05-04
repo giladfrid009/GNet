@@ -37,7 +37,7 @@ namespace GNet
 
         public ShapedArray<double> Predict(ShapedArray<double> inputs)
         {
-            if(inputs.Shape != InputShape)
+            if (inputs.Shape != InputShape)
             {
                 throw new ShapeMismatchException(nameof(inputs));
             }
