@@ -30,7 +30,7 @@ namespace GNet.Datasets.Generators
                     res = Func(num);
                 }
 
-                dataArray[i] = new Data(new Tensor<double>(num), new Tensor<double>(res));
+                dataArray[i] = new Data(new ShapedArray<double>(num), new ShapedArray<double>(res));
             }
 
             return Dataset.FromRef(dataArray);

@@ -53,8 +53,8 @@ namespace GNet
 
                 InternalArray[i] = new Data
                 (
-                    inputs ?  D.Inputs.Select(X => normalizer.Normalize(X)).ToTensor(InputShape) : D.Inputs,
-                    targets ? D.Targets.Select(X => normalizer.Normalize(X)).ToTensor(TargetShape) : D.Targets
+                    inputs ? D.Inputs.Select(X => normalizer.Normalize(X)).ToShape(InputShape) : D.Inputs,
+                    targets ? D.Targets.Select(X => normalizer.Normalize(X)).ToShape(TargetShape) : D.Targets
                 );
             }
         }

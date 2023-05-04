@@ -46,7 +46,7 @@ namespace GNet.Layers
                 throw new ShapeMismatchException(nameof(inLayer));
             }
 
-            ShapedArray<Neuron> padded = Padder.PadArray(inLayer.Neurons.Reshape(Shape), Paddings, () => new Neuron() { OutVal = PadVal });
+            ShapedArray<Neuron> padded = Padder.PadArray(inLayer.Neurons.ToShape(Shape), Paddings, () => new Neuron() { OutVal = PadVal });
 
             var inConnections = new ShapedArray<List<Synapse>>(PaddedShape, () => new List<Synapse>());
 

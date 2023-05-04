@@ -53,7 +53,7 @@ namespace GNet
             return new Array<T>(array, true);
         }
 
-        public ShapedArray<T> Reshape(Shape shape)
+        public ShapedArray<T> ToShape(Shape shape)
         {
             return ShapedArray<T>.FromRef(shape, InternalArray);
         }
